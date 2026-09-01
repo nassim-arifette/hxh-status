@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hxhstatus",
+  "compatibility_date": "2026-09-01",
+  // The app is a static export (see `output: "export"` in next.config.ts), so
+  // there is no Worker script: Cloudflare serves the built files directly.
+  // Without this file Wrangler guesses the framework, assumes server-side
+  // rendering, and pulls in the OpenNext adapter, which then fails looking for
+  // a `.next/standalone` build that a static export never produces.
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
+}
