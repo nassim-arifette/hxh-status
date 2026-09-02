@@ -7,7 +7,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build && playwright install --only-shell chromium && node scripts/generate-share-images.mjs",
+    "build": "next build",
+    "share:build": "npm run build && playwright install --only-shell chromium && node scripts/generate-share-images.mjs",
     "start": "next start",
     "lint": "eslint app/page.tsx app/layout.tsx app/robots.ts app/sitemap.ts app/status-dashboard.tsx app/chapter-tracker.tsx app/section-capture-actions.tsx app/status-presentation.tsx app/data/status.ts app/ja/page.tsx app/capture/layout.tsx app/capture/production/page.tsx app/capture/publication-history/page.tsx components/ui/sheet.tsx lib/utils.ts lib/i18n.ts lib/dictionaries.ts scripts/check-translations.mjs scripts/generate-share-images.mjs",
     "translations:check": "node scripts/check-translations.mjs",

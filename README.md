@@ -41,16 +41,19 @@ physical issues count as one issue.
 After editing data, update `lastUpdated` in `app/data/status.ts` and run:
 
 ```bash
-npm run build
+npm run share:build
 ```
 
-The build renders the two tracker sections with the same React components and
-CSS used by the site, replaces the interactive actions with `hxhstatus.com`,
-and captures them as `out/share/production.png` and
+This command first builds the site, then renders the two tracker sections with
+the same React components and CSS used by the site, replaces the interactive
+actions with `hxhstatus.com`, and captures them as
+`out/share/production.png` and
 `out/share/publication-history.png`. The same files are kept in
 `public/share/` so Share and Copy also work during local development. These
-PNGs are generated once per build and then served as immutable static assets;
-site traffic never launches a browser or regenerates them.
+PNGs are generated once, committed with the data update, and then served as
+immutable static assets; site traffic never launches a browser or regenerates
+them. The regular `npm run build` deliberately reuses the committed PNGs so
+Cloudflare does not need Playwright or Chromium system libraries.
 
 ## Translate the site
 
