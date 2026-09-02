@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type RefObject } from "react";
+import { useId, useRef, useState, type RefObject } from "react";
 import { ExternalLink } from "lucide-react";
 
 import {
@@ -11,7 +11,41 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import type { ChapterRecord } from "./data/status";
-import { formatDate, statusMeta } from "./status-presentation";
+import {
+  formatDate,
+  formatReleaseDate,
+  statusMeta,
+} from "./status-presentation";
+
+const compactReleaseDateOptions = {
+  month: "short",
+  day: "numeric",
+} satisfies Intl.DateTimeFormatOptions;
+
+function InlineScript({ html }: { html: string }) {
+  return (
+    <script
+      type={typeof window === "undefined" ? "text/javascript" : "text/plain"}
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
+export function LocalReleaseDate({ releaseAt }: { releaseAt: string }) {
+  const id = useId();
+
+  return (
+    <>
+      <time id={id} dateTime={releaseAt} suppressHydrationWarning>
+        {formatReleaseDate(releaseAt, compactReleaseDateOptions)}
+      </time>
+      <InlineScript
+        html={`{var n=document.getElementById(${JSON.stringify(id)});if(n)n.textContent=new Intl.DateTimeFormat("en",${JSON.stringify(compactReleaseDateOptions)}).format(new Date(${JSON.stringify(releaseAt)}))}`}
+      />
+    </>
+  );
+}
 
 function ChapterGrid({
   chapters,
@@ -111,10 +145,16 @@ function ChapterDetails({
               <p className="sheet-explanation">{meta.description}</p>
 
               <dl className="detail-list">
-                {chapter.publishedAt ? (
+                {chapter.releaseAt ? (
                   <div>
-                    <dt>Published</dt>
-                    <dd>{formatDate(chapter.publishedAt)}</dd>
+                    <dt>
+                      {chapter.status === "published" ? "Published" : "Scheduled"}
+                    </dt>
+                    <dd>
+                      <time dateTime={chapter.releaseAt}>
+                        {formatReleaseDate(chapter.releaseAt)}
+                      </time>
+                    </dd>
                   </div>
                 ) : null}
                 {chapter.updatedAt ? (

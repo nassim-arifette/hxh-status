@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint app/page.tsx app/layout.tsx app/robots.ts app/sitemap.ts app/status-dashboard.tsx app/chapter-tracker.tsx app/status-presentation.tsx app/data/status.ts components/ui/sheet.tsx lib/utils.ts",
+    "lint": "eslint app/page.tsx app/layout.tsx app/robots.ts app/sitemap.ts app/status-dashboard.tsx app/chapter-tracker.tsx app/section-capture-actions.tsx app/status-presentation.tsx app/data/status.ts app/share/_shared.tsx app/share/production.png/route.ts app/share/production.png/_image.tsx app/share/publication-history.png/route.ts app/share/publication-history.png/_image.tsx components/ui/sheet.tsx lib/utils.ts",
     "cf:dev": "npm run build && wrangler dev",
     "cf:check": "npm run build && wrangler deploy --dry-run",
     "cf:deployments": "wrangler deployments list",

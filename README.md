@@ -25,9 +25,9 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Update the tracker
 
 Current production data is in `app/data/status.ts`. Each chapter can include a
-status, confirmation date, source URL, Jump issue, note, and a short
-`scheduleLabel` for a scheduled chapter's dated upcoming milestone (for
-example `"Sep 2 / 3"`).
+status, confirmation date, source URL, Jump issue, note, and a `releaseAt`
+timestamp for its official Japanese digital release (for example
+`"2026-09-07T00:00:00+09:00"`).
 
 Everything on the page is derived from that file: the four headline numbers, the
 "currently publishing / on hiatus" state, and the latest-update panel. Adding a

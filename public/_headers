@@ -1,5 +1,9 @@
 /opengraph-image
   Content-Type: image/png
 
+/share/*.png
+  Content-Type: image/png
+  Cache-Control: public, max-age=31556952, immutable
+
 /_next/static/*
   Cache-Control: public, max-age=31556952, immutable

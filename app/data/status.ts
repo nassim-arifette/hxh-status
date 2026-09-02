@@ -10,12 +10,11 @@ export type ChapterRecord = {
   chapter: number;
   status: ChapterStatus;
   updatedAt?: string;
-  publishedAt?: string;
+  releaseAt?: string;
   jumpIssue?: string;
   source?: string;
   sourceLabel?: string;
   note?: string;
-  scheduleLabel?: string;
 };
 
 const togashiLabel = "Yoshihiro Togashi on X";
@@ -24,15 +23,15 @@ const vizSeries =
   "https://www.viz.com/shonenjump/chapters/hunter-x-hunter";
 
 const publishedBase: ChapterRecord[] = [
-  { chapter: 411, status: "published", publishedAt: "2026-06-29", jumpIssue: "31" },
-  { chapter: 412, status: "published", publishedAt: "2026-07-06", jumpIssue: "32" },
-  { chapter: 413, status: "published", publishedAt: "2026-07-13", jumpIssue: "33" },
-  { chapter: 414, status: "published", publishedAt: "2026-07-20", jumpIssue: "34" },
-  { chapter: 415, status: "published", publishedAt: "2026-07-27", jumpIssue: "35" },
-  { chapter: 416, status: "published", publishedAt: "2026-08-03", jumpIssue: "36" },
-  { chapter: 417, status: "published", publishedAt: "2026-08-10", jumpIssue: "37/38" },
-  { chapter: 418, status: "published", publishedAt: "2026-08-24", jumpIssue: "39" },
-  { chapter: 419, status: "published", publishedAt: "2026-08-31", jumpIssue: "40" },
+  { chapter: 411, status: "published", releaseAt: "2026-06-29T00:00:00+09:00", jumpIssue: "31" },
+  { chapter: 412, status: "published", releaseAt: "2026-07-06T00:00:00+09:00", jumpIssue: "32" },
+  { chapter: 413, status: "published", releaseAt: "2026-07-13T00:00:00+09:00", jumpIssue: "33" },
+  { chapter: 414, status: "published", releaseAt: "2026-07-20T00:00:00+09:00", jumpIssue: "34" },
+  { chapter: 415, status: "published", releaseAt: "2026-07-27T00:00:00+09:00", jumpIssue: "35" },
+  { chapter: 416, status: "published", releaseAt: "2026-08-03T00:00:00+09:00", jumpIssue: "36" },
+  { chapter: 417, status: "published", releaseAt: "2026-08-10T00:00:00+09:00", jumpIssue: "37/38" },
+  { chapter: 418, status: "published", releaseAt: "2026-08-24T00:00:00+09:00", jumpIssue: "39" },
+  { chapter: 419, status: "published", releaseAt: "2026-08-31T00:00:00+09:00", jumpIssue: "40" },
 ];
 
 const published: ChapterRecord[] = publishedBase.map((chapter) => ({
@@ -45,11 +44,11 @@ const progress: ChapterRecord[] = [
   {
     chapter: 420,
     status: "scheduled",
+    releaseAt: "2026-09-07T00:00:00+09:00",
     updatedAt: "2026-09-01",
     source: vizSeries,
     sourceLabel: "VIZ Shonen Jump",
-    scheduleLabel: "Sep 2 / 3",
-    note: "Scheduled for publication September 2 / 3.",
+    note: "Scheduled for publication in Weekly Shonen Jump.",
   },
   {
     chapter: 421,
@@ -202,9 +201,10 @@ export const latestUpdate = togashiUpdates.reduce(
 
 const dayMs = 24 * 60 * 60 * 1000;
 
-function daysBetween(from: string, to: string) {
+function daysBetween(releaseAt: string, throughDate: string) {
   return Math.round(
-    (Date.parse(`${to}T12:00:00Z`) - Date.parse(`${from}T12:00:00Z`)) / dayMs,
+    (Date.parse(`${throughDate}T00:00:00+09:00`) - Date.parse(releaseAt)) /
+      dayMs,
   );
 }
 
@@ -212,7 +212,7 @@ function daysBetween(from: string, to: string) {
 // rather than the normal schedule. Measured against `lastUpdated`, never the
 // clock, so the server and client always render the same thing.
 export const serialization: "publishing" | "hiatus" =
-  latestPublished.publishedAt &&
-  daysBetween(latestPublished.publishedAt, lastUpdated) <= 35
+  latestPublished.releaseAt &&
+  daysBetween(latestPublished.releaseAt, lastUpdated) <= 35
     ? "publishing"
     : "hiatus";

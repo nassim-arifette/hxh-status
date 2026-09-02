@@ -81,3 +81,14 @@ export function formatDate(
     ...options,
   }).format(new Date(`${date}T12:00:00Z`));
 }
+
+export function formatReleaseDate(
+  releaseAt: string,
+  options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  },
+) {
+  return new Intl.DateTimeFormat("en", options).format(new Date(releaseAt));
+}

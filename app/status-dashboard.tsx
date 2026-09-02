@@ -1,7 +1,8 @@
 import { CalendarDays, ExternalLink } from "lucide-react";
 
-import ChapterTracker from "./chapter-tracker";
+import ChapterTracker, { LocalReleaseDate } from "./chapter-tracker";
 import historyData from "./data/publication-history.json";
+import SectionCaptureActions from "./section-capture-actions";
 import {
   chapters,
   lastUpdated,
@@ -162,8 +163,11 @@ export default function StatusDashboard() {
               <span>Next chapter</span>
               <strong>{nextChapter.chapter}</strong>
               <small>
-                {nextChapter.scheduleLabel ??
-                  statusMeta[nextChapter.status].shortLabel}
+                {nextChapter.releaseAt ? (
+                  <LocalReleaseDate releaseAt={nextChapter.releaseAt} />
+                ) : (
+                  statusMeta[nextChapter.status].shortLabel
+                )}
               </small>
             </article>
             <article className="metric">
@@ -188,6 +192,11 @@ export default function StatusDashboard() {
               <p className="eyebrow">Kakin Succession Contest</p>
               <h2 id="production-title">Production tracker</h2>
             </div>
+            <SectionCaptureActions
+              fileName="hxh-production-tracker.png"
+              imageUrl={`/share/production.png?v=${lastUpdated}`}
+              label="Production tracker"
+            />
           </div>
 
           <ChapterTracker chapters={chapters} lastUpdated={lastUpdated} />
@@ -226,6 +235,11 @@ export default function StatusDashboard() {
               <p className="eyebrow">1998–2026</p>
               <h2 id="history-title">Publication history</h2>
             </div>
+            <SectionCaptureActions
+              fileName="hxh-publication-history.png"
+              imageUrl={`/share/publication-history.png?v=${lastUpdated}`}
+              label="Publication history"
+            />
           </div>
 
           <div className="history-key">
