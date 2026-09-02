@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: {
-    canonical: "/",
+    canonical: "https://hxhstatus.com",
   },
   openGraph: {
     title,
     description,
-    url: "/",
+    url: "https://hxhstatus.com",
     siteName: "HxH Status",
     locale: "en_US",
     type: "website",

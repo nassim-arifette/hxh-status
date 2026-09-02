@@ -1,23 +1,6 @@
-"use client";
+import { CalendarDays, ExternalLink } from "lucide-react";
 
-import { useMemo, useState, type ComponentType } from "react";
-import {
-  CalendarDays,
-  Check,
-  CircleDashed,
-  ExternalLink,
-  PanelsTopLeft,
-  PenLine,
-  Send,
-} from "lucide-react";
-
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import ChapterTracker from "./chapter-tracker";
 import historyData from "./data/publication-history.json";
 import {
   chapters,
@@ -28,18 +11,9 @@ import {
   nextChapter,
   serialization,
   workConfirmed,
-  type ChapterRecord,
   type ChapterStatus,
 } from "./data/status";
-
-type Icon = ComponentType<{ size?: number; strokeWidth?: number }>;
-
-type StatusMeta = {
-  label: string;
-  shortLabel: string;
-  description: string;
-  icon: Icon;
-};
+import { formatDate, lowerFirst, statusMeta } from "./status-presentation";
 
 type PublicationIssue = {
   year: number;
@@ -49,105 +23,38 @@ type PublicationIssue = {
   date?: string;
 };
 
-const statusMeta: Record<ChapterStatus, StatusMeta> = {
-  published: {
-    label: "Published",
-    shortLabel: "Published",
-    description: "Officially released to readers.",
-    icon: Check,
-  },
-  scheduled: {
-    label: "Scheduled for publication",
-    shortLabel: "Scheduled",
-    description: "Jump has scheduled this chapter for publication.",
-    icon: CalendarDays,
-  },
-  delivered: {
-    label: "Delivered to Jump",
-    shortLabel: "At Jump",
-    description:
-      "The finished manuscript has been delivered to Jump, but it is not published yet.",
-    icon: Send,
-  },
-  background: {
-    label: "Background specifications complete",
-    shortLabel: "Backgrounds",
-    description:
-      "Instructions for backgrounds and supporting production work are complete.",
-    icon: PanelsTopLeft,
-  },
-  inking: {
-    label: "Character inking complete",
-    shortLabel: "Inked",
-    description:
-      "Character linework is complete; later production steps remain.",
-    icon: PenLine,
-  },
-  unknown: {
-    label: "No confirmed production update",
-    shortLabel: "Unknown",
-    description: "No precise public production milestone has been confirmed.",
-    icon: CircleDashed,
-  },
-};
-
 const issues = historyData as PublicationIssue[];
 
-const currentYear = issues.reduce((latest, issue) => Math.max(latest, issue.year), 0);
+const currentYear = issues.reduce(
+  (latest, issue) => Math.max(latest, issue.year),
+  0,
+);
 
 const chaptersThisYear = issues.filter(
   (issue) => issue.year === currentYear && issue.released,
 ).length;
 
+const publicationByYear = (() => {
+  const grouped = new Map<number, PublicationIssue[]>();
+
+  for (const issue of issues) {
+    const current = grouped.get(issue.year) ?? [];
+    current.push(issue);
+    grouped.set(issue.year, current);
+  }
+
+  return [...grouped.entries()]
+    .sort(([a], [b]) => b - a)
+    .map(([year, yearIssues]) => ({
+      year,
+      issues: [...yearIssues].sort((a, b) => a.number - b.number),
+    }));
+})();
+
 const serializationHeadline = {
   publishing: "Serializing",
   hiatus: "On hiatus",
 } as const;
-
-// Status labels read as sentence fragments after "Chapter 427 …", but only the
-// first letter may drop case: "Delivered to Jump" has to keep its capital J.
-function lowerFirst(label: string) {
-  return label.charAt(0).toLowerCase() + label.slice(1);
-}
-
-function formatDate(date?: string, options?: Intl.DateTimeFormatOptions) {
-  if (!date) return "Not confirmed";
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-    ...options,
-  }).format(new Date(`${date}T12:00:00Z`));
-}
-
-function ChapterGrid({ onSelect }: { onSelect: (chapter: ChapterRecord) => void }) {
-  return (
-    <div className="chapter-grid" aria-label="Chapter production status">
-      {chapters.map((chapter) => {
-        const meta = statusMeta[chapter.status];
-        const StatusIcon = meta.icon;
-
-        return (
-          <button
-            className="chapter-card"
-            data-status={chapter.status}
-            key={chapter.chapter}
-            onClick={() => onSelect(chapter)}
-            aria-label={`Chapter ${chapter.chapter}: ${meta.label}`}
-            type="button"
-          >
-            <span className="chapter-number">{chapter.chapter}</span>
-            <span className="chapter-status-icon" aria-hidden="true">
-              <StatusIcon size={16} strokeWidth={2.2} />
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 function Legend() {
   return (
@@ -155,6 +62,7 @@ function Legend() {
       {(Object.keys(statusMeta) as ChapterStatus[]).map((status) => {
         const meta = statusMeta[status];
         const StatusIcon = meta.icon;
+
         return (
           <div className="legend-item" data-status={status} key={status}>
             <span className="legend-icon" aria-hidden="true">
@@ -169,28 +77,17 @@ function Legend() {
 }
 
 function PublicationHistory() {
-  const byYear = useMemo(() => {
-    const grouped = new Map<number, PublicationIssue[]>();
-
-    for (const issue of issues) {
-      const current = grouped.get(issue.year) ?? [];
-      current.push(issue);
-      grouped.set(issue.year, current);
-    }
-
-    return [...grouped.entries()]
-      .sort(([a], [b]) => b - a)
-      .map(([year, yearIssues]) => ({
-        year,
-        issues: [...yearIssues].sort((a, b) => a.number - b.number),
-      }));
-  }, []);
-
   return (
-    <div className="history-scroll" tabIndex={0} aria-label="Publication history chart">
+    <div
+      className="history-scroll"
+      tabIndex={0}
+      aria-label="Publication history chart"
+    >
       <div className="history-chart">
-        {byYear.map(({ year, issues: yearIssues }) => {
-          const publishedCount = yearIssues.filter((issue) => issue.released).length;
+        {publicationByYear.map(({ year, issues: yearIssues }) => {
+          const publishedCount = yearIssues.filter(
+            (issue) => issue.released,
+          ).length;
 
           return (
             <div className="history-row" key={year}>
@@ -213,7 +110,10 @@ function PublicationHistory() {
                   );
                 })}
               </div>
-              <span className="history-count" aria-label={`${publishedCount} chapters`}>
+              <span
+                className="history-count"
+                aria-label={`${publishedCount} chapters`}
+              >
                 {String(publishedCount).padStart(2, "0")}
               </span>
             </div>
@@ -224,95 +124,15 @@ function PublicationHistory() {
   );
 }
 
-function ChapterDetails({
-  chapter,
-  onOpenChange,
-}: {
-  chapter: ChapterRecord | null;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const meta = chapter ? statusMeta[chapter.status] : statusMeta.unknown;
-  const StatusIcon = meta.icon;
-
-  return (
-    <Sheet open={Boolean(chapter)} onOpenChange={onOpenChange}>
-      <SheetContent className="chapter-sheet" side="right">
-        {chapter ? (
-          <>
-            <SheetHeader className="sheet-header">
-              <p className="eyebrow">Chapter</p>
-              <SheetTitle className="sheet-chapter">{chapter.chapter}</SheetTitle>
-              <SheetDescription className="sheet-description">
-                Latest confirmed state as of {formatDate(lastUpdated)}.
-              </SheetDescription>
-            </SheetHeader>
-
-            <div className="sheet-body">
-              <div className="sheet-status" data-status={chapter.status}>
-                <span className="sheet-status-icon" aria-hidden="true">
-                  <StatusIcon size={20} strokeWidth={2.2} />
-                </span>
-                <div>
-                  <span className="sheet-label">Status</span>
-                  <strong>{meta.label}</strong>
-                </div>
-              </div>
-
-              <p className="sheet-explanation">{meta.description}</p>
-
-              <dl className="detail-list">
-                {chapter.publishedAt ? (
-                  <div>
-                    <dt>Published</dt>
-                    <dd>{formatDate(chapter.publishedAt)}</dd>
-                  </div>
-                ) : null}
-                {chapter.updatedAt ? (
-                  <div>
-                    <dt>Update</dt>
-                    <dd>{formatDate(chapter.updatedAt)}</dd>
-                  </div>
-                ) : null}
-                {chapter.jumpIssue ? (
-                  <div>
-                    <dt>Weekly Shonen Jump</dt>
-                    <dd>Issue {chapter.jumpIssue}</dd>
-                  </div>
-                ) : null}
-              </dl>
-
-              {chapter.note ? <p className="sheet-note">{chapter.note}</p> : null}
-
-              {chapter.source ? (
-                <a
-                  className="source-link"
-                  href={chapter.source}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {chapter.sourceLabel ?? "View source"}
-                  <ExternalLink size={15} />
-                </a>
-              ) : (
-                <p className="no-source">No chapter-specific source yet.</p>
-              )}
-            </div>
-          </>
-        ) : null}
-      </SheetContent>
-    </Sheet>
-  );
-}
-
 export default function StatusDashboard() {
-  const [selectedChapter, setSelectedChapter] = useState<ChapterRecord | null>(null);
-
   return (
     <main id="top" className="site-shell">
       <div className="page-frame">
         <header className="site-header">
-          <a className="wordmark" href="#top" aria-label="HxH Status home">
-            <span className="wordmark-hxh">H<span className="wordmark-times">×</span>H</span>
+          <a className="wordmark" href="#top" aria-label="H×H Status">
+            <span className="wordmark-hxh">
+              H<span className="wordmark-times">×</span>H
+            </span>
             <span className="wordmark-status">Status</span>
           </a>
           <div className="updated-label">
@@ -359,7 +179,10 @@ export default function StatusDashboard() {
           </div>
         </section>
 
-        <section className="content-section production-section" aria-labelledby="production-title">
+        <section
+          className="content-section production-section"
+          aria-labelledby="production-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">Kakin Succession Contest</p>
@@ -367,7 +190,7 @@ export default function StatusDashboard() {
             </div>
           </div>
 
-          <ChapterGrid onSelect={setSelectedChapter} />
+          <ChapterTracker chapters={chapters} lastUpdated={lastUpdated} />
           <Legend />
         </section>
 
@@ -394,7 +217,10 @@ export default function StatusDashboard() {
           </a>
         </section>
 
-        <section className="content-section history-section" aria-labelledby="history-title">
+        <section
+          className="content-section history-section"
+          aria-labelledby="history-title"
+        >
           <div className="section-heading history-heading">
             <div>
               <p className="eyebrow">1998–2026</p>
@@ -403,9 +229,15 @@ export default function StatusDashboard() {
           </div>
 
           <div className="history-key">
-            <span><i className="key-cell key-published" /> Chapter published</span>
-            <span><i className="key-cell key-hiatus" /> No chapter</span>
-            <span className="history-key-count">right column: chapters / year</span>
+            <span>
+              <i className="key-cell key-published" /> Chapter published
+            </span>
+            <span>
+              <i className="key-cell key-hiatus" /> No chapter
+            </span>
+            <span className="history-key-count">
+              right column: chapters / year
+            </span>
           </div>
           <PublicationHistory />
         </section>
@@ -415,13 +247,6 @@ export default function StatusDashboard() {
           <p>Sources: Yoshihiro Togashi, Weekly Shonen Jump, VIZ.</p>
         </footer>
       </div>
-
-      <ChapterDetails
-        chapter={selectedChapter}
-        onOpenChange={(open) => {
-          if (!open) setSelectedChapter(null);
-        }}
-      />
     </main>
   );
 }

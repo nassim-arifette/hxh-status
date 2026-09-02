@@ -25,7 +25,7 @@
   --surface-raised: #151916;
   --surface-hover: #1a201b;
   --text-secondary: #a7aea8;
-  --text-muted: #747c76;
+  --text-muted: #879189;
   --accent-green: #78c963;
   --accent-green-soft: #1b2b1c;
 
@@ -44,7 +44,7 @@
   --inking: #df824c;
   --inking-bg: #301f15;
   --inking-border: #724027;
-  --unknown: #6e7770;
+  --unknown: #879189;
   --unknown-bg: #171b18;
   --unknown-border: #353b37;
 }
@@ -84,6 +84,7 @@ html {
   background: var(--background);
   color-scheme: dark;
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -201,28 +202,45 @@ button {
 }
 
 .serialization-dot {
+  position: relative;
   flex: 0 0 auto;
   width: 13px;
   height: 13px;
   border-radius: 999px;
   background: var(--accent-green);
+}
+
+.serialization-dot::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent-green);
+  content: "";
+  pointer-events: none;
   animation: serialization-pulse 2.4s ease-out infinite;
+  will-change: opacity, transform;
 }
 
 .serialization[data-state="hiatus"] .serialization-dot {
   background: var(--text-muted);
-  animation: none;
+}
+
+.serialization[data-state="hiatus"] .serialization-dot::after {
+  content: none;
 }
 
 @keyframes serialization-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(120, 201, 99, 0.5);
+    opacity: 0.5;
+    transform: scale(1);
   }
   70% {
-    box-shadow: 0 0 0 11px rgba(120, 201, 99, 0);
+    opacity: 0;
+    transform: scale(2.7);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(120, 201, 99, 0);
+    opacity: 0;
+    transform: scale(2.7);
   }
 }
 
@@ -493,6 +511,8 @@ button {
 
 .history-section {
   margin-top: 18px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 820px;
 }
 
 .history-heading {
@@ -541,6 +561,7 @@ button {
   max-width: 100%;
   overflow-x: auto;
   padding: 4px 0 9px;
+  scrollbar-gutter: stable;
   scrollbar-color: #3a433c transparent;
   scrollbar-width: thin;
 }
@@ -962,5 +983,4 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
-
 
