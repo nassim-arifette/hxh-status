@@ -32,12 +32,12 @@
   --published: #78c963;
   --published-bg: #172b18;
   --published-border: #315f32;
+  --scheduled: #50bcb2;
+  --scheduled-bg: #142b29;
+  --scheduled-border: #28625d;
   --delivered: #68a0ff;
   --delivered-bg: #15233a;
   --delivered-border: #2d518d;
-  --manuscript: #50bcb2;
-  --manuscript-bg: #142b29;
-  --manuscript-border: #28625d;
   --background-work: #d6aa4d;
   --background-work-bg: #2d2514;
   --background-work-border: #665021;
@@ -382,16 +382,16 @@ button {
   --status-border: var(--published-border);
 }
 
+[data-status="scheduled"] {
+  --status-color: var(--scheduled);
+  --status-bg: var(--scheduled-bg);
+  --status-border: var(--scheduled-border);
+}
+
 [data-status="delivered"] {
   --status-color: var(--delivered);
   --status-bg: var(--delivered-bg);
   --status-border: var(--delivered-border);
-}
-
-[data-status="manuscript"] {
-  --status-color: var(--manuscript);
-  --status-bg: var(--manuscript-bg);
-  --status-border: var(--manuscript-border);
 }
 
 [data-status="background"] {
@@ -962,7 +962,5 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
-
-
 
 

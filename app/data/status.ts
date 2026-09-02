@@ -1,7 +1,7 @@
 export type ChapterStatus =
   | "published"
+  | "scheduled"
   | "delivered"
-  | "manuscript"
   | "background"
   | "inking"
   | "unknown";
@@ -44,58 +44,58 @@ const published: ChapterRecord[] = publishedBase.map((chapter) => ({
 const progress: ChapterRecord[] = [
   {
     chapter: 420,
-    status: "delivered",
+    status: "scheduled",
     updatedAt: "2026-09-01",
     source: vizSeries,
     sourceLabel: "VIZ Shonen Jump",
-    scheduleLabel: "Sep 6 / 7",
-    note: "Scheduled next: September 6 on VIZ / September 7 in Japan.",
+    scheduleLabel: "Sep 2 / 3",
+    note: "Scheduled for publication September 2 / 3.",
   },
   {
     chapter: 421,
-    status: "manuscript",
+    status: "delivered",
     updatedAt: "2026-05-26",
     source: "https://x.com/Un4v5s8bgsVk9Xp/status/2059299316800569524",
     sourceLabel: togashiLabel,
   },
   {
     chapter: 422,
-    status: "manuscript",
+    status: "delivered",
     updatedAt: "2026-07-01",
     source: "https://x.com/Un4v5s8bgsVk9Xp/status/2072287279197126773",
     sourceLabel: togashiLabel,
   },
   {
     chapter: 423,
-    status: "manuscript",
+    status: "delivered",
     updatedAt: "2026-07-07",
     source: "https://x.com/Un4v5s8bgsVk9Xp/status/2074538142506549407",
     sourceLabel: togashiLabel,
   },
   {
     chapter: 424,
-    status: "manuscript",
+    status: "delivered",
     updatedAt: "2026-08-08",
     source: "https://x.com/Un4v5s8bgsVk9Xp/status/2086132321166794760",
     sourceLabel: togashiLabel,
   },
   {
     chapter: 425,
-    status: "manuscript",
+    status: "delivered",
     updatedAt: "2026-08-11",
     source: "https://x.com/Un4v5s8bgsVk9Xp/status/2087170463839682713",
     sourceLabel: togashiLabel,
   },
   {
     chapter: 426,
-    status: "manuscript",
+    status: "delivered",
     updatedAt: "2026-08-25",
     source: "https://x.com/Un4v5s8bgsVk9Xp/status/2092132894814998720",
     sourceLabel: togashiLabel,
   },
   {
     chapter: 427,
-    status: "manuscript",
+    status: "delivered",
     updatedAt: "2026-09-01",
     source: "https://x.com/Un4v5s8bgsVk9Xp/status/2094673907626414299",
     sourceLabel: togashiLabel,
@@ -153,7 +153,7 @@ export const chapters = [...published, ...progress, ...unknown].sort(
   (a, b) => a.chapter - b.chapter,
 );
 
-export const lastUpdated = "2026-09-01";
+export const lastUpdated = "2026-09-02";
 
 // Production order, earliest milestone first. Every chapter at or above a rank
 // has cleared the milestones below it, so a single walk finds "complete through
@@ -162,8 +162,8 @@ const statusRank: Record<ChapterStatus, number> = {
   unknown: 0,
   inking: 1,
   background: 2,
-  manuscript: 3,
-  delivered: 4,
+  delivered: 3,
+  scheduled: 4,
   published: 5,
 };
 
@@ -181,7 +181,7 @@ function completeThrough(rank: number): ChapterRecord {
 }
 
 export const latestPublished = completeThrough(statusRank.published);
-export const manuscriptsComplete = completeThrough(statusRank.manuscript);
+export const manuscriptsComplete = completeThrough(statusRank.delivered);
 export const workConfirmed = completeThrough(statusRank.inking);
 
 export const nextChapter =

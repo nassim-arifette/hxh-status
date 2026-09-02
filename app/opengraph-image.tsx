@@ -10,7 +10,7 @@ import { __iconNode as checkIcon } from "lucide-react/dist/esm/icons/check.mjs";
 // @ts-expect-error Lucide does not publish declarations for individual .mjs icon nodes.
 import { __iconNode as circleDashedIcon } from "lucide-react/dist/esm/icons/circle-dashed.mjs";
 // @ts-expect-error Lucide does not publish declarations for individual .mjs icon nodes.
-import { __iconNode as fileCheckIcon } from "lucide-react/dist/esm/icons/file-check-corner.mjs";
+import { __iconNode as calendarCheckIcon } from "lucide-react/dist/esm/icons/calendar-check-2.mjs";
 // @ts-expect-error Lucide does not publish declarations for individual .mjs icon nodes.
 import { __iconNode as panelsTopLeftIcon } from "lucide-react/dist/esm/icons/panels-top-left.mjs";
 // @ts-expect-error Lucide does not publish declarations for individual .mjs icon nodes.
@@ -58,17 +58,17 @@ const statusStyles = {
     border: "#315f32",
     icon: checkIcon,
   },
+  scheduled: {
+    accent: "#50bcb2",
+    background: "#142b29",
+    border: "#28625d",
+    icon: calendarCheckIcon,
+  },
   delivered: {
     accent: "#68a0ff",
     background: "#15233a",
     border: "#2d518d",
     icon: sendIcon,
-  },
-  manuscript: {
-    accent: "#50bcb2",
-    background: "#142b29",
-    border: "#28625d",
-    icon: fileCheckIcon,
   },
   background: {
     accent: "#d6aa4d",

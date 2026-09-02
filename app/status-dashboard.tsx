@@ -6,7 +6,6 @@ import {
   Check,
   CircleDashed,
   ExternalLink,
-  FileCheck2,
   PanelsTopLeft,
   PenLine,
   Send,
@@ -57,22 +56,21 @@ const statusMeta: Record<ChapterStatus, StatusMeta> = {
     description: "Officially released to readers.",
     icon: Check,
   },
+  scheduled: {
+    label: "Scheduled for publication",
+    shortLabel: "Scheduled",
+    description: "Jump has scheduled this chapter for publication.",
+    icon: CalendarDays,
+  },
   delivered: {
     label: "Delivered to Jump",
     shortLabel: "At Jump",
     description:
-      "Editorial scheduling is confirmed, but this chapter is not published yet.",
+      "The finished manuscript has been delivered to Jump, but it is not published yet.",
     icon: Send,
   },
-  manuscript: {
-    label: "Manuscript complete",
-    shortLabel: "Complete",
-    description:
-      "Togashi announced the manuscript complete. Delivery is not inferred.",
-    icon: FileCheck2,
-  },
   background: {
-    label: "Background directions complete",
+    label: "Background specifications complete",
     shortLabel: "Backgrounds",
     description:
       "Instructions for backgrounds and supporting production work are complete.",
@@ -86,7 +84,7 @@ const statusMeta: Record<ChapterStatus, StatusMeta> = {
     icon: PenLine,
   },
   unknown: {
-    label: "No confirmed update",
+    label: "No confirmed production update",
     shortLabel: "Unknown",
     description: "No precise public production milestone has been confirmed.",
     icon: CircleDashed,

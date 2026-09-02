@@ -7,11 +7,11 @@ A minimal, sourced HUNTER×HUNTER publication and production tracker.
 The tracker keeps these milestones separate:
 
 - officially published;
-- delivered or scheduled by Weekly Shonen Jump;
-- manuscript complete;
-- background directions complete;
+- scheduled for publication;
+- delivered to Weekly Shonen Jump;
+- background specifications complete;
 - character inking complete;
-- no confirmed update.
+- no confirmed production update.
 
 ## Run locally
 
@@ -26,8 +26,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Current production data is in `app/data/status.ts`. Each chapter can include a
 status, confirmation date, source URL, Jump issue, note, and a short
-`scheduleLabel` for a chapter that has a confirmed release date but is not out
-yet (for example `"Sep 6 / 7"`).
+`scheduleLabel` for a scheduled chapter's dated upcoming milestone (for
+example `"Sep 2 / 3"`).
 
 Everything on the page is derived from that file: the four headline numbers, the
 "currently publishing / on hiatus" state, and the latest-update panel. Adding a
