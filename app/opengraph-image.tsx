@@ -21,6 +21,7 @@ import { __iconNode as sendIcon } from "lucide-react/dist/esm/icons/send.mjs";
 import {
   chapters,
   latestPublished,
+  manuscriptsComplete,
   nextChapter,
   serialization,
   workConfirmed,
@@ -113,32 +114,51 @@ function LucideIcon({ iconNode }: { iconNode: LucideIconNode }) {
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function Metric({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: string;
+}) {
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "22px 0",
+        padding: "15px 0",
         borderTop: "1px solid #252c27",
       }}
     >
       <span
         style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 9,
           color: "#98a099",
           fontFamily: "Geist Mono",
-          fontSize: 18,
+          fontSize: 15,
           letterSpacing: "0.04em",
           textTransform: "uppercase",
         }}
       >
+        <span
+          style={{
+            width: 7,
+            height: 7,
+            borderRadius: 999,
+            background: color,
+          }}
+        />
         {label}
       </span>
       <strong
         style={{
-          color: "#f3f6f3",
-          fontSize: 42,
+          color,
+          fontSize: 38,
           fontWeight: 600,
           letterSpacing: "-0.05em",
         }}
@@ -323,9 +343,26 @@ export default async function OpenGraphImage() {
             borderLeft: "1px solid #252c27",
           }}
         >
-          <Metric label="Published" value={latestPublished.chapter} />
-          <Metric label="Next chapter" value={nextChapter.chapter} />
-          <Metric label="Work confirmed" value={workConfirmed.chapter} />
+          <Metric
+            label="Published"
+            value={latestPublished.chapter}
+            color={statusStyles.published.accent}
+          />
+          <Metric
+            label="Scheduled"
+            value={nextChapter.chapter}
+            color={statusStyles.scheduled.accent}
+          />
+          <Metric
+            label="Delivered"
+            value={manuscriptsComplete.chapter}
+            color={statusStyles.delivered.accent}
+          />
+          <Metric
+            label="Work confirmed"
+            value={workConfirmed.chapter}
+            color={statusStyles.inking.accent}
+          />
         </div>
       </div>
 
