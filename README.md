@@ -44,6 +44,27 @@ After editing data, update `lastUpdated` in `app/data/status.ts` and run:
 npm run build
 ```
 
+The build renders the two tracker sections with the same React components and
+CSS used by the site, replaces the interactive actions with `hxhstatus.com`,
+and captures them as `out/share/production.png` and
+`out/share/publication-history.png`. The same files are kept in
+`public/share/` so Share and Copy also work during local development. These
+PNGs are generated once per build and then served as immutable static assets;
+site traffic never launches a browser or regenerates them.
+
+## Translate the site
+
+English interface text lives in `messages/en.json`. Each translation gets a
+matching catalog such as `messages/ja.json`; translators only change its values.
+Japanese is the first example and can be previewed at
+[http://localhost:3000/ja](http://localhost:3000/ja).
+
+See [TRANSLATING.md](TRANSLATING.md) for the contributor workflow and run
+`npm run translations:check` before opening a pull request. A maintainer prepares
+the catalog and preview route for each new language, so contributors never need
+to edit the application code. Preview routes remain unlinked and marked
+`noindex` until their translation has been reviewed.
+
 ## Deploy
 
 `next.config.ts` sets `output: "export"`, so `npm run build` emits a fully

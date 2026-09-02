@@ -261,7 +261,7 @@ export default async function OpenGraphImage() {
                 background: isPublishing ? "#78c963" : "#747c76",
               }}
             />
-            {isPublishing ? "Serializing" : "On hiatus"}
+            {isPublishing ? "Publishing" : "On hiatus"}
           </div>
 
           <div

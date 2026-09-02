@@ -8,58 +8,48 @@ import {
   Send,
 } from "lucide-react";
 
+import type { Locale, Messages } from "@/lib/i18n";
 import type { ChapterStatus } from "./data/status";
 
 type Icon = ComponentType<{ size?: number; strokeWidth?: number }>;
 
-type StatusMeta = {
+export type StatusMeta = {
   label: string;
   shortLabel: string;
   description: string;
   icon: Icon;
 };
 
-export const statusMeta: Record<ChapterStatus, StatusMeta> = {
-  published: {
-    label: "Published",
-    shortLabel: "Published",
-    description: "Officially released to readers.",
-    icon: Check,
-  },
-  scheduled: {
-    label: "Scheduled for publication",
-    shortLabel: "Scheduled",
-    description: "Jump has scheduled this chapter for publication.",
-    icon: CalendarDays,
-  },
-  delivered: {
-    label: "Delivered to Jump",
-    shortLabel: "At Jump",
-    description:
-      "The finished manuscript has been delivered to Jump, but it is not published yet.",
-    icon: Send,
-  },
-  background: {
-    label: "Background specifications complete",
-    shortLabel: "Backgrounds",
-    description:
-      "Instructions for backgrounds and supporting production work are complete.",
-    icon: PanelsTopLeft,
-  },
-  inking: {
-    label: "Character inking complete",
-    shortLabel: "Inked",
-    description:
-      "Character linework is complete; later production steps remain.",
-    icon: PenLine,
-  },
-  unknown: {
-    label: "No confirmed production update",
-    shortLabel: "Unknown",
-    description: "No precise public production milestone has been confirmed.",
-    icon: CircleDashed,
-  },
-};
+export function getStatusMeta(
+  messages: Messages["statuses"],
+): Record<ChapterStatus, StatusMeta> {
+  return {
+    published: {
+      ...messages.published,
+      icon: Check,
+    },
+    scheduled: {
+      ...messages.scheduled,
+      icon: CalendarDays,
+    },
+    delivered: {
+      ...messages.delivered,
+      icon: Send,
+    },
+    background: {
+      ...messages.background,
+      icon: PanelsTopLeft,
+    },
+    inking: {
+      ...messages.inking,
+      icon: PenLine,
+    },
+    unknown: {
+      ...messages.unknown,
+      icon: CircleDashed,
+    },
+  };
+}
 
 // Status labels read as sentence fragments after "Chapter 427 …", but only the
 // first letter may drop case: "Delivered to Jump" has to keep its capital J.
@@ -70,10 +60,11 @@ export function lowerFirst(label: string) {
 export function formatDate(
   date?: string,
   options?: Intl.DateTimeFormatOptions,
+  locale: Locale = "en",
 ) {
   if (!date) return "Not confirmed";
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -82,13 +73,14 @@ export function formatDate(
   }).format(new Date(`${date}T12:00:00Z`));
 }
 
-export function formatReleaseDate(
-  releaseAt: string,
+export function formatLocalDate(
+  dateTime: string,
   options: Intl.DateTimeFormatOptions = {
     month: "short",
     day: "numeric",
     year: "numeric",
   },
+  locale: Locale = "en",
 ) {
-  return new Intl.DateTimeFormat("en", options).format(new Date(releaseAt));
+  return new Intl.DateTimeFormat(locale, options).format(new Date(dateTime));
 }

@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "title": "HxH Status - Publication & Production Tracker",
+    "description": "A sourced, unofficial tracker for HUNTER×HUNTER publication history and Yoshihiro Togashi's confirmed production progress.",
+    "siteName": "HxH Status"
+  },
+  "header": {
+    "wordmarkAria": "H×H Status",
+    "updated": "Updated {date}"
+  },
+  "snapshot": {
+    "publishing": "Publishing",
+    "hiatus": "On hiatus",
+    "chaptersPublished": "{count} chapters published in {year}.",
+    "latestPublished": "Latest published",
+    "nextChapter": "Next chapter",
+    "manuscriptsComplete": "Manuscripts complete",
+    "workConfirmed": "Work confirmed",
+    "throughChapter": "through chapter",
+    "estimatedPreRelease": "Estimated pre-release",
+    "preReleaseSuffix": "pre-release"
+  },
+  "production": {
+    "eyebrow": "Kakin Succession Contest",
+    "title": "Production tracker",
+    "chapterStatusAria": "Chapter production status",
+    "legendAria": "Status legend"
+  },
+  "latestUpdate": {
+    "eyebrow": "Latest Togashi update",
+    "sentence": "Chapter {chapter} {status}.",
+    "viewPost": "View post"
+  },
+  "history": {
+    "eyebrow": "1998-2026",
+    "title": "Publication history",
+    "chartAria": "Publication history chart",
+    "publishedIssue": "WSJ {issue}: chapter {chapter} published",
+    "emptyIssue": "WSJ {issue}: no chapter",
+    "chapterCountAria": "{count} chapters",
+    "chapterPublished": "Chapter published",
+    "noChapter": "No chapter",
+    "countHint": "right column: chapters / year"
+  },
+  "chapter": {
+    "title": "Chapter",
+    "cardAria": "Chapter {chapter}: {status}",
+    "latestState": "Latest confirmed state as of {date}.",
+    "status": "Status",
+    "estimatedPreRelease": "Estimated pre-release",
+    "published": "Published",
+    "officialPublication": "Official publication",
+    "update": "Update",
+    "weeklyShonenJump": "Weekly Shonen Jump",
+    "issue": "Issue {issue}",
+    "viewSource": "View source",
+    "noSource": "No chapter-specific source yet."
+  },
+  "statuses": {
+    "published": {
+      "label": "Published",
+      "shortLabel": "Published",
+      "description": "Officially released to readers."
+    },
+    "scheduled": {
+      "label": "Scheduled for publication",
+      "shortLabel": "Scheduled",
+      "description": "Jump has scheduled this chapter for publication."
+    },
+    "delivered": {
+      "label": "Delivered to Jump",
+      "shortLabel": "At Jump",
+      "description": "The finished manuscript has been delivered to Jump, but it is not published yet."
+    },
+    "background": {
+      "label": "Background specifications complete",
+      "shortLabel": "Backgrounds",
+      "description": "Instructions for backgrounds and supporting production work are complete."
+    },
+    "inking": {
+      "label": "Character inking complete",
+      "shortLabel": "Inked",
+      "description": "Character linework is complete; later production steps remain."
+    },
+    "unknown": {
+      "label": "No confirmed production update",
+      "shortLabel": "Unknown",
+      "description": "No precise public production milestone has been confirmed."
+    }
+  },
+  "captureActions": {
+    "share": "Share",
+    "copy": "Copy",
+    "preparing": "Preparing",
+    "downloaded": "Downloaded",
+    "copied": "Copied",
+    "shared": "Shared",
+    "shareReady": "Share ready",
+    "tryAgain": "Try again",
+    "buttonAria": "{action}: {label} PNG image",
+    "copyUnavailable": "Image copying is unavailable, so {label} was downloaded as a PNG.",
+    "copySuccess": "{label} copied as a PNG image.",
+    "copyFallback": "{label} could not be copied, so the PNG was downloaded instead.",
+    "loadError": "{label} could not be loaded.",
+    "shareUnavailable": "Image sharing is unavailable, so {label} was downloaded as a PNG.",
+    "shareReadyMessage": "Image ready. Tap Share again to open your share sheet.",
+    "shareText": "{label} from hxhstatus.com",
+    "shareTitle": "{label} - HxH Status",
+    "shareSuccess": "{label} shared as a PNG image.",
+    "shareFallback": "{label} could not be shared, so the PNG was downloaded instead."
+  },
+  "footer": {
+    "disclaimer": "Unofficial HUNTER×HUNTER status tracker.",
+    "sources": "Sources: Yoshihiro Togashi, Weekly Shonen Jump, VIZ."
+  }
+}

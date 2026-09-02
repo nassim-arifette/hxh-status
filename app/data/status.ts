@@ -11,6 +11,7 @@ export type ChapterRecord = {
   status: ChapterStatus;
   updatedAt?: string;
   releaseAt?: string;
+  preReleaseAt?: string;
   jumpIssue?: string;
   source?: string;
   sourceLabel?: string;
@@ -45,10 +46,10 @@ const progress: ChapterRecord[] = [
     chapter: 420,
     status: "scheduled",
     releaseAt: "2026-09-07T00:00:00+09:00",
+    preReleaseAt: "2026-09-03T12:00:00+09:00",
     updatedAt: "2026-09-01",
     source: vizSeries,
     sourceLabel: "VIZ Shonen Jump",
-    note: "Scheduled for publication in Weekly Shonen Jump.",
   },
   {
     chapter: 421,

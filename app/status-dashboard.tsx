@@ -1,6 +1,12 @@
 import { CalendarDays, ExternalLink } from "lucide-react";
 
-import ChapterTracker, { LocalReleaseDate } from "./chapter-tracker";
+import {
+  formatMessage,
+  type Locale,
+  type Messages,
+} from "@/lib/i18n";
+import englishMessages from "@/messages/en.json";
+import ChapterTracker, { LocalDate } from "./chapter-tracker";
 import historyData from "./data/publication-history.json";
 import SectionCaptureActions from "./section-capture-actions";
 import {
@@ -14,7 +20,12 @@ import {
   workConfirmed,
   type ChapterStatus,
 } from "./data/status";
-import { formatDate, lowerFirst, statusMeta } from "./status-presentation";
+import {
+  formatDate,
+  getStatusMeta,
+  lowerFirst,
+  type StatusMeta,
+} from "./status-presentation";
 
 type PublicationIssue = {
   year: number;
@@ -22,6 +33,19 @@ type PublicationIssue = {
   released?: boolean;
   chapter?: number | string;
   date?: string;
+};
+
+type StatusMap = Record<ChapterStatus, StatusMeta>;
+
+type LocalizedSectionProps = {
+  capture?: boolean;
+  locale?: Locale;
+  messages?: Messages;
+};
+
+type StatusDashboardProps = {
+  locale?: Locale;
+  messages?: Messages;
 };
 
 const issues = historyData as PublicationIssue[];
@@ -52,14 +76,15 @@ const publicationByYear = (() => {
     }));
 })();
 
-const serializationHeadline = {
-  publishing: "Serializing",
-  hiatus: "On hiatus",
-} as const;
-
-function Legend() {
+export function Legend({
+  messages,
+  statusMeta,
+}: {
+  messages: Messages;
+  statusMeta: StatusMap;
+}) {
   return (
-    <div className="legend" aria-label="Status legend">
+    <div className="legend" aria-label={messages.production.legendAria}>
       {(Object.keys(statusMeta) as ChapterStatus[]).map((status) => {
         const meta = statusMeta[status];
         const StatusIcon = meta.icon;
@@ -77,12 +102,16 @@ function Legend() {
   );
 }
 
-function PublicationHistory() {
+export function PublicationHistory({
+  messages,
+}: {
+  messages: Messages["history"];
+}) {
   return (
     <div
       className="history-scroll"
       tabIndex={0}
-      aria-label="Publication history chart"
+      aria-label={messages.chartAria}
     >
       <div className="history-chart">
         {publicationByYear.map(({ year, issues: yearIssues }) => {
@@ -95,15 +124,21 @@ function PublicationHistory() {
               <span className="history-year">{year}</span>
               <div className="history-cells">
                 {yearIssues.map((issue) => {
-                  const detail = issue.released
-                    ? `WSJ ${issue.number}: chapter ${issue.chapter} published`
-                    : `WSJ ${issue.number}: no chapter`;
+                  const detail = formatMessage(
+                    issue.released
+                      ? messages.publishedIssue
+                      : messages.emptyIssue,
+                    {
+                      chapter: issue.chapter ?? "",
+                      issue: issue.number,
+                    },
+                  );
 
                   return (
                     <span
                       className="history-cell"
                       data-released={issue.released ? "true" : "false"}
-                      key={`${issue.year}-${issue.number}`}
+                      key={issue.year + "-" + issue.number}
                       title={detail}
                       aria-label={detail}
                       role="img"
@@ -113,7 +148,9 @@ function PublicationHistory() {
               </div>
               <span
                 className="history-count"
-                aria-label={`${publishedCount} chapters`}
+                aria-label={formatMessage(messages.chapterCountAria, {
+                  count: publishedCount,
+                })}
               >
                 {String(publishedCount).padStart(2, "0")}
               </span>
@@ -125,20 +162,146 @@ function PublicationHistory() {
   );
 }
 
-export default function StatusDashboard() {
+function CaptureSiteLabel() {
+  return <span className="capture-site-label">hxhstatus.com</span>;
+}
+
+function ProductionCaptureActions({ messages }: { messages: Messages }) {
   return (
-    <main id="top" className="site-shell">
+    <SectionCaptureActions
+      fileName="hxh-production-tracker.png"
+      imageUrl={"/share/production.png?v=" + lastUpdated}
+      label={messages.production.title}
+      messages={messages.captureActions}
+    />
+  );
+}
+
+export function ProductionSection({
+  capture = false,
+  locale = "en",
+  messages = englishMessages,
+}: LocalizedSectionProps) {
+  const statusMeta = getStatusMeta(messages.statuses);
+
+  return (
+    <section
+      className="content-section production-section"
+      id="production-share-capture"
+      aria-labelledby="production-title"
+    >
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">{messages.production.eyebrow}</p>
+          <h2 id="production-title">{messages.production.title}</h2>
+        </div>
+        {capture ? (
+          <CaptureSiteLabel />
+        ) : (
+          <ProductionCaptureActions messages={messages} />
+        )}
+      </div>
+
+      <ChapterTracker
+        chapters={chapters}
+        lastUpdated={lastUpdated}
+        locale={locale}
+        messages={messages}
+      />
+      <Legend messages={messages} statusMeta={statusMeta} />
+    </section>
+  );
+}
+
+function PublicationHistoryCaptureActions({
+  messages,
+}: {
+  messages: Messages;
+}) {
+  return (
+    <SectionCaptureActions
+      fileName="hxh-publication-history.png"
+      imageUrl={"/share/publication-history.png?v=" + lastUpdated}
+      label={messages.history.title}
+      messages={messages.captureActions}
+    />
+  );
+}
+
+export function PublicationHistorySection({
+  capture = false,
+  messages = englishMessages,
+}: LocalizedSectionProps) {
+  return (
+    <section
+      className="content-section history-section"
+      id="publication-history-share-capture"
+      aria-labelledby="history-title"
+    >
+      <div className="section-heading history-heading">
+        <div>
+          <p className="eyebrow">{messages.history.eyebrow}</p>
+          <h2 id="history-title">{messages.history.title}</h2>
+        </div>
+        {capture ? (
+          <CaptureSiteLabel />
+        ) : (
+          <PublicationHistoryCaptureActions messages={messages} />
+        )}
+      </div>
+
+      <div className="history-key">
+        <span>
+          <i className="key-cell key-published" />{" "}
+          {messages.history.chapterPublished}
+        </span>
+        <span>
+          <i className="key-cell key-hiatus" /> {messages.history.noChapter}
+        </span>
+        <span className="history-key-count">{messages.history.countHint}</span>
+      </div>
+      <PublicationHistory messages={messages.history} />
+    </section>
+  );
+}
+
+export default function StatusDashboard({
+  locale = "en",
+  messages = englishMessages,
+}: StatusDashboardProps = {}) {
+  const nextChapterDate = nextChapter.preReleaseAt ?? nextChapter.releaseAt;
+  const statusMeta = getStatusMeta(messages.statuses);
+  const latestStatusLabel = statusMeta[latestUpdate.status].label;
+  const latestStatus =
+    locale === "en" ? lowerFirst(latestStatusLabel) : latestStatusLabel;
+  const serializationLabel =
+    serialization === "publishing"
+      ? messages.snapshot.publishing
+      : messages.snapshot.hiatus;
+
+  return (
+    <main id="top" className="site-shell" lang={locale}>
       <div className="page-frame">
         <header className="site-header">
-          <a className="wordmark" href="#top" aria-label="H×H Status">
+          <a
+            className="wordmark"
+            href="#top"
+            aria-label={messages.header.wordmarkAria}
+          >
             <span className="wordmark-hxh">
-              H<span className="wordmark-times">×</span>H
+              H<span className="wordmark-times">&times;</span>H
             </span>
             <span className="wordmark-status">Status</span>
           </a>
           <div className="updated-label">
             <span className="live-dot" aria-hidden="true" />
-            Updated {formatDate(lastUpdated, { month: "short", day: "numeric" })}
+            {formatMessage(messages.header.updated, {
+              date: formatDate(
+                lastUpdated,
+                { month: "short", day: "numeric" },
+                locale,
+              ),
+            })}
           </div>
         </header>
 
@@ -146,73 +309,75 @@ export default function StatusDashboard() {
           <div className="serialization" data-state={serialization}>
             <h1 id="serialization-title">
               <span className="serialization-dot" aria-hidden="true" />
-              {serializationHeadline[serialization]}
+              {serializationLabel}
             </h1>
             <p className="serialization-detail">
-              {chaptersThisYear} chapters published in {currentYear}.
+              {formatMessage(messages.snapshot.chaptersPublished, {
+                count: chaptersThisYear,
+                year: currentYear,
+              })}
             </p>
           </div>
 
           <div className="metric-grid">
             <article className="metric metric-primary">
-              <span>Latest published</span>
+              <span>{messages.snapshot.latestPublished}</span>
               <strong>{latestPublished.chapter}</strong>
               <small>WSJ #{latestPublished.jumpIssue}</small>
             </article>
             <article className="metric">
-              <span>Next chapter</span>
+              <span>{messages.snapshot.nextChapter}</span>
               <strong>{nextChapter.chapter}</strong>
               <small>
-                {nextChapter.releaseAt ? (
-                  <LocalReleaseDate releaseAt={nextChapter.releaseAt} />
+                {nextChapterDate ? (
+                  nextChapter.preReleaseAt ? (
+                    <>
+                      <span className="sr-only">
+                        {messages.snapshot.estimatedPreRelease}:{" "}
+                      </span>
+                      <span aria-hidden="true">~ </span>
+                      <LocalDate dateTime={nextChapterDate} locale={locale} />
+                      <span aria-hidden="true">
+                        {" - " + messages.snapshot.preReleaseSuffix}
+                      </span>
+                    </>
+                  ) : (
+                    <LocalDate dateTime={nextChapterDate} locale={locale} />
+                  )
                 ) : (
                   statusMeta[nextChapter.status].shortLabel
                 )}
               </small>
             </article>
             <article className="metric">
-              <span>Manuscripts complete</span>
+              <span>{messages.snapshot.manuscriptsComplete}</span>
               <strong>{manuscriptsComplete.chapter}</strong>
-              <small>through chapter</small>
+              <small>{messages.snapshot.throughChapter}</small>
             </article>
             <article className="metric">
-              <span>Work confirmed</span>
+              <span>{messages.snapshot.workConfirmed}</span>
               <strong>{workConfirmed.chapter}</strong>
-              <small>through chapter</small>
+              <small>{messages.snapshot.throughChapter}</small>
             </article>
           </div>
         </section>
 
-        <section
-          className="content-section production-section"
-          aria-labelledby="production-title"
-        >
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">Kakin Succession Contest</p>
-              <h2 id="production-title">Production tracker</h2>
-            </div>
-            <SectionCaptureActions
-              fileName="hxh-production-tracker.png"
-              imageUrl={`/share/production.png?v=${lastUpdated}`}
-              label="Production tracker"
-            />
-          </div>
-
-          <ChapterTracker chapters={chapters} lastUpdated={lastUpdated} />
-          <Legend />
-        </section>
+        <ProductionSection locale={locale} messages={messages} />
 
         <section className="latest-update" aria-labelledby="latest-update-title">
           <div className="update-date">
             <CalendarDays size={17} aria-hidden="true" />
-            <span>{formatDate(latestUpdate.updatedAt)}</span>
+            <span>
+              {formatDate(latestUpdate.updatedAt, undefined, locale)}
+            </span>
           </div>
           <div className="update-copy">
-            <p className="eyebrow">Latest Togashi update</p>
+            <p className="eyebrow">{messages.latestUpdate.eyebrow}</p>
             <h2 id="latest-update-title">
-              Chapter {latestUpdate.chapter}{" "}
-              {lowerFirst(statusMeta[latestUpdate.status].label)}.
+              {formatMessage(messages.latestUpdate.sentence, {
+                chapter: latestUpdate.chapter,
+                status: latestStatus,
+              })}
             </h2>
           </div>
           <a
@@ -221,44 +386,16 @@ export default function StatusDashboard() {
             rel="noreferrer"
             target="_blank"
           >
-            View post
+            {messages.latestUpdate.viewPost}
             <ExternalLink size={15} />
           </a>
         </section>
 
-        <section
-          className="content-section history-section"
-          aria-labelledby="history-title"
-        >
-          <div className="section-heading history-heading">
-            <div>
-              <p className="eyebrow">1998–2026</p>
-              <h2 id="history-title">Publication history</h2>
-            </div>
-            <SectionCaptureActions
-              fileName="hxh-publication-history.png"
-              imageUrl={`/share/publication-history.png?v=${lastUpdated}`}
-              label="Publication history"
-            />
-          </div>
-
-          <div className="history-key">
-            <span>
-              <i className="key-cell key-published" /> Chapter published
-            </span>
-            <span>
-              <i className="key-cell key-hiatus" /> No chapter
-            </span>
-            <span className="history-key-count">
-              right column: chapters / year
-            </span>
-          </div>
-          <PublicationHistory />
-        </section>
+        <PublicationHistorySection messages={messages} />
 
         <footer className="site-footer">
-          <p>Unofficial HUNTER×HUNTER status tracker.</p>
-          <p>Sources: Yoshihiro Togashi, Weekly Shonen Jump, VIZ.</p>
+          <p>{messages.footer.disclaimer}</p>
+          <p>{messages.footer.sources}</p>
         </footer>
       </div>
     </main>

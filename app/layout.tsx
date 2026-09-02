@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import englishMessages from "@/messages/en.json";
 import "./globals.css";
 
-const title = "HxH Status — Publication & Production Tracker";
-const description =
-  "A sourced, unofficial tracker for HUNTER×HUNTER publication history and Yoshihiro Togashi's confirmed production progress.";
+const { title, description } = englishMessages.metadata;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hxhstatus.com"),
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
     title,
     description,
     url: "https://hxhstatus.com",
-    siteName: "HxH Status",
+    siteName: englishMessages.metadata.siteName,
     locale: "en_US",
     type: "website",
   },

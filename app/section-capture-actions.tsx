@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy, LoaderCircle, Share2 } from "lucide-react";
 
+import { formatMessage, type Messages } from "@/lib/i18n";
+
 type CaptureAction = "copy" | "share";
 
 type CaptureFeedback = {
@@ -21,6 +23,7 @@ type SectionCaptureActionsProps = {
   fileName: string;
   imageUrl: string;
   label: string;
+  messages: Messages["captureActions"];
 };
 
 function downloadImage(imageUrl: string, fileName: string) {
@@ -42,6 +45,7 @@ export default function SectionCaptureActions({
   fileName,
   imageUrl,
   label,
+  messages,
 }: SectionCaptureActionsProps) {
   const assetRef = useRef<ImageAsset | null>(null);
   const assetPromiseRef = useRef<Promise<ImageAsset> | null>(null);
@@ -135,8 +139,8 @@ export default function SectionCaptureActions({
         downloadImage(imageUrl, fileName);
         showFeedback({
           action: "copy",
-          label: "Downloaded",
-          message: `Image copying is unavailable, so ${label} was downloaded as a PNG.`,
+          label: messages.downloaded,
+          message: formatMessage(messages.copyUnavailable, { label }),
           tone: "success",
         });
         return;
@@ -150,24 +154,24 @@ export default function SectionCaptureActions({
         ]);
         showFeedback({
           action: "copy",
-          label: "Copied",
-          message: `${label} copied as a PNG image.`,
+          label: messages.copied,
+          message: formatMessage(messages.copySuccess, { label }),
           tone: "success",
         });
       } catch {
         downloadImage(imageUrl, fileName);
         showFeedback({
           action: "copy",
-          label: "Downloaded",
-          message: `${label} could not be copied, so the PNG was downloaded instead.`,
+          label: messages.downloaded,
+          message: formatMessage(messages.copyFallback, { label }),
           tone: "success",
         });
       }
     } catch {
       showFeedback({
         action: "copy",
-        label: "Try again",
-        message: `${label} could not be loaded.`,
+        label: messages.tryAgain,
+        message: formatMessage(messages.loadError, { label }),
         tone: "error",
       });
     } finally {
@@ -192,8 +196,8 @@ export default function SectionCaptureActions({
         downloadImage(imageUrl, fileName);
         showFeedback({
           action: "share",
-          label: "Downloaded",
-          message: `Image sharing is unavailable, so ${label} was downloaded as a PNG.`,
+          label: messages.downloaded,
+          message: formatMessage(messages.shareUnavailable, { label }),
           tone: "success",
         });
         return;
@@ -203,8 +207,8 @@ export default function SectionCaptureActions({
         await getImageAsset();
         showFeedback({
           action: "share",
-          label: "Share ready",
-          message: "Image ready. Tap Share again to open your share sheet.",
+          label: messages.shareReady,
+          message: messages.shareReadyMessage,
           tone: "ready",
         });
         return;
@@ -212,16 +216,16 @@ export default function SectionCaptureActions({
 
       const shareData: ShareData = {
         files: [assetRef.current.file],
-        text: `${label} from hxhstatus.com`,
-        title: `${label} - HxH Status`,
+        text: formatMessage(messages.shareText, { label }),
+        title: formatMessage(messages.shareTitle, { label }),
       };
 
       try {
         await navigator.share(shareData);
         showFeedback({
           action: "share",
-          label: "Shared",
-          message: `${label} shared as a PNG image.`,
+          label: messages.shared,
+          message: formatMessage(messages.shareSuccess, { label }),
           tone: "success",
         });
       } catch (error) {
@@ -232,16 +236,16 @@ export default function SectionCaptureActions({
         downloadImage(imageUrl, fileName);
         showFeedback({
           action: "share",
-          label: "Downloaded",
-          message: `${label} could not be shared, so the PNG was downloaded instead.`,
+          label: messages.downloaded,
+          message: formatMessage(messages.shareFallback, { label }),
           tone: "success",
         });
       }
     } catch {
       showFeedback({
         action: "share",
-        label: "Try again",
-        message: `${label} could not be loaded.`,
+        label: messages.tryAgain,
+        message: formatMessage(messages.loadError, { label }),
         tone: "error",
       });
     } finally {
@@ -252,9 +256,13 @@ export default function SectionCaptureActions({
   const copyFeedback = feedback?.action === "copy" ? feedback : null;
   const shareFeedback = feedback?.action === "share" ? feedback : null;
   const copyButtonLabel =
-    busy === "copy" ? "Preparing" : (copyFeedback?.label ?? "Copy");
+    busy === "copy"
+      ? messages.preparing
+      : (copyFeedback?.label ?? messages.copy);
   const shareButtonLabel =
-    busy === "share" ? "Preparing" : (shareFeedback?.label ?? "Share");
+    busy === "share"
+      ? messages.preparing
+      : (shareFeedback?.label ?? messages.share);
   const CopyIcon =
     busy === "copy"
       ? LoaderCircle
@@ -272,7 +280,10 @@ export default function SectionCaptureActions({
     <div className="capture-actions" onPointerEnter={warmImage}>
       <button
         aria-busy={busy === "share"}
-        aria-label={`${shareButtonLabel}: ${label} PNG image`}
+        aria-label={formatMessage(messages.buttonAria, {
+          action: shareButtonLabel,
+          label,
+        })}
         className="capture-action"
         data-state={shareFeedback?.tone}
         disabled={busy !== null}
@@ -295,7 +306,10 @@ export default function SectionCaptureActions({
       </button>
       <button
         aria-busy={busy === "copy"}
-        aria-label={`${copyButtonLabel}: ${label} PNG image`}
+        aria-label={formatMessage(messages.buttonAria, {
+          action: copyButtonLabel,
+          label,
+        })}
         className="capture-action"
         data-state={copyFeedback?.tone}
         disabled={busy !== null}

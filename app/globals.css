@@ -343,6 +343,39 @@ button {
   gap: 8px;
 }
 
+.capture-site-label {
+  min-height: 44px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.share-capture-page {
+  width: 1160px;
+  min-width: 1160px;
+  min-height: 100vh;
+  padding: 20px;
+  background: var(--background);
+}
+
+.share-capture-page .content-section {
+  width: 1120px;
+}
+
+.share-capture-page .history-section {
+  margin-top: 0;
+  content-visibility: visible;
+}
+
 .capture-action {
   min-height: 44px;
   display: inline-flex;
