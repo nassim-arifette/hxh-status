@@ -27,6 +27,9 @@ import {
   type StatusMeta,
 } from "./status-presentation";
 
+// Bump when capture-only styles change; data updates already bump lastUpdated.
+const shareImageRevision = "2";
+
 type PublicationIssue = {
   year: number;
   number: number;
@@ -170,7 +173,7 @@ function ProductionCaptureActions({ messages }: { messages: Messages }) {
   return (
     <SectionCaptureActions
       fileName="hxh-production-tracker.png"
-      imageUrl={"/share/production.png?v=" + lastUpdated}
+      imageUrl={`/share/production.png?v=${lastUpdated}-${shareImageRevision}`}
       label={messages.production.title}
       messages={messages.captureActions}
     />
@@ -221,7 +224,7 @@ function PublicationHistoryCaptureActions({
   return (
     <SectionCaptureActions
       fileName="hxh-publication-history.png"
-      imageUrl={"/share/publication-history.png?v=" + lastUpdated}
+      imageUrl={`/share/publication-history.png?v=${lastUpdated}-${shareImageRevision}`}
       label={messages.history.title}
       messages={messages.captureActions}
     />

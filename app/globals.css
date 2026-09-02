@@ -349,10 +349,6 @@ button {
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  padding: 0 13px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface-raised);
   color: var(--text-muted);
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.72rem;
@@ -757,6 +753,7 @@ button {
   border-color: var(--border) !important;
   background: var(--background) !important;
   box-shadow: -24px 0 60px rgb(0 0 0 / 0.35) !important;
+  overflow-y: auto;
 }
 
 .chapter-sheet > button {

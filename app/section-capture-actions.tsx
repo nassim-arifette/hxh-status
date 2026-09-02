@@ -146,7 +146,8 @@ export default function SectionCaptureActions({
         return;
       }
 
-      const pngPromise = getImageAsset().then(({ blob }) => blob);
+      const assetPromise = getImageAsset();
+      const pngPromise = assetPromise.then(({ blob }) => blob);
 
       try {
         await navigator.clipboard.write([
@@ -159,6 +160,7 @@ export default function SectionCaptureActions({
           tone: "success",
         });
       } catch {
+        await assetPromise;
         downloadImage(imageUrl, fileName);
         showFeedback({
           action: "copy",
@@ -184,15 +186,10 @@ export default function SectionCaptureActions({
     setBusy("share");
 
     try {
-      const probeFile =
-        assetRef.current?.file ??
-        new File([], fileName, { type: "image/png" });
-      const canShareImage =
-        typeof navigator.share === "function" &&
-        typeof navigator.canShare === "function" &&
-        navigator.canShare({ files: [probeFile] });
-
-      if (!canShareImage) {
+      if (
+        typeof navigator.share !== "function" ||
+        typeof navigator.canShare !== "function"
+      ) {
         downloadImage(imageUrl, fileName);
         showFeedback({
           action: "share",
@@ -203,25 +200,30 @@ export default function SectionCaptureActions({
         return;
       }
 
-      if (!assetRef.current) {
-        await getImageAsset();
+      const hadCachedAsset = assetRef.current !== null;
+      const { file } = await getImageAsset();
+      const shareData: ShareData = {
+        files: [file],
+        text: formatMessage(messages.shareText, { label }),
+        title: formatMessage(messages.shareTitle, { label }),
+      };
+      const fileOnlyShareData: ShareData = { files: [file] };
+
+      if (!navigator.canShare(fileOnlyShareData)) {
+        downloadImage(imageUrl, fileName);
         showFeedback({
           action: "share",
-          label: messages.shareReady,
-          message: messages.shareReadyMessage,
-          tone: "ready",
+          label: messages.downloaded,
+          message: formatMessage(messages.shareUnavailable, { label }),
+          tone: "success",
         });
         return;
       }
 
-      const shareData: ShareData = {
-        files: [assetRef.current.file],
-        text: formatMessage(messages.shareText, { label }),
-        title: formatMessage(messages.shareTitle, { label }),
-      };
-
       try {
-        await navigator.share(shareData);
+        await navigator.share(
+          navigator.canShare(shareData) ? shareData : fileOnlyShareData,
+        );
         showFeedback({
           action: "share",
           label: messages.shared,
@@ -230,6 +232,16 @@ export default function SectionCaptureActions({
         });
       } catch (error) {
         if (isErrorNamed(error, "AbortError")) {
+          return;
+        }
+
+        if (!hadCachedAsset && isErrorNamed(error, "NotAllowedError")) {
+          showFeedback({
+            action: "share",
+            label: messages.shareReady,
+            message: messages.shareReadyMessage,
+            tone: "ready",
+          });
           return;
         }
 

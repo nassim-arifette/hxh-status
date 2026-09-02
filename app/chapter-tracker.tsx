@@ -135,6 +135,7 @@ function ChapterDetails({
       <SheetContent
         className="chapter-sheet"
         id="chapter-details"
+        lang={locale}
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           titleRef.current?.focus({ preventScroll: true });
