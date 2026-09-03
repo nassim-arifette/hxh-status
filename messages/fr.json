@@ -12,6 +12,22 @@
   "language": {
     "label": "Langue"
   },
+  "notifications": {
+    "enable": "Alertes de posts",
+    "on": "Alertes activées",
+    "enabling": "Activation",
+    "disabling": "Désactivation",
+    "blocked": "Alertes bloquées",
+    "unsupported": "Alertes indisponibles",
+    "tryAgain": "Réessayer",
+    "description": "Recevez une notification dans votre navigateur quand Yoshihiro Togashi publie un post.",
+    "disable": "Désactiver les alertes de posts de Togashi",
+    "enabledTitle": "Les alertes Togashi sont activées",
+    "enabledBody": "Vous serez notifié à chaque nouveau post de Yoshihiro Togashi.",
+    "permissionDenied": "Les notifications sont bloquées. Autorisez-les dans les réglages de votre navigateur pour activer les alertes.",
+    "setupError": "Impossible de modifier les alertes de posts. Veuillez réessayer.",
+    "disabled": "Les alertes de posts de Togashi sont désactivées."
+  },
   "snapshot": {
     "publishing": "Publication en cours",
     "hiatus": "En hiatus",

@@ -7,3 +7,9 @@
 
 /_next/static/*
   Cache-Control: public, max-age=31556952, immutable
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Content-Security-Policy: default-src 'self'; script-src 'self'
+  Service-Worker-Allowed: /
+  X-Content-Type-Options: nosniff

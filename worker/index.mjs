@@ -10,6 +10,7 @@ import {
   hasActiveAutomationRun,
 } from "./github.mjs";
 import { fetchTimelineTweets, selectUnseenTweets } from "./x-timeline.mjs";
+import { handlePushApi, runPushNotifications } from "./push-notifications.mjs";
 
 const MAX_DISPATCH_BYTES = 50_000;
 const MAX_TWEETS_PER_RUN = 5;
@@ -136,11 +137,36 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
 
 const worker = {
   async fetch(request, env) {
-    return env.ASSETS.fetch(request);
+    const pushResponse = await handlePushApi(request, env);
+    return pushResponse ?? env.ASSETS.fetch(request);
   },
 
   async scheduled(_controller, env) {
-    await runAutomation(env);
+    // This is deliberately a fallback. Real-time X Activity events are handled
+    // by the dedicated togashi-events Worker; syndication repairs missed events.
+    let timelinePromise;
+    const timelineLoader = () => {
+      timelinePromise ??= fetchTimelineTweets(
+        {
+          listId: requiredEnv(env, "TOGASHI_LIST_ID"),
+          expectedUserId: requiredEnv(env, "TOGASHI_USER_ID"),
+        },
+        fetch,
+      );
+      return timelinePromise;
+    };
+
+    const results = await Promise.allSettled([
+      runAutomation(env, fetch, timelineLoader),
+      runPushNotifications(env, fetch, timelineLoader),
+    ]);
+    const errors = results
+      .filter((result) => result.status === "rejected")
+      .map((result) => result.reason);
+
+    if (errors.length > 0) {
+      throw new AggregateError(errors, "One or more scheduled tasks failed.");
+    }
   },
 };
 

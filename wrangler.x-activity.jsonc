@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "togashi-events",
+  "main": "./worker/x-activity-webhook.mjs",
+  "compatibility_date": "2026-09-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "X_EVENT_STATE",
+      "id": "5e05f4804f774e518b70dd28d6e0ae5b"
+    },
+    {
+      "binding": "PUSH_SUBSCRIPTIONS",
+      "id": "3851985703a94cffa6a925d1dbbf5eb2"
+    }
+  ],
+  "triggers": {
+    "crons": ["* * * * *"]
+  },
+  "vars": {
+    "AUTOMATION_ENABLED": "true",
+    "PUSH_NOTIFICATIONS_ENABLED": "true",
+    "PUSH_INITIAL_TWEET_ID": "2094673907626414299",
+    "VAPID_PUBLIC_KEY": "BDDiMqC-8OtxjviwRNsKba57GJWACZJXDfL1Snw6uLCeJZxs-fTQEF6-NrKe0vuhfSU3E72Jgtd1at7NpWmGZKc",
+    "VAPID_SUBJECT": "mailto:contact@hxhstatus.com",
+    "TOGASHI_LIST_ID": "2095219478636495163",
+    "TOGASHI_USER_ID": "1528978792617611264",
+    "GITHUB_REPOSITORY": "nassim-arifette/hxh-status",
+    "GITHUB_BRANCH": "main",
+    "GITHUB_WORKFLOW_FILE": "togashi-status.yml"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

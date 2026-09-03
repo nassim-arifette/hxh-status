@@ -24,11 +24,22 @@ jobs:
     steps:
       - name: Check out main
         uses: actions/checkout@v6
+        with:
+          # A duplicate dispatch can wait behind the concurrency group. Resolve
+          # main when the job starts instead of checking out its older event SHA.
+          ref: main
+
+      - name: Refresh the shared automation cursor
+        shell: bash
+        run: git pull --ff-only origin main
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Verify automation contracts
         run: npm run automation:test
@@ -44,7 +55,6 @@ jobs:
       - name: Regenerate share images after a status change
         if: steps.process.outputs.status_changed == 'true'
         run: |
-          npm ci
           npm run build
           npx playwright install --with-deps --only-shell chromium
           node scripts/generate-share-images.mjs

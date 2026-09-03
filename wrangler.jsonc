@@ -2,17 +2,25 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "hxhstatus",
   "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "PUSH_SUBSCRIPTIONS",
+      "id": "3851985703a94cffa6a925d1dbbf5eb2"
+    }
+  ],
   "main": "./worker/index.mjs",
-  "triggers": {
-    "crons": ["*/5 * * * *"]
-  },
+  "ratelimits": [
+    {
+      "name": "PUSH_RATE_LIMITER",
+      "namespace_id": "4202026093",
+      "simple": { "limit": 10, "period": 60 }
+    }
+  ],
   "vars": {
-    "AUTOMATION_ENABLED": "false",
-    "TOGASHI_LIST_ID": "2095219478636495163",
-    "TOGASHI_USER_ID": "1528978792617611264",
-    "GITHUB_REPOSITORY": "nassim-arifette/hxh-status",
-    "GITHUB_BRANCH": "main",
-    "GITHUB_WORKFLOW_FILE": "togashi-status.yml"
+    "PUSH_NOTIFICATIONS_ENABLED": "true",
+    "VAPID_PUBLIC_KEY": "BDDiMqC-8OtxjviwRNsKba57GJWACZJXDfL1Snw6uLCeJZxs-fTQEF6-NrKe0vuhfSU3E72Jgtd1at7NpWmGZKc",
+    "VAPID_SUBJECT": "mailto:contact@hxhstatus.com"
   },
   // Static files still bypass the Worker whenever an asset matches. The Worker
   // only handles the Cron and delegates unmatched HTTP requests back to ASSETS.

@@ -12,6 +12,22 @@
   "language": {
     "label": "言語"
   },
+  "notifications": {
+    "enable": "Post alerts",
+    "on": "Alerts on",
+    "enabling": "Enabling",
+    "disabling": "Turning off",
+    "blocked": "Alerts blocked",
+    "unsupported": "Alerts unavailable",
+    "tryAgain": "Try again",
+    "description": "Get a browser notification when Yoshihiro Togashi posts.",
+    "disable": "Turn off Togashi post alerts",
+    "enabledTitle": "Togashi post alerts are on",
+    "enabledBody": "You will be notified when Yoshihiro Togashi posts.",
+    "permissionDenied": "Notifications are blocked. Allow them in your browser settings to enable alerts.",
+    "setupError": "Post alerts could not be changed. Please try again.",
+    "disabled": "Togashi post alerts are off."
+  },
   "snapshot": {
     "publishing": "Publishing",
     "hiatus": "On hiatus",

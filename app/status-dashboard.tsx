@@ -10,6 +10,7 @@ import englishMessages from "@/messages/en.json";
 import ChapterTracker, { LocalDate } from "./chapter-tracker";
 import historyData from "./data/publication-history.json";
 import LanguageSwitcher from "./language-switcher";
+import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
 import {
   chapters,
@@ -327,7 +328,10 @@ export default function StatusDashboard({
                 ),
               })}
             </div>
-
+            <PushNotificationControl
+              locale={locale}
+              messages={messages.notifications}
+            />
             <LanguageSwitcher
               label={messages.language.label}
               locale={locale}

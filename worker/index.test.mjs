@@ -141,6 +141,22 @@ test("idle automation dispatches one validated batch", async () => {
   );
 });
 
+test("a post already recorded by either source is not dispatched again", async () => {
+  const processedId = "2096000000000000001";
+
+  for (const secondSource of ["webhook", "syndication fallback"]) {
+    const router = fetchRouter({ cursor: processedId });
+    const result = await runAutomation(env, router.fetch);
+
+    assert.deepEqual(result, { dispatched: false, count: 0 }, secondSource);
+    assert.equal(
+      router.calls.some(({ url }) => url.endsWith("/dispatches")),
+      false,
+      `${secondSource} must not dispatch an already processed post`,
+    );
+  }
+});
+
 test("timeline HTTP failures fail closed", async () => {
   const router = fetchRouter({ timelineStatus: 429 });
 

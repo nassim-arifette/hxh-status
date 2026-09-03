@@ -179,6 +179,107 @@ select {
   gap: 18px;
 }
 
+.push-notification-control {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.push-notification-button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  padding: 0 11px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    border-color 130ms ease,
+    background-color 130ms ease,
+    color 130ms ease;
+}
+
+.push-notification-button[data-state="on"],
+.push-notification-button[data-state="disabling"] {
+  border-color: var(--published-border);
+  background: var(--published-bg);
+  color: var(--accent-green);
+}
+
+.push-notification-button[data-state="denied"],
+.push-notification-button[data-state="error"] {
+  border-color: #63393a;
+  color: #ef9a9a;
+}
+
+.push-notification-button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.push-notification-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.push-notification-feedback {
+  position: fixed;
+  z-index: 80;
+  right: 18px;
+  bottom: 18px;
+  width: min(360px, calc(100vw - 36px));
+  margin: 0;
+  border: 1px solid var(--published-border);
+  border-radius: 10px;
+  background: #121a13;
+  color: var(--foreground);
+  padding: 12px 14px;
+  box-shadow: 0 14px 42px rgb(0 0 0 / 38%);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.push-notification-feedback[data-error="true"] {
+  border-color: #63393a;
+  background: #211415;
+}
+
+.push-notification-spinner {
+  animation: push-notification-spin 850ms linear infinite;
+}
+
+@keyframes push-notification-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (hover: hover) {
+  .push-notification-button:not(:disabled):hover {
+    border-color: #405146;
+    background: var(--surface-hover);
+    color: var(--foreground);
+  }
+
+  .push-notification-button[data-state="on"]:not(:disabled):hover {
+    border-color: var(--accent-green);
+    background: #1d321f;
+    color: #a9e09b;
+  }
+}
+
+@media (pointer: coarse) {
+  .push-notification-button {
+    min-height: 44px;
+  }
+}
 .language-picker {
   position: relative;
   display: inline-flex;
@@ -1021,6 +1122,16 @@ select {
   }
 }
 
+@media (max-width: 720px) {
+  .push-notification-button {
+    width: 36px;
+    padding: 0;
+  }
+
+  .push-notification-label {
+    display: none;
+  }
+}
 @media (max-width: 720px) {
   .page-frame {
     width: min(100% - 28px, 1120px);
