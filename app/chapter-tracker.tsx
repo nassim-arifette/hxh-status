@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/sheet";
 import {
   formatMessage,
+  getLocaleDirection,
+  getOfficialReaders,
   type Locale,
   type Messages,
 } from "@/lib/i18n";
@@ -129,11 +131,26 @@ function ChapterDetails({
   const meta = chapter ? statusMeta[chapter.status] : statusMeta.unknown;
   const StatusIcon = meta.icon;
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const sources = chapter
+    ? chapter.sourceType === "official-reader"
+      ? getOfficialReaders(locale, chapter.chapter)
+      : chapter.source
+        ? [{
+            href: chapter.source,
+            label:
+              chapter.sourceType === "togashi-x"
+                ? messages.chapter.togashiSource
+                : (chapter.sourceLabel ?? messages.chapter.viewSource),
+          }]
+        : []
+    : [];
 
   return (
     <Sheet open={Boolean(chapter)} onOpenChange={onOpenChange}>
       <SheetContent
         className="chapter-sheet"
+        closeLabel={messages.chapter.close}
+        dir={getLocaleDirection(locale)}
         id="chapter-details"
         lang={locale}
         onOpenAutoFocus={(event) => {
@@ -223,16 +240,24 @@ function ChapterDetails({
 
               {chapter.note ? <p className="sheet-note">{chapter.note}</p> : null}
 
-              {chapter.source ? (
-                <a
-                  className="source-link"
-                  href={chapter.source}
-                  rel="noreferrer"
-                  target="_blank"
+              {sources.length > 0 ? (
+                <div
+                  className="source-links"
+                  aria-label={messages.chapter.viewSource}
                 >
-                  {chapter.sourceLabel ?? messages.chapter.viewSource}
-                  <ExternalLink size={15} />
-                </a>
+                  {sources.map((source) => (
+                    <a
+                      className="source-link"
+                      href={source.href}
+                      key={source.href}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {source.label}
+                      <ExternalLink size={15} />
+                    </a>
+                  ))}
+                </div>
               ) : (
                 <p className="no-source">{messages.chapter.noSource}</p>
               )}

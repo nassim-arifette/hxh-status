@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "title": "HxH Status - Suivi de publication et de production",
+    "description": "Un suivi non officiel et sourcé de l’historique de publication de HUNTER×HUNTER et de l’avancement de production confirmé par Yoshihiro Togashi.",
+    "siteName": "HxH Status",
+    "imageAlt": "Aperçu du suivi de publication et de production de HxH Status avec les étapes actuelles des chapitres"
+  },
+  "header": {
+    "wordmarkAria": "H×H Status",
+    "updated": "Mis à jour le {date}"
+  },
+  "language": {
+    "label": "Langue"
+  },
+  "snapshot": {
+    "publishing": "Publication en cours",
+    "hiatus": "En hiatus",
+    "chaptersPublished": "{count} chapitres publiés en {year}.",
+    "latestPublished": "Dernier publié",
+    "nextChapter": "Prochain chapitre",
+    "manuscriptsComplete": "Manuscrits terminés",
+    "workConfirmed": "Travail confirmé",
+    "throughChapter": "jusqu’au chapitre",
+    "estimatedPreRelease": "Pré-release estimée",
+    "preReleaseSuffix": "pré-release"
+  },
+  "production": {
+    "eyebrow": "Guerre de succession de Kakin",
+    "title": "Suivi de production",
+    "chapterStatusAria": "État de production des chapitres",
+    "legendAria": "Légende des statuts"
+  },
+  "latestUpdate": {
+    "eyebrow": "Dernière mise à jour de Togashi",
+    "sentence": "Chapitre {chapter} : {status}.",
+    "viewPost": "Voir le post"
+  },
+  "history": {
+    "eyebrow": "1998-2026",
+    "title": "Historique de publication",
+    "chartAria": "Graphique de l’historique de publication",
+    "publishedIssue": "WSJ {issue} : chapitre {chapter} publié",
+    "emptyIssue": "WSJ {issue} : aucun chapitre",
+    "chapterCountAria": "{count} chapitres",
+    "chapterPublished": "Chapitre publié",
+    "noChapter": "Aucun chapitre",
+    "countHint": "colonne de droite : chapitres / année"
+  },
+  "chapter": {
+    "title": "Chapitre",
+    "close": "Fermer",
+    "togashiSource": "Yoshihiro Togashi sur X",
+    "cardAria": "Chapitre {chapter} : {status}",
+    "latestState": "Dernier état confirmé au {date}.",
+    "status": "Statut",
+    "estimatedPreRelease": "Pré-release estimée",
+    "published": "Publié",
+    "officialPublication": "Publication officielle",
+    "update": "Mise à jour",
+    "weeklyShonenJump": "Weekly Shonen Jump",
+    "issue": "Numéro {issue}",
+    "viewSource": "Voir la source",
+    "noSource": "Aucune source spécifique à ce chapitre pour le moment."
+  },
+  "statuses": {
+    "published": {
+      "label": "Publié",
+      "shortLabel": "Publié",
+      "description": "Officiellement publié et disponible pour les lecteurs."
+    },
+    "scheduled": {
+      "label": "Publication programmée",
+      "shortLabel": "Programmé",
+      "description": "Jump a programmé la publication de ce chapitre."
+    },
+    "delivered": {
+      "label": "Remis au Jump",
+      "shortLabel": "Chez Jump",
+      "description": "Le manuscrit terminé a été remis au Jump, mais le chapitre n’est pas encore publié."
+    },
+    "background": {
+      "label": "Spécifications des arrière-plans terminées",
+      "shortLabel": "Arrière-plans",
+      "description": "Les instructions pour les arrière-plans et les travaux de production associés sont terminées."
+    },
+    "inking": {
+      "label": "Encrage des personnages terminé",
+      "shortLabel": "Encré",
+      "description": "L’encrage des personnages est terminé ; les étapes de production suivantes restent à réaliser."
+    },
+    "unknown": {
+      "label": "Aucune mise à jour de production confirmée",
+      "shortLabel": "Inconnu",
+      "description": "Aucune étape précise de production n’a été confirmée publiquement."
+    }
+  },
+  "captureActions": {
+    "share": "Partager",
+    "copy": "Copier",
+    "preparing": "Préparation",
+    "downloaded": "Téléchargé",
+    "copied": "Copié",
+    "shared": "Partagé",
+    "shareReady": "Prêt à partager",
+    "tryAgain": "Réessayer",
+    "buttonAria": "{action} : image PNG {label}",
+    "copyUnavailable": "La copie d’image n’est pas disponible ; {label} a donc été téléchargé au format PNG.",
+    "copySuccess": "{label} a été copié au format PNG.",
+    "copyFallback": "{label} n’a pas pu être copié ; le PNG a donc été téléchargé à la place.",
+    "loadError": "{label} n’a pas pu être chargé.",
+    "shareUnavailable": "Le partage d’image n’est pas disponible ; {label} a donc été téléchargé au format PNG.",
+    "shareReadyMessage": "Image prête. Appuyez à nouveau sur Partager pour ouvrir le menu de partage.",
+    "shareText": "{label} sur hxhstatus.com",
+    "shareTitle": "{label} - HxH Status",
+    "shareSuccess": "{label} a été partagé au format PNG.",
+    "shareFallback": "{label} n’a pas pu être partagé ; le PNG a donc été téléchargé à la place."
+  },
+  "footer": {
+    "disclaimer": "Suivi non officiel du statut de HUNTER×HUNTER.",
+    "sources": "Sources : Yoshihiro Togashi, Weekly Shonen Jump, MANGA Plus."
+  }
+}

@@ -23,7 +23,7 @@ import {
   latestPublished,
   manuscriptsComplete,
   nextChapter,
-  serialization,
+  publicationStatus,
   workConfirmed,
 } from "./data/status";
 
@@ -171,7 +171,7 @@ function Metric({
 
 export default async function OpenGraphImage() {
   const [sans, mono] = await Promise.all([geistSans, geistMono]);
-  const isPublishing = serialization === "publishing";
+  const isPublishing = publicationStatus === "publishing";
   const firstPreviewChapter = latestPublished.chapter - 2;
   const previewChapters = chapters
     .filter((chapter) => chapter.chapter >= firstPreviewChapter)

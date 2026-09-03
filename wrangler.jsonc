@@ -2,13 +2,23 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "hxhstatus",
   "compatibility_date": "2026-09-01",
-  // The app is a static export (see `output: "export"` in next.config.ts), so
-  // there is no Worker script: Cloudflare serves the built files directly.
-  // Without this file Wrangler guesses the framework, assumes server-side
-  // rendering, and pulls in the OpenNext adapter, which then fails looking for
-  // a `.next/standalone` build that a static export never produces.
+  "main": "./worker/index.mjs",
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+  "vars": {
+    "AUTOMATION_ENABLED": "false",
+    "TOGASHI_LIST_ID": "2095219478636495163",
+    "TOGASHI_USER_ID": "1528978792617611264",
+    "GITHUB_REPOSITORY": "nassim-arifette/hxh-status",
+    "GITHUB_BRANCH": "main",
+    "GITHUB_WORKFLOW_FILE": "togashi-status.yml"
+  },
+  // Static files still bypass the Worker whenever an asset matches. The Worker
+  // only handles the Cron and delegates unmatched HTTP requests back to ASSETS.
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
     "not_found_handling": "404-page"
   }
 }

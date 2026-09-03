@@ -1,13 +1,80 @@
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const messagesDirectory = join(process.cwd(), "messages");
+const root = process.cwd();
+const messagesDirectory = join(root, "messages");
 const referenceLocale = "en";
-const translatedLocales = (await readdir(messagesDirectory))
+const localeConfig = JSON.parse(
+  await readFile(join(root, "lib", "locales.json"), "utf8"),
+);
+const configuredLocales = Object.keys(localeConfig.locales).sort();
+const catalogLocales = (await readdir(messagesDirectory))
   .filter((fileName) => fileName.endsWith(".json"))
   .map((fileName) => fileName.replace(/\.json$/, ""))
-  .filter((locale) => locale !== referenceLocale)
   .sort();
+const dictionariesSource = await readFile(
+  join(root, "lib", "dictionaries.ts"),
+  "utf8",
+);
+
+let failed = false;
+
+function report(message) {
+  failed = true;
+  console.error(message);
+}
+
+function difference(left, right) {
+  return left.filter((value) => !right.includes(value));
+}
+
+const missingCatalogs = difference(configuredLocales, catalogLocales);
+const orphanCatalogs = difference(catalogLocales, configuredLocales);
+
+if (missingCatalogs.length > 0) {
+  report("Missing message catalogs: " + missingCatalogs.join(", "));
+}
+if (orphanCatalogs.length > 0) {
+  report("Unregistered message catalogs: " + orphanCatalogs.join(", "));
+}
+if (!configuredLocales.includes(referenceLocale)) {
+  report("The reference locale is missing from lib/locales.json.");
+}
+
+for (const locale of configuredLocales) {
+  const settings = localeConfig.locales[locale];
+  if (
+    !/^[a-z]{2,3}(?:-[A-Za-z0-9]+)*$/.test(locale) ||
+    typeof settings?.label !== "string" ||
+    settings.label.trim().length === 0 ||
+    typeof settings?.published !== "boolean" ||
+    !["ltr", "rtl"].includes(settings?.dir) ||
+    typeof settings?.openGraphLocale !== "string" ||
+    !/^[a-z]{2,3}_[A-Z]{2}$/.test(settings.openGraphLocale)
+  ) {
+    report("Invalid locale settings for " + locale + ".");
+  }
+
+  const route = locale === referenceLocale
+    ? join(root, "app", "page.tsx")
+    : join(root, "app", locale, "page.tsx");
+  try {
+    await access(route);
+  } catch {
+    report("Missing preview route for locale " + locale + ".");
+  }
+
+  if (!dictionariesSource.includes(`@/messages/${locale}.json`)) {
+    report("lib/dictionaries.ts does not import " + locale + ".json.");
+  }
+  const dictionaryEntry = new RegExp(
+    "^\\s*" + locale + "\\s*:",
+    "m",
+  );
+  if (!dictionaryEntry.test(dictionariesSource)) {
+    report("lib/dictionaries.ts does not register locale " + locale + ".");
+  }
+}
 
 function flatten(value, prefix = "", result = new Map()) {
   for (const [key, child] of Object.entries(value)) {
@@ -35,29 +102,66 @@ async function load(locale) {
   return JSON.parse(await readFile(path, "utf8"));
 }
 
-const reference = flatten(await load(referenceLocale));
-let failed = false;
+if (catalogLocales.includes(referenceLocale)) {
+  const reference = flatten(await load(referenceLocale));
 
-for (const locale of translatedLocales) {
-  const translation = flatten(await load(locale));
-  const missing = [...reference.keys()].filter((key) => !translation.has(key));
-  const extra = [...translation.keys()].filter((key) => !reference.has(key));
-  const placeholderErrors = [...reference.entries()]
-    .filter(([key, value]) => {
-      if (!translation.has(key)) return false;
-      return placeholders(value).join(",") !== placeholders(translation.get(key)).join(",");
-    })
-    .map(([key]) => key);
+  for (
+    const locale of configuredLocales.filter(
+      (item) => item !== referenceLocale,
+    )
+  ) {
+    if (!catalogLocales.includes(locale)) continue;
 
-  if (missing.length || extra.length || placeholderErrors.length) {
-    failed = true;
-    console.error("\n" + locale + ".json does not match " + referenceLocale + ".json.");
-    if (missing.length) console.error("Missing keys: " + missing.join(", "));
-    if (extra.length) console.error("Extra keys: " + extra.join(", "));
-    if (placeholderErrors.length) console.error("Placeholder mismatches: " + placeholderErrors.join(", "));
-  } else {
-    console.log(locale + ".json: all keys and placeholders are valid.");
+    const translation = flatten(await load(locale));
+    const missing = [...reference.keys()].filter((key) => !translation.has(key));
+    const extra = [...translation.keys()].filter((key) => !reference.has(key));
+    const invalidValues = [...translation.entries()]
+      .filter(
+        ([, value]) => typeof value !== "string" || value.trim().length === 0,
+      )
+      .map(([key]) => key);
+    const placeholderErrors = [...reference.entries()]
+      .filter(([key, value]) => {
+        if (!translation.has(key)) return false;
+        return (
+          placeholders(value).join(",") !==
+          placeholders(translation.get(key)).join(",")
+        );
+      })
+      .map(([key]) => key);
+
+    if (
+      missing.length ||
+      extra.length ||
+      invalidValues.length ||
+      placeholderErrors.length
+    ) {
+      failed = true;
+      console.error(
+        "\n" + locale + ".json does not match " + referenceLocale + ".json.",
+      );
+      if (missing.length) console.error("Missing keys: " + missing.join(", "));
+      if (extra.length) console.error("Extra keys: " + extra.join(", "));
+      if (invalidValues.length) {
+        console.error("Invalid values: " + invalidValues.join(", "));
+      }
+      if (placeholderErrors.length) {
+        console.error(
+          "Placeholder mismatches: " + placeholderErrors.join(", "),
+        );
+      }
+    } else {
+      console.log(
+        locale + ".json: all keys, values, and placeholders are valid.",
+      );
+    }
   }
+}
+
+if (!failed) {
+  console.log(
+    "Locale registry, catalogs, dictionaries, and preview routes are aligned.",
+  );
 }
 
 if (failed) process.exitCode = 1;

@@ -110,6 +110,10 @@ button {
   font: inherit;
 }
 
+select {
+  font: inherit;
+}
+
 ::selection {
   background: #315f32;
   color: #ffffff;
@@ -169,6 +173,69 @@ button {
   text-transform: uppercase;
 }
 
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.language-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.language-picker select {
+  min-width: 116px;
+  min-height: 36px;
+  appearance: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--foreground);
+  padding: 0 30px 0 32px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 130ms ease, background-color 130ms ease;
+}
+
+.language-picker-icon,
+.language-picker-chevron {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.language-picker-icon {
+  left: 10px;
+  color: var(--accent-green);
+}
+
+.language-picker-chevron {
+  right: 9px;
+}
+
+.language-picker:focus-within select {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-color: var(--accent-green);
+}
+
+@media (hover: hover) {
+  .language-picker:hover select {
+    border-color: #405146;
+    background: var(--surface-hover);
+  }
+}
+
+@media (pointer: coarse) {
+  .language-picker select {
+    min-height: 44px;
+  }
+}
+
 .live-dot {
   width: 7px;
   height: 7px;
@@ -184,7 +251,7 @@ button {
   padding: 54px 0 48px;
 }
 
-.serialization h1,
+.publishing-status h1,
 .section-heading h2,
 .latest-update h2 {
   margin: 0;
@@ -192,7 +259,7 @@ button {
   letter-spacing: -0.035em;
 }
 
-.serialization h1 {
+.publishing-status h1 {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -201,7 +268,7 @@ button {
   line-height: 1.02;
 }
 
-.serialization-dot {
+.publishing-status-dot {
   position: relative;
   flex: 0 0 auto;
   width: 13px;
@@ -210,26 +277,26 @@ button {
   background: var(--accent-green);
 }
 
-.serialization-dot::after {
+.publishing-status-dot::after {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   background: var(--accent-green);
   content: "";
   pointer-events: none;
-  animation: serialization-pulse 2.4s ease-out infinite;
+  animation: publishing-status-pulse 2.4s ease-out infinite;
   will-change: opacity, transform;
 }
 
-.serialization[data-state="hiatus"] .serialization-dot {
+.publishing-status[data-state="hiatus"] .publishing-status-dot {
   background: var(--text-muted);
 }
 
-.serialization[data-state="hiatus"] .serialization-dot::after {
+.publishing-status[data-state="hiatus"] .publishing-status-dot::after {
   content: none;
 }
 
-@keyframes serialization-pulse {
+@keyframes publishing-status-pulse {
   0% {
     opacity: 0.5;
     transform: scale(1);
@@ -244,7 +311,7 @@ button {
   }
 }
 
-.serialization-detail {
+.publishing-status-detail {
   max-width: 410px;
   margin: 16px 0 0;
   color: var(--text-secondary);
@@ -746,6 +813,33 @@ button {
   margin: 0;
 }
 
+.footer-details {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  text-align: right;
+}
+
+.footer-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 130ms ease;
+}
+
+.footer-github:hover {
+  color: var(--foreground);
+}
+
+.footer-github:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
 .chapter-sheet {
   width: min(100%, 420px) !important;
   max-width: 420px !important;
@@ -879,8 +973,15 @@ button {
   line-height: 1.55;
 }
 
-.sheet-body .source-link {
+.sheet-body .source-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
   margin-top: 28px;
+}
+
+.sheet-body .source-links .source-link {
+  margin-top: 0;
 }
 
 .no-source {
@@ -896,7 +997,7 @@ button {
     align-items: start;
   }
 
-  .serialization-detail {
+  .publishing-status-detail {
     max-width: 560px;
   }
 
@@ -933,11 +1034,15 @@ button {
     font-size: 0.68rem;
   }
 
+  .header-meta {
+    gap: 10px;
+  }
+
   .snapshot {
     padding: 38px 0 34px;
   }
 
-  .serialization h1 {
+  .publishing-status h1 {
     font-size: 2.4rem;
   }
 
@@ -1048,6 +1153,25 @@ button {
     flex-direction: column;
     gap: 7px;
     line-height: 1.5;
+  }
+
+  .footer-details {
+    justify-content: flex-start;
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .site-header {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 0;
+  }
+
+  .header-meta {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 

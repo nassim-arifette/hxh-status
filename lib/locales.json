@@ -1,0 +1,57 @@
+{
+  "defaultOfficialReaders": [
+    {
+      "href": "https://mangaplus.shueisha.co.jp/titles/100015",
+      "label": "MANGA Plus",
+      "chapterUrls": {
+        "419": "https://mangaplus.shueisha.co.jp/viewer/1029887"
+      }
+    }
+  ],
+  "locales": {
+    "en": {
+      "label": "English",
+      "published": true,
+      "dir": "ltr",
+      "openGraphLocale": "en_US",
+      "officialReaders": [
+        {
+          "href": "https://www.viz.com/shonenjump/chapters/hunter-x-hunter",
+          "label": "VIZ Shonen Jump",
+          "chapterUrls": {
+            "419": "https://www.viz.com/shonenjump/hunter-x-hunter-chapter-419/chapter/51146"
+          }
+        },
+        {
+          "href": "https://mangaplus.shueisha.co.jp/titles/100015",
+          "label": "MANGA Plus",
+          "chapterUrls": {
+            "419": "https://mangaplus.shueisha.co.jp/viewer/1029887"
+          }
+        }
+      ]
+    },
+    "fr": {
+      "label": "Français",
+      "published": true,
+      "dir": "ltr",
+      "openGraphLocale": "fr_FR"
+    },
+    "ja": {
+      "label": "日本語",
+      "published": false,
+      "dir": "ltr",
+      "openGraphLocale": "ja_JP",
+      "officialReaders": [
+        {
+          "href": "https://shonenjumpplus.com/app",
+          "label": "少年ジャンプ＋"
+        },
+        {
+          "href": "https://zebrack-comic.shueisha.co.jp/main/manga",
+          "label": "ゼブラック"
+        }
+      ]
+    }
+  }
+}

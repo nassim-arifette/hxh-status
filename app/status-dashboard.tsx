@@ -2,12 +2,14 @@ import { CalendarDays, ExternalLink } from "lucide-react";
 
 import {
   formatMessage,
+  getLocaleDirection,
   type Locale,
   type Messages,
 } from "@/lib/i18n";
 import englishMessages from "@/messages/en.json";
 import ChapterTracker, { LocalDate } from "./chapter-tracker";
 import historyData from "./data/publication-history.json";
+import LanguageSwitcher from "./language-switcher";
 import SectionCaptureActions from "./section-capture-actions";
 import {
   chapters,
@@ -16,7 +18,8 @@ import {
   latestUpdate,
   manuscriptsComplete,
   nextChapter,
-  serialization,
+  publicationStatus,
+  statusDataRevision,
   workConfirmed,
   type ChapterStatus,
 } from "./data/status";
@@ -169,11 +172,17 @@ function CaptureSiteLabel() {
   return <span className="capture-site-label">hxhstatus.com</span>;
 }
 
-function ProductionCaptureActions({ messages }: { messages: Messages }) {
+function ProductionCaptureActions({
+  locale,
+  messages,
+}: {
+  locale: Locale;
+  messages: Messages;
+}) {
   return (
     <SectionCaptureActions
-      fileName="hxh-production-tracker.png"
-      imageUrl={`/share/production.png?v=${lastUpdated}-${shareImageRevision}`}
+      fileName={`hxh-production-tracker-${locale}.png`}
+      imageUrl={`/share/${locale}/production.png?v=${statusDataRevision}-${shareImageRevision}`}
       label={messages.production.title}
       messages={messages.captureActions}
     />
@@ -201,7 +210,7 @@ export function ProductionSection({
         {capture ? (
           <CaptureSiteLabel />
         ) : (
-          <ProductionCaptureActions messages={messages} />
+          <ProductionCaptureActions locale={locale} messages={messages} />
         )}
       </div>
 
@@ -217,14 +226,16 @@ export function ProductionSection({
 }
 
 function PublicationHistoryCaptureActions({
+  locale,
   messages,
 }: {
+  locale: Locale;
   messages: Messages;
 }) {
   return (
     <SectionCaptureActions
-      fileName="hxh-publication-history.png"
-      imageUrl={`/share/publication-history.png?v=${lastUpdated}-${shareImageRevision}`}
+      fileName={`hxh-publication-history-${locale}.png`}
+      imageUrl={`/share/${locale}/publication-history.png?v=${statusDataRevision}-${shareImageRevision}`}
       label={messages.history.title}
       messages={messages.captureActions}
     />
@@ -233,6 +244,7 @@ function PublicationHistoryCaptureActions({
 
 export function PublicationHistorySection({
   capture = false,
+  locale = "en",
   messages = englishMessages,
 }: LocalizedSectionProps) {
   return (
@@ -249,7 +261,10 @@ export function PublicationHistorySection({
         {capture ? (
           <CaptureSiteLabel />
         ) : (
-          <PublicationHistoryCaptureActions messages={messages} />
+          <PublicationHistoryCaptureActions
+            locale={locale}
+            messages={messages}
+          />
         )}
       </div>
 
@@ -277,13 +292,18 @@ export default function StatusDashboard({
   const latestStatusLabel = statusMeta[latestUpdate.status].label;
   const latestStatus =
     locale === "en" ? lowerFirst(latestStatusLabel) : latestStatusLabel;
-  const serializationLabel =
-    serialization === "publishing"
+  const publicationStatusLabel =
+    publicationStatus === "publishing"
       ? messages.snapshot.publishing
       : messages.snapshot.hiatus;
 
   return (
-    <main id="top" className="site-shell" lang={locale}>
+    <main
+      id="top"
+      className="site-shell"
+      dir={getLocaleDirection(locale)}
+      lang={locale}
+    >
       <div className="page-frame">
         <header className="site-header">
           <a
@@ -296,25 +316,32 @@ export default function StatusDashboard({
             </span>
             <span className="wordmark-status">Status</span>
           </a>
-          <div className="updated-label">
-            <span className="live-dot" aria-hidden="true" />
-            {formatMessage(messages.header.updated, {
-              date: formatDate(
-                lastUpdated,
-                { month: "short", day: "numeric" },
-                locale,
-              ),
-            })}
+          <div className="header-meta">
+            <div className="updated-label">
+              <span className="live-dot" aria-hidden="true" />
+              {formatMessage(messages.header.updated, {
+                date: formatDate(
+                  lastUpdated,
+                  { month: "short", day: "numeric" },
+                  locale,
+                ),
+              })}
+            </div>
+
+            <LanguageSwitcher
+              label={messages.language.label}
+              locale={locale}
+            />
           </div>
         </header>
 
-        <section className="snapshot" aria-labelledby="serialization-title">
-          <div className="serialization" data-state={serialization}>
-            <h1 id="serialization-title">
-              <span className="serialization-dot" aria-hidden="true" />
-              {serializationLabel}
+        <section className="snapshot" aria-labelledby="publishing-status-title">
+          <div className="publishing-status" data-state={publicationStatus}>
+            <h1 id="publishing-status-title">
+              <span className="publishing-status-dot" aria-hidden="true" />
+              {publicationStatusLabel}
             </h1>
-            <p className="serialization-detail">
+            <p className="publishing-status-detail">
               {formatMessage(messages.snapshot.chaptersPublished, {
                 count: chaptersThisYear,
                 year: currentYear,
@@ -394,11 +421,32 @@ export default function StatusDashboard({
           </a>
         </section>
 
-        <PublicationHistorySection messages={messages} />
+        <PublicationHistorySection locale={locale} messages={messages} />
 
         <footer className="site-footer">
           <p>{messages.footer.disclaimer}</p>
-          <p>{messages.footer.sources}</p>
+          <div className="footer-details">
+            <p>{messages.footer.sources}</p>
+            <a
+              className="footer-github"
+              href="https://github.com/nassim-arifette/hxh-status"
+              rel="noreferrer"
+              target="_blank"
+            >
+              <svg
+                aria-hidden="true"
+                height="14"
+                viewBox="0 0 24 24"
+                width="14"
+              >
+                <path
+                  d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.3c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z"
+                  fill="currentColor"
+                />
+              </svg>
+              GitHub
+            </a>
+          </div>
         </footer>
       </div>
     </main>

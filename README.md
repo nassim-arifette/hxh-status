@@ -24,7 +24,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Update the tracker
 
-Current production data is in `app/data/status.ts`. Each chapter can include a
+Current production data is in `app/data/status-data.json`. The adjacent
+`app/data/status.ts` module validates it and derives the dashboard values.
+Each chapter can include a
 status, confirmation date, source URL, Jump issue, note, and a `releaseAt`
 timestamp for its official Japanese digital release (for example
 `"2026-09-07T00:00:00+09:00"`).
@@ -38,7 +40,7 @@ Publication-history data is in `app/data/publication-history.json`. Add a
 Weekly Shonen Jump issue only after its official release. Double-numbered
 physical issues count as one issue.
 
-After editing data, update `lastUpdated` in `app/data/status.ts` and run:
+After editing data, update `lastUpdated` in `app/data/status-data.json` and run:
 
 ```bash
 npm run share:build
@@ -55,30 +57,42 @@ immutable static assets; site traffic never launches a browser or regenerates
 them. The regular `npm run build` deliberately reuses the committed PNGs so
 Cloudflare does not need Playwright or Chromium system libraries.
 
+## Togashi update automation
+
+A small Cloudflare Cron Worker can watch the public X list dedicated to Togashi
+and dispatch a serialized GitHub Action. Gemini is treated only as a
+conservative extractor: a production status changes automatically only when
+Gemini and deterministic Japanese text rules agree. Dates, Jump issues,
+publication state, and publication history remain protected.
+
+The automation is disabled by default until its secrets and repository
+permissions are configured. See [AUTOMATION.md](AUTOMATION.md) for the
+architecture, safety rules, setup, tests, and the parts that still require an
+official source.
+
 ## Translate the site
 
-English interface text lives in `messages/en.json`. Each translation gets a
-matching catalog such as `messages/ja.json`; translators only change its values.
-Japanese is the first example and can be previewed at
+English interface text lives in `messages/en.json`. French is public at
+[https://hxhstatus.com/fr](https://hxhstatus.com/fr). Japanese currently uses
+the English catalog as an unlisted, non-indexed translation draft at
 [http://localhost:3000/ja](http://localhost:3000/ja).
 
 See [TRANSLATING.md](TRANSLATING.md) for the contributor workflow and run
-`npm run translations:check` before opening a pull request. A maintainer prepares
-the catalog and preview route for each new language, so contributors never need
-to edit the application code. Preview routes remain unlinked and marked
-`noindex` until their translation has been reviewed.
+`npm run translations:check` before opening a pull request. A maintainer does
+the one-time locale registration; translators then edit only their assigned
+`messages/{locale}.json` values. Publishing a reviewed locale automatically
+adds it to language detection, the selector, the sitemap, and hreflang metadata.
 
 ## Deploy
 
-`next.config.ts` sets `output: "export"`, so `npm run build` emits a fully
-static site to `out/`. There is no server, database, or environment variable to
-configure, and no framework adapter is needed.
+`next.config.ts` sets `output: "export"`, so `npm run build` emits the site
+to `out/`. Cloudflare serves matching files directly as static assets; a very
+small Worker handles only the scheduled X check and unmatched HTTP requests.
+No Next.js server or framework adapter is needed.
 
-`wrangler.jsonc` declares `out/` as a static asset directory and defines no
-Worker script, so Cloudflare serves the built files directly. That file has to
-stay in the repository: without it Wrangler infers the framework, assumes
-server-side rendering, and pulls in the OpenNext adapter, which then fails
-looking for a `.next/standalone` build that a static export never produces.
+`wrangler.jsonc` declares both the static asset directory and the Cron Worker.
+Static asset requests bypass Worker execution by default. Keep this file in the
+repository so Wrangler does not infer a server-rendered OpenNext deployment.
 
 Cloudflare Workers build settings:
 
@@ -100,7 +114,8 @@ npm run cf:logs         # stream production logs
 Run `npx wrangler login` once before using commands that access the Cloudflare
 account.
 
-Any other static host works the same way — serve the contents of `out/`.
+Any other static host can serve `out/`; the optional monitoring automation
+would need an equivalent scheduler.
 
 ## Sources
 

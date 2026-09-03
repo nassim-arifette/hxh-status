@@ -1,0 +1,146 @@
+import { Buffer } from "node:buffer";
+import { appendFile, readFile, rename, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+
+import {
+  compareSnowflakeIds,
+  validateAutomationPayload,
+} from "../automation/contracts.mjs";
+import { analyzeTweet } from "../automation/gemini.mjs";
+import { applyAnalyzedEvents } from "../automation/reducer.mjs";
+
+const root = process.cwd();
+const statusPath = join(root, "app", "data", "status-data.json");
+const statePath = join(root, "automation", "state.json");
+
+async function readJson(path) {
+  return JSON.parse(await readFile(path, "utf8"));
+}
+
+async function writeJsonAtomically(path, value) {
+  const temporaryPath = join(
+    dirname(path),
+    `.${path.split(/[\\/]/).at(-1)}.${process.pid}.tmp`,
+  );
+  await writeFile(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  await rename(temporaryPath, path);
+}
+
+async function setOutput(name, value) {
+  if (!process.env.GITHUB_OUTPUT) return;
+  await appendFile(process.env.GITHUB_OUTPUT, `${name}=${value}\n`, "utf8");
+}
+
+function safeReviewText(value) {
+  return String(value)
+    .replace(/[\u0000-\u001F\u007F]/g, " ")
+    .replace(/@/g, "@\u200B")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 1_000);
+}
+
+function reviewMarkdown(reviewItems) {
+  const lines = [
+    "# Togashi post requires review",
+    "",
+    "The automation deliberately made no status change for the item(s) below.",
+    "",
+  ];
+
+  for (const item of reviewItems) {
+    lines.push(
+      `## Post ${item.tweetId}`,
+      "",
+      `- Source: ${item.tweetUrl}`,
+      `- Published: ${item.createdAt}`,
+      `- Validation result: ${safeReviewText(item.reason)}`,
+      `- Gemini explanation: ${safeReviewText(
+        item.explanation || "None",
+      )}`,
+      "",
+    );
+  }
+
+  return `${lines.join("\n")}\n`;
+}
+
+const rawPayload = process.env.AUTOMATION_PAYLOAD;
+if (!rawPayload) throw new Error("AUTOMATION_PAYLOAD is not configured.");
+if (Buffer.byteLength(rawPayload, "utf8") > 60_000) {
+  throw new Error("AUTOMATION_PAYLOAD exceeds the safety size limit.");
+}
+
+const payload = validateAutomationPayload(JSON.parse(rawPayload));
+const [statusData, state] = await Promise.all([
+  readJson(statusPath),
+  readJson(statePath),
+]);
+
+const freshTweets = [...payload.tweets]
+  .filter(
+    (tweet) => compareSnowflakeIds(tweet.id, state.lastProcessedTweetId) > 0,
+  )
+  .sort((left, right) => compareSnowflakeIds(left.id, right.id));
+
+const analyzedEvents = [];
+
+for (const tweet of freshTweets) {
+  const result = await analyzeTweet({
+    tweet,
+    currentChapters: statusData.chapters,
+    apiKey: process.env.GEMINI_API_KEY,
+    model: process.env.GEMINI_MODEL || "gemini-3.7-flash",
+  });
+
+  analyzedEvents.push({
+    tweetId: tweet.id,
+    analysis: result.analysis,
+    verification: result.verification,
+  });
+
+  for (const mediaError of result.mediaErrors) {
+    console.warn(`Media warning for ${tweet.id}: ${mediaError}`);
+  }
+}
+
+const result = applyAnalyzedEvents({
+  statusData,
+  state,
+  payload,
+  analyzedEvents,
+});
+
+if (result.statusChanged) {
+  await writeJsonAtomically(statusPath, result.statusData);
+}
+
+if (result.stateChanged) {
+  await writeJsonAtomically(statePath, result.state);
+}
+
+if (result.reviewItems.length > 0 && process.env.AUTOMATION_REVIEW_FILE) {
+  await writeFile(
+    process.env.AUTOMATION_REVIEW_FILE,
+    reviewMarkdown(result.reviewItems),
+    "utf8",
+  );
+}
+
+await Promise.all([
+  setOutput("status_changed", String(result.statusChanged)),
+  setOutput("state_changed", String(result.stateChanged)),
+  setOutput("review_needed", String(result.reviewItems.length > 0)),
+  setOutput("review_tweet_id", result.reviewItems[0]?.tweetId ?? ""),
+]);
+
+console.log(
+  JSON.stringify({
+    analyzed: freshTweets.length,
+    statusChanged: result.statusChanged,
+    stateChanged: result.stateChanged,
+    reviews: result.reviewItems.length,
+  }),
+);

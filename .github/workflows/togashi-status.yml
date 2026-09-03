@@ -1,0 +1,130 @@
+name: Togashi status automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Validated Togashi timeline payload
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: togashi-status-main
+  cancel-in-progress: false
+
+jobs:
+  update-status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Verify automation contracts
+        run: npm run automation:test
+
+      - name: Process Togashi posts
+        id: process
+        env:
+          AUTOMATION_PAYLOAD: ${{ inputs.payload }}
+          AUTOMATION_REVIEW_FILE: ${{ runner.temp }}/togashi-review.md
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: npm run automation:process
+
+      - name: Regenerate share images after a status change
+        if: steps.process.outputs.status_changed == 'true'
+        run: |
+          npm ci
+          npm run build
+          npx playwright install --with-deps --only-shell chromium
+          node scripts/generate-share-images.mjs
+
+      - name: Open a review issue for ambiguous evidence
+        if: steps.process.outputs.review_needed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_FILE: ${{ runner.temp }}/togashi-review.md
+          REVIEW_TWEET_ID: ${{ steps.process.outputs.review_tweet_id }}
+        shell: bash
+        run: |
+          review_title="review: Togashi post ${REVIEW_TWEET_ID}"
+          existing_titles="$(gh issue list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state all \
+            --limit 1000 \
+            --json title \
+            --jq '.[].title')"
+
+          if ! grep -Fqx -- "$review_title" <<< "$existing_titles"; then
+            gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$review_title" \
+              --body-file "$REVIEW_FILE"
+          fi
+
+      - name: Commit the validated result
+        if: steps.process.outputs.state_changed == 'true'
+        env:
+          STATUS_CHANGED: ${{ steps.process.outputs.status_changed }}
+        shell: bash
+        run: |
+          git add automation/state.json
+
+          if [ "$STATUS_CHANGED" = "true" ]; then
+            git add app/data/status-data.json public/share
+          fi
+
+          while IFS= read -r path; do
+            case "$path" in
+              automation/state.json)
+                ;;
+              app/data/status-data.json|public/share/*)
+                if [ "$STATUS_CHANGED" != "true" ]; then
+                  echo "Unexpected status artifact: $path" >&2
+                  exit 1
+                fi
+                ;;
+              *)
+                echo "Unexpected staged file: $path" >&2
+                exit 1
+                ;;
+            esac
+          done < <(git diff --cached --name-only)
+
+          if ! git diff --quiet; then
+            echo "Automation produced unexpected tracked changes." >&2
+            git status --short
+            exit 1
+          fi
+
+          untracked="$(git ls-files --others --exclude-standard)"
+          if [ -n "$untracked" ]; then
+            echo "Automation produced unexpected untracked files:" >&2
+            printf '%s\n' "$untracked" >&2
+            exit 1
+          fi
+
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if [ "$STATUS_CHANGED" = "true" ]; then
+            git commit -m "chore: update Togashi production status"
+          else
+            git commit -m "chore: record Togashi post"
+          fi
+
+          git push origin HEAD:main

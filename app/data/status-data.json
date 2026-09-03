@@ -1,0 +1,187 @@
+{
+  "lastUpdated": "2026-09-02",
+  "chapters": [
+    {
+      "chapter": 411,
+      "status": "published",
+      "releaseAt": "2026-06-29T00:00:00+09:00",
+      "jumpIssue": "31",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 412,
+      "status": "published",
+      "releaseAt": "2026-07-06T00:00:00+09:00",
+      "jumpIssue": "32",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 413,
+      "status": "published",
+      "releaseAt": "2026-07-13T00:00:00+09:00",
+      "jumpIssue": "33",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 414,
+      "status": "published",
+      "releaseAt": "2026-07-20T00:00:00+09:00",
+      "jumpIssue": "34",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 415,
+      "status": "published",
+      "releaseAt": "2026-07-27T00:00:00+09:00",
+      "jumpIssue": "35",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 416,
+      "status": "published",
+      "releaseAt": "2026-08-03T00:00:00+09:00",
+      "jumpIssue": "36",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 417,
+      "status": "published",
+      "releaseAt": "2026-08-10T00:00:00+09:00",
+      "jumpIssue": "37/38",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 418,
+      "status": "published",
+      "releaseAt": "2026-08-24T00:00:00+09:00",
+      "jumpIssue": "39",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 419,
+      "status": "published",
+      "releaseAt": "2026-08-31T00:00:00+09:00",
+      "jumpIssue": "40",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 420,
+      "status": "scheduled",
+      "releaseAt": "2026-09-07T00:00:00+09:00",
+      "preReleaseAt": "2026-09-03T12:00:00+09:00",
+      "updatedAt": "2026-09-01",
+      "sourceType": "official-reader"
+    },
+    {
+      "chapter": 421,
+      "status": "delivered",
+      "updatedAt": "2026-05-26",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2059299316800569524",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 422,
+      "status": "delivered",
+      "updatedAt": "2026-07-01",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2072287279197126773",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 423,
+      "status": "delivered",
+      "updatedAt": "2026-07-07",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2074538142506549407",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 424,
+      "status": "delivered",
+      "updatedAt": "2026-08-08",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2086132321166794760",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 425,
+      "status": "delivered",
+      "updatedAt": "2026-08-11",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2087170463839682713",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 426,
+      "status": "delivered",
+      "updatedAt": "2026-08-25",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2092132894814998720",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 427,
+      "status": "delivered",
+      "updatedAt": "2026-09-01",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2094673907626414299",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 428,
+      "status": "background",
+      "updatedAt": "2026-07-03",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 429,
+      "status": "background",
+      "updatedAt": "2026-08-27",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2092902182790341023",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 430,
+      "status": "background",
+      "updatedAt": "2026-08-30",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2093900520406855763",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 431,
+      "status": "inking",
+      "updatedAt": "2026-06-14",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2066167513214505229",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 432,
+      "status": "inking",
+      "updatedAt": "2026-07-11",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2075732291931009110",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    {
+      "chapter": 433,
+      "status": "inking",
+      "updatedAt": "2026-08-03",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2084155567363539307",
+      "sourceLabel": "Yoshihiro Togashi on X",
+      "sourceType": "togashi-x"
+    },
+    { "chapter": 434, "status": "unknown" },
+    { "chapter": 435, "status": "unknown" },
+    { "chapter": 436, "status": "unknown" },
+    { "chapter": 437, "status": "unknown" },
+    { "chapter": 438, "status": "unknown" },
+    { "chapter": 439, "status": "unknown" },
+    { "chapter": 440, "status": "unknown" }
+  ]
+}

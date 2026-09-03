@@ -3,6 +3,7 @@ import { copyFile, mkdir, readFile, stat } from "node:fs/promises";
 import { dirname, extname, join, normalize } from "node:path";
 
 import { chromium } from "playwright";
+import localeConfig from "../lib/locales.json" with { type: "json" };
 
 const outDirectory = join(process.cwd(), "out");
 
@@ -18,25 +19,38 @@ const mimeTypes = new Map([
   [".woff2", "font/woff2"],
 ]);
 
-const captures = [
+const captureTypes = [
   {
-    pathname: "/capture/production",
+    name: "production",
     selector: "#production-share-capture",
-    output: join(outDirectory, "share", "production.png"),
-    publicOutput: join(process.cwd(), "public", "share", "production.png"),
   },
   {
-    pathname: "/capture/publication-history",
+    name: "publication-history",
     selector: "#publication-history-share-capture",
-    output: join(outDirectory, "share", "publication-history.png"),
+  },
+];
+
+const captures = Object.keys(localeConfig.locales).flatMap((locale) =>
+  captureTypes.map(({ name, selector }) => ({
+    locale,
+    pathname: `/capture/${locale}/${name}`,
+    selector,
+    output: join(outDirectory, "share", locale, `${name}.png`),
     publicOutput: join(
       process.cwd(),
       "public",
       "share",
-      "publication-history.png",
+      locale,
+      `${name}.png`,
     ),
-  },
-];
+    legacyOutput:
+      locale === "en" ? join(outDirectory, "share", `${name}.png`) : null,
+    legacyPublicOutput:
+      locale === "en"
+        ? join(process.cwd(), "public", "share", `${name}.png`)
+        : null,
+  })),
+);
 
 async function findFile(pathname) {
   const relativePath = decodeURIComponent(pathname).replace(/^\/+/, "");
@@ -132,12 +146,20 @@ try {
       scale: "css",
     });
     await copyFile(capture.output, capture.publicOutput);
+    if (capture.legacyOutput && capture.legacyPublicOutput) {
+      await Promise.all([
+        copyFile(capture.output, capture.legacyOutput),
+        copyFile(capture.output, capture.legacyPublicOutput),
+      ]);
+    }
 
     const bounds = await target.boundingBox();
     const dimensions = bounds
       ? `${Math.round(bounds.width)}x${Math.round(bounds.height)}`
       : "unknown size";
-    console.log(`Generated ${capture.output} (${dimensions}).`);
+    console.log(
+      `Generated ${capture.output} [${capture.locale}] (${dimensions}).`,
+    );
   }
 
   if (pageErrors.length > 0) {
