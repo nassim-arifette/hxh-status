@@ -31,6 +31,9 @@
       "new_sqlite_classes": ["PushSubscriptionRegistry"]
     }
   ],
+  "triggers": {
+    "crons": []
+  },
   "vars": {
     "PUSH_NOTIFICATIONS_ENABLED": "true",
     "VAPID_PUBLIC_KEY": "BDDiMqC-8OtxjviwRNsKba57GJWACZJXDfL1Snw6uLCeJZxs-fTQEF6-NrKe0vuhfSU3E72Jgtd1at7NpWmGZKc",
