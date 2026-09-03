@@ -11,6 +11,7 @@ const env = {
   GITHUB_BRANCH: "main",
   GITHUB_WORKFLOW_FILE: "togashi-status.yml",
   GITHUB_AUTOMATION_TOKEN: "test-token",
+  AUTOMATION_PAYLOAD_SECRET: "test-automation-payload-secret-32-chars",
 };
 
 function timelineHtml(id = "2096000000000000001") {
@@ -133,6 +134,7 @@ test("idle automation dispatches one validated batch", async () => {
 
   const body = JSON.parse(dispatch.options.body);
   const payload = JSON.parse(body.inputs.payload);
+  assert.match(body.inputs.signature, /^sha256=[A-Za-z0-9+/]{43}=$/);
   assert.equal(payload.listId, env.TOGASHI_LIST_ID);
   assert.equal(payload.authorId, env.TOGASHI_USER_ID);
   assert.deepEqual(

@@ -7,6 +7,7 @@ import {
   serializePipeline,
   verifyWebhookSignature,
 } from "./x-activity-webhook.mjs";
+import activityWorker from "./x-activity-webhook.mjs";
 
 class MemoryKv {
   constructor() {
@@ -42,6 +43,9 @@ const baseEnv = {
   TOGASHI_USER_ID: "1528978792617611264",
   AUTOMATION_ENABLED: "true",
   PUSH_NOTIFICATIONS_ENABLED: "true",
+  X_CONSUMER_SECRET: "test-consumer-secret",
+  X_WEBHOOK_PATH_SECRET:
+    "test-webhook-path-secret-which-is-longer-than-32-bytes",
 };
 
 function activityData(overrides = {}) {
@@ -59,17 +63,125 @@ function activityData(overrides = {}) {
   };
 }
 
-test("creates and verifies X webhook HMAC signatures", async () => {
+async function signWebhookBody(secret, body) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const bytes = new Uint8Array(
+    await crypto.subtle.sign("HMAC", key, body),
+  );
+  return `sha256=${Buffer.from(bytes).toString("base64")}`;
+}
+
+test("creates CRC responses and independently verifies X POST signatures", async () => {
   const secret = "test-consumer-secret";
   const body = new TextEncoder().encode('{"event":"post.create"}');
-  const signature = await createCrcResponseToken(
-    secret,
-    new TextDecoder().decode(body),
+  const signature = await signWebhookBody(secret, body);
+
+  assert.match(
+    await createCrcResponseToken(secret, "opaque-x-crc-challenge"),
+    /^sha256=[A-Za-z0-9+/]{43}=$/,
   );
 
   assert.equal(await verifyWebhookSignature(secret, body, signature), true);
   assert.equal(
     await verifyWebhookSignature(secret, body, "sha256=invalid"),
+    false,
+  );
+});
+
+test("CRC refuses to sign JSON event-shaped values", async () => {
+  await assert.rejects(
+    createCrcResponseToken("test-consumer-secret", '{"data":{}}'),
+    /Invalid crc_token/,
+  );
+  await assert.rejects(
+    createCrcResponseToken("test-consumer-secret", "  []  "),
+    /Invalid crc_token/,
+  );
+  await assert.rejects(
+    createCrcResponseToken("test-consumer-secret", '\uFEFF{"data":{}}'),
+    /Invalid crc_token/,
+  );
+});
+
+test("webhook requires the unguessable configured callback path", async () => {
+  const context = { waitUntil() {} };
+  const plain = await activityWorker.fetch(
+    new Request("https://events.example/webhook?crc_token=opaque"),
+    baseEnv,
+    context,
+  );
+  assert.equal(plain.status, 404);
+
+  const configured = await activityWorker.fetch(
+    new Request(
+      `https://events.example/webhook/${baseEnv.X_WEBHOOK_PATH_SECRET}` +
+        "?crc_token=opaque",
+    ),
+    baseEnv,
+    context,
+  );
+  assert.equal(configured.status, 200);
+  assert.match(
+    (await configured.json()).response_token,
+    /^sha256=[A-Za-z0-9+/]{43}=$/,
+  );
+});
+
+test("configured callback accepts a genuinely signed X event and rejects forgery", async () => {
+  const store = new MemoryKv();
+  const env = { ...baseEnv, X_EVENT_STATE: store };
+  const data = activityData({
+    payload: {
+      ...activityData().payload,
+      in_reply_to_tweet_id: "2095000000000000000",
+    },
+  });
+  const body = new TextEncoder().encode(JSON.stringify({ data }));
+  const signature = await signWebhookBody(env.X_CONSUMER_SECRET, body);
+  const url =
+    `https://events.example/webhook/${env.X_WEBHOOK_PATH_SECRET}`;
+  const context = {
+    waitUntil() {
+      assert.fail("Replies must not start downstream processing.");
+    },
+  };
+
+  const accepted = await activityWorker.fetch(
+    new Request(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-twitter-webhooks-signature": signature,
+      },
+      body,
+    }),
+    env,
+    context,
+  );
+  assert.equal(accepted.status, 200);
+  assert.deepEqual(await accepted.json(), { ok: true, queued: false });
+
+  const rejected = await activityWorker.fetch(
+    new Request(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-twitter-webhooks-signature": "sha256=" + "A".repeat(43) + "=",
+      },
+      body,
+    }),
+    env,
+    context,
+  );
+  assert.equal(rejected.status, 401);
+  assert.equal(
+    [...store.data.keys()].some((key) => key.startsWith("pipeline:pending:")),
     false,
   );
 });

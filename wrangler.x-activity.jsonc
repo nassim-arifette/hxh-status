@@ -14,6 +14,15 @@
       "id": "3851985703a94cffa6a925d1dbbf5eb2"
     }
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "PUSH_REGISTRY",
+        "class_name": "PushSubscriptionRegistry",
+        "script_name": "hxhstatus"
+      }
+    ]
+  },
   "triggers": {
     "crons": ["* * * * *"]
   },

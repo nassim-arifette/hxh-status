@@ -17,10 +17,26 @@
       "simple": { "limit": 10, "period": 60 }
     }
   ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "PUSH_REGISTRY",
+        "class_name": "PushSubscriptionRegistry"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["PushSubscriptionRegistry"]
+    }
+  ],
   "vars": {
     "PUSH_NOTIFICATIONS_ENABLED": "true",
     "VAPID_PUBLIC_KEY": "BDDiMqC-8OtxjviwRNsKba57GJWACZJXDfL1Snw6uLCeJZxs-fTQEF6-NrKe0vuhfSU3E72Jgtd1at7NpWmGZKc",
-    "VAPID_SUBJECT": "mailto:contact@hxhstatus.com"
+    "VAPID_SUBJECT": "mailto:contact@hxhstatus.com",
+    "PUSH_ACTIVE_SUBSCRIPTION_LIMIT": "5000",
+    "PUSH_PENDING_SUBSCRIPTION_LIMIT": "256"
   },
   // Static files still bypass the Worker whenever an asset matches. The Worker
   // only handles the Cron and delegates unmatched HTTP requests back to ASSETS.

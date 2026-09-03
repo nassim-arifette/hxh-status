@@ -8,12 +8,16 @@ import {
   validateAutomationPayload,
 } from "../automation/contracts.mjs";
 import siteWorker, { runAutomation } from "./index.mjs";
-import { deliverPushForTweets } from "./push-notifications.mjs";
+import {
+  deliverPushForTweets,
+  maintainPushSubscriptions,
+} from "./push-notifications.mjs";
 
 const EVENT_TTL_SECONDS = 14 * 24 * 60 * 60;
 const PROCESSED_TTL_SECONDS = 180 * 24 * 60 * 60;
 const PENDING_TTL_SECONDS = 14 * 24 * 60 * 60;
 const MAX_EVENT_BYTES = 2_000_000;
+const MAX_CRC_TOKEN_BYTES = 512;
 const MAX_X_RESPONSE_BYTES = 1_000_000;
 const X_TIMEOUT_MS = 15_000;
 const EVENT_PREFIX = "pipeline:event:";
@@ -65,6 +69,9 @@ function safeError(error) {
 }
 
 async function importHmacKey(secret) {
+  if (typeof secret !== "string" || secret.length === 0) {
+    throw new Error("X consumer secret is not configured.");
+  }
   return crypto.subtle.importKey(
     "raw",
     encoder.encode(secret),
@@ -86,6 +93,30 @@ function base64ToBytes(value) {
 }
 
 export async function createCrcResponseToken(secret, crcToken) {
+  if (
+    typeof crcToken !== "string" ||
+    crcToken.length === 0 ||
+    encoder.encode(crcToken).byteLength > MAX_CRC_TOKEN_BYTES
+  ) {
+    throw new TypeError("Invalid crc_token.");
+  }
+
+  // The CRC endpoint and event endpoint necessarily use the same X consumer
+  // secret. Never sign a JSON object/array that could also be replayed as an
+  // Activity POST body.
+  try {
+    // Match the POST decoder exactly; TextDecoder strips an initial UTF-8 BOM.
+    const eventDecodedToken = new TextDecoder().decode(
+      encoder.encode(crcToken),
+    );
+    const parsed = JSON.parse(eventDecodedToken);
+    if (parsed !== null && typeof parsed === "object") {
+      throw new TypeError("Invalid crc_token.");
+    }
+  } catch (error) {
+    if (error instanceof TypeError) throw error;
+  }
+
   const key = await importHmacKey(secret);
   const signature = await crypto.subtle.sign(
     "HMAC",
@@ -96,7 +127,9 @@ export async function createCrcResponseToken(secret, crcToken) {
 }
 
 export async function verifyWebhookSignature(secret, body, signatureHeader) {
-  if (!signatureHeader?.startsWith("sha256=")) return false;
+  if (!/^sha256=[A-Za-z0-9+/]{43}=$/.test(signatureHeader ?? "")) {
+    return false;
+  }
 
   try {
     const signature = base64ToBytes(signatureHeader.slice("sha256=".length));
@@ -477,9 +510,26 @@ async function handleCrc(url, secret) {
   const crcToken = url.searchParams.get("crc_token");
   if (!crcToken) return json({ error: "Missing crc_token." }, { status: 400 });
 
-  return json({
-    response_token: await createCrcResponseToken(secret, crcToken),
-  });
+  try {
+    return json({
+      response_token: await createCrcResponseToken(secret, crcToken),
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      return json({ error: "Invalid crc_token." }, { status: 400 });
+    }
+    throw error;
+  }
+}
+
+function configuredWebhookPath(env) {
+  const pathSecret = requiredString(env, "X_WEBHOOK_PATH_SECRET");
+  if (!/^[A-Za-z0-9_-]{43,128}$/.test(pathSecret)) {
+    throw new Error(
+      "X_WEBHOOK_PATH_SECRET must be a 32-byte-or-longer base64url value.",
+    );
+  }
+  return `/webhook/${pathSecret}`;
 }
 
 async function handleEvent(request, env, context) {
@@ -544,22 +594,38 @@ const worker = {
     const url = new URL(request.url);
 
     if (request.method === "GET" && url.pathname === "/health") {
+      let webhookPathConfigured = false;
+      try {
+        configuredWebhookPath(env);
+        webhookPathConfigured = true;
+      } catch {
+        // Report only the configuration state, never the secret path.
+      }
       return json({
         ok: true,
         service: "togashi-events",
-        webhookConfigured: Boolean(env.X_CONSUMER_SECRET),
+        webhookConfigured: Boolean(
+          env.X_CONSUMER_SECRET && webhookPathConfigured,
+        ),
         eventStorageConfigured: Boolean(env.X_EVENT_STATE),
         xLookupConfigured: Boolean(env.X_BEARER_TOKEN),
         automationConfigured: Boolean(env.GITHUB_AUTOMATION_TOKEN),
         pushConfigured: Boolean(
           env.PUSH_SUBSCRIPTIONS &&
+            env.PUSH_REGISTRY &&
             env.VAPID_PUBLIC_KEY &&
             env.VAPID_PRIVATE_KEY,
         ),
       });
     }
 
-    if (url.pathname !== "/webhook") {
+    let webhookPath;
+    try {
+      webhookPath = configuredWebhookPath(env);
+    } catch {
+      return json({ error: "Webhook is not configured." }, { status: 503 });
+    }
+    if (url.pathname !== webhookPath) {
       return json({ error: "Not found." }, { status: 404 });
     }
     if (!env.X_CONSUMER_SECRET) {
@@ -577,6 +643,12 @@ const worker = {
   async scheduled(_controller, env) {
     return serializePipeline(async () => {
       const errors = [];
+
+      try {
+        await maintainPushSubscriptions(env);
+      } catch (error) {
+        errors.push(error);
+      }
 
       // Always drain real-time events first. If the same post is also visible
       // through syndication, the repository and push cursors make the fallback

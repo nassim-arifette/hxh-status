@@ -152,3 +152,27 @@ test("an untracked chapter is queued for review without changing status", () => 
   assert.equal(result.reviewItems.length, 1);
   assert.equal(result.state.pendingReviews[0].tweetId, tweet.id);
 });
+
+test("replaying a cursor-covered payload is a complete no-op", () => {
+  const evidence = "No.434\u3001\u4EBA\u7269\u30DA\u30F3\u5165\u308C\u5B8C\u4E86";
+  const tweet = post("2096000000000000005", evidence);
+  const processedState = {
+    ...state(),
+    lastProcessedTweetId: tweet.id,
+    lastProcessedAt: tweet.createdAt,
+  };
+  const originalStatus = statusData();
+
+  const result = applyAnalyzedEvents({
+    statusData: originalStatus,
+    state: processedState,
+    payload: payload(tweet),
+    analyzedEvents: [analyzed(tweet.id, 434, "inking", evidence)],
+  });
+
+  assert.equal(result.statusChanged, false);
+  assert.equal(result.stateChanged, false);
+  assert.deepEqual(result.statusData, originalStatus);
+  assert.deepEqual(result.state, processedState);
+  assert.deepEqual(result.reviewItems, []);
+});

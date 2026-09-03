@@ -7,6 +7,10 @@ on:
         description: Validated Togashi timeline payload
         required: true
         type: string
+      signature:
+        description: Worker HMAC for the exact timeline payload
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -48,6 +52,8 @@ jobs:
         id: process
         env:
           AUTOMATION_PAYLOAD: ${{ inputs.payload }}
+          AUTOMATION_PAYLOAD_SIGNATURE: ${{ inputs.signature }}
+          AUTOMATION_PAYLOAD_SECRET: ${{ secrets.AUTOMATION_PAYLOAD_SECRET }}
           AUTOMATION_REVIEW_FILE: ${{ runner.temp }}/togashi-review.md
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run automation:process

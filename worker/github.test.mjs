@@ -12,6 +12,7 @@ const config = {
   repository: "nassim-arifette/hxh-status",
   branch: "main",
   workflowFile: "togashi-status.yml",
+  payloadSecret: "test-automation-payload-secret-32-chars",
 };
 
 test("fetchAutomationState reads the raw file from the configured branch", async () => {
@@ -63,10 +64,10 @@ test("dispatch sends one JSON payload and requires GitHub 204", async () => {
       called = true;
       assert.match(url, /togashi-status\.yml\/dispatches$/);
       assert.equal(options.method, "POST");
-      assert.deepEqual(JSON.parse(options.body), {
-        ref: "main",
-        inputs: { payload: JSON.stringify(payload) },
-      });
+      const body = JSON.parse(options.body);
+      assert.equal(body.ref, "main");
+      assert.equal(body.inputs.payload, JSON.stringify(payload));
+      assert.match(body.inputs.signature, /^sha256=[A-Za-z0-9+/]{43}=$/);
       return new Response(null, { status: 204 });
     },
   );

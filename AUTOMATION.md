@@ -20,14 +20,16 @@ must therefore stop the fallback rather than guess.
 ## Flow
 
 ```text
-X Activity post.create webhook
+X Activity post.create webhook on a secret callback path
   -> verify the X HMAC signature
   -> reject replies, reposts, duplicates, and unexpected authors
   -> queue the post in Cloudflare KV
   -> fetch the canonical post and image URLs from the official X API
-  -> dispatch the post to the serialized GitHub Action
+  -> sign the exact dispatch payload with an independent HMAC secret
+  -> dispatch the payload and signature to the serialized GitHub Action
   -> broadcast browser notifications from the same event
   -> serialized GitHub Action
+  -> verify signature and freshness before Gemini or repository writes
   -> Gemini extraction
   -> deterministic validation
   -> update data/state/share PNGs atomically
@@ -93,15 +95,32 @@ publication scheduling automatic.
 
 Never commit tokens.
 
-The GitHub Action needs a repository Actions secret named `GEMINI_API_KEY`.
-The `togashi-events` Worker needs `X_CONSUMER_SECRET`, `X_BEARER_TOKEN`,
-`GITHUB_AUTOMATION_TOKEN`, and `VAPID_PRIVATE_KEY`. The public `hxhstatus`
-Worker only receives the public VAPID key through `wrangler.jsonc`; it must not
-contain the GitHub token, X credentials, or VAPID private key.
+The GitHub Action needs repository Actions secrets named `GEMINI_API_KEY` and
+`AUTOMATION_PAYLOAD_SECRET`. The `togashi-events` Worker needs
+`X_CONSUMER_SECRET`, `X_WEBHOOK_PATH_SECRET`, `X_BEARER_TOKEN`,
+`GITHUB_AUTOMATION_TOKEN`, `AUTOMATION_PAYLOAD_SECRET`, and
+`VAPID_PRIVATE_KEY`. The public `hxhstatus` Worker only receives the public
+VAPID key through `wrangler.jsonc`; it must not contain the GitHub token, X
+credentials, payload HMAC secret, or VAPID private key.
 
 ```bash
 npx wrangler secret put GITHUB_AUTOMATION_TOKEN --config wrangler.x-activity.jsonc
+npx wrangler secret put AUTOMATION_PAYLOAD_SECRET --config wrangler.x-activity.jsonc
+npx wrangler secret put X_WEBHOOK_PATH_SECRET --config wrangler.x-activity.jsonc
 ```
+
+Generate independent random values for `AUTOMATION_PAYLOAD_SECRET` and
+`X_WEBHOOK_PATH_SECRET`; never reuse the X consumer secret. Store the first
+value under the same name in GitHub Actions. Configure the X callback as:
+
+```text
+https://<togashi-events-worker-host>/webhook/<X_WEBHOOK_PATH_SECRET>
+```
+
+The secret path prevents public access to the X challenge-response endpoint.
+The handler also refuses to sign JSON objects or arrays, so a CRC challenge
+cannot be replayed as an Activity body. GitHub rejects a manually dispatched,
+tampered, stale, or unsigned payload before Gemini runs or files are written.
 
 Use a fine-grained GitHub token limited to this repository with Metadata read,
 Contents read, and Actions read/write. The Worker does not need Contents write.
@@ -133,6 +152,7 @@ messages/*
 public/*
 worker/*
 automation/contracts.mjs
+automation/payload-auth.mjs
 package.json
 package-lock.json
 next.config.ts
@@ -153,9 +173,17 @@ the site or the validated Togashi post on X.
 The signed X Activity event is the primary notification trigger. The 15-minute
 syndication Cron uses the same cursor only to repair a missed event. Push delivery
 is independent from the Gemini decision: visitors are notified for every original
-Togashi post, even if it does not change a chapter status. Subscriptions, the
-push cursor, and a retryable broadcast job are stored in the shared
-`PUSH_SUBSCRIPTIONS` KV binding. Delivery runs in pages of 32, retries only
+Togashi post, even if it does not change a chapter status. Verified
+subscriptions, the push cursor, and a retryable broadcast job are stored in the
+shared `PUSH_SUBSCRIPTIONS` KV binding. A globally unique Durable Object admits
+at most 5,000 total registrations, including at most 256 pending registrations.
+That same object serializes lifecycle writes and checks a per-registration
+revision, so an in-flight delivery cannot undo a locale refresh or unsubscribe.
+New registrations first receive a short-lived confirmation push; only an
+endpoint accepted by a supported browser push service is promoted. Pending
+records expire after 10 minutes and active records after 180 days. A site visit
+or successful delivery renews an active lease. Old unleased records are
+revalidated in bounded batches. Delivery runs in pages of 32, retries only
 failed recipients, removes expired or permanently invalid subscriptions, and
 abandons a recipient after six transient failures so later posts cannot remain
 blocked.
@@ -168,6 +196,11 @@ key is stored in both Wrangler configs:
 npx web-push generate-vapid-keys --json
 npx wrangler secret put VAPID_PRIVATE_KEY --config wrangler.x-activity.jsonc
 ```
+
+Deploy `wrangler.jsonc` first because the public `hxhstatus` Worker owns the
+Durable Object class and its SQLite migration. Then deploy
+`wrangler.x-activity.jsonc`, whose event Worker uses the same object through an
+external binding.
 
 Before activation, set `PUSH_INITIAL_TWEET_ID` to the newest validated Togashi
 post so existing posts are not announced as new. Then set
@@ -193,6 +226,7 @@ service.
 npm run automation:test
 npm run lint
 npx wrangler deploy --dry-run
+npx wrangler deploy --dry-run --config wrangler.x-activity.jsonc
 ```
 
 For a local fallback Cron invocation, keep external writes disabled:

@@ -8,6 +8,10 @@ import {
 } from "../automation/contracts.mjs";
 import { analyzeTweet } from "../automation/gemini.mjs";
 import { applyAnalyzedEvents } from "../automation/reducer.mjs";
+import {
+  assertFreshAutomationPayload,
+  verifyAutomationPayloadSignature,
+} from "../automation/payload-auth.mjs";
 
 const root = process.cwd();
 const statusPath = join(root, "app", "data", "status-data.json");
@@ -73,7 +77,23 @@ if (Buffer.byteLength(rawPayload, "utf8") > 60_000) {
   throw new Error("AUTOMATION_PAYLOAD exceeds the safety size limit.");
 }
 
+const payloadSignature = process.env.AUTOMATION_PAYLOAD_SIGNATURE;
+const payloadSecret = process.env.AUTOMATION_PAYLOAD_SECRET;
+if (!payloadSignature || !payloadSecret) {
+  throw new Error("Automation payload authentication is not configured.");
+}
+if (
+  !(await verifyAutomationPayloadSignature(
+    rawPayload,
+    payloadSignature,
+    payloadSecret,
+  ))
+) {
+  throw new Error("Automation payload signature is invalid.");
+}
+
 const payload = validateAutomationPayload(JSON.parse(rawPayload));
+assertFreshAutomationPayload(payload);
 const [statusData, state] = await Promise.all([
   readJson(statusPath),
   readJson(statePath),

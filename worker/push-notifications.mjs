@@ -11,11 +11,17 @@ const API_PREFIX = "/api/push/";
 const PUBLIC_KEY_PATH = API_PREFIX + "public-key";
 const SUBSCRIPTIONS_PATH = API_PREFIX + "subscriptions";
 const TEST_PATH = API_PREFIX + "test";
-const SUBSCRIPTION_PREFIX = "push:subscription:";
+const LEGACY_SUBSCRIPTION_PREFIX = "push:subscription:";
+const SUBSCRIPTION_PREFIX = "push:verified:";
+const PENDING_SUBSCRIPTION_PREFIX = "push:pending-subscription:";
+const REGISTRATION_REVISION_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const CURSOR_KEY = "push:last-notified-tweet";
 const PENDING_KEY = "push:pending-broadcast";
 const MAX_BODY_BYTES = 8_192;
 const MAX_SUBSCRIPTIONS_PER_RUN = 32;
+const MAX_SUBSCRIPTIONS_TO_VERIFY = 8;
+const MAX_LEGACY_SUBSCRIPTIONS_TO_MIGRATE = 8;
 const VALID_LOCALES = new Set(["en", "fr", "ja"]);
 const PUSH_ENDPOINT_HOSTS = [
   /^fcm\.googleapis\.com$/,
@@ -51,9 +57,17 @@ function requirePushStore(env) {
   return env.PUSH_SUBSCRIPTIONS;
 }
 
+function requirePushRegistry(env) {
+  if (!env.PUSH_REGISTRY?.getByName) {
+    throw new Error("PUSH_REGISTRY is not configured.");
+  }
+  return env.PUSH_REGISTRY;
+}
+
 function assertPushApiConfigured(env) {
   requiredString(env, "VAPID_PUBLIC_KEY");
   requirePushStore(env);
+  requirePushRegistry(env);
 }
 
 function assertPushDeliveryConfigured(env) {
@@ -228,33 +242,77 @@ function validateLocale(value) {
 async function subscriptionKey(endpoint) {
   const bytes = new TextEncoder().encode(endpoint);
   const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
-  return (
-    SUBSCRIPTION_PREFIX +
-    [...digest].map((byte) => byte.toString(16).padStart(2, "0")).join("")
-  );
+  return [...digest]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function activeSubscriptionKey(id) {
+  return SUBSCRIPTION_PREFIX + id;
+}
+
+function pendingSubscriptionKey(id) {
+  return PENDING_SUBSCRIPTION_PREFIX + id;
+}
+
+class PushCapacityError extends Error {}
+class PushRegistryNotFoundError extends Error {}
+class PushRegistryConflictError extends Error {}
+
+async function registryCommand(env, command, id, details = {}) {
+  const registry = requirePushRegistry(env).getByName("global");
+  const response = await registry.fetch(`https://push-registry/${command}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, ...details }),
+  });
+
+  if (response.status === 429) {
+    throw new PushCapacityError("Push subscription capacity reached.");
+  }
+  if (response.status === 404) {
+    throw new PushRegistryNotFoundError(
+      `Push registry ${command} target was not found.`,
+    );
+  }
+  if (response.status === 409) {
+    throw new PushRegistryConflictError(
+      `Push registry ${command} target changed during delivery.`,
+    );
+  }
+  if (!response.ok) {
+    throw new Error(`Push registry ${command} failed (${response.status}).`);
+  }
+  return response.json();
+}
+
+function storedRecord(subscription, locale, state) {
+  const now = new Date().toISOString();
+  return {
+    version: 2,
+    revision: crypto.randomUUID(),
+    state,
+    subscription,
+    locale: validateLocale(locale),
+    updatedAt: now,
+    ...(state === "active" ? { verifiedAt: now } : {}),
+  };
 }
 
 async function storeSubscription(env, input, locale) {
-  const store = requirePushStore(env);
   const subscription = await validateSubscription(input);
-  const key = await subscriptionKey(subscription.endpoint);
-
-  await store.put(
-    key,
-    JSON.stringify({
-      subscription,
-      locale: validateLocale(locale),
-      updatedAt: new Date().toISOString(),
-    }),
-  );
+  const id = await subscriptionKey(subscription.endpoint);
+  await registryCommand(env, "upsert", id, {
+    record: storedRecord(subscription, locale, "pending"),
+  });
 
   return subscription;
 }
 
 async function deleteSubscription(env, endpoint) {
-  const store = requirePushStore(env);
   const validatedEndpoint = validateEndpoint(endpoint);
-  await store.delete(await subscriptionKey(validatedEndpoint));
+  const id = await subscriptionKey(validatedEndpoint);
+  await registryCommand(env, "release", id);
 }
 
 function compactText(value) {
@@ -295,20 +353,69 @@ async function defaultSendPush(env, subscription, payload) {
   });
 }
 
-async function loadStoredSubscription(store, key) {
+function registrationIdFromKey(key, prefix) {
+  const id = key.slice(prefix.length);
+  if (!/^[a-f0-9]{64}$/.test(id)) {
+    throw new TypeError("Invalid stored subscription key.");
+  }
+  return id;
+}
+
+async function removeRegistration(env, id, revision = null) {
+  try {
+    await registryCommand(
+      env,
+      revision ? "release-if-current" : "release",
+      id,
+      revision ? { revision } : {},
+    );
+    return true;
+  } catch (error) {
+    if (
+      error instanceof PushRegistryConflictError ||
+      error instanceof PushRegistryNotFoundError
+    ) {
+      return false;
+    }
+    throw error;
+  }
+}
+
+async function loadStoredSubscription(env, key, prefix, expectedState) {
+  const store = requirePushStore(env);
   const raw = await store.get(key);
   if (!raw) return null;
 
   try {
+    const id = registrationIdFromKey(key, prefix);
     const record = JSON.parse(raw);
+    if (
+      record.version !== 2 ||
+      record.state !== expectedState ||
+      !REGISTRATION_REVISION_PATTERN.test(record.revision ?? "")
+    ) {
+      throw new TypeError("Invalid subscription lifecycle state.");
+    }
+    const registration = await registryCommand(env, "inspect", id);
+    if (registration.state !== expectedState) return null;
     return {
+      id,
+      revision: record.revision,
       subscription: await validateSubscription(record.subscription),
       locale: normalizeLocale(record.locale),
+      verifiedAt: record.verifiedAt ?? null,
     };
   } catch {
-    await store.delete(key);
+    // Lifecycle mutations are serialized by the registry. A failed or stale
+    // read must never delete a newer registration; finite leases clean it up.
     return null;
   }
+}
+
+async function renewActiveSubscription(env, record) {
+  await registryCommand(env, "renew", record.id, {
+    revision: record.revision,
+  });
 }
 
 function pushStatus(error) {
@@ -325,6 +432,145 @@ function isTransientPushFailure(status) {
     status === 429 ||
     status >= 500
   );
+}
+
+async function migrateLegacyPushSubscriptions(env) {
+  const store = requirePushStore(env);
+  const page = await store.list({
+    prefix: LEGACY_SUBSCRIPTION_PREFIX,
+    limit: MAX_LEGACY_SUBSCRIPTIONS_TO_MIGRATE,
+  });
+  let migrated = 0;
+  let removed = 0;
+
+  for (const { name } of page.keys) {
+    const raw = await store.get(name);
+    if (!raw) continue;
+
+    let id;
+    let subscription;
+    let locale;
+    try {
+      id = registrationIdFromKey(name, LEGACY_SUBSCRIPTION_PREFIX);
+      const record = JSON.parse(raw);
+      subscription = await validateSubscription(record.subscription);
+      locale = normalizeLocale(record.locale);
+      if ((await subscriptionKey(subscription.endpoint)) !== id) {
+        throw new TypeError("Stored subscription endpoint does not match its key.");
+      }
+    } catch {
+      await store.delete(name);
+      removed += 1;
+      continue;
+    }
+
+    try {
+      await registryCommand(env, "migrate", id, {
+        record: storedRecord(subscription, locale, "pending"),
+      });
+    } catch (error) {
+      if (error instanceof PushRegistryNotFoundError) continue;
+      if (!(error instanceof PushCapacityError)) throw error;
+      await store.delete(name);
+      removed += 1;
+      continue;
+    }
+    migrated += 1;
+  }
+
+  return { migrated, removed };
+}
+
+export async function verifyPendingPushSubscriptions(
+  env,
+  sendPush = defaultSendPush,
+) {
+  if (env.PUSH_NOTIFICATIONS_ENABLED !== "true") {
+    return { enabled: false, verified: 0, removed: 0, pending: 0 };
+  }
+
+  assertPushDeliveryConfigured(env);
+  const store = requirePushStore(env);
+  const page = await store.list({
+    prefix: PENDING_SUBSCRIPTION_PREFIX,
+    limit: MAX_SUBSCRIPTIONS_TO_VERIFY,
+  });
+  let verified = 0;
+  let removed = 0;
+  let pending = 0;
+
+  for (const { name } of page.keys) {
+    const record = await loadStoredSubscription(
+      env,
+      name,
+      PENDING_SUBSCRIPTION_PREFIX,
+      "pending",
+    );
+    if (!record) {
+      removed += 1;
+      continue;
+    }
+
+    try {
+      await sendPush(env, record.subscription, {
+        v: 1,
+        kind: "test",
+        locale: record.locale,
+      });
+    } catch (error) {
+      if (isTransientPushFailure(pushStatus(error))) {
+        pending += 1;
+        continue;
+      }
+      if (await removeRegistration(env, record.id, record.revision)) {
+        removed += 1;
+      } else {
+        pending += 1;
+      }
+      continue;
+    }
+
+    try {
+      await registryCommand(env, "promote", record.id, {
+        revision: record.revision,
+      });
+      verified += 1;
+    } catch (error) {
+      if (error instanceof PushRegistryNotFoundError) {
+        removed += 1;
+      } else {
+        // A concurrent refresh owns the newer revision. Infrastructure errors
+        // leave only the short finite pending lease for a later retry.
+        pending += 1;
+      }
+    }
+  }
+
+  return { enabled: true, verified, removed, pending };
+}
+
+export async function maintainPushSubscriptions(
+  env,
+  sendPush = defaultSendPush,
+) {
+  if (env.PUSH_NOTIFICATIONS_ENABLED !== "true") {
+    return {
+      enabled: false,
+      migrated: 0,
+      verified: 0,
+      removed: 0,
+      pending: 0,
+    };
+  }
+
+  assertPushDeliveryConfigured(env);
+  const migration = await migrateLegacyPushSubscriptions(env);
+  const verification = await verifyPendingPushSubscriptions(env, sendPush);
+  return {
+    ...verification,
+    migrated: migration.migrated,
+    removed: migration.removed + verification.removed,
+  };
 }
 
 async function deliverPage(env, job, sendPush) {
@@ -348,7 +594,12 @@ async function deliverPage(env, job, sendPush) {
     const keys = page.keys.slice(start, start + 4);
     await Promise.all(
       keys.map(async ({ name }) => {
-        const record = await loadStoredSubscription(store, name);
+        const record = await loadStoredSubscription(
+          env,
+          name,
+          SUBSCRIPTION_PREFIX,
+          "active",
+        );
         if (!record) return;
 
         try {
@@ -357,10 +608,16 @@ async function deliverPage(env, job, sendPush) {
             record.subscription,
             notificationPayload(job.tweet, job.count, record.locale),
           );
+          try {
+            await renewActiveSubscription(env, record);
+          } catch {
+            // Delivery succeeded, so retrying would duplicate it. The registry
+            // either retained the current revision or a concurrent mutation won.
+          }
         } catch (error) {
           const status = pushStatus(error);
           if (status === 404 || status === 410) {
-            await store.delete(name);
+            await removeRegistration(env, record.id, record.revision);
             return;
           }
           if (isTransientPushFailure(status) && retryAttempt < 6) {
@@ -369,7 +626,7 @@ async function deliverPage(env, job, sendPush) {
           }
 
           // Permanent failures and exhausted retries must not block later posts.
-          await store.delete(name);
+          await removeRegistration(env, record.id, record.revision);
         }
       }),
     );
@@ -437,7 +694,7 @@ async function loadPendingJob(store) {
         job.retryKeys.some(
           (key) =>
             typeof key !== "string" ||
-            !/^push:subscription:[a-f0-9]{64}$/.test(key),
+            !/^push:verified:[a-f0-9]{64}$/.test(key),
         ) ||
         new Set(job.retryKeys).size !== job.retryKeys.length ||
         !Number.isInteger(job.retryAttempt) ||
@@ -562,9 +819,25 @@ async function handleTestNotification(request, env, sendPush) {
   const body = await readJson(request);
   assertExactKeys(body, ["endpoint"], "test request");
   const endpoint = validateEndpoint(body.endpoint);
-  const store = requirePushStore(env);
-  const key = await subscriptionKey(endpoint);
-  const record = await loadStoredSubscription(store, key);
+  const id = await subscriptionKey(endpoint);
+  const activeKey = activeSubscriptionKey(id);
+  const pendingKey = pendingSubscriptionKey(id);
+  let isPending = false;
+  let record = await loadStoredSubscription(
+    env,
+    activeKey,
+    SUBSCRIPTION_PREFIX,
+    "active",
+  );
+  if (!record) {
+    isPending = true;
+    record = await loadStoredSubscription(
+      env,
+      pendingKey,
+      PENDING_SUBSCRIPTION_PREFIX,
+      "pending",
+    );
+  }
 
   if (!record) return apiError(404, "Subscription not found.");
 
@@ -577,10 +850,26 @@ async function handleTestNotification(request, env, sendPush) {
   } catch (error) {
     const status = pushStatus(error);
     if (status === 404 || status === 410) {
-      await store.delete(key);
+      await removeRegistration(env, record.id, record.revision);
       return apiError(410, "Subscription expired.");
     }
     return apiError(502, "Test notification could not be sent.");
+  }
+
+  if (isPending) {
+    try {
+      await registryCommand(env, "promote", record.id, {
+        revision: record.revision,
+      });
+    } catch {
+      return apiError(503, "Subscription could not be activated.");
+    }
+  } else {
+    try {
+      await renewActiveSubscription(env, record);
+    } catch {
+      return apiError(503, "Subscription could not be renewed.");
+    }
   }
 
   return json({ ok: true });
@@ -650,6 +939,12 @@ export async function handlePushApi(
       return handleTestNotification(request, env, sendPush);
     }
   } catch (error) {
+    if (error instanceof PushCapacityError) {
+      return json(
+        { error: "Push subscription capacity reached." },
+        { status: 429, headers: { "Retry-After": "600" } },
+      );
+    }
     if (error instanceof RangeError) {
       return apiError(413, "Request body is too large.");
     }

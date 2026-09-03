@@ -12,6 +12,8 @@ import {
 import { fetchTimelineTweets, selectUnseenTweets } from "./x-timeline.mjs";
 import { handlePushApi, runPushNotifications } from "./push-notifications.mjs";
 
+export { PushSubscriptionRegistry } from "./push-subscription-registry.mjs";
+
 const MAX_DISPATCH_BYTES = 50_000;
 const MAX_TWEETS_PER_RUN = 5;
 
@@ -123,8 +125,10 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
     return { dispatched: false, count: payload.tweets.length };
   }
 
+  const payloadSecret = requiredEnv(env, "AUTOMATION_PAYLOAD_SECRET");
+
   await dispatchAutomationWorkflow(
-    { ...githubConfig, payload },
+    { ...githubConfig, payload, payloadSecret },
     fetchImpl,
   );
 

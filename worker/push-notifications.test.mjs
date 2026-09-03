@@ -4,7 +4,9 @@ import assert from "node:assert/strict";
 import {
   deliverPushForTweets,
   handlePushApi,
+  maintainPushSubscriptions,
   runPushNotifications,
+  verifyPendingPushSubscriptions,
 } from "./push-notifications.mjs";
 import worker from "./index.mjs";
 
@@ -12,18 +14,21 @@ import worker from "./index.mjs";
 class MemoryKv {
   constructor(entries = []) {
     this.data = new Map(entries);
+    this.putOptions = new Map();
   }
 
   async get(key) {
     return this.data.get(key) ?? null;
   }
 
-  async put(key, value) {
+  async put(key, value, options) {
     this.data.set(key, String(value));
+    this.putOptions.set(key, options ?? null);
   }
 
   async delete(key) {
     this.data.delete(key);
+    this.putOptions.delete(key);
   }
 
   async list({ prefix = "", limit = 1_000, cursor } = {}) {
@@ -41,6 +46,140 @@ class MemoryKv {
   }
 }
 
+class MemoryRegistry {
+  constructor({ activeLimit = 5_000, pendingLimit = 256, store = null } = {}) {
+    this.activeLimit = activeLimit;
+    this.pendingLimit = pendingLimit;
+    this.store = store;
+    this.entries = new Map();
+    this.queue = Promise.resolve();
+  }
+
+  getByName(name) {
+    assert.equal(name, "global");
+    return this;
+  }
+
+  fetch(input, options) {
+    const operation = this.queue.then(() => this.handle(input, options));
+    this.queue = operation.catch(() => undefined);
+    return operation;
+  }
+
+  async handle(input, options) {
+    const path = new URL(input).pathname;
+    const { id, record, revision } = JSON.parse(options.body);
+    const existing = this.entries.get(id);
+    const activeKey = `push:verified:${id}`;
+    const pendingKey = `push:pending-subscription:${id}`;
+    const legacyKey = `push:subscription:${id}`;
+
+    if (path === "/upsert" || path === "/migrate") {
+      if (path === "/migrate" && !(await this.store.get(legacyKey))) {
+        return Response.json({ error: "missing" }, { status: 404 });
+      }
+      if (existing) {
+        const previous =
+          existing === "active"
+            ? JSON.parse(await this.store.get(activeKey))
+            : null;
+        const stored = {
+          ...record,
+          state: existing,
+          ...(existing === "active"
+            ? { verifiedAt: previous?.verifiedAt ?? new Date().toISOString() }
+            : {}),
+        };
+        await this.store.put(
+          existing === "active" ? activeKey : pendingKey,
+          JSON.stringify(stored),
+          { expirationTtl: existing === "active" ? 15_552_000 : 600 },
+        );
+        await this.store.delete(existing === "active" ? pendingKey : activeKey);
+        await this.store.delete(legacyKey);
+        return Response.json({ state: existing, created: false });
+      }
+
+      const pending = [...this.entries.values()].filter(
+        (state) => state === "pending",
+      ).length;
+      if (
+        this.entries.size >= this.activeLimit ||
+        pending >= this.pendingLimit
+      ) {
+        return Response.json({ error: "capacity" }, { status: 429 });
+      }
+      this.entries.set(id, "pending");
+      await this.store.put(pendingKey, JSON.stringify(record), {
+        expirationTtl: 600,
+      });
+      await this.store.delete(activeKey);
+      await this.store.delete(legacyKey);
+      return Response.json({ state: "pending", created: true }, { status: 201 });
+    }
+
+    if (path === "/inspect") {
+      return existing
+        ? Response.json({ state: existing })
+        : Response.json({ error: "missing" }, { status: 404 });
+    }
+
+    if (path === "/promote") {
+      if (existing !== "pending") {
+        return Response.json({ error: "missing" }, { status: 404 });
+      }
+      const pending = JSON.parse(await this.store.get(pendingKey));
+      if (pending.revision !== revision) {
+        return Response.json({ error: "changed" }, { status: 409 });
+      }
+      this.entries.set(id, "active");
+      await this.store.put(
+        activeKey,
+        JSON.stringify({
+          ...pending,
+          state: "active",
+          verifiedAt: pending.verifiedAt ?? new Date().toISOString(),
+        }),
+        { expirationTtl: 15_552_000 },
+      );
+      await this.store.delete(pendingKey);
+      return Response.json({ state: "active", created: false });
+    }
+
+    if (path === "/renew") {
+      if (existing !== "active") {
+        return Response.json({ error: "missing" }, { status: 404 });
+      }
+      const active = JSON.parse(await this.store.get(activeKey));
+      if (active.revision !== revision) {
+        return Response.json({ error: "changed" }, { status: 409 });
+      }
+      await this.store.put(activeKey, JSON.stringify(active), {
+        expirationTtl: 15_552_000,
+      });
+      return Response.json({ state: "active", created: false });
+    }
+
+    if (path === "/release" || path === "/release-if-current") {
+      if (path === "/release-if-current" && existing) {
+        const current = JSON.parse(
+          await this.store.get(existing === "active" ? activeKey : pendingKey),
+        );
+        if (current.revision !== revision) {
+          return Response.json({ error: "changed" }, { status: 409 });
+        }
+      }
+      this.entries.delete(id);
+      await this.store.delete(activeKey);
+      await this.store.delete(pendingKey);
+      await this.store.delete(legacyKey);
+      return Response.json({ released: true });
+    }
+
+    return Response.json({ error: "missing" }, { status: 404 });
+  }
+}
+
 const baseEnv = {
   PUSH_NOTIFICATIONS_ENABLED: "true",
   PUSH_INITIAL_TWEET_ID: "2094673907626414299",
@@ -50,6 +189,17 @@ const baseEnv = {
   VAPID_PRIVATE_KEY: "test-private-key",
   VAPID_SUBJECT: "mailto:contact@hxhstatus.com",
 };
+
+function makeEnv(store = new MemoryKv(), overrides = {}) {
+  const registry = overrides.PUSH_REGISTRY ?? new MemoryRegistry();
+  registry.store = store;
+  return {
+    ...baseEnv,
+    PUSH_SUBSCRIPTIONS: store,
+    ...overrides,
+    PUSH_REGISTRY: registry,
+  };
+}
 
 function encodeBase64Url(bytes) {
   return Buffer.from(bytes).toString("base64url");
@@ -73,6 +223,14 @@ async function validSubscription(suffix = "one") {
       auth: encodeBase64Url(crypto.getRandomValues(new Uint8Array(16))),
     },
   };
+}
+
+async function subscriptionId(endpoint) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(endpoint),
+  );
+  return Buffer.from(digest).toString("hex");
 }
 
 function jsonRequest(path, method, body, origin = "https://hxhstatus.com") {
@@ -99,7 +257,7 @@ function tweet(id = "2096000000000000001") {
   };
 }
 
-async function subscribe(env, subscription, locale = "en") {
+async function registerPending(env, subscription, locale = "en") {
   const response = await handlePushApi(
     jsonRequest("/api/push/subscriptions", "POST", {
       locale,
@@ -108,10 +266,17 @@ async function subscribe(env, subscription, locale = "en") {
     env,
   );
   assert.equal(response.status, 201);
+  return response;
+}
+
+async function subscribe(env, subscription, locale = "en") {
+  await registerPending(env, subscription, locale);
+  const result = await verifyPendingPushSubscriptions(env, async () => {});
+  assert.equal(result.verified, 1);
 }
 
 test("push API exposes only the public key and ignores non-API paths", async () => {
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: new MemoryKv() };
+  const env = makeEnv();
   const response = await handlePushApi(
     new Request("https://hxhstatus.com/api/push/public-key"),
     env,
@@ -130,16 +295,14 @@ test("push API exposes only the public key and ignores non-API paths", async () 
 
 test("Worker routes push APIs before falling back to static assets", async () => {
   let assetCalls = 0;
-  const env = {
-    ...baseEnv,
-    PUSH_SUBSCRIPTIONS: new MemoryKv(),
+  const env = makeEnv(new MemoryKv(), {
     ASSETS: {
       async fetch() {
         assetCalls += 1;
         return new Response("asset");
       },
     },
-  };
+  });
 
   const apiResponse = await worker.fetch(
     new Request("https://hxhstatus.com/api/push/public-key"),
@@ -157,15 +320,30 @@ test("Worker routes push APIs before falling back to static assets", async () =>
 });
 test("subscription upsert records locale and DELETE removes it", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   const subscription = await validSubscription();
 
   await subscribe(env, subscription, "fr");
   const storedKeys = [...store.data.keys()].filter((key) =>
-    key.startsWith("push:subscription:"),
+    key.startsWith("push:verified:"),
   );
   assert.equal(storedKeys.length, 1);
   assert.equal(JSON.parse(store.data.get(storedKeys[0])).locale, "fr");
+  assert.equal(
+    store.putOptions.get(storedKeys[0]).expirationTtl,
+    180 * 24 * 60 * 60,
+  );
+
+  const refreshed = await handlePushApi(
+    jsonRequest("/api/push/subscriptions", "POST", {
+      locale: "ja",
+      subscription,
+    }),
+    env,
+  );
+  assert.equal(refreshed.status, 201);
+  assert.equal(JSON.parse(store.data.get(storedKeys[0])).locale, "ja");
+  assert.equal(env.PUSH_REGISTRY.entries.size, 1);
 
   const response = await handlePushApi(
     jsonRequest("/api/push/subscriptions", "DELETE", {
@@ -177,8 +355,261 @@ test("subscription upsert records locale and DELETE removes it", async () => {
   assert.equal(store.data.has(storedKeys[0]), false);
 });
 
+test("an in-flight delivery cannot overwrite a concurrent locale refresh", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("locale-race");
+  await subscribe(env, subscription, "fr");
+
+  let signalStarted;
+  let releaseSend;
+  const started = new Promise((resolve) => {
+    signalStarted = resolve;
+  });
+  const blocked = new Promise((resolve) => {
+    releaseSend = resolve;
+  });
+  const delivery = deliverPushForTweets(env, [tweet()], async () => {
+    signalStarted();
+    await blocked;
+  });
+  await started;
+
+  const refresh = await handlePushApi(
+    jsonRequest("/api/push/subscriptions", "POST", {
+      locale: "ja",
+      subscription,
+    }),
+    env,
+  );
+  assert.equal(refresh.status, 201);
+  releaseSend();
+  await delivery;
+
+  const activeKey = [...store.data.keys()].find((key) =>
+    key.startsWith("push:verified:"),
+  );
+  assert.ok(activeKey);
+  assert.equal(JSON.parse(store.data.get(activeKey)).locale, "ja");
+  assert.equal(env.PUSH_REGISTRY.entries.size, 1);
+});
+
+test("an in-flight delivery cannot recreate a deleted subscription", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("delete-race");
+  await subscribe(env, subscription, "fr");
+
+  let signalStarted;
+  let releaseSend;
+  const started = new Promise((resolve) => {
+    signalStarted = resolve;
+  });
+  const blocked = new Promise((resolve) => {
+    releaseSend = resolve;
+  });
+  const delivery = deliverPushForTweets(env, [tweet()], async () => {
+    signalStarted();
+    await blocked;
+  });
+  await started;
+
+  const deletion = await handlePushApi(
+    jsonRequest("/api/push/subscriptions", "DELETE", {
+      endpoint: subscription.endpoint,
+    }),
+    env,
+  );
+  assert.equal(deletion.status, 200);
+  releaseSend();
+  await delivery;
+
+  assert.equal(env.PUSH_REGISTRY.entries.size, 0);
+  assert.equal(
+    [...store.data.keys()].some((key) =>
+      /push:(?:verified|pending-subscription):/.test(key),
+    ),
+    false,
+  );
+});
+
+test("new registrations remain short-lived until a push service accepts them", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("pending");
+
+  await registerPending(env, subscription, "ja");
+  const pendingKey = [...store.data.keys()].find((key) =>
+    key.startsWith("push:pending-subscription:"),
+  );
+  assert.ok(pendingKey);
+  assert.equal(
+    store.putOptions.get(pendingKey).expirationTtl,
+    10 * 60,
+  );
+  assert.equal(
+    [...store.data.keys()].some((key) => key.startsWith("push:verified:")),
+    false,
+  );
+
+  const sent = [];
+  const result = await verifyPendingPushSubscriptions(
+    env,
+    async (_env, target, payload) => sent.push({ target, payload }),
+  );
+  assert.deepEqual(result, {
+    enabled: true,
+    verified: 1,
+    removed: 0,
+    pending: 0,
+  });
+  assert.equal(sent[0].target.endpoint, subscription.endpoint);
+  assert.deepEqual(sent[0].payload, { v: 1, kind: "test", locale: "ja" });
+  assert.equal(store.data.has(pendingKey), false);
+  assert.equal(
+    [...store.data.keys()].some((key) => key.startsWith("push:verified:")),
+    true,
+  );
+});
+
+test("pending verification promotes the newest concurrent locale revision", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("pending-locale-race");
+  await registerPending(env, subscription, "fr");
+
+  let signalStarted;
+  let releaseSend;
+  const started = new Promise((resolve) => {
+    signalStarted = resolve;
+  });
+  const blocked = new Promise((resolve) => {
+    releaseSend = resolve;
+  });
+  const verification = verifyPendingPushSubscriptions(env, async () => {
+    signalStarted();
+    await blocked;
+  });
+  await started;
+  await handlePushApi(
+    jsonRequest("/api/push/subscriptions", "POST", {
+      locale: "ja",
+      subscription,
+    }),
+    env,
+  );
+  releaseSend();
+
+  assert.equal((await verification).pending, 1);
+  const retry = await verifyPendingPushSubscriptions(env, async () => {});
+  assert.equal(retry.verified, 1);
+  const activeKey = [...store.data.keys()].find((key) =>
+    key.startsWith("push:verified:"),
+  );
+  assert.equal(JSON.parse(store.data.get(activeKey)).locale, "ja");
+});
+
+test("pending verification cannot recreate a deleted subscription", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("pending-delete-race");
+  await registerPending(env, subscription, "fr");
+
+  let signalStarted;
+  let releaseSend;
+  const started = new Promise((resolve) => {
+    signalStarted = resolve;
+  });
+  const blocked = new Promise((resolve) => {
+    releaseSend = resolve;
+  });
+  const verification = verifyPendingPushSubscriptions(env, async () => {
+    signalStarted();
+    await blocked;
+  });
+  await started;
+  const deletion = await handlePushApi(
+    jsonRequest("/api/push/subscriptions", "DELETE", {
+      endpoint: subscription.endpoint,
+    }),
+    env,
+  );
+  assert.equal(deletion.status, 200);
+  releaseSend();
+  await verification;
+
+  assert.equal(env.PUSH_REGISTRY.entries.size, 0);
+  assert.equal(
+    [...store.data.keys()].some((key) =>
+      /push:(?:verified|pending-subscription):/.test(key),
+    ),
+    false,
+  );
+});
+
+test("unreachable push endpoints are removed instead of becoming active", async () => {
+  const store = new MemoryKv();
+  const registry = new MemoryRegistry();
+  const env = makeEnv(store, { PUSH_REGISTRY: registry });
+  await registerPending(env, await validSubscription("unreachable"));
+
+  const result = await verifyPendingPushSubscriptions(env, async () => {
+    throw { statusCode: 404 };
+  });
+
+  assert.equal(result.verified, 0);
+  assert.equal(result.removed, 1);
+  assert.equal(registry.entries.size, 0);
+  assert.equal(
+    [...store.data.keys()].some((key) =>
+      key.startsWith("push:pending-subscription:"),
+    ),
+    false,
+  );
+});
+
+test("the shared registry enforces a global pending and active cap", async () => {
+  const store = new MemoryKv();
+  const registry = new MemoryRegistry({ activeLimit: 1, pendingLimit: 1 });
+  const env = makeEnv(store, { PUSH_REGISTRY: registry });
+  await registerPending(env, await validSubscription("first-cap"));
+
+  const second = await handlePushApi(
+    jsonRequest("/api/push/subscriptions", "POST", {
+      locale: "en",
+      subscription: await validSubscription("second-cap"),
+    }),
+    env,
+  );
+
+  assert.equal(second.status, 429);
+  assert.equal(registry.entries.size, 1);
+});
+
+test("legacy records are revalidated and moved onto finite leases", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("legacy");
+  const id = await subscriptionId(subscription.endpoint);
+  store.data.set(
+    `push:subscription:${id}`,
+    JSON.stringify({ subscription, locale: "fr" }),
+  );
+
+  const result = await maintainPushSubscriptions(env, async () => {});
+
+  assert.equal(result.migrated, 1);
+  assert.equal(result.verified, 1);
+  assert.equal(store.data.has(`push:subscription:${id}`), false);
+  assert.equal(store.data.has(`push:verified:${id}`), true);
+  assert.equal(
+    store.putOptions.get(`push:verified:${id}`).expirationTtl,
+    180 * 24 * 60 * 60,
+  );
+});
+
 test("subscription API rejects cross-origin, oversized, and SSRF endpoints", async () => {
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: new MemoryKv() };
+  const env = makeEnv();
   const subscription = await validSubscription();
   const crossOrigin = await handlePushApi(
     jsonRequest(
@@ -216,11 +647,7 @@ test("subscription API rejects cross-origin, oversized, and SSRF endpoints", asy
 
 test("local test endpoint sends a fixed schema to the stored browser", async () => {
   const store = new MemoryKv();
-  const env = {
-    ...baseEnv,
-    PUSH_TEST_ENABLED: "true",
-    PUSH_SUBSCRIPTIONS: store,
-  };
+  const env = makeEnv(store, { PUSH_TEST_ENABLED: "true" });
   const subscription = await validSubscription();
   await subscribe(env, subscription, "fr");
   const sent = [];
@@ -250,11 +677,7 @@ test("local test endpoint sends a fixed schema to the stored browser", async () 
 test("push notifications stay independent from disabled GitHub automation", async () => {
   let loaded = 0;
   const result = await runPushNotifications(
-    {
-      ...baseEnv,
-      PUSH_NOTIFICATIONS_ENABLED: "false",
-      PUSH_SUBSCRIPTIONS: new MemoryKv(),
-    },
+    makeEnv(new MemoryKv(), { PUSH_NOTIFICATIONS_ENABLED: "false" }),
     async () => {
       throw new Error("network should not run");
     },
@@ -274,7 +697,7 @@ test("push notifications stay independent from disabled GitHub automation", asyn
 
 test("one new Togashi post is sent once and advances the push cursor", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   await subscribe(env, await validSubscription(), "fr");
   const sent = [];
   const latest = tweet();
@@ -312,9 +735,35 @@ test("one new Togashi post is sent once and advances the push cursor", async () 
   assert.deepEqual(second, { enabled: true, complete: true, delivered: 0 });
 });
 
+test("a stale KV record is ignored if its registry lease vanished", async () => {
+  const store = new MemoryKv();
+  const registry = new MemoryRegistry();
+  const env = makeEnv(store, { PUSH_REGISTRY: registry });
+  await subscribe(env, await validSubscription("lease-recovery"), "en");
+  registry.entries.clear();
+  let sends = 0;
+
+  const result = await runPushNotifications(
+    env,
+    fetch,
+    async () => [tweet()],
+    async () => {
+      sends += 1;
+    },
+  );
+
+  assert.equal(result.complete, true);
+  assert.equal(sends, 0);
+  assert.equal(registry.entries.size, 0);
+  assert.equal(
+    [...store.data.keys()].some((key) => key.startsWith("push:verified:")),
+    true,
+  );
+});
+
 test("real-time delivery is idempotent once the post cursor has advanced", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   await subscribe(env, await validSubscription(), "en");
   const latest = tweet();
   let sends = 0;
@@ -336,7 +785,7 @@ test("webhook and fallback share one push cursor in either arrival order", async
   for (const firstSource of ["webhook", "fallback"]) {
     await t.test(`${firstSource} arrives first`, async () => {
       const store = new MemoryKv();
-      const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+      const env = makeEnv(store);
       await subscribe(env, await validSubscription(firstSource), "en");
       const latest = tweet();
       let sends = 0;
@@ -363,10 +812,10 @@ test("webhook and fallback share one push cursor in either arrival order", async
 
 test("expired subscriptions are removed without blocking the cursor", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   await subscribe(env, await validSubscription(), "en");
   const key = [...store.data.keys()].find((item) =>
-    item.startsWith("push:subscription:"),
+    item.startsWith("push:verified:"),
   );
   const latest = tweet();
 
@@ -386,7 +835,7 @@ test("expired subscriptions are removed without blocking the cursor", async () =
 
 test("temporary delivery failure keeps a retryable pending job", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   await subscribe(env, await validSubscription(), "en");
   const latest = tweet();
 
@@ -421,7 +870,7 @@ test("temporary delivery failure keeps a retryable pending job", async () => {
 
 test("retry sends only to subscriptions that failed transiently", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   const first = await validSubscription("first");
   const second = await validSubscription("second");
   await subscribe(env, first, "en");
@@ -458,7 +907,7 @@ test("retry sends only to subscriptions that failed transiently", async () => {
 
 test("permanent recipient failure is removed without blocking the cursor", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   await subscribe(env, await validSubscription("forbidden"), "en");
   const latest = tweet();
 
@@ -474,7 +923,7 @@ test("permanent recipient failure is removed without blocking the cursor", async
   assert.equal(result.complete, true);
   assert.equal(
     [...store.data.keys()].some((key) =>
-      key.startsWith("push:subscription:"),
+      key.startsWith("push:verified:"),
     ),
     false,
   );
@@ -483,7 +932,7 @@ test("permanent recipient failure is removed without blocking the cursor", async
 
 test("transient recipient failure is dropped after six attempts", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   await subscribe(env, await validSubscription("unavailable"), "en");
   const latest = tweet();
   let attempts = 0;
@@ -524,22 +973,31 @@ test("transient recipient failure is dropped after six attempts", async () => {
   assert.equal(store.data.get("push:last-notified-tweet"), latest.id);
   assert.equal(
     [...store.data.keys()].some((key) =>
-      key.startsWith("push:subscription:"),
+      key.startsWith("push:verified:"),
     ),
     false,
   );
 });
 test("broadcasts paginate without exceeding 32 subscriptions per run", async () => {
   const store = new MemoryKv();
-  const env = { ...baseEnv, PUSH_SUBSCRIPTIONS: store };
+  const env = makeEnv(store);
   const subscription = await validSubscription();
-  const record = JSON.stringify({ subscription, locale: "en" });
-
   for (let index = 0; index < 33; index += 1) {
+    const id = index.toString(16).padStart(64, "0");
+    const record = JSON.stringify({
+      version: 2,
+      revision: crypto.randomUUID(),
+      state: "active",
+      subscription,
+      locale: "en",
+      verifiedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
     store.data.set(
-      `push:subscription:${String(index).padStart(2, "0")}`,
+      `push:verified:${id}`,
       record,
     );
+    env.PUSH_REGISTRY.entries.set(id, "active");
   }
 
   let sends = 0;

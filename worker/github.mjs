@@ -1,3 +1,5 @@
+import { signAutomationPayload } from "../automation/payload-auth.mjs";
+
 const GITHUB_API = "https://api.github.com";
 const GITHUB_API_VERSION = "2022-11-28";
 const GITHUB_TIMEOUT_MS = 15_000;
@@ -114,10 +116,12 @@ export async function hasActiveAutomationRun(
 }
 
 export async function dispatchAutomationWorkflow(
-  { token, repository, branch, workflowFile, payload },
+  { token, repository, branch, workflowFile, payload, payloadSecret },
   fetchImpl = fetch,
 ) {
   const [owner, repo] = repositoryParts(repository);
+  const payloadText = JSON.stringify(payload);
+  const signature = await signAutomationPayload(payloadText, payloadSecret);
   const url =
     `${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/` +
     `${encodeURIComponent(workflowFile)}/dispatches`;
@@ -131,7 +135,7 @@ export async function dispatchAutomationWorkflow(
       },
       body: JSON.stringify({
         ref: branch,
-        inputs: { payload: JSON.stringify(payload) },
+        inputs: { payload: payloadText, signature },
       }),
     },
     fetchImpl,
