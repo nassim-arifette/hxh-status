@@ -71,6 +71,15 @@ function completeThrough(chapters, rank) {
 export function publicationState(statusData) {
   assertStatusData(statusData, "publication");
   const chapters = orderedChapters(statusData);
+
+  // Jump scheduling a chapter *is* the announcement that the series is running
+  // again: it carries a release date and lands before anything is published.
+  // The gap below can only observe a break after it has opened, so it would
+  // keep reporting a hiatus through the entire run-up to the return.
+  if (chapters.some((chapter) => chapter.status === "scheduled")) {
+    return "publishing";
+  }
+
   const latestPublished = completeThrough(chapters, STATUS_RANK.published);
 
   return latestPublished.releaseAt &&

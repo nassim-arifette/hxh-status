@@ -63,12 +63,57 @@ test("a chapter dropped from the tracker is not a milestone", () => {
   assert.deepEqual(chapterMilestones(publishing, next), []);
 });
 
+// Nothing scheduled: the run has ended and only the gap can speak.
+const quiet = [
+  { chapter: 419, status: "published", releaseAt: "2026-08-24T00:00:00+09:00" },
+  { chapter: 420, status: "delivered" },
+  { chapter: 421, status: "delivered" },
+];
+
 test("publication state follows the last unbroken published chapter", () => {
-  assert.equal(publicationState(publishing), "publishing");
+  assert.equal(publicationState(tracker("2026-09-02", quiet)), "publishing");
 
   // Same data read five weeks later: the gap alone tips it into hiatus.
-  const stale = tracker("2026-10-05", publishing.chapters);
-  assert.equal(publicationState(stale), "hiatus");
+  assert.equal(publicationState(tracker("2026-10-05", quiet)), "hiatus");
+});
+
+test("a scheduled chapter means the series is running, whatever the gap", () => {
+  // Jump announces the return: 421 moves from Togashi's desk to a Jump slot.
+  const announced = tracker("2026-11-06", [
+    { chapter: 419, status: "published", releaseAt: "2026-08-24T00:00:00+09:00" },
+    { chapter: 420, status: "delivered" },
+    { chapter: 421, status: "scheduled", releaseAt: "2026-11-30T00:00:00+09:00" },
+  ]);
+
+  assert.equal(publicationState(tracker("2026-11-06", quiet)), "hiatus");
+  assert.equal(publicationState(announced), "publishing");
+});
+
+test("scheduling a chapter announces the return exactly once", () => {
+  const onHiatus = tracker("2026-11-05", quiet);
+  const announced = tracker("2026-11-06", [
+    { chapter: 419, status: "published", releaseAt: "2026-08-24T00:00:00+09:00" },
+    { chapter: 420, status: "scheduled", releaseAt: "2026-11-30T00:00:00+09:00" },
+    { chapter: 421, status: "delivered" },
+  ]);
+
+  const returning = trackerMilestones(onHiatus, announced);
+  assert.deepEqual(returning.publication, { from: "hiatus", to: "publishing" });
+  assert.deepEqual(returning.chapters, [
+    { chapter: 420, from: "delivered", to: "scheduled" },
+  ]);
+
+  // The chapter actually shipping is not a second return announcement.
+  const shipped = tracker("2026-11-30", [
+    { chapter: 419, status: "published", releaseAt: "2026-08-24T00:00:00+09:00" },
+    { chapter: 420, status: "published", releaseAt: "2026-11-30T00:00:00+09:00" },
+    { chapter: 421, status: "delivered" },
+  ]);
+  const after = trackerMilestones(announced, shipped);
+  assert.equal(after.publication, null);
+  assert.deepEqual(after.chapters, [
+    { chapter: 420, from: "scheduled", to: "published" },
+  ]);
 });
 
 test("a chapter jumping ahead of a gap does not restart publication", () => {
@@ -81,14 +126,15 @@ test("a chapter jumping ahead of a gap does not restart publication", () => {
 });
 
 test("the hiatus flip is reported once, alongside chapter milestones", () => {
+  const before = tracker("2026-09-02", quiet);
   const next = tracker("2026-10-05", [
     { chapter: 419, status: "published", releaseAt: "2026-08-24T00:00:00+09:00" },
-    { chapter: 420, status: "scheduled" },
+    { chapter: 420, status: "delivered" },
     { chapter: 421, status: "delivered" },
     { chapter: 422, status: "inking" },
   ]);
 
-  const result = trackerMilestones(publishing, next);
+  const result = trackerMilestones(before, next);
 
   assert.deepEqual(result.chapters, [
     { chapter: 422, from: "unknown", to: "inking" },

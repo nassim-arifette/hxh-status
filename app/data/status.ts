@@ -225,11 +225,21 @@ function daysBetween(releaseAt: string, throughDate: string) {
   );
 }
 
+// Jump scheduling a chapter *is* the announcement that the series is running
+// again: it carries a release date and lands before anything is published.
+const hasScheduledChapter = chapters.some(
+  (chapter) => chapter.status === "scheduled",
+);
+
 // Weekly Jump skips issues routinely; a gap past roughly five weeks is a break
 // rather than the normal schedule. Measured against `lastUpdated`, never the
-// clock, so the server and client always render the same thing.
+// clock, so the server and client always render the same thing. The gap can
+// only observe a break after it has opened, which is why a scheduled chapter
+// wins outright. Mirrored by `publicationState` in
+// `automation/milestones.mjs`; change both together.
 export const publicationStatus: "publishing" | "hiatus" =
-  latestPublished.releaseAt &&
-  daysBetween(latestPublished.releaseAt, lastUpdated) <= 35
+  hasScheduledChapter ||
+  (latestPublished.releaseAt &&
+    daysBetween(latestPublished.releaseAt, lastUpdated) <= 35)
     ? "publishing"
     : "hiatus";
