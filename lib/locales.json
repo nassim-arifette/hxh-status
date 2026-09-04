@@ -39,7 +39,7 @@
     },
     "ja": {
       "label": "日本語",
-      "published": false,
+      "published": true,
       "dir": "ltr",
       "openGraphLocale": "ja_JP",
       "officialReaders": [
@@ -55,13 +55,13 @@
     },
     "es": {
       "label": "Español",
-      "published": false,
+      "published": true,
       "dir": "ltr",
       "openGraphLocale": "es_ES"
     },
     "pt": {
       "label": "Português",
-      "published": false,
+      "published": true,
       "dir": "ltr",
       "openGraphLocale": "pt_BR",
       "officialReaders": [
@@ -77,7 +77,7 @@
     },
     "zh": {
       "label": "中文",
-      "published": false,
+      "published": true,
       "dir": "ltr",
       "openGraphLocale": "zh_CN",
       "officialReaders": [
@@ -89,7 +89,7 @@
     },
     "ar": {
       "label": "العربية",
-      "published": false,
+      "published": true,
       "dir": "rtl",
       "openGraphLocale": "ar_AR",
       "officialReaders": []

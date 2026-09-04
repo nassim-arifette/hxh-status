@@ -29,36 +29,36 @@
     "disabled": "Las alertas de Togashi están desactivadas."
   },
   "push": {
-    "onePost": "Nueva publicación de Togashi",
-    "manyPosts": "{count} nuevas publicaciones de Togashi",
-    "fallbackBody": "Yoshihiro Togashi ha publicado algo en X.",
+    "onePost": "Nuevo post de Togashi",
+    "manyPosts": "{count} nuevos posts de Togashi",
+    "fallbackBody": "Togashi acaba de publicar en X.",
     "milestoneTitle": {
-      "inking": "Capítulo {chapter}: ¡el entintado está listo!",
-      "background": "Capítulo {chapter}: ¡los fondos están listos!",
-      "delivered": "¡El capítulo {chapter} ha sido entregado a Jump!",
-      "scheduled": "¡El capítulo {chapter} ya tiene fecha de publicación!",
-      "published": "¡El capítulo {chapter} ya está disponible!"
+      "inking": "Cap. {chapter}: entintado terminado",
+      "background": "Cap. {chapter}: indicaciones de fondos listas",
+      "delivered": "Cap. {chapter}: manuscrito entregado a Jump",
+      "scheduled": "Cap. {chapter}: fecha confirmada",
+      "published": "Cap. {chapter}: ya disponible"
     },
     "milestoneBody": {
       "inking": "Togashi ha terminado el entintado de los personajes.",
-      "background": "Las indicaciones de los fondos están completas.",
+      "background": "Togashi ha terminado las indicaciones para los fondos.",
       "delivered": "El manuscrito terminado ya está en manos de Jump.",
-      "scheduled": "Jump ha programado su publicación.",
-      "published": "A leerlo."
+      "scheduled": "Jump confirmó la fecha de publicación.",
+      "published": "El capítulo ya está disponible oficialmente."
     },
     "statuses": {
-      "inking": "entintado",
-      "background": "fondos listos",
-      "delivered": "en Jump",
-      "scheduled": "programado",
+      "inking": "entintado terminado",
+      "background": "indicaciones de fondos listas",
+      "delivered": "entregado a Jump",
+      "scheduled": "fecha confirmada",
       "published": "disponible"
     },
-    "manyChapters": "¡{count} capítulos han avanzado!",
-    "chapterLine": "{chapter}: {label}",
-    "hiatusTitle": "Hunter × Hunter entra en hiatus",
-    "hiatusBody": "Por ahora no hay ningún capítulo programado.",
-    "publishingTitle": "¡Hunter × Hunter ha vuelto!",
-    "publishingBody": "Jump ya ha programado el próximo capítulo."
+    "manyChapters": "Avances en {count} capítulos",
+    "chapterLine": "Cap. {chapter}: {label}",
+    "hiatusTitle": "Hunter × Hunter está en hiatus",
+    "hiatusBody": "No hay ningún capítulo nuevo programado por ahora.",
+    "publishingTitle": "¡Hunter × Hunter regresa!",
+    "publishingBody": "El próximo capítulo ya tiene fecha de publicación."
   },
   "snapshot": {
     "publishing": "En publicación",

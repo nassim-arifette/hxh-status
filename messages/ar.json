@@ -29,36 +29,36 @@
     "disabled": "تنبيهات توغاشي متوقفة."
   },
   "push": {
-    "onePost": "منشور جديد من توغاشي",
-    "manyPosts": "{count} منشورات جديدة من توغاشي",
-    "fallbackBody": "نشر يوشيهيرو توغاشي منشورًا على X.",
+    "onePost": "منشور جديد لتوغاشي",
+    "manyPosts": "{count} منشورات جديدة لتوغاشي",
+    "fallbackBody": "نشر توغاشي منشورًا جديدًا على X.",
     "milestoneTitle": {
-      "inking": "الفصل {chapter}: اكتمل تحبير الشخصيات!",
-      "background": "الفصل {chapter}: اكتملت الخلفيات!",
-      "delivered": "سُلّم الفصل {chapter} إلى Jump!",
-      "scheduled": "تحدد موعد نشر الفصل {chapter}!",
-      "published": "صدر الفصل {chapter}!"
+      "inking": "الفصل {chapter}: اكتمل تحبير الشخصيات",
+      "background": "الفصل {chapter}: اكتملت تعليمات الخلفيات",
+      "delivered": "الفصل {chapter}: سُلّمت المخطوطة إلى جمب",
+      "scheduled": "الفصل {chapter}: تم تحديد موعد النشر",
+      "published": "الفصل {chapter}: متاح الآن"
     },
     "milestoneBody": {
-      "inking": "أنهى توغاشي تحبير الشخصيات.",
-      "background": "اكتملت تعليمات الخلفيات.",
-      "delivered": "المخطوطة المكتملة الآن لدى Jump.",
-      "scheduled": "حددت Jump موعد نشره.",
-      "published": "اقرأه الآن."
+      "inking": "أكمل توغاشي تحبير الشخصيات.",
+      "background": "اكتمل إعداد مستند تعليمات الخلفيات.",
+      "delivered": "سُلّمت المخطوطة المكتملة إلى جمب.",
+      "scheduled": "أعلنت جمب موعد نشر الفصل.",
+      "published": "الفصل متاح رسميًا الآن."
     },
     "statuses": {
-      "inking": "مُحبَّر",
-      "background": "الخلفيات مكتملة",
-      "delivered": "لدى Jump",
-      "scheduled": "مجدول",
+      "inking": "التحبير مكتمل",
+      "background": "تعليمات الخلفيات مكتملة",
+      "delivered": "سُلّمت إلى جمب",
+      "scheduled": "موعد النشر محدد",
       "published": "متاح الآن"
     },
-    "manyChapters": "{count} فصول تقدمت!",
-    "chapterLine": "{chapter}: {label}",
-    "hiatusTitle": "هانتر × هانتر يدخل فترة توقف",
-    "hiatusBody": "لا يوجد فصل جديد مجدول في الوقت الحالي.",
-    "publishingTitle": "عاد هانتر × هانتر!",
-    "publishingBody": "جدولت Jump الفصل القادم."
+    "manyChapters": "تقدم جديد في عدة فصول ({count})",
+    "chapterLine": "الفصل {chapter}: {label}",
+    "hiatusTitle": "هنتر × هنتر في فترة توقف",
+    "hiatusBody": "لا يوجد فصل جديد مقرر للنشر حاليًا.",
+    "publishingTitle": "عودة هنتر × هنتر",
+    "publishingBody": "تم تحديد موعد نشر الفصل القادم."
   },
   "snapshot": {
     "publishing": "قيد النشر",
@@ -117,12 +117,12 @@
       "description": "نُشر رسميًا وأصبح متاحًا للقراء."
     },
     "scheduled": {
-      "label": "محدد للنشر",
-      "shortLabel": "مجدول",
+      "label": "مقرر للنشر",
+      "shortLabel": "مقرر",
       "description": "أعلنت Jump موعد نشر هذا الفصل وحددته."
     },
     "delivered": {
-      "label": "سُلّمت إلى Jump",
+      "label": "تم تسليم المخطوطة إلى Jump",
       "shortLabel": "لدى Jump",
       "description": "اكتملت المخطوطة وسُلّمت إلى هيئة تحرير Jump، لكن الفصل لم يُنشر بعد."
     },

@@ -30,35 +30,35 @@
   },
   "push": {
     "onePost": "富坚发布了新动态",
-    "manyPosts": "富坚发布了 {count} 条新动态",
-    "fallbackBody": "富坚义博在 X 上发布了新动态。",
+    "manyPosts": "富坚发布了{count}条新动态",
+    "fallbackBody": "富坚义博在 X 发布了新动态。",
     "milestoneTitle": {
-      "inking": "第 {chapter} 话：人物描线完成！",
-      "background": "第 {chapter} 话：背景指定完成！",
-      "delivered": "第 {chapter} 话的原稿已交付集英社！",
-      "scheduled": "第 {chapter} 话已确定刊载时间！",
-      "published": "第 {chapter} 话已刊载！"
+      "inking": "第{chapter}话：人物勾线完成",
+      "background": "第{chapter}话：背景指定书完成",
+      "delivered": "第{chapter}话：原稿完成",
+      "scheduled": "第{chapter}话：刊载日期确定",
+      "published": "第{chapter}话：正式刊载"
     },
     "milestoneBody": {
-      "inking": "富坚义博已完成人物描线。",
-      "background": "背景指定书已完成。",
-      "delivered": "完成的原稿已经送到集英社。",
-      "scheduled": "Jump 已安排刊载。",
-      "published": "去读吧。"
+      "inking": "富坚义博已完成人物勾线。",
+      "background": "背景指定书已制作完成。",
+      "delivered": "完整原稿已交付集英社。",
+      "scheduled": "《周刊少年Jump》已确定刊载日期。",
+      "published": "本话现已正式刊载。"
     },
     "statuses": {
-      "inking": "人物描线完成",
-      "background": "背景指定完成",
+      "inking": "人物勾线完成",
+      "background": "背景指定书完成",
       "delivered": "已交稿",
-      "scheduled": "待刊载",
+      "scheduled": "刊载日期确定",
       "published": "已刊载"
     },
-    "manyChapters": "{count} 话的进度有更新！",
-    "chapterLine": "第 {chapter} 话：{label}",
-    "hiatusTitle": "《全职猎人》进入休刊",
-    "hiatusBody": "目前没有新话的刊载安排。",
-    "publishingTitle": "《全职猎人》回归了！",
-    "publishingBody": "Jump 已安排下一话的刊载。"
+    "manyChapters": "共{count}话制作进度更新",
+    "chapterLine": "第{chapter}话：{label}",
+    "hiatusTitle": "《全职猎人》休刊中",
+    "hiatusBody": "目前暂无新话刊载安排。",
+    "publishingTitle": "《全职猎人》复刊",
+    "publishingBody": "下一话刊载日期已确定。"
   },
   "snapshot": {
     "publishing": "连载中",
@@ -132,9 +132,9 @@
       "description": "背景指定书以及相关制作说明已完成。"
     },
     "inking": {
-      "label": "人物描线完成",
-      "shortLabel": "人物描线",
-      "description": "人物描线已完成，后续仍有背景等制作工序。"
+      "label": "人物勾线完成",
+      "shortLabel": "人物勾线",
+      "description": "人物勾线已完成，后续仍有背景等制作工序。"
     },
     "unknown": {
       "label": "暂无确认进度",

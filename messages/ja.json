@@ -33,32 +33,32 @@
     "manyPosts": "冨樫先生の新しい投稿が{count}件",
     "fallbackBody": "冨樫義博先生がXに投稿しました。",
     "milestoneTitle": {
-      "inking": "第{chapter}話：人物のペン入れが完了！",
-      "background": "第{chapter}話：背景指定が完了！",
-      "delivered": "第{chapter}話の原稿がジャンプに渡りました！",
-      "scheduled": "第{chapter}話の掲載日が決まりました！",
-      "published": "第{chapter}話が掲載されました！"
+      "inking": "第{chapter}話：人物ペン入れ完了",
+      "background": "第{chapter}話：背景指定書作成完了",
+      "delivered": "第{chapter}話：原稿完成",
+      "scheduled": "第{chapter}話：掲載日決定",
+      "published": "第{chapter}話：掲載開始"
     },
     "milestoneBody": {
-      "inking": "冨樫先生が人物のペン入れを終えました。",
-      "background": "背景の指定書が完成しました。",
-      "delivered": "完成した原稿はジャンプ編集部に渡っています。",
-      "scheduled": "ジャンプが掲載を予定しています。",
-      "published": "ぜひ読んでください。"
+      "inking": "冨樫先生が人物ペン入れ完了を報告しました。",
+      "background": "背景指定書の作成が完了しました。",
+      "delivered": "完成原稿はジャンプ編集部に渡っています。",
+      "scheduled": "掲載日が正式に決まりました。",
+      "published": "最新話が公式に掲載されました。"
     },
     "statuses": {
       "inking": "人物ペン入れ完了",
-      "background": "背景指定完了",
+      "background": "背景指定書作成完了",
       "delivered": "原稿完成",
-      "scheduled": "掲載予定",
+      "scheduled": "掲載日決定",
       "published": "掲載済み"
     },
-    "manyChapters": "{count}話の進捗が進みました！",
+    "manyChapters": "{count}話分の制作が進みました",
     "chapterLine": "第{chapter}話：{label}",
-    "hiatusTitle": "HUNTER×HUNTERが休載に入ります",
-    "hiatusBody": "現在、次の話の掲載予定はありません。",
-    "publishingTitle": "HUNTER×HUNTERが再開します！",
-    "publishingBody": "ジャンプが次の話の掲載を予定しています。"
+    "hiatusTitle": "HUNTER×HUNTERは休載中",
+    "hiatusBody": "次回掲載日はまだ決まっていません。",
+    "publishingTitle": "HUNTER×HUNTER連載再開",
+    "publishingBody": "次回掲載日が決まりました。"
   },
   "snapshot": {
     "publishing": "掲載中",

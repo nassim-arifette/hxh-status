@@ -37,11 +37,14 @@ function milestone(overrides = {}) {
   };
 }
 
-test("one chapter reads as a sentence, not a status code", () => {
+test("one chapter names the milestone and explains it", () => {
   const notification = buildNotification(milestone());
 
-  assert.equal(notification.title, "Chapter 428 has been delivered to Jump!");
-  assert.equal(notification.body, "The finished manuscript is now with Jump.");
+  assert.equal(notification.title, "Ch. 428: manuscript sent to Jump");
+  assert.equal(
+    notification.body,
+    "The finished manuscript has been delivered to Jump.",
+  );
   assert.equal(notification.tag, "tracker-2094673907626414299");
   assert.equal(notification.url, "/");
 });
@@ -49,19 +52,19 @@ test("one chapter reads as a sentence, not a status code", () => {
 test("the reader's own language is used", () => {
   const notification = buildNotification(milestone({ locale: "fr" }));
 
-  assert.equal(notification.title, "Le chapitre 428 a été livré au Jump !");
-  assert.equal(notification.body, "Le manuscrit terminé est entre les mains du Jump.");
+  assert.equal(notification.title, "Ch. 428 : manuscrit remis au Jump");
+  assert.equal(notification.body, "Le manuscrit terminé a été remis au Jump.");
 
   const spanish = buildNotification(milestone({ locale: "es" }));
 
-  assert.equal(spanish.title, "¡El capítulo 428 ha sido entregado a Jump!");
+  assert.equal(spanish.title, "Cap. 428: manuscrito entregado a Jump");
   assert.equal(
     spanish.body,
     "El manuscrito terminado ya está en manos de Jump.",
   );
 });
 
-test("every milestone has its own sentence", () => {
+test("every milestone has its own title", () => {
   const titles = ["inking", "background", "delivered", "scheduled", "published"].map(
     (to) =>
       buildNotification(milestone({ locale: "fr", chapters: [{ chapter: 428, to }] }))
@@ -69,14 +72,14 @@ test("every milestone has its own sentence", () => {
   );
 
   assert.deepEqual(titles, [
-    "Chapitre 428 : l’encrage est terminé !",
-    "Chapitre 428 : les décors sont bouclés !",
-    "Le chapitre 428 a été livré au Jump !",
-    "Le chapitre 428 a une date de sortie !",
-    "Le chapitre 428 est sorti !",
+    "Ch. 428 : encrage terminé",
+    "Ch. 428 : consignes de décors terminées",
+    "Ch. 428 : manuscrit remis au Jump",
+    "Ch. 428 : date de parution fixée",
+    "Chapitre 428 disponible !",
   ]);
 
-  // Every sentence must be distinct, or a status is quietly reusing another's.
+  // Every title must be distinct, or a status is quietly reusing another's.
   assert.equal(new Set(titles).size, titles.length);
 });
 
@@ -92,10 +95,11 @@ test("several chapters collapse into a headline and a short list", () => {
     }),
   );
 
-  assert.equal(notification.title, "3 chapitres ont avancé !");
+  assert.equal(notification.title, "3 chapitres ont avancé");
   assert.equal(
     notification.body,
-    "428 : chez le Jump · 429 : décors bouclés · 430 : encré",
+    "Ch. 428 : remis au Jump · Ch. 429 : consignes de décors terminées · " +
+      "Ch. 430 : encrage terminé",
   );
 });
 
@@ -103,8 +107,8 @@ test("a hiatus flip outranks the chapters it travelled with", () => {
   const alone = buildNotification(
     milestone({ chapters: [], publication: "hiatus" }),
   );
-  assert.equal(alone.title, "Hunter × Hunter is going on a break");
-  assert.equal(alone.body, "No new chapter is scheduled for now.");
+  assert.equal(alone.title, "Hunter × Hunter is on hiatus");
+  assert.equal(alone.body, "No new chapter is scheduled yet.");
 
   const together = buildNotification(
     milestone({
@@ -112,8 +116,8 @@ test("a hiatus flip outranks the chapters it travelled with", () => {
       publication: "hiatus",
     }),
   );
-  assert.equal(together.title, "Hunter × Hunter is going on a break");
-  assert.equal(together.body, "428: out now");
+  assert.equal(together.title, "Hunter × Hunter is on hiatus");
+  assert.equal(together.body, "Ch. 428: out now");
 
   const resumed = buildNotification(
     milestone({ chapters: [], publication: "publishing" }),

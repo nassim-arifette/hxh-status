@@ -31,32 +31,32 @@
   "push": {
     "onePost": "New Togashi post",
     "manyPosts": "{count} new Togashi posts",
-    "fallbackBody": "Yoshihiro Togashi posted on X.",
+    "fallbackBody": "Yoshihiro Togashi just posted on X.",
     "milestoneTitle": {
-      "inking": "Chapter {chapter}: the inking is done!",
-      "background": "Chapter {chapter}: the backgrounds are done!",
-      "delivered": "Chapter {chapter} has been delivered to Jump!",
-      "scheduled": "Chapter {chapter} has a release date!",
-      "published": "Chapter {chapter} is out!"
+      "inking": "Ch. {chapter}: inking complete",
+      "background": "Ch. {chapter}: background specs complete",
+      "delivered": "Ch. {chapter}: manuscript sent to Jump",
+      "scheduled": "Ch. {chapter}: release date confirmed",
+      "published": "Ch. {chapter}: out now"
     },
     "milestoneBody": {
-      "inking": "Togashi has finished the character linework.",
-      "background": "The background instructions are complete.",
-      "delivered": "The finished manuscript is now with Jump.",
-      "scheduled": "Jump has scheduled it for publication.",
-      "published": "Go read it."
+      "inking": "Togashi has finished the character inking.",
+      "background": "The background specification sheet is complete.",
+      "delivered": "The finished manuscript has been delivered to Jump.",
+      "scheduled": "Jump has confirmed the chapter's release date.",
+      "published": "The chapter is now officially available."
     },
     "statuses": {
-      "inking": "inked",
-      "background": "backgrounds done",
-      "delivered": "at Jump",
-      "scheduled": "scheduled",
+      "inking": "inking complete",
+      "background": "background specs complete",
+      "delivered": "sent to Jump",
+      "scheduled": "release date confirmed",
       "published": "out now"
     },
-    "manyChapters": "{count} chapters moved forward!",
-    "chapterLine": "{chapter}: {label}",
-    "hiatusTitle": "Hunter × Hunter is going on a break",
-    "hiatusBody": "No new chapter is scheduled for now.",
+    "manyChapters": "Progress on {count} chapters",
+    "chapterLine": "Ch. {chapter}: {label}",
+    "hiatusTitle": "Hunter × Hunter is on hiatus",
+    "hiatusBody": "No new chapter is scheduled yet.",
     "publishingTitle": "Hunter × Hunter is back!",
     "publishingBody": "Jump has scheduled the next chapter."
   },
