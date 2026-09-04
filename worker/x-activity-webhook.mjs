@@ -643,27 +643,33 @@ const worker = {
   async scheduled(_controller, env) {
     return serializePipeline(async () => {
       const errors = [];
+      // Name every failure in the logs; the AggregateError alone never says
+      // which task broke.
+      const runTask = async (task, run) => {
+        try {
+          await run();
+        } catch (error) {
+          console.error(
+            JSON.stringify({
+              message: "Scheduled Togashi task failed.",
+              task,
+              error: safeError(error),
+            }),
+          );
+          errors.push(error);
+        }
+      };
 
-      try {
-        await maintainPushSubscriptions(env);
-      } catch (error) {
-        errors.push(error);
-      }
+      await runTask("maintainPushSubscriptions", () =>
+        maintainPushSubscriptions(env),
+      );
 
       // Always drain real-time events first. If the same post is also visible
       // through syndication, the repository and push cursors make the fallback
       // an immediate no-op.
-      try {
-        await processQueuedPosts(env);
-      } catch (error) {
-        errors.push(error);
-      }
+      await runTask("processQueuedPosts", () => processQueuedPosts(env));
 
-      try {
-        await runSyndicationFallback(env);
-      } catch (error) {
-        errors.push(error);
-      }
+      await runTask("runSyndicationFallback", () => runSyndicationFallback(env));
 
       if (errors.length > 0) {
         throw new AggregateError(errors, "One or more scheduled tasks failed.");

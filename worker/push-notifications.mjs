@@ -435,6 +435,13 @@ function isTransientPushFailure(status) {
 }
 
 async function migrateLegacyPushSubscriptions(env) {
+  // A one-shot migration, but the Cron calls it on every tick. Listing an
+  // otherwise-empty legacy prefix 1440 times a day is what exhausted the KV
+  // list quota, so the sweep only runs while it is explicitly enabled.
+  if (env.PUSH_LEGACY_MIGRATION_ENABLED !== "true") {
+    return { migrated: 0, removed: 0, unresolved: 0 };
+  }
+
   const store = requirePushStore(env);
   const page = await store.list({
     prefix: LEGACY_SUBSCRIPTION_PREFIX,
@@ -442,9 +449,12 @@ async function migrateLegacyPushSubscriptions(env) {
   });
   let migrated = 0;
   let removed = 0;
+  let unresolved = 0;
 
   for (const { name } of page.keys) {
     const raw = await store.get(name);
+    // A listed key can read back empty while a write propagates; leave it for
+    // the next sweep rather than deleting a registration that still exists.
     if (!raw) continue;
 
     let id;
@@ -469,7 +479,19 @@ async function migrateLegacyPushSubscriptions(env) {
         record: storedRecord(subscription, locale, "pending"),
       });
     } catch (error) {
-      if (error instanceof PushRegistryNotFoundError) continue;
+      if (error instanceof PushRegistryNotFoundError) {
+        // The registry cannot see a legacy key this sweep just read. Retrying
+        // that in silence would re-list the same key on every sweep with no
+        // trace, so name it.
+        console.error(
+          JSON.stringify({
+            message: "Legacy push migration target is missing from the registry.",
+            id,
+          }),
+        );
+        unresolved += 1;
+        continue;
+      }
       if (!(error instanceof PushCapacityError)) throw error;
       await store.delete(name);
       removed += 1;
@@ -478,7 +500,7 @@ async function migrateLegacyPushSubscriptions(env) {
     migrated += 1;
   }
 
-  return { migrated, removed };
+  return { migrated, removed, unresolved };
 }
 
 export async function verifyPendingPushSubscriptions(
@@ -557,6 +579,7 @@ export async function maintainPushSubscriptions(
     return {
       enabled: false,
       migrated: 0,
+      unresolved: 0,
       verified: 0,
       removed: 0,
       pending: 0,
@@ -566,11 +589,28 @@ export async function maintainPushSubscriptions(
   assertPushDeliveryConfigured(env);
   const migration = await migrateLegacyPushSubscriptions(env);
   const verification = await verifyPendingPushSubscriptions(env, sendPush);
-  return {
+  const result = {
     ...verification,
     migrated: migration.migrated,
+    unresolved: migration.unresolved,
     removed: migration.removed + verification.removed,
   };
+
+  // Silence used to mean "nothing to do" and "stuck in a loop" alike. Report
+  // any run that actually touched a subscription.
+  if (
+    result.migrated ||
+    result.unresolved ||
+    result.removed ||
+    result.verified ||
+    result.pending
+  ) {
+    console.log(
+      JSON.stringify({ message: "Push subscription maintenance.", ...result }),
+    );
+  }
+
+  return result;
 }
 
 async function deliverPage(env, job, sendPush) {

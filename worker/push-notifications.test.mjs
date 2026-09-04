@@ -588,7 +588,7 @@ test("the shared registry enforces a global pending and active cap", async () =>
 
 test("legacy records are revalidated and moved onto finite leases", async () => {
   const store = new MemoryKv();
-  const env = makeEnv(store);
+  const env = makeEnv(store, { PUSH_LEGACY_MIGRATION_ENABLED: "true" });
   const subscription = await validSubscription("legacy");
   const id = await subscriptionId(subscription.endpoint);
   store.data.set(
@@ -606,6 +606,30 @@ test("legacy records are revalidated and moved onto finite leases", async () => 
     store.putOptions.get(`push:verified:${id}`).expirationTtl,
     180 * 24 * 60 * 60,
   );
+});
+
+test("the legacy sweep issues no KV list while it stays disabled", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("legacy-disabled");
+  const id = await subscriptionId(subscription.endpoint);
+  store.data.set(
+    `push:subscription:${id}`,
+    JSON.stringify({ subscription, locale: "fr" }),
+  );
+  let lists = 0;
+  const list = store.list.bind(store);
+  store.list = (options) => {
+    lists += 1;
+    return list(options);
+  };
+
+  const result = await maintainPushSubscriptions(env, async () => {});
+
+  assert.equal(result.migrated, 0);
+  // Only the pending-verification sweep may list; the legacy prefix must not.
+  assert.equal(lists, 1);
+  assert.equal(store.data.has(`push:subscription:${id}`), true);
 });
 
 test("subscription API rejects cross-origin, oversized, and SSRF endpoints", async () => {

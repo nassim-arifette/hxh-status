@@ -24,7 +24,7 @@
     ]
   },
   "triggers": {
-    "crons": ["* * * * *"]
+    "crons": ["*/5 * * * *"]
   },
   "vars": {
     "AUTOMATION_ENABLED": "true",
