@@ -5,6 +5,12 @@ import {
   assertSnowflakeId,
   compareSnowflakeIds,
 } from "../automation/contracts.mjs";
+import {
+  hasAnnouncements,
+  isNotificationState,
+  seedFromMilestones,
+  selectUnnotified,
+} from "../automation/milestone-dedupe.mjs";
 import { fetchTimelineTweets, selectUnseenTweets } from "./x-timeline.mjs";
 
 const API_PREFIX = "/api/push/";
@@ -18,6 +24,9 @@ const REGISTRATION_REVISION_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const CURSOR_KEY = "push:last-notified-tweet";
 const PENDING_KEY = "push:pending-broadcast";
+const MILESTONE_PENDING_KEY = "push:pending-milestone-broadcast";
+const MILESTONE_STATE_KEY = "push:announced-milestones";
+const MAX_MILESTONES_PER_NOTIFICATION = 10;
 const MAX_BODY_BYTES = 8_192;
 const MAX_SUBSCRIPTIONS_PER_RUN = 32;
 const MAX_SUBSCRIPTIONS_TO_VERIFY = 8;
@@ -334,6 +343,37 @@ function notificationPayload(tweet, count, locale) {
   };
 }
 
+function milestonePayload(announcement, locale) {
+  return {
+    v: 1,
+    kind: "tracker-milestone",
+    locale: normalizeLocale(locale),
+    revision: announcement.revision,
+    chapters: announcement.chapters,
+    publication: announcement.publication,
+  };
+}
+
+// `deliverPage` touches the broadcast subject in exactly three places: the
+// payload it builds, the key holding its resumable state, and what it records
+// once every subscriber has been reached. A channel names those three, so posts
+// and tracker milestones share one delivery path without sharing a slot — an
+// in-flight post broadcast can never be overwritten by a milestone.
+const POST_CHANNEL = {
+  pendingKey: PENDING_KEY,
+  payloadFor: (job, locale) => notificationPayload(job.tweet, job.count, locale),
+  commit: (store, job) => store.put(CURSOR_KEY, job.tweet.id),
+};
+
+const MILESTONE_CHANNEL = {
+  pendingKey: MILESTONE_PENDING_KEY,
+  payloadFor: (job, locale) => milestonePayload(job.announcement, locale),
+  // The announced record is written only once delivery is complete. Persisting
+  // it earlier would swallow the milestone if the send failed.
+  commit: (store, job) =>
+    store.put(MILESTONE_STATE_KEY, JSON.stringify(job.state)),
+};
+
 async function defaultSendPush(env, subscription, payload) {
   assertPushDeliveryConfigured(env);
   const topic =
@@ -613,7 +653,7 @@ export async function maintainPushSubscriptions(
   return result;
 }
 
-async function deliverPage(env, job, sendPush) {
+async function deliverPage(env, channel, job, sendPush) {
   const store = requirePushStore(env);
   const retrying = Array.isArray(job.retryKeys);
   const page = retrying
@@ -646,7 +686,7 @@ async function deliverPage(env, job, sendPush) {
           await sendPush(
             env,
             record.subscription,
-            notificationPayload(job.tweet, job.count, record.locale),
+            channel.payloadFor(job, record.locale),
           );
           try {
             await renewActiveSubscription(env, record);
@@ -674,7 +714,7 @@ async function deliverPage(env, job, sendPush) {
 
   if (transientKeys.length > 0) {
     await store.put(
-      PENDING_KEY,
+      channel.pendingKey,
       JSON.stringify({
         ...job,
         retryKeys: transientKeys,
@@ -689,15 +729,13 @@ async function deliverPage(env, job, sendPush) {
   }
 
   if (page.list_complete) {
-    await Promise.all([
-      store.put(CURSOR_KEY, job.tweet.id),
-      store.delete(PENDING_KEY),
-    ]);
+    await channel.commit(store, job);
+    await store.delete(channel.pendingKey);
     return { complete: true, delivered: page.keys.length };
   }
 
   await store.put(
-    PENDING_KEY,
+    channel.pendingKey,
     JSON.stringify({
       ...job,
       cursor: page.cursor,
@@ -805,7 +843,10 @@ export async function runPushNotifications(
     await store.put(PENDING_KEY, JSON.stringify(job));
   }
 
-  return { enabled: true, ...(await deliverPage(env, job, sendPush)) };
+  return {
+    enabled: true,
+    ...(await deliverPage(env, POST_CHANNEL, job, sendPush)),
+  };
 }
 
 export async function deliverPushForTweets(
@@ -995,4 +1036,105 @@ export async function handlePushApi(
   }
 
   return apiError(405, "Method not allowed.");
+}
+
+async function loadAnnouncedState(store, milestones) {
+  const raw = await store.get(MILESTONE_STATE_KEY);
+  if (!raw) return seedFromMilestones(milestones);
+
+  try {
+    const state = JSON.parse(raw);
+    if (!isNotificationState(state)) throw new Error("Invalid state.");
+    return state;
+  } catch {
+    // Refusing here is safer than reseeding: a reseed would re-announce every
+    // milestone in the batch to everyone.
+    throw new Error("Stored milestone announcement state is invalid.");
+  }
+}
+
+// Announces tracker milestones. `dryRun` walks the whole decision — dedupe,
+// payload, locale — and reports what would be sent without sending it and,
+// critically, without recording it as announced. A dry run that consumed the
+// record would silence the real milestone forever.
+export async function deliverMilestones(
+  env,
+  { milestones, revision },
+  { sendPush = defaultSendPush, dryRun = false } = {},
+) {
+  if (env.PUSH_NOTIFICATIONS_ENABLED !== "true") {
+    return { enabled: false, complete: true, announced: 0 };
+  }
+  if (
+    typeof revision !== "string" ||
+    !/^[0-9A-Za-z-]{1,40}$/.test(revision)
+  ) {
+    throw new TypeError("Milestone revision is invalid.");
+  }
+
+  assertPushDeliveryConfigured(env);
+  const store = requirePushStore(env);
+  const state = await loadAnnouncedState(store, milestones);
+  const selection = selectUnnotified(state, milestones);
+
+  if (!hasAnnouncements(selection)) {
+    return { enabled: true, complete: true, announced: 0, duplicate: true };
+  }
+
+  const announcement = {
+    revision,
+    chapters: selection.chapters.slice(0, MAX_MILESTONES_PER_NOTIFICATION),
+    publication: selection.publication,
+  };
+
+  if (dryRun) {
+    return {
+      enabled: true,
+      complete: true,
+      dryRun: true,
+      announced: announcement.chapters.length,
+      preview: milestonePayload(announcement, "en"),
+    };
+  }
+
+  let job = { announcement, state: selection.state, cursor: null };
+  let delivered = 0;
+
+  // Two subscribers fit in one page today; the loop is what keeps a larger
+  // audience from needing a second Cron tick to finish.
+  for (let page = 0; page < 8; page += 1) {
+    const result = await deliverPage(env, MILESTONE_CHANNEL, job, sendPush);
+    delivered += result.delivered;
+
+    if (result.complete) {
+      return {
+        enabled: true,
+        complete: true,
+        announced: announcement.chapters.length,
+        delivered,
+      };
+    }
+
+    const raw = await store.get(MILESTONE_PENDING_KEY);
+    if (!raw) break;
+    job = JSON.parse(raw);
+  }
+
+  return { enabled: true, complete: false, delivered };
+}
+
+// Marks a post as already announced without sending anything. Used when a
+// tracker milestone said the same thing in better words: the cursor still has
+// to move, or the syndication fallback would notify the post later anyway.
+export async function skipPostBroadcast(env, tweetId) {
+  assertSnowflakeId(tweetId, "skipped post ID");
+  const store = requirePushStore(env);
+  const cursor = await store.get(CURSOR_KEY);
+
+  if (cursor && compareSnowflakeIds(cursor, tweetId) >= 0) {
+    return { skipped: false, cursor };
+  }
+
+  await store.put(CURSOR_KEY, tweetId);
+  return { skipped: true, cursor: tweetId };
 }

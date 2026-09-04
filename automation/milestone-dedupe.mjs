@@ -20,6 +20,24 @@ export function seedNotificationState(statusData) {
   };
 }
 
+// A first verdict arrives with no stored record. Seeding from the milestones'
+// own starting points announces that batch — which is correct, it is a real
+// change — while still refusing a replay of it. Seeding from the whole tracker
+// here would instead announce nothing, losing the first real milestone.
+export function seedFromMilestones(milestones) {
+  const chapters = {};
+
+  for (const milestone of milestones.chapters) {
+    chapters[milestone.chapter] = STATUS_RANK[milestone.from];
+  }
+
+  return {
+    version: NOTIFICATION_STATE_VERSION,
+    chapters,
+    publication: milestones.publication ? milestones.publication.from : null,
+  };
+}
+
 export function isNotificationState(value) {
   return (
     typeof value === "object" &&

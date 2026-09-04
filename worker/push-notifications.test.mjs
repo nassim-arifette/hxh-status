@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  deliverMilestones,
   deliverPushForTweets,
   handlePushApi,
   maintainPushSubscriptions,
@@ -1049,4 +1050,131 @@ test("broadcasts paginate without exceeding 32 subscriptions per run", async () 
   );
   assert.deepEqual(second, { enabled: true, complete: true, delivered: 1 });
   assert.equal(sends, 33);
+});
+
+function milestoneBatch(chapters, publication = null) {
+  return { chapters, publication };
+}
+
+test("a tracker milestone reaches every subscriber in their own language", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  await subscribe(env, await validSubscription("milestone-en"), "en");
+  await subscribe(env, await validSubscription("milestone-fr"), "fr");
+  const sent = [];
+
+  const result = await deliverMilestones(
+    env,
+    {
+      milestones: milestoneBatch([
+        { chapter: 428, from: "background", to: "delivered" },
+      ]),
+      revision: "2094673907626414299",
+    },
+    {
+      sendPush: async (_env, _subscription, payload) => {
+        sent.push(payload);
+      },
+    },
+  );
+
+  assert.equal(result.complete, true);
+  assert.equal(result.announced, 1);
+  assert.equal(sent.length, 2);
+  assert.deepEqual(
+    sent.map((payload) => payload.locale).sort(),
+    ["en", "fr"],
+  );
+  assert.equal(sent[0].kind, "tracker-milestone");
+  assert.deepEqual(sent[0].chapters, [{ chapter: 428, to: "delivered" }]);
+  assert.equal(sent[0].revision, "2094673907626414299");
+});
+
+test("the same milestone is never announced twice", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  await subscribe(env, await validSubscription("milestone-once"), "en");
+  const batch = {
+    milestones: milestoneBatch([
+      { chapter: 428, from: "background", to: "delivered" },
+    ]),
+    revision: "2094673907626414299",
+  };
+  let sends = 0;
+  const sendPush = async () => {
+    sends += 1;
+  };
+
+  await deliverMilestones(env, batch, { sendPush });
+  assert.equal(sends, 1);
+
+  // The Action replays the same verdict after a failed commit.
+  const replay = await deliverMilestones(env, batch, { sendPush });
+  assert.equal(sends, 1);
+  assert.equal(replay.duplicate, true);
+  assert.equal(replay.announced, 0);
+});
+
+test("a dry run reports the notification without sending or recording it", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  await subscribe(env, await validSubscription("milestone-dry"), "en");
+  const batch = {
+    milestones: milestoneBatch(
+      [{ chapter: 428, from: "background", to: "delivered" }],
+      { from: "publishing", to: "hiatus" },
+    ),
+    revision: "2094673907626414299",
+  };
+  let sends = 0;
+  const sendPush = async () => {
+    sends += 1;
+  };
+
+  const preview = await deliverMilestones(env, batch, {
+    sendPush,
+    dryRun: true,
+  });
+
+  assert.equal(preview.dryRun, true);
+  assert.equal(sends, 0);
+  assert.equal(preview.preview.kind, "tracker-milestone");
+  assert.equal(preview.preview.publication, "hiatus");
+  assert.equal(store.data.has("push:announced-milestones"), false);
+
+  // The rehearsal must not have consumed the real milestone.
+  const real = await deliverMilestones(env, batch, { sendPush });
+  assert.equal(sends, 1);
+  assert.equal(real.announced, 1);
+});
+
+test("the announced record is written only once delivery finishes", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  await subscribe(env, await validSubscription("milestone-fail"), "en");
+  const batch = {
+    milestones: milestoneBatch([
+      { chapter: 428, from: "background", to: "delivered" },
+    ]),
+    revision: "2094673907626414299",
+  };
+
+  await assert.rejects(
+    deliverMilestones(env, batch, {
+      sendPush: async () => {
+        throw { statusCode: 503 };
+      },
+    }),
+  );
+  assert.equal(store.data.has("push:announced-milestones"), false);
+
+  // Nothing was recorded, so the retry still announces it.
+  let sends = 0;
+  const retry = await deliverMilestones(env, batch, {
+    sendPush: async () => {
+      sends += 1;
+    },
+  });
+  assert.equal(sends, 1);
+  assert.equal(retry.announced, 1);
 });

@@ -1,5 +1,13 @@
 const SIGNATURE_PREFIX = "sha256=";
 const SIGNATURE_CONTEXT = "hxhstatus-automation-payload:v1\n";
+
+// The Worker signs dispatches to the Action, and the Action signs verdicts back
+// to the Worker. Domain-separating the two means a signature captured from one
+// direction cannot be replayed as the other, even though both hang off secrets
+// held by the same two parties.
+export const AUTOMATION_SIGNATURE_CONTEXT = SIGNATURE_CONTEXT;
+export const TRACKER_VERDICT_SIGNATURE_CONTEXT =
+  "hxhstatus-tracker-verdict:v1\n";
 const MIN_SECRET_LENGTH = 32;
 const MAX_PAYLOAD_AGE_MS = 6 * 60 * 60 * 1_000;
 const MAX_FUTURE_SKEW_MS = 5 * 60 * 1_000;
@@ -30,9 +38,9 @@ async function importKey(secret, usage) {
   );
 }
 
-function signedBytes(payloadText) {
+function signedBytes(payloadText, context) {
   assertPayloadText(payloadText);
-  return encoder.encode(SIGNATURE_CONTEXT + payloadText);
+  return encoder.encode(context + payloadText);
 }
 
 function bytesToBase64(bytes) {
@@ -46,12 +54,16 @@ function base64ToBytes(value) {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
-export async function signAutomationPayload(payloadText, secret) {
+export async function signAutomationPayload(
+  payloadText,
+  secret,
+  { context = SIGNATURE_CONTEXT } = {},
+) {
   const key = await importKey(secret, "sign");
   const signature = await crypto.subtle.sign(
     "HMAC",
     key,
-    signedBytes(payloadText),
+    signedBytes(payloadText, context),
   );
   return SIGNATURE_PREFIX + bytesToBase64(new Uint8Array(signature));
 }
@@ -60,6 +72,7 @@ export async function verifyAutomationPayloadSignature(
   payloadText,
   signatureHeader,
   secret,
+  { context = SIGNATURE_CONTEXT } = {},
 ) {
   if (
     typeof signatureHeader !== "string" ||
@@ -74,7 +87,7 @@ export async function verifyAutomationPayloadSignature(
       "HMAC",
       key,
       base64ToBytes(signatureHeader.slice(SIGNATURE_PREFIX.length)),
-      signedBytes(payloadText),
+      signedBytes(payloadText, context),
     );
   } catch {
     return false;
