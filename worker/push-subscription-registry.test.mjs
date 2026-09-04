@@ -201,3 +201,42 @@ test("an expired lease is swept before it can be renewed", async () => {
   const response = await call(registry, "/renew", { id, revision });
   assert.equal(response.status, 404);
 });
+
+test("pending ids come from the index, costing no KV operation", async () => {
+  const { registry, store } = makeRegistry();
+  const ids = ["a", "b", "c"].map((letter) => letter.repeat(64));
+
+  for (const pendingId of ids) {
+    await call(registry, "/upsert", { id: pendingId, record: record() });
+  }
+  await call(registry, "/promote", { id: ids[1], revision });
+
+  const before = { gets: store.gets, puts: store.puts };
+  const response = await call(registry, "/pending-ids", {});
+  assert.equal(response.status, 200);
+
+  const { ids: pending } = await response.json();
+  // The promoted one is active now, so it must not come back as pending.
+  assert.deepEqual(pending.sort(), [ids[0], ids[2]].sort());
+  assert.equal(store.gets - before.gets, 0);
+  assert.equal(store.puts - before.puts, 0);
+});
+
+test("the pending query ignores swept registrations and needs no id", async () => {
+  const { registry, sql } = makeRegistry();
+  await call(registry, "/upsert", { id, record: record() });
+
+  // A pending lease that ran out before anyone verified it.
+  sql.exec(
+    "UPDATE push_registrations SET expires_at = ? WHERE id = ?",
+    Date.now() - 1_000,
+    id,
+  );
+
+  const response = await call(registry, "/pending-ids", {});
+  assert.deepEqual((await response.json()).ids, []);
+
+  // Every other command still requires a valid registration id.
+  const rejected = await call(registry, "/inspect", {});
+  assert.equal(rejected.status, 400);
+});
