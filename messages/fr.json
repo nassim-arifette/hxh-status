@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "title": "HxH Status - Suivi de publication et de production",
-    "description": "Un suivi non officiel et sourcé de l’historique de publication de HUNTER×HUNTER et de l’avancement de production confirmé par Yoshihiro Togashi.",
+    "title": "HxH Status - Chapitres & avancement de HUNTER×HUNTER",
+    "description": "Un tracker non officiel et sourcé des sorties de chapitres de HUNTER×HUNTER et de l'avancement confirmé par Yoshihiro Togashi sur les prochains chapitres.",
     "siteName": "HxH Status",
-    "imageAlt": "Aperçu du suivi de publication et de production de HxH Status avec les étapes actuelles des chapitres"
+    "imageAlt": "HxH Status, suivi des sorties de chapitres et de l'avancement confirmé de HUNTER×HUNTER"
   },
   "header": {
     "wordmarkAria": "H×H Status",
@@ -13,37 +13,69 @@
     "label": "Langue"
   },
   "notifications": {
-    "enable": "Alertes de posts",
+    "enable": "Alertes Togashi",
     "on": "Alertes activées",
     "enabling": "Activation",
     "disabling": "Désactivation",
     "blocked": "Alertes bloquées",
     "unsupported": "Alertes indisponibles",
     "tryAgain": "Réessayer",
-    "description": "Recevez une notification dans votre navigateur quand Yoshihiro Togashi publie un post.",
-    "disable": "Désactiver les alertes de posts de Togashi",
+    "description": "Recevez une notification dans votre navigateur à chaque nouveau post de Yoshihiro Togashi.",
+    "disable": "Désactiver les alertes Togashi",
     "enabledTitle": "Les alertes Togashi sont activées",
     "enabledBody": "Vous serez notifié à chaque nouveau post de Yoshihiro Togashi.",
     "permissionDenied": "Les notifications sont bloquées. Autorisez-les dans les réglages de votre navigateur pour activer les alertes.",
-    "setupError": "Impossible de modifier les alertes de posts. Veuillez réessayer.",
-    "disabled": "Les alertes de posts de Togashi sont désactivées."
+    "setupError": "Impossible de modifier les alertes Togashi. Veuillez réessayer.",
+    "disabled": "Les alertes Togashi sont désactivées."
+  },
+  "push": {
+    "onePost": "Nouveau post de Togashi",
+    "manyPosts": "{count} nouveaux posts de Togashi",
+    "fallbackBody": "Yoshihiro Togashi a publié un nouveau post sur X.",
+    "milestoneTitle": {
+      "inking": "Chapitre {chapter} : l’encrage est terminé !",
+      "background": "Chapitre {chapter} : les décors sont bouclés !",
+      "delivered": "Le chapitre {chapter} a été livré au Jump !",
+      "scheduled": "Le chapitre {chapter} a une date de sortie !",
+      "published": "Le chapitre {chapter} est sorti !"
+    },
+    "milestoneBody": {
+      "inking": "Togashi a fini l’encrage des personnages.",
+      "background": "Les instructions de décors sont terminées.",
+      "delivered": "Le manuscrit terminé est entre les mains du Jump.",
+      "scheduled": "Le Jump a programmé sa publication.",
+      "published": "Bonne lecture."
+    },
+    "statuses": {
+      "inking": "encré",
+      "background": "décors bouclés",
+      "delivered": "chez le Jump",
+      "scheduled": "programmé",
+      "published": "disponible"
+    },
+    "manyChapters": "{count} chapitres ont avancé !",
+    "chapterLine": "{chapter} : {label}",
+    "hiatusTitle": "Hunter × Hunter part en pause",
+    "hiatusBody": "Aucun nouveau chapitre n’est programmé pour l’instant.",
+    "publishingTitle": "Hunter × Hunter revient !",
+    "publishingBody": "Le Jump a programmé la suite."
   },
   "snapshot": {
     "publishing": "Publication en cours",
     "hiatus": "En hiatus",
     "chaptersPublished": "{count} chapitres publiés en {year}.",
-    "latestPublished": "Dernier publié",
+    "latestPublished": "Dernier chapitre publié",
     "nextChapter": "Prochain chapitre",
     "manuscriptsComplete": "Manuscrits terminés",
-    "workConfirmed": "Travail confirmé",
-    "throughChapter": "jusqu’au chapitre",
-    "estimatedPreRelease": "Pré-release estimée",
-    "preReleaseSuffix": "pré-release"
+    "workConfirmed": "Avancement confirmé",
+    "throughChapter": "jusqu'au chapitre",
+    "estimatedPreRelease": "Date estimée des leaks",
+    "preReleaseSuffix": "leaks"
   },
   "production": {
     "eyebrow": "Guerre de succession de Kakin",
-    "title": "Suivi de production",
-    "chapterStatusAria": "État de production des chapitres",
+    "title": "Suivi de l'avancement",
+    "chapterStatusAria": "Avancement de production des chapitres",
     "legendAria": "Légende des statuts"
   },
   "latestUpdate": {
@@ -53,8 +85,8 @@
   },
   "history": {
     "eyebrow": "1998-2026",
-    "title": "Historique de publication",
-    "chartAria": "Graphique de l’historique de publication",
+    "title": "Historique de parution",
+    "chartAria": "Graphique de l'historique de parution de HUNTER×HUNTER",
     "publishedIssue": "WSJ {issue} : chapitre {chapter} publié",
     "emptyIssue": "WSJ {issue} : aucun chapitre",
     "chapterCountAria": "{count} chapitres",
@@ -67,14 +99,14 @@
     "close": "Fermer",
     "togashiSource": "Yoshihiro Togashi sur X",
     "cardAria": "Chapitre {chapter} : {status}",
-    "latestState": "Dernier état confirmé au {date}.",
+    "latestState": "Dernier statut confirmé au {date}.",
     "status": "Statut",
-    "estimatedPreRelease": "Pré-release estimée",
+    "estimatedPreRelease": "Date estimée des leaks",
     "published": "Publié",
-    "officialPublication": "Publication officielle",
+    "officialPublication": "Parution officielle",
     "update": "Mise à jour",
     "weeklyShonenJump": "Weekly Shonen Jump",
-    "issue": "Numéro {issue}",
+    "issue": "N° {issue}",
     "viewSource": "Voir la source",
     "noSource": "Aucune source spécifique à ce chapitre pour le moment."
   },
@@ -82,32 +114,32 @@
     "published": {
       "label": "Publié",
       "shortLabel": "Publié",
-      "description": "Officiellement publié et disponible pour les lecteurs."
+      "description": "Officiellement paru et disponible pour les lecteurs."
     },
     "scheduled": {
-      "label": "Publication programmée",
-      "shortLabel": "Programmé",
-      "description": "Jump a programmé la publication de ce chapitre."
+      "label": "Parution annoncée",
+      "shortLabel": "Annoncé",
+      "description": "Jump a annoncé et programmé la parution de ce chapitre."
     },
     "delivered": {
       "label": "Remis au Jump",
       "shortLabel": "Chez Jump",
-      "description": "Le manuscrit terminé a été remis au Jump, mais le chapitre n’est pas encore publié."
+      "description": "Le manuscrit terminé a été remis à la rédaction de Jump, mais le chapitre n'est pas encore publié."
     },
     "background": {
-      "label": "Spécifications des arrière-plans terminées",
-      "shortLabel": "Arrière-plans",
-      "description": "Les instructions pour les arrière-plans et les travaux de production associés sont terminées."
+      "label": "Instructions pour les décors terminées",
+      "shortLabel": "Décors",
+      "description": "Les indications pour les décors et les éléments de production associés sont terminées."
     },
     "inking": {
       "label": "Encrage des personnages terminé",
       "shortLabel": "Encré",
-      "description": "L’encrage des personnages est terminé ; les étapes de production suivantes restent à réaliser."
+      "description": "L'encrage des personnages est terminé ; les étapes de production suivantes restent à réaliser."
     },
     "unknown": {
-      "label": "Aucune mise à jour de production confirmée",
+      "label": "Aucun avancement confirmé",
       "shortLabel": "Inconnu",
-      "description": "Aucune étape précise de production n’a été confirmée publiquement."
+      "description": "Aucune étape précise de production n'a été confirmée publiquement."
     }
   },
   "captureActions": {
@@ -120,19 +152,19 @@
     "shareReady": "Prêt à partager",
     "tryAgain": "Réessayer",
     "buttonAria": "{action} : image PNG {label}",
-    "copyUnavailable": "La copie d’image n’est pas disponible ; {label} a donc été téléchargé au format PNG.",
+    "copyUnavailable": "La copie d'image n'est pas disponible ; {label} a donc été téléchargé au format PNG.",
     "copySuccess": "{label} a été copié au format PNG.",
-    "copyFallback": "{label} n’a pas pu être copié ; le PNG a donc été téléchargé à la place.",
-    "loadError": "{label} n’a pas pu être chargé.",
-    "shareUnavailable": "Le partage d’image n’est pas disponible ; {label} a donc été téléchargé au format PNG.",
+    "copyFallback": "{label} n'a pas pu être copié ; le PNG a donc été téléchargé à la place.",
+    "loadError": "{label} n'a pas pu être chargé.",
+    "shareUnavailable": "Le partage d'image n'est pas disponible ; {label} a donc été téléchargé au format PNG.",
     "shareReadyMessage": "Image prête. Appuyez à nouveau sur Partager pour ouvrir le menu de partage.",
     "shareText": "{label} sur hxhstatus.com",
     "shareTitle": "{label} - HxH Status",
     "shareSuccess": "{label} a été partagé au format PNG.",
-    "shareFallback": "{label} n’a pas pu être partagé ; le PNG a donc été téléchargé à la place."
+    "shareFallback": "{label} n'a pas pu être partagé ; le PNG a donc été téléchargé à la place."
   },
   "footer": {
-    "disclaimer": "Suivi non officiel du statut de HUNTER×HUNTER.",
-    "sources": "Sources : Yoshihiro Togashi, Weekly Shonen Jump, MANGA Plus."
+    "disclaimer": "Suivi non officiel des chapitres et de l'avancement de HUNTER×HUNTER.",
+    "sources": "Sources : Yoshihiro Togashi, Weekly Shonen Jump, VIZ, MANGA Plus."
   }
 }

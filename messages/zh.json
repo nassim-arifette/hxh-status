@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "title": "HxH Status - 《全职猎人》章节与制作进度",
+    "description": "一个附有来源的非官方《HUNTER×HUNTER（全职猎人）》追踪站，汇总最新刊载章节以及富坚义博公开确认的后续章节制作进度。",
+    "siteName": "HxH Status",
+    "imageAlt": "HxH Status：《全职猎人》最新刊载章节与已确认制作进度"
+  },
+  "header": {
+    "wordmarkAria": "H×H Status",
+    "updated": "更新于 {date}"
+  },
+  "language": {
+    "label": "语言"
+  },
+  "notifications": {
+    "enable": "富坚动态提醒",
+    "on": "提醒已开启",
+    "enabling": "正在开启",
+    "disabling": "正在关闭",
+    "blocked": "提醒已被阻止",
+    "unsupported": "提醒不可用",
+    "tryAgain": "重试",
+    "description": "富坚义博发布新动态时，在浏览器中收到提醒。",
+    "disable": "关闭富坚动态提醒",
+    "enabledTitle": "富坚动态提醒已开启",
+    "enabledBody": "富坚义博发布新动态时，你将收到提醒。",
+    "permissionDenied": "通知已被阻止。请在浏览器设置中允许通知后再开启提醒。",
+    "setupError": "无法更改富坚动态提醒，请重试。",
+    "disabled": "富坚动态提醒已关闭。"
+  },
+  "push": {
+    "onePost": "富坚发布了新动态",
+    "manyPosts": "富坚发布了 {count} 条新动态",
+    "fallbackBody": "富坚义博在 X 上发布了新动态。",
+    "milestoneTitle": {
+      "inking": "第 {chapter} 话：人物描线完成！",
+      "background": "第 {chapter} 话：背景指定完成！",
+      "delivered": "第 {chapter} 话的原稿已交付集英社！",
+      "scheduled": "第 {chapter} 话已确定刊载时间！",
+      "published": "第 {chapter} 话已刊载！"
+    },
+    "milestoneBody": {
+      "inking": "富坚义博已完成人物描线。",
+      "background": "背景指定书已完成。",
+      "delivered": "完成的原稿已经送到集英社。",
+      "scheduled": "Jump 已安排刊载。",
+      "published": "去读吧。"
+    },
+    "statuses": {
+      "inking": "人物描线完成",
+      "background": "背景指定完成",
+      "delivered": "已交稿",
+      "scheduled": "待刊载",
+      "published": "已刊载"
+    },
+    "manyChapters": "{count} 话的进度有更新！",
+    "chapterLine": "第 {chapter} 话：{label}",
+    "hiatusTitle": "《全职猎人》进入休刊",
+    "hiatusBody": "目前没有新话的刊载安排。",
+    "publishingTitle": "《全职猎人》回归了！",
+    "publishingBody": "Jump 已安排下一话的刊载。"
+  },
+  "snapshot": {
+    "publishing": "连载中",
+    "hiatus": "休刊中",
+    "chaptersPublished": "{year} 年已刊载 {count} 话。",
+    "latestPublished": "最新刊载",
+    "nextChapter": "下一话",
+    "manuscriptsComplete": "原稿完成",
+    "workConfirmed": "已确认进度",
+    "throughChapter": "话",
+    "estimatedPreRelease": "预计情报时间",
+    "preReleaseSuffix": "情报"
+  },
+  "production": {
+    "eyebrow": "卡金王位继承战",
+    "title": "制作进度",
+    "chapterStatusAria": "各话制作进度",
+    "legendAria": "状态说明"
+  },
+  "latestUpdate": {
+    "eyebrow": "富坚最新进度",
+    "sentence": "第 {chapter} 话：{status}。",
+    "viewPost": "查看动态"
+  },
+  "history": {
+    "eyebrow": "1998-2026",
+    "title": "连载记录",
+    "chartAria": "《全职猎人》连载记录图",
+    "publishedIssue": "《周刊少年Jump》第 {issue} 号：刊载第 {chapter} 话",
+    "emptyIssue": "《周刊少年Jump》第 {issue} 号：未刊载新话",
+    "chapterCountAria": "{count} 话",
+    "chapterPublished": "有新话",
+    "noChapter": "无新话",
+    "countHint": "右侧：每年刊载话数"
+  },
+  "chapter": {
+    "title": "话数",
+    "close": "关闭",
+    "togashiSource": "富坚义博 X",
+    "cardAria": "第 {chapter} 话：{status}",
+    "latestState": "截至 {date} 的最新确认状态。",
+    "status": "状态",
+    "estimatedPreRelease": "预计情报时间",
+    "published": "已刊载",
+    "officialPublication": "正式刊载",
+    "update": "更新",
+    "weeklyShonenJump": "周刊少年Jump",
+    "issue": "第 {issue} 号",
+    "viewSource": "查看来源",
+    "noSource": "目前还没有这一话的专属来源。"
+  },
+  "statuses": {
+    "published": {
+      "label": "已刊载",
+      "shortLabel": "已刊载",
+      "description": "已正式刊载，读者可以阅读。"
+    },
+    "scheduled": {
+      "label": "已确定刊载",
+      "shortLabel": "待刊载",
+      "description": "Jump 已宣布并确定这一话的刊载安排。"
+    },
+    "delivered": {
+      "label": "已交付集英社",
+      "shortLabel": "已交稿",
+      "description": "完整原稿已完成并交付集英社的编辑与刊载流程，但这一话尚未正式刊载。"
+    },
+    "background": {
+      "label": "背景指定书制作完成",
+      "shortLabel": "背景指定完成",
+      "description": "背景指定书以及相关制作说明已完成。"
+    },
+    "inking": {
+      "label": "人物描线完成",
+      "shortLabel": "人物描线",
+      "description": "人物描线已完成，后续仍有背景等制作工序。"
+    },
+    "unknown": {
+      "label": "暂无确认进度",
+      "shortLabel": "未确认",
+      "description": "目前没有公开确认的具体制作进度。"
+    }
+  },
+  "captureActions": {
+    "share": "分享",
+    "copy": "复制",
+    "preparing": "正在准备",
+    "downloaded": "已下载",
+    "copied": "已复制",
+    "shared": "已分享",
+    "shareReady": "已可分享",
+    "tryAgain": "重试",
+    "buttonAria": "{action}：{label} PNG 图片",
+    "copyUnavailable": "无法复制图片，因此已将 {label} 下载为 PNG。",
+    "copySuccess": "已将 {label} 复制为 PNG 图片。",
+    "copyFallback": "无法复制 {label}，因此改为下载 PNG。",
+    "loadError": "无法加载 {label}。",
+    "shareUnavailable": "无法直接分享图片，因此已将 {label} 下载为 PNG。",
+    "shareReadyMessage": "图片已准备好。请再次点击“分享”打开系统分享菜单。",
+    "shareText": "hxhstatus.com 的 {label}",
+    "shareTitle": "{label} - HxH Status",
+    "shareSuccess": "已将 {label} 作为 PNG 图片分享。",
+    "shareFallback": "无法分享 {label}，因此改为下载 PNG。"
+  },
+  "footer": {
+    "disclaimer": "非官方《HUNTER×HUNTER（全职猎人）》章节与制作进度追踪站。",
+    "sources": "来源：富坚义博、《周刊少年Jump》、MANGA Plus。"
+  }
+}

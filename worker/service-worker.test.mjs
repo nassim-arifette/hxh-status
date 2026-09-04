@@ -51,6 +51,14 @@ test("the reader's own language is used", () => {
 
   assert.equal(notification.title, "Le chapitre 428 a été livré au Jump !");
   assert.equal(notification.body, "Le manuscrit terminé est entre les mains du Jump.");
+
+  const spanish = buildNotification(milestone({ locale: "es" }));
+
+  assert.equal(spanish.title, "¡El capítulo 428 ha sido entregado a Jump!");
+  assert.equal(
+    spanish.body,
+    "El manuscrito terminado ya está en manos de Jump.",
+  );
 });
 
 test("every milestone has its own sentence", () => {
@@ -153,5 +161,5 @@ test("the existing post and test notifications are unchanged", () => {
   );
 
   const enabled = buildNotification({ v: 1, kind: "test", locale: "en" });
-  assert.equal(enabled.title, "Togashi post alerts are on");
+  assert.equal(enabled.title, "Togashi alerts are on");
 });

@@ -1,138 +1,170 @@
 {
   "metadata": {
-    "title": "HxH Status - Publication & Production Tracker",
-    "description": "A sourced, unofficial tracker for HUNTER×HUNTER publication history and Yoshihiro Togashi's confirmed production progress.",
+    "title": "HxH Status - HUNTER×HUNTER 最新話・制作進捗トラッカー",
+    "description": "HUNTER×HUNTERの掲載状況と、冨樫義博先生が公表した今後の話数の制作進捗を、出典付きで追跡する非公式サイトです。",
     "siteName": "HxH Status",
-    "imageAlt": "HxH Status publication and production tracker with current chapter milestones"
+    "imageAlt": "HUNTER×HUNTERの最新掲載話と確認済み制作進捗を表示するHxH Status"
   },
   "header": {
     "wordmarkAria": "H×H Status",
-    "updated": "Updated {date}"
+    "updated": "更新：{date}"
   },
   "language": {
     "label": "言語"
   },
   "notifications": {
-    "enable": "Post alerts",
-    "on": "Alerts on",
-    "enabling": "Enabling",
-    "disabling": "Turning off",
-    "blocked": "Alerts blocked",
-    "unsupported": "Alerts unavailable",
-    "tryAgain": "Try again",
-    "description": "Get a browser notification when Yoshihiro Togashi posts.",
-    "disable": "Turn off Togashi post alerts",
-    "enabledTitle": "Togashi post alerts are on",
-    "enabledBody": "You will be notified when Yoshihiro Togashi posts.",
-    "permissionDenied": "Notifications are blocked. Allow them in your browser settings to enable alerts.",
-    "setupError": "Post alerts could not be changed. Please try again.",
-    "disabled": "Togashi post alerts are off."
+    "enable": "冨樫先生の投稿通知",
+    "on": "通知オン",
+    "enabling": "有効化中",
+    "disabling": "無効化中",
+    "blocked": "通知がブロックされています",
+    "unsupported": "通知を利用できません",
+    "tryAgain": "再試行",
+    "description": "冨樫義博先生が新しい投稿をしたときにブラウザ通知を受け取ります。",
+    "disable": "冨樫先生の投稿通知をオフにする",
+    "enabledTitle": "冨樫先生の投稿通知がオンになりました",
+    "enabledBody": "冨樫義博先生が投稿すると通知されます。",
+    "permissionDenied": "通知がブロックされています。ブラウザの設定で通知を許可してください。",
+    "setupError": "投稿通知を変更できませんでした。もう一度お試しください。",
+    "disabled": "冨樫先生の投稿通知はオフです。"
+  },
+  "push": {
+    "onePost": "冨樫先生の新しい投稿",
+    "manyPosts": "冨樫先生の新しい投稿が{count}件",
+    "fallbackBody": "冨樫義博先生がXに投稿しました。",
+    "milestoneTitle": {
+      "inking": "第{chapter}話：人物のペン入れが完了！",
+      "background": "第{chapter}話：背景指定が完了！",
+      "delivered": "第{chapter}話の原稿がジャンプに渡りました！",
+      "scheduled": "第{chapter}話の掲載日が決まりました！",
+      "published": "第{chapter}話が掲載されました！"
+    },
+    "milestoneBody": {
+      "inking": "冨樫先生が人物のペン入れを終えました。",
+      "background": "背景の指定書が完成しました。",
+      "delivered": "完成した原稿はジャンプ編集部に渡っています。",
+      "scheduled": "ジャンプが掲載を予定しています。",
+      "published": "ぜひ読んでください。"
+    },
+    "statuses": {
+      "inking": "人物ペン入れ完了",
+      "background": "背景指定完了",
+      "delivered": "原稿完成",
+      "scheduled": "掲載予定",
+      "published": "掲載済み"
+    },
+    "manyChapters": "{count}話の進捗が進みました！",
+    "chapterLine": "第{chapter}話：{label}",
+    "hiatusTitle": "HUNTER×HUNTERが休載に入ります",
+    "hiatusBody": "現在、次の話の掲載予定はありません。",
+    "publishingTitle": "HUNTER×HUNTERが再開します！",
+    "publishingBody": "ジャンプが次の話の掲載を予定しています。"
   },
   "snapshot": {
-    "publishing": "Publishing",
-    "hiatus": "On hiatus",
-    "chaptersPublished": "{count} chapters published in {year}.",
-    "latestPublished": "Latest published",
-    "nextChapter": "Next chapter",
-    "manuscriptsComplete": "Manuscripts complete",
-    "workConfirmed": "Work confirmed",
-    "throughChapter": "through chapter",
-    "estimatedPreRelease": "Estimated pre-release",
-    "preReleaseSuffix": "pre-release"
+    "publishing": "掲載中",
+    "hiatus": "休載中",
+    "chaptersPublished": "{year}年に{count}話掲載。",
+    "latestPublished": "最新掲載話",
+    "nextChapter": "次回",
+    "manuscriptsComplete": "原稿完成",
+    "workConfirmed": "進捗確認済み",
+    "throughChapter": "話まで",
+    "estimatedPreRelease": "早バレ予想日",
+    "preReleaseSuffix": "早バレ"
   },
   "production": {
-    "eyebrow": "Kakin Succession Contest",
-    "title": "Production tracker",
-    "chapterStatusAria": "Chapter production status",
-    "legendAria": "Status legend"
+    "eyebrow": "カキン王位継承戦",
+    "title": "制作進捗",
+    "chapterStatusAria": "各話の制作進捗",
+    "legendAria": "ステータス凡例"
   },
   "latestUpdate": {
-    "eyebrow": "Latest Togashi update",
-    "sentence": "Chapter {chapter} {status}.",
-    "viewPost": "View post"
+    "eyebrow": "冨樫先生の最新進捗",
+    "sentence": "No.{chapter}：{status}。",
+    "viewPost": "投稿を見る"
   },
   "history": {
     "eyebrow": "1998-2026",
-    "title": "Publication history",
-    "chartAria": "Publication history chart",
-    "publishedIssue": "WSJ {issue}: chapter {chapter} published",
-    "emptyIssue": "WSJ {issue}: no chapter",
-    "chapterCountAria": "{count} chapters",
-    "chapterPublished": "Chapter published",
-    "noChapter": "No chapter",
-    "countHint": "right column: chapters / year"
+    "title": "掲載履歴",
+    "chartAria": "HUNTER×HUNTER掲載履歴グラフ",
+    "publishedIssue": "週刊少年ジャンプ{issue}号：No.{chapter}掲載",
+    "emptyIssue": "週刊少年ジャンプ{issue}号：掲載なし",
+    "chapterCountAria": "{count}話",
+    "chapterPublished": "掲載あり",
+    "noChapter": "掲載なし",
+    "countHint": "右端：年間掲載話数"
   },
   "chapter": {
-    "title": "Chapter",
-    "close": "Close",
-    "togashiSource": "Yoshihiro Togashi on X",
-    "cardAria": "Chapter {chapter}: {status}",
-    "latestState": "Latest confirmed state as of {date}.",
-    "status": "Status",
-    "estimatedPreRelease": "Estimated pre-release",
-    "published": "Published",
-    "officialPublication": "Official publication",
-    "update": "Update",
-    "weeklyShonenJump": "Weekly Shonen Jump",
-    "issue": "Issue {issue}",
-    "viewSource": "View source",
-    "noSource": "No chapter-specific source yet."
+    "title": "話数",
+    "close": "閉じる",
+    "togashiSource": "冨樫義博 公式X",
+    "cardAria": "No.{chapter}：{status}",
+    "latestState": "{date}時点の最新確認状況。",
+    "status": "状況",
+    "estimatedPreRelease": "早バレ予想日",
+    "published": "掲載済み",
+    "officialPublication": "公式掲載",
+    "update": "更新",
+    "weeklyShonenJump": "週刊少年ジャンプ",
+    "issue": "{issue}号",
+    "viewSource": "出典を見る",
+    "noSource": "この話数に紐づく出典はまだありません。"
   },
   "statuses": {
     "published": {
-      "label": "Published",
-      "shortLabel": "Published",
-      "description": "Officially released to readers."
+      "label": "掲載済み",
+      "shortLabel": "掲載済み",
+      "description": "公式に掲載され、読者が読める状態です。"
     },
     "scheduled": {
-      "label": "Scheduled for publication",
-      "shortLabel": "Scheduled",
-      "description": "Jump has scheduled this chapter for publication."
+      "label": "掲載予定",
+      "shortLabel": "掲載予定",
+      "description": "ジャンプ編集部からこの話数の掲載予定が発表されています。"
     },
     "delivered": {
-      "label": "Delivered to Jump",
-      "shortLabel": "At Jump",
-      "description": "The finished manuscript has been delivered to Jump, but it is not published yet."
+      "label": "原稿完成",
+      "shortLabel": "原稿完成",
+      "description": "原稿が完成し、ジャンプの編集・入稿工程に渡った段階です。まだ掲載はされていません。"
     },
     "background": {
-      "label": "Background specifications complete",
-      "shortLabel": "Backgrounds",
-      "description": "Instructions for backgrounds and supporting production work are complete."
+      "label": "背景指定書作成完了",
+      "shortLabel": "背景指定完了",
+      "description": "背景や仕上げ作業に関する指定書の作成が完了しています。"
     },
     "inking": {
-      "label": "Character inking complete",
-      "shortLabel": "Inked",
-      "description": "Character linework is complete; later production steps remain."
+      "label": "人物ペン入れ完了",
+      "shortLabel": "人物ペン入れ",
+      "description": "人物のペン入れが完了し、後工程が残っています。"
     },
     "unknown": {
-      "label": "No confirmed production update",
-      "shortLabel": "Unknown",
-      "description": "No precise public production milestone has been confirmed."
+      "label": "確認済み進捗なし",
+      "shortLabel": "未確認",
+      "description": "具体的な制作工程の進捗は公表・確認されていません。"
     }
   },
   "captureActions": {
-    "share": "Share",
-    "copy": "Copy",
-    "preparing": "Preparing",
-    "downloaded": "Downloaded",
-    "copied": "Copied",
-    "shared": "Shared",
-    "shareReady": "Share ready",
-    "tryAgain": "Try again",
-    "buttonAria": "{action}: {label} PNG image",
-    "copyUnavailable": "Image copying is unavailable, so {label} was downloaded as a PNG.",
-    "copySuccess": "{label} copied as a PNG image.",
-    "copyFallback": "{label} could not be copied, so the PNG was downloaded instead.",
-    "loadError": "{label} could not be loaded.",
-    "shareUnavailable": "Image sharing is unavailable, so {label} was downloaded as a PNG.",
-    "shareReadyMessage": "Image ready. Tap Share again to open your share sheet.",
-    "shareText": "{label} from hxhstatus.com",
+    "share": "共有",
+    "copy": "コピー",
+    "preparing": "準備中",
+    "downloaded": "ダウンロード済み",
+    "copied": "コピー済み",
+    "shared": "共有済み",
+    "shareReady": "共有準備完了",
+    "tryAgain": "再試行",
+    "buttonAria": "{action}：{label}のPNG画像",
+    "copyUnavailable": "画像をコピーできないため、{label}をPNGでダウンロードしました。",
+    "copySuccess": "{label}をPNG画像としてコピーしました。",
+    "copyFallback": "{label}をコピーできなかったため、代わりにPNGをダウンロードしました。",
+    "loadError": "{label}を読み込めませんでした。",
+    "shareUnavailable": "画像を共有できないため、{label}をPNGでダウンロードしました。",
+    "shareReadyMessage": "画像の準備ができました。もう一度「共有」を押して共有メニューを開いてください。",
+    "shareText": "hxhstatus.com の{label}",
     "shareTitle": "{label} - HxH Status",
-    "shareSuccess": "{label} shared as a PNG image.",
-    "shareFallback": "{label} could not be shared, so the PNG was downloaded instead."
+    "shareSuccess": "{label}をPNG画像として共有しました。",
+    "shareFallback": "{label}を共有できなかったため、代わりにPNGをダウンロードしました。"
   },
   "footer": {
-    "disclaimer": "Unofficial HUNTER×HUNTER status tracker.",
-    "sources": "Sources: Yoshihiro Togashi, Weekly Shonen Jump, 少年ジャンプ＋, ゼブラック."
+    "disclaimer": "HUNTER×HUNTERの非公式掲載・制作進捗トラッカーです。",
+    "sources": "出典：冨樫義博、週刊少年ジャンプ、少年ジャンプ＋、ゼブラック。"
   }
 }

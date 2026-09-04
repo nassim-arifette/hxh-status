@@ -1,6 +1,7 @@
 import { access, readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import vm from "node:vm";
+
+import { isUpToDate } from "./generate-sw-copy.mjs";
 
 const root = process.cwd();
 const messagesDirectory = join(root, "messages");
@@ -160,82 +161,13 @@ if (catalogLocales.includes(referenceLocale)) {
 }
 
 // The service worker cannot read the message catalogs: it runs detached from
-// the page, so it ships its own copy of the notification strings. Nothing else
-// compares the two, which is how a new locale or a new notification string can
-// reach subscribers untranslated.
-const serviceWorkerSource = await readFile(
-  join(root, "public", "sw.js"),
-  "utf8",
-);
-let notificationCopy;
-
-try {
-  const sandbox = vm.createContext({
-    self: {
-      addEventListener() {},
-      location: { origin: "https://hxhstatus.com" },
-    },
-  });
-  vm.runInContext(
-    `${serviceWorkerSource};globalThis.__copy = notificationCopy;`,
-    sandbox,
-  );
-  notificationCopy = sandbox.__copy;
-} catch (error) {
-  report("public/sw.js could not be evaluated: " + error.message);
-}
-
-if (notificationCopy) {
-  const swReference = flatten(notificationCopy[referenceLocale] ?? {});
-
-  for (const locale of configuredLocales) {
-    const localeCopy = notificationCopy[locale];
-
-    if (!localeCopy) {
-      report("public/sw.js has no notification copy for " + locale + ".");
-      continue;
-    }
-
-    const entries = flatten(localeCopy);
-    const missing = [...swReference.keys()].filter((key) => !entries.has(key));
-    const extra = [...entries.keys()].filter((key) => !swReference.has(key));
-    const empty = [...entries.entries()]
-      .filter(([, value]) =>
-        typeof value === "function"
-          ? false
-          : typeof value !== "string" || value.trim().length === 0,
-      )
-      .map(([key]) => key);
-
-    if (missing.length) {
-      report(
-        "public/sw.js is missing notification copy for " +
-          locale +
-          ": " +
-          missing.join(", "),
-      );
-    }
-    if (extra.length) {
-      report(
-        "public/sw.js has unused notification copy for " +
-          locale +
-          ": " +
-          extra.join(", "),
-      );
-    }
-    if (empty.length) {
-      report(
-        "public/sw.js has empty notification copy for " +
-          locale +
-          ": " +
-          empty.join(", "),
-      );
-    }
-  }
-
-  if (!failed) {
-    console.log("public/sw.js notification copy covers every locale.");
-  }
+// the page, so it ships a generated copy of the notification strings. A stale
+// copy is how a new locale or a reworded notification reaches subscribers
+// untranslated.
+if (await isUpToDate()) {
+  console.log("public/sw.js notification copy matches the catalogs.");
+} else {
+  report("public/sw.js is out of date. Run `npm run sw:copy`.");
 }
 
 if (!failed) {

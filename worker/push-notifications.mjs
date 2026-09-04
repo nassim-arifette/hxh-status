@@ -31,7 +31,7 @@ const MAX_BODY_BYTES = 8_192;
 const MAX_SUBSCRIPTIONS_PER_RUN = 32;
 const MAX_SUBSCRIPTIONS_TO_VERIFY = 8;
 const MAX_LEGACY_SUBSCRIPTIONS_TO_MIGRATE = 8;
-const VALID_LOCALES = new Set(["en", "fr", "ja"]);
+const VALID_LOCALES = new Set(["en", "fr", "ja", "es", "pt", "zh", "ar"]);
 const PUSH_ENDPOINT_HOSTS = [
   /^fcm\.googleapis\.com$/,
   /^updates\.push\.services\.mozilla\.com$/,

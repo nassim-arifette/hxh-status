@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "title": "HxH Status - فصول HUNTER×HUNTER وتقدم العمل",
+    "description": "متتبع غير رسمي وموثق بالمصادر لفصول HUNTER×HUNTER وللتقدم الذي يؤكده يوشيهيرو توغاشي في الفصول القادمة.",
+    "siteName": "HxH Status",
+    "imageAlt": "HxH Status لمتابعة فصول HUNTER×HUNTER وآخر تقدم مؤكد في العمل"
+  },
+  "header": {
+    "wordmarkAria": "H×H Status",
+    "updated": "آخر تحديث: {date}"
+  },
+  "language": {
+    "label": "اللغة"
+  },
+  "notifications": {
+    "enable": "تنبيهات توغاشي",
+    "on": "التنبيهات مفعلة",
+    "enabling": "جارٍ التفعيل",
+    "disabling": "جارٍ الإيقاف",
+    "blocked": "التنبيهات محظورة",
+    "unsupported": "التنبيهات غير متاحة",
+    "tryAgain": "إعادة المحاولة",
+    "description": "احصل على إشعار في المتصفح كلما نشر يوشيهيرو توغاشي منشورًا جديدًا.",
+    "disable": "إيقاف تنبيهات توغاشي",
+    "enabledTitle": "تنبيهات توغاشي مفعلة",
+    "enabledBody": "سيصلك إشعار كلما نشر يوشيهيرو توغاشي منشورًا جديدًا.",
+    "permissionDenied": "الإشعارات محظورة. اسمح بها من إعدادات المتصفح لتفعيل التنبيهات.",
+    "setupError": "تعذر تغيير تنبيهات توغاشي. حاول مرة أخرى.",
+    "disabled": "تنبيهات توغاشي متوقفة."
+  },
+  "push": {
+    "onePost": "منشور جديد من توغاشي",
+    "manyPosts": "{count} منشورات جديدة من توغاشي",
+    "fallbackBody": "نشر يوشيهيرو توغاشي منشورًا على X.",
+    "milestoneTitle": {
+      "inking": "الفصل {chapter}: اكتمل تحبير الشخصيات!",
+      "background": "الفصل {chapter}: اكتملت الخلفيات!",
+      "delivered": "سُلّم الفصل {chapter} إلى Jump!",
+      "scheduled": "تحدد موعد نشر الفصل {chapter}!",
+      "published": "صدر الفصل {chapter}!"
+    },
+    "milestoneBody": {
+      "inking": "أنهى توغاشي تحبير الشخصيات.",
+      "background": "اكتملت تعليمات الخلفيات.",
+      "delivered": "المخطوطة المكتملة الآن لدى Jump.",
+      "scheduled": "حددت Jump موعد نشره.",
+      "published": "اقرأه الآن."
+    },
+    "statuses": {
+      "inking": "مُحبَّر",
+      "background": "الخلفيات مكتملة",
+      "delivered": "لدى Jump",
+      "scheduled": "مجدول",
+      "published": "متاح الآن"
+    },
+    "manyChapters": "{count} فصول تقدمت!",
+    "chapterLine": "{chapter}: {label}",
+    "hiatusTitle": "هانتر × هانتر يدخل فترة توقف",
+    "hiatusBody": "لا يوجد فصل جديد مجدول في الوقت الحالي.",
+    "publishingTitle": "عاد هانتر × هانتر!",
+    "publishingBody": "جدولت Jump الفصل القادم."
+  },
+  "snapshot": {
+    "publishing": "قيد النشر",
+    "hiatus": "في فترة توقف",
+    "chaptersPublished": "الفصول المنشورة في {year}: {count}.",
+    "latestPublished": "آخر فصل منشور",
+    "nextChapter": "الفصل القادم",
+    "manuscriptsComplete": "المخطوطات المكتملة",
+    "workConfirmed": "تقدم مؤكد",
+    "throughChapter": "حتى الفصل",
+    "estimatedPreRelease": "موعد التسريبات المتوقع",
+    "preReleaseSuffix": "تسريبات"
+  },
+  "production": {
+    "eyebrow": "حرب الخلافة في كاكين",
+    "title": "متابعة الإنتاج",
+    "chapterStatusAria": "حالة إنتاج الفصول",
+    "legendAria": "دليل الحالات"
+  },
+  "latestUpdate": {
+    "eyebrow": "آخر تحديث من توغاشي",
+    "sentence": "الفصل {chapter}: {status}.",
+    "viewPost": "عرض المنشور"
+  },
+  "history": {
+    "eyebrow": "1998-2026",
+    "title": "سجل النشر",
+    "chartAria": "مخطط تاريخ نشر HUNTER×HUNTER",
+    "publishedIssue": "WSJ {issue}: نُشر الفصل {chapter}",
+    "emptyIssue": "WSJ {issue}: لا يوجد فصل",
+    "chapterCountAria": "{count} فصل",
+    "chapterPublished": "فصل منشور",
+    "noChapter": "لا يوجد فصل",
+    "countHint": "العمود الأيمن: الفصول / السنة"
+  },
+  "chapter": {
+    "title": "الفصل",
+    "close": "إغلاق",
+    "togashiSource": "يوشيهيرو توغاشي على X",
+    "cardAria": "الفصل {chapter}: {status}",
+    "latestState": "آخر حالة مؤكدة حتى {date}.",
+    "status": "الحالة",
+    "estimatedPreRelease": "موعد التسريبات المتوقع",
+    "published": "منشور",
+    "officialPublication": "النشر الرسمي",
+    "update": "تحديث",
+    "weeklyShonenJump": "Weekly Shonen Jump",
+    "issue": "العدد {issue}",
+    "viewSource": "عرض المصدر",
+    "noSource": "لا يوجد مصدر خاص بهذا الفصل حتى الآن."
+  },
+  "statuses": {
+    "published": {
+      "label": "منشور",
+      "shortLabel": "منشور",
+      "description": "نُشر رسميًا وأصبح متاحًا للقراء."
+    },
+    "scheduled": {
+      "label": "محدد للنشر",
+      "shortLabel": "مجدول",
+      "description": "أعلنت Jump موعد نشر هذا الفصل وحددته."
+    },
+    "delivered": {
+      "label": "سُلّمت إلى Jump",
+      "shortLabel": "لدى Jump",
+      "description": "اكتملت المخطوطة وسُلّمت إلى هيئة تحرير Jump، لكن الفصل لم يُنشر بعد."
+    },
+    "background": {
+      "label": "اكتملت تعليمات الخلفيات",
+      "shortLabel": "الخلفيات",
+      "description": "اكتملت تعليمات الخلفيات وأعمال الإنتاج المرتبطة بها."
+    },
+    "inking": {
+      "label": "اكتمل تحبير الشخصيات",
+      "shortLabel": "التحبير",
+      "description": "اكتمل تحبير الشخصيات؛ ولا تزال هناك مراحل إنتاج لاحقة."
+    },
+    "unknown": {
+      "label": "لا يوجد تقدم مؤكد",
+      "shortLabel": "غير مؤكد",
+      "description": "لم تُؤكد علنًا أي مرحلة إنتاج محددة."
+    }
+  },
+  "captureActions": {
+    "share": "مشاركة",
+    "copy": "نسخ",
+    "preparing": "جارٍ التحضير",
+    "downloaded": "تم التنزيل",
+    "copied": "تم النسخ",
+    "shared": "تمت المشاركة",
+    "shareReady": "جاهز للمشاركة",
+    "tryAgain": "إعادة المحاولة",
+    "buttonAria": "{action}: صورة PNG لـ {label}",
+    "copyUnavailable": "نسخ الصورة غير متاح، لذلك تم تنزيل {label} كصورة PNG.",
+    "copySuccess": "تم نسخ {label} كصورة PNG.",
+    "copyFallback": "تعذر نسخ {label}، لذلك تم تنزيل ملف PNG بدلًا من ذلك.",
+    "loadError": "تعذر تحميل {label}.",
+    "shareUnavailable": "مشاركة الصورة غير متاحة، لذلك تم تنزيل {label} كصورة PNG.",
+    "shareReadyMessage": "الصورة جاهزة. اضغط على مشاركة مرة أخرى لفتح قائمة المشاركة.",
+    "shareText": "{label} من hxhstatus.com",
+    "shareTitle": "{label} - HxH Status",
+    "shareSuccess": "تمت مشاركة {label} كصورة PNG.",
+    "shareFallback": "تعذرت مشاركة {label}، لذلك تم تنزيل ملف PNG بدلًا من ذلك."
+  },
+  "footer": {
+    "disclaimer": "متتبع غير رسمي لفصول HUNTER×HUNTER وتقدم إنتاجها.",
+    "sources": "المصادر: يوشيهيرو توغاشي، Weekly Shonen Jump، MANGA Plus."
+  }
+}

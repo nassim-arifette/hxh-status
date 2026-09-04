@@ -951,9 +951,12 @@ select {
   overflow-y: auto;
 }
 
+/* Right-to-left locales read the header from the same edge the close button
+   sits on, so the button moves to the panel's other side with it. */
 .chapter-sheet > button {
   top: 22px;
-  right: 22px;
+  inset-inline-start: auto;
+  inset-inline-end: 22px;
   width: 34px;
   height: 34px;
   display: grid;

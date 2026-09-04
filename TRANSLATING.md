@@ -4,10 +4,11 @@ The website data and translations are kept separate. Chapter numbers, dates,
 sources, and publication history stay in `app/data/`. Translators only edit the
 message catalog prepared for their language.
 
-French is already public at `/fr`. Japanese is the first draft example: its
-catalog is `messages/ja.json` and its unlisted preview is
-`http://localhost:3000/ja`. The same workflow applies to every future
-language.
+French is already public at `/fr`. Japanese, Spanish, Portuguese, Chinese, and
+Arabic are drafts: their catalogs are `messages/ja.json`, `messages/es.json`,
+`messages/pt.json`, `messages/zh.json`, and `messages/ar.json`, and their
+unlisted previews are `http://localhost:3000/ja` and the matching paths. The
+same workflow applies to every future language.
 
 ## Translation workflow
 
@@ -17,7 +18,8 @@ language.
    `{status}`, `{issue}`, `{label}`, and `{action}` unchanged.
 4. Keep product and publication names accurate: HUNTER x HUNTER, Weekly
    Shonen Jump, MANGA Plus, VIZ, and Yoshihiro Togashi.
-5. Run `npm run translations:check`.
+5. Run `npm run sw:copy`, which copies the `push` section into the service
+   worker, then `npm run translations:check`.
 6. Run `npm run dev` and open the preview URL provided for your language.
 7. Open chapter 420 and check the Share and Copy labels, chapter details, and
    publication-history section.
@@ -45,7 +47,9 @@ catalog yet. The maintainer performs the one-time setup:
    text direction, and Open Graph locale;
 3. register the catalog in `lib/dictionaries.ts`;
 4. add its unlisted preview route using the shared metadata helper;
-5. generate its two Share images.
+5. add the locale to `VALID_LOCALES` in `worker/push-notifications.mjs`;
+6. run `npm run sw:copy` so the service worker ships its push notifications;
+7. generate its two Share images.
 
 MANGA Plus is the default reader. Locale-specific reader lists only need to be
 added when they differ. A reader's optional `chapterUrls` map can point a

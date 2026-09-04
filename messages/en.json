@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "title": "HxH Status - Publication & Production Tracker",
-    "description": "A sourced, unofficial tracker for HUNTER×HUNTER publication history and Yoshihiro Togashi's confirmed production progress.",
+    "title": "HxH Status - HUNTER×HUNTER Chapter & Production Tracker",
+    "description": "A sourced, unofficial tracker for HUNTER×HUNTER chapter releases and Yoshihiro Togashi's confirmed progress on upcoming chapters.",
     "siteName": "HxH Status",
-    "imageAlt": "HxH Status publication and production tracker with current chapter milestones"
+    "imageAlt": "HxH Status chapter release and production tracker showing the latest confirmed HUNTER×HUNTER progress"
   },
   "header": {
     "wordmarkAria": "H×H Status",
@@ -13,35 +13,67 @@
     "label": "Language"
   },
   "notifications": {
-    "enable": "Post alerts",
+    "enable": "Togashi alerts",
     "on": "Alerts on",
     "enabling": "Enabling",
     "disabling": "Turning off",
     "blocked": "Alerts blocked",
     "unsupported": "Alerts unavailable",
     "tryAgain": "Try again",
-    "description": "Get a browser notification when Yoshihiro Togashi posts.",
-    "disable": "Turn off Togashi post alerts",
-    "enabledTitle": "Togashi post alerts are on",
-    "enabledBody": "You will be notified when Yoshihiro Togashi posts.",
+    "description": "Get a browser notification whenever Yoshihiro Togashi posts.",
+    "disable": "Turn off Togashi alerts",
+    "enabledTitle": "Togashi alerts are on",
+    "enabledBody": "You will be notified whenever Yoshihiro Togashi posts.",
     "permissionDenied": "Notifications are blocked. Allow them in your browser settings to enable alerts.",
-    "setupError": "Post alerts could not be changed. Please try again.",
-    "disabled": "Togashi post alerts are off."
+    "setupError": "Togashi alerts could not be changed. Please try again.",
+    "disabled": "Togashi alerts are off."
+  },
+  "push": {
+    "onePost": "New Togashi post",
+    "manyPosts": "{count} new Togashi posts",
+    "fallbackBody": "Yoshihiro Togashi posted on X.",
+    "milestoneTitle": {
+      "inking": "Chapter {chapter}: the inking is done!",
+      "background": "Chapter {chapter}: the backgrounds are done!",
+      "delivered": "Chapter {chapter} has been delivered to Jump!",
+      "scheduled": "Chapter {chapter} has a release date!",
+      "published": "Chapter {chapter} is out!"
+    },
+    "milestoneBody": {
+      "inking": "Togashi has finished the character linework.",
+      "background": "The background instructions are complete.",
+      "delivered": "The finished manuscript is now with Jump.",
+      "scheduled": "Jump has scheduled it for publication.",
+      "published": "Go read it."
+    },
+    "statuses": {
+      "inking": "inked",
+      "background": "backgrounds done",
+      "delivered": "at Jump",
+      "scheduled": "scheduled",
+      "published": "out now"
+    },
+    "manyChapters": "{count} chapters moved forward!",
+    "chapterLine": "{chapter}: {label}",
+    "hiatusTitle": "Hunter × Hunter is going on a break",
+    "hiatusBody": "No new chapter is scheduled for now.",
+    "publishingTitle": "Hunter × Hunter is back!",
+    "publishingBody": "Jump has scheduled the next chapter."
   },
   "snapshot": {
     "publishing": "Publishing",
     "hiatus": "On hiatus",
     "chaptersPublished": "{count} chapters published in {year}.",
-    "latestPublished": "Latest published",
+    "latestPublished": "Latest released",
     "nextChapter": "Next chapter",
     "manuscriptsComplete": "Manuscripts complete",
-    "workConfirmed": "Work confirmed",
+    "workConfirmed": "Confirmed progress",
     "throughChapter": "through chapter",
     "estimatedPreRelease": "Estimated pre-release",
     "preReleaseSuffix": "pre-release"
   },
   "production": {
-    "eyebrow": "Kakin Succession Contest",
+    "eyebrow": "Kakin Succession War",
     "title": "Production tracker",
     "chapterStatusAria": "Chapter production status",
     "legendAria": "Status legend"
@@ -54,7 +86,7 @@
   "history": {
     "eyebrow": "1998-2026",
     "title": "Publication history",
-    "chartAria": "Publication history chart",
+    "chartAria": "HUNTER×HUNTER publication history chart",
     "publishedIssue": "WSJ {issue}: chapter {chapter} published",
     "emptyIssue": "WSJ {issue}: no chapter",
     "chapterCountAria": "{count} chapters",
@@ -67,11 +99,11 @@
     "close": "Close",
     "togashiSource": "Yoshihiro Togashi on X",
     "cardAria": "Chapter {chapter}: {status}",
-    "latestState": "Latest confirmed state as of {date}.",
+    "latestState": "Latest confirmed status as of {date}.",
     "status": "Status",
     "estimatedPreRelease": "Estimated pre-release",
     "published": "Published",
-    "officialPublication": "Official publication",
+    "officialPublication": "Official release",
     "update": "Update",
     "weeklyShonenJump": "Weekly Shonen Jump",
     "issue": "Issue {issue}",
@@ -82,32 +114,32 @@
     "published": {
       "label": "Published",
       "shortLabel": "Published",
-      "description": "Officially released to readers."
+      "description": "Officially released and available to readers."
     },
     "scheduled": {
-      "label": "Scheduled for publication",
+      "label": "Scheduled for release",
       "shortLabel": "Scheduled",
-      "description": "Jump has scheduled this chapter for publication."
+      "description": "Jump has announced and scheduled this chapter for release."
     },
     "delivered": {
       "label": "Delivered to Jump",
       "shortLabel": "At Jump",
-      "description": "The finished manuscript has been delivered to Jump, but it is not published yet."
+      "description": "The completed manuscript has been delivered to Jump and is not published yet."
     },
     "background": {
       "label": "Background specifications complete",
       "shortLabel": "Backgrounds",
-      "description": "Instructions for backgrounds and supporting production work are complete."
+      "description": "Background instructions and related production specifications are complete."
     },
     "inking": {
       "label": "Character inking complete",
       "shortLabel": "Inked",
-      "description": "Character linework is complete; later production steps remain."
+      "description": "Character inking is complete; later production steps remain."
     },
     "unknown": {
-      "label": "No confirmed production update",
+      "label": "No confirmed progress",
       "shortLabel": "Unknown",
-      "description": "No precise public production milestone has been confirmed."
+      "description": "No precise production milestone has been confirmed publicly."
     }
   },
   "captureActions": {
@@ -132,7 +164,7 @@
     "shareFallback": "{label} could not be shared, so the PNG was downloaded instead."
   },
   "footer": {
-    "disclaimer": "Unofficial HUNTER×HUNTER status tracker.",
+    "disclaimer": "Unofficial HUNTER×HUNTER chapter and production tracker.",
     "sources": "Sources: Yoshihiro Togashi, Weekly Shonen Jump, VIZ, MANGA Plus."
   }
 }

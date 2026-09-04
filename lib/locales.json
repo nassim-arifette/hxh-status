@@ -52,6 +52,47 @@
           "label": "ゼブラック"
         }
       ]
+    },
+    "es": {
+      "label": "Español",
+      "published": false,
+      "dir": "ltr",
+      "openGraphLocale": "es_ES"
+    },
+    "pt": {
+      "label": "Português",
+      "published": false,
+      "dir": "ltr",
+      "openGraphLocale": "pt_BR",
+      "officialReaders": [
+        {
+          "href": "https://mangamillion.shueisha.co.jp/pt-BR/title/121",
+          "label": "MANGA MILLION"
+        },
+        {
+          "href": "https://editorajbc.com.br/mangas/colecao/hunter-x-hunter/",
+          "label": "Editora JBC"
+        }
+      ]
+    },
+    "zh": {
+      "label": "中文",
+      "published": false,
+      "dir": "ltr",
+      "openGraphLocale": "zh_CN",
+      "officialReaders": [
+        {
+          "href": "https://mangamillion.shueisha.co.jp/zh-CN/title/121",
+          "label": "MANGA MILLION"
+        }
+      ]
+    },
+    "ar": {
+      "label": "العربية",
+      "published": false,
+      "dir": "rtl",
+      "openGraphLocale": "ar_AR",
+      "officialReaders": []
     }
   }
 }
