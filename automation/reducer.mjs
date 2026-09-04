@@ -1,29 +1,13 @@
 import {
   AUTO_STATUSES,
   AUTOMATION_SCHEMA_VERSION,
+  STATUS_RANK,
   TOGASHI_SOURCE_LABEL,
+  TRACKER_STATUSES,
   compareSnowflakeIds,
   evaluateAnalysis,
   validateAutomationPayload,
 } from "./contracts.mjs";
-
-const TRACKER_STATUSES = [
-  "unknown",
-  "inking",
-  "background",
-  "delivered",
-  "scheduled",
-  "published",
-];
-
-const STATUS_RANK = {
-  unknown: 0,
-  inking: 1,
-  background: 2,
-  delivered: 3,
-  scheduled: 4,
-  published: 5,
-};
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));

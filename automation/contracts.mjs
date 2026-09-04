@@ -3,6 +3,22 @@ export const TOGASHI_USER_ID = "1528978792617611264";
 export const TOGASHI_SCREEN_NAME = "Un4v5s8bgsVk9Xp";
 export const TOGASHI_SOURCE_LABEL = "Yoshihiro Togashi on X";
 export const AUTO_STATUSES = ["inking", "background", "delivered"];
+
+// The tracker's full vocabulary, ordered from "nothing confirmed" to "readable
+// now". Every consumer ranks statuses off this one list so a milestone means
+// the same thing in the reducer, the notifier and the site.
+export const TRACKER_STATUSES = [
+  "unknown",
+  "inking",
+  "background",
+  "delivered",
+  "scheduled",
+  "published",
+];
+
+export const STATUS_RANK = Object.freeze(
+  Object.fromEntries(TRACKER_STATUSES.map((status, rank) => [status, rank])),
+);
 export const MIN_AUTO_CONFIDENCE = 0.98;
 
 const CLASSIFICATIONS = [
