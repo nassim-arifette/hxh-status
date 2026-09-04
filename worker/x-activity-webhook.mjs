@@ -2,15 +2,24 @@ import {
   AUTOMATION_SCHEMA_VERSION,
   TOGASHI_SCREEN_NAME,
   TOGASHI_USER_ID,
+  TRACKER_STATUSES,
   assertSnowflakeId,
   canonicalTweetUrl,
   isAllowedMediaUrl,
   validateAutomationPayload,
 } from "../automation/contracts.mjs";
+import { hasMilestones } from "../automation/milestones.mjs";
+import {
+  TRACKER_VERDICT_SIGNATURE_CONTEXT,
+  assertFreshAutomationPayload,
+  verifyAutomationPayloadSignature,
+} from "../automation/payload-auth.mjs";
 import siteWorker, { runAutomation } from "./index.mjs";
 import {
+  deliverMilestones,
   deliverPushForTweets,
   maintainPushSubscriptions,
+  skipPostBroadcast,
 } from "./push-notifications.mjs";
 
 const EVENT_TTL_SECONDS = 14 * 24 * 60 * 60;
@@ -25,6 +34,12 @@ const PENDING_PREFIX = "pipeline:pending:";
 const PROCESSED_PREFIX = "pipeline:processed:";
 const FALLBACK_LAST_RUN_KEY = "pipeline:fallback:last-run";
 const FALLBACK_INTERVAL_MS = 15 * 60 * 1_000;
+// How long a post alert waits for the Action to say whether it moved a chapter.
+// Long enough for Gemini to exhaust its three attempts, short enough that an
+// incident does not swallow the notification entirely.
+const WITHHELD_WINDOW_MS = 10 * 60 * 1_000;
+const MAX_VERDICT_BYTES = 20_000;
+const TRACKER_VERDICT_PATH = "/tracker-verdict";
 const encoder = new TextEncoder();
 let pipelineTail = Promise.resolve();
 
@@ -376,6 +391,77 @@ async function saveJob(store, key, job) {
   });
 }
 
+async function parseQueuedJob(store, key, raw, postId) {
+  try {
+    const job = JSON.parse(raw);
+    if (job?.version !== 1 || job?.postId !== postId) {
+      throw new Error("Invalid queued X event.");
+    }
+    assertSnowflakeId(job.postId, "Queued post ID");
+    return job;
+  } catch {
+    await store.delete(key);
+    throw new Error("Stored X event is invalid.");
+  }
+}
+
+async function finalizeProcessedPost(store, postId, job, tweet) {
+  await Promise.all([
+    store.put(processedKey(postId), new Date().toISOString(), {
+      expirationTtl: PROCESSED_TTL_SECONDS,
+    }),
+    store.put(
+      "togashi:latest-post",
+      JSON.stringify({
+        id: tweet.id,
+        text: tweet.fullText,
+        mediaUrls: tweet.mediaUrls,
+        createdAt: tweet.createdAt,
+        receivedAt: job.receivedAt,
+        processedAt: new Date().toISOString(),
+      }),
+    ),
+    store.delete(pendingKey(postId)),
+  ]);
+}
+
+// Ends a post's hold. `announced` means a tracker milestone already told
+// subscribers about this post, so the post alert is dropped — but the push
+// cursor still moves, or the syndication fallback would send it later anyway.
+export async function resolveWithheldPost(
+  postId,
+  env,
+  {
+    announced = false,
+    fetchImpl = fetch,
+    pushRunner = deliverPushForTweets,
+    skipRunner = skipPostBroadcast,
+    reason = "verdict",
+  } = {},
+) {
+  const store = env.X_EVENT_STATE;
+  if (!store) throw new Error("X_EVENT_STATE is not configured.");
+  const key = pendingKey(postId);
+  const raw = await store.get(key);
+  if (!raw) return { complete: true, missing: true };
+
+  const job = await parseQueuedJob(store, key, raw, postId);
+  const tweet = await fetchTweetFromX(postId, env, fetchImpl);
+
+  if (announced) {
+    await skipRunner(env, postId);
+  } else {
+    const push = await pushRunner(env, [tweet]);
+    if (!push.enabled || !push.complete) {
+      throw new Error("Push notification delivery is still pending.");
+    }
+  }
+
+  job.pushComplete = true;
+  await finalizeProcessedPost(store, postId, job, tweet);
+  return { complete: true, postId, announced, reason };
+}
+
 export async function processPendingPost(
   postId,
   env,
@@ -391,19 +477,27 @@ export async function processPendingPost(
   const raw = await store.get(key);
   if (!raw) return { complete: true, missing: true };
 
-  let job;
-  try {
-    job = JSON.parse(raw);
-    if (job?.version !== 1 || job?.postId !== postId) {
-      throw new Error("Invalid queued X event.");
-    }
-    assertSnowflakeId(job.postId, "Queued post ID");
-  } catch {
-    await store.delete(key);
-    throw new Error("Stored X event is invalid.");
-  }
+  const job = await parseQueuedJob(store, key, raw, postId);
 
   try {
+    // A withheld post is not waiting on more work, it is waiting on the
+    // Action's verdict. Re-running the pipeline here would dispatch it twice.
+    if (job.pushWithheldUntil) {
+      const deadline = Date.parse(job.pushWithheldUntil);
+      if (Number.isFinite(deadline) && Date.now() < deadline) {
+        return { complete: false, withheld: true, postId };
+      }
+
+      // No verdict arrived in time. Announce the post itself: a vaguer alert
+      // beats silence, and the milestone can still land later on its own.
+      return await resolveWithheldPost(postId, env, {
+        announced: false,
+        fetchImpl,
+        pushRunner,
+        reason: "deadline",
+      });
+    }
+
     const tweet = await fetchTweetFromX(postId, env, fetchImpl);
 
     if (!job.automationComplete) {
@@ -426,32 +520,20 @@ export async function processPendingPost(
       if (env.PUSH_NOTIFICATIONS_ENABLED !== "true") {
         throw new Error("Real-time push notifications are disabled.");
       }
-      const push = await pushRunner(env, [tweet]);
-      if (!push.enabled || !push.complete) {
-        throw new Error("Push notification delivery is still pending.");
-      }
-      job.pushComplete = true;
+
+      // Hold the post alert until the Action reports whether this post moved a
+      // chapter. If it did, the milestone says the same thing in the reader's
+      // own language, and sending both would notify twice for one event. The
+      // job stays in the pending list the Cron already reads, so waiting costs
+      // no extra KV listing.
+      job.pushWithheldUntil = new Date(
+        Date.now() + WITHHELD_WINDOW_MS,
+      ).toISOString();
       await saveJob(store, key, job);
+      return { complete: false, withheld: true, postId };
     }
 
-    await Promise.all([
-      store.put(processedKey(postId), new Date().toISOString(), {
-        expirationTtl: PROCESSED_TTL_SECONDS,
-      }),
-      store.put(
-        "togashi:latest-post",
-        JSON.stringify({
-          id: tweet.id,
-          text: tweet.fullText,
-          mediaUrls: tweet.mediaUrls,
-          createdAt: tweet.createdAt,
-          receivedAt: job.receivedAt,
-          processedAt: new Date().toISOString(),
-        }),
-      ),
-      store.delete(key),
-    ]);
-
+    await finalizeProcessedPost(store, postId, job, tweet);
     return { complete: true, postId };
   } catch (error) {
     job.attempts += 1;
@@ -504,6 +586,177 @@ async function runSyndicationFallback(env) {
   await store.put(FALLBACK_LAST_RUN_KEY, new Date(now).toISOString());
   await siteWorker.scheduled({ cron: "fallback" }, env);
   return { skipped: false };
+}
+
+function validateVerdict(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    throw new TypeError("Verdict payload is invalid.");
+  }
+
+  const allowed = new Set([
+    "requestedAt",
+    "revision",
+    "postIds",
+    "milestones",
+    "dryRun",
+  ]);
+  if (Object.keys(body).some((key) => !allowed.has(key))) {
+    throw new TypeError("Verdict payload has unexpected fields.");
+  }
+  if (
+    typeof body.revision !== "string" ||
+    !/^[0-9A-Za-z-]{1,40}$/.test(body.revision)
+  ) {
+    throw new TypeError("Verdict revision is invalid.");
+  }
+  if (!Array.isArray(body.postIds) || body.postIds.length > 5) {
+    throw new TypeError("Verdict post IDs are invalid.");
+  }
+  for (const id of body.postIds) {
+    assertSnowflakeId(id, "Verdict post ID");
+  }
+  if (body.dryRun !== undefined && typeof body.dryRun !== "boolean") {
+    throw new TypeError("Verdict dryRun is invalid.");
+  }
+
+  const milestones = body.milestones;
+  if (
+    !milestones ||
+    typeof milestones !== "object" ||
+    Array.isArray(milestones) ||
+    !Array.isArray(milestones.chapters) ||
+    milestones.chapters.length > 20
+  ) {
+    throw new TypeError("Verdict milestones are invalid.");
+  }
+  for (const entry of milestones.chapters) {
+    if (
+      !entry ||
+      typeof entry !== "object" ||
+      !Number.isInteger(entry.chapter) ||
+      entry.chapter < 1 ||
+      entry.chapter > 9_999 ||
+      !TRACKER_STATUSES.includes(entry.from) ||
+      !TRACKER_STATUSES.includes(entry.to)
+    ) {
+      throw new TypeError("Verdict milestone entry is invalid.");
+    }
+  }
+
+  const publication = milestones.publication;
+  if (
+    publication !== null &&
+    (!publication ||
+      typeof publication !== "object" ||
+      !["publishing", "hiatus"].includes(publication.from) ||
+      !["publishing", "hiatus"].includes(publication.to))
+  ) {
+    throw new TypeError("Verdict publication change is invalid.");
+  }
+
+  return body;
+}
+
+// The Action reports what the reducer decided, for every run — including
+// "nothing moved". That negative answer is what releases a withheld post
+// straight away instead of leaving it to time out.
+async function handleTrackerVerdict(request, env) {
+  const secret = env.TRACKER_VERDICT_SECRET;
+  if (typeof secret !== "string" || secret.length === 0) {
+    return json(
+      { error: "Verdict endpoint is not configured." },
+      { status: 503 },
+    );
+  }
+
+  let bytes;
+  try {
+    bytes = await readBytesWithLimit(request, MAX_VERDICT_BYTES);
+  } catch (error) {
+    if (error instanceof RangeError) {
+      return json({ error: error.message }, { status: 413 });
+    }
+    throw error;
+  }
+
+  const text = new TextDecoder().decode(bytes);
+  if (
+    !(await verifyAutomationPayloadSignature(
+      text,
+      request.headers.get("x-hxhstatus-signature"),
+      secret,
+      { context: TRACKER_VERDICT_SIGNATURE_CONTEXT },
+    ))
+  ) {
+    return json({ error: "Invalid verdict signature." }, { status: 401 });
+  }
+
+  let verdict;
+  try {
+    verdict = validateVerdict(JSON.parse(text));
+    assertFreshAutomationPayload(verdict);
+  } catch (error) {
+    return json({ error: safeError(error) }, { status: 400 });
+  }
+
+  const dryRun =
+    verdict.dryRun === true || env.TRACKER_VERDICT_DRY_RUN === "true";
+  const milestones = {
+    chapters: verdict.milestones.chapters,
+    publication: verdict.milestones.publication,
+  };
+  const carriesMilestones = hasMilestones(milestones);
+
+  return serializePipeline(async () => {
+    const announcement = await deliverMilestones(
+      env,
+      { milestones, revision: verdict.revision },
+      { dryRun },
+    );
+
+    const failures = [];
+    let resolved = 0;
+
+    // A dry run must not resolve anything: releasing a post here would send a
+    // real notification, and suppressing one would lose it.
+    if (!dryRun) {
+      for (const postId of verdict.postIds) {
+        try {
+          await resolveWithheldPost(postId, env, {
+            announced: carriesMilestones,
+          });
+          resolved += 1;
+        } catch (error) {
+          // One stuck post must not strand the others; the Cron retries it.
+          failures.push({ postId, error: safeError(error) });
+        }
+      }
+    }
+
+    console.log(
+      JSON.stringify({
+        message: "Tracker verdict handled.",
+        revision: verdict.revision,
+        dryRun,
+        carriesMilestones,
+        announced: announcement.announced ?? 0,
+        duplicate: announcement.duplicate ?? false,
+        posts: verdict.postIds.length,
+        resolved,
+        failures,
+      }),
+    );
+
+    return json({
+      ok: failures.length === 0,
+      dryRun,
+      announced: announcement.announced ?? 0,
+      duplicate: announcement.duplicate ?? false,
+      ...(announcement.preview ? { preview: announcement.preview } : {}),
+      resolved,
+      failures,
+    });
+  });
 }
 
 async function handleCrc(url, secret) {
@@ -608,6 +861,7 @@ const worker = {
           env.X_CONSUMER_SECRET && webhookPathConfigured,
         ),
         eventStorageConfigured: Boolean(env.X_EVENT_STATE),
+        verdictConfigured: Boolean(env.TRACKER_VERDICT_SECRET),
         xLookupConfigured: Boolean(env.X_BEARER_TOKEN),
         automationConfigured: Boolean(env.GITHUB_AUTOMATION_TOKEN),
         pushConfigured: Boolean(
@@ -617,6 +871,10 @@ const worker = {
             env.VAPID_PRIVATE_KEY,
         ),
       });
+    }
+
+    if (request.method === "POST" && url.pathname === TRACKER_VERDICT_PATH) {
+      return handleTrackerVerdict(request, env);
     }
 
     let webhookPath;

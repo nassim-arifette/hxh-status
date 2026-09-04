@@ -4,10 +4,15 @@ import {
   createCrcResponseToken,
   enqueueActivityEvent,
   processPendingPost,
+  resolveWithheldPost,
   serializePipeline,
   verifyWebhookSignature,
 } from "./x-activity-webhook.mjs";
 import activityWorker from "./x-activity-webhook.mjs";
+import {
+  TRACKER_VERDICT_SIGNATURE_CONTEXT,
+  signAutomationPayload,
+} from "../automation/payload-auth.mjs";
 
 class MemoryKv {
   constructor() {
@@ -253,7 +258,7 @@ test("queues an original Togashi post and ignores replies", async () => {
   });
 });
 
-test("processes one queued post through GitHub automation and browser push", async () => {
+test("dispatches automation, then withholds the post alert for a verdict", async () => {
   const store = new MemoryKv();
   const env = { ...baseEnv, X_EVENT_STATE: store };
   await enqueueActivityEvent(activityData(), env);
@@ -295,22 +300,134 @@ test("processes one queued post through GitHub automation and browser push", asy
     },
   });
 
-  assert.deepEqual(result, { complete: true, postId });
+  assert.deepEqual(result, { complete: false, withheld: true, postId });
   assert.equal(automationTweets.length, 1);
-  assert.equal(pushedTweets.length, 1);
-  assert.deepEqual(automationTweets[0], pushedTweets[0]);
   assert.deepEqual(automationTweets[0].mediaUrls, [
     "https://pbs.twimg.com/media/example.jpg",
   ]);
-  assert.equal(store.data.has(`pipeline:pending:${postId}`), false);
-  assert.equal(store.data.has(`pipeline:processed:${postId}`), true);
-  assert.equal(JSON.parse(store.data.get("togashi:latest-post")).id, postId);
 
+  // Nothing is sent yet: the tracker may be about to say it better.
+  assert.equal(pushedTweets.length, 0);
+  const held = JSON.parse(store.data.get(`pipeline:pending:${postId}`));
+  assert.equal(held.automationComplete, true);
+  assert.equal(typeof held.pushWithheldUntil, "string");
+
+  // A second Cron tick inside the window must not dispatch the post again.
+  const again = await processPendingPost(postId, env, {
+    fetchImpl: async () => {
+      throw new Error("The post must not be fetched again while withheld.");
+    },
+    automationRunner: async () => {
+      throw new Error("Automation must not run twice for one post.");
+    },
+  });
+  assert.deepEqual(again, { complete: false, withheld: true, postId });
+
+  // A duplicate event arriving mid-hold must not reset the hold or re-dispatch
+  // the automation: the stored job has to survive untouched.
   const replay = await enqueueActivityEvent(
     activityData({ event_uuid: "different-event-same-post" }),
     env,
   );
-  assert.deepEqual(replay, { queued: false, duplicate: true });
+  assert.deepEqual(replay, { queued: true, duplicate: false, postId });
+
+  const afterReplay = JSON.parse(store.data.get(`pipeline:pending:${postId}`));
+  assert.equal(afterReplay.automationComplete, true);
+  assert.equal(afterReplay.pushWithheldUntil, held.pushWithheldUntil);
+});
+
+async function withheldEnvironment() {
+  const store = new MemoryKv();
+  const env = { ...baseEnv, X_EVENT_STATE: store };
+  await enqueueActivityEvent(activityData(), env);
+  const fetchImpl = async () =>
+    new Response(
+      JSON.stringify({
+        data: {
+          id: postId,
+          author_id: baseEnv.TOGASHI_USER_ID,
+          created_at: "2026-09-02T12:00:00.000Z",
+          text: "No.434、人物ペン入れ完了。",
+        },
+      }),
+      { status: 200 },
+    );
+
+  await processPendingPost(postId, env, {
+    fetchImpl,
+    automationRunner: async () => ({ dispatched: true, count: 1 }),
+  });
+
+  return { store, env, fetchImpl };
+}
+
+test("a verdict with no milestone releases the post alert itself", async () => {
+  const { store, env, fetchImpl } = await withheldEnvironment();
+  const pushed = [];
+
+  const result = await resolveWithheldPost(postId, env, {
+    announced: false,
+    fetchImpl,
+    pushRunner: async (_env, tweets) => {
+      pushed.push(...tweets);
+      return { enabled: true, complete: true, delivered: 1 };
+    },
+  });
+
+  assert.equal(result.complete, true);
+  assert.equal(result.announced, false);
+  assert.equal(pushed.length, 1);
+  assert.equal(pushed[0].id, postId);
+  assert.equal(store.data.has(`pipeline:pending:${postId}`), false);
+  assert.equal(store.data.has(`pipeline:processed:${postId}`), true);
+  assert.equal(JSON.parse(store.data.get("togashi:latest-post")).id, postId);
+});
+
+test("a verdict carrying a milestone drops the post alert but moves the cursor", async () => {
+  const { store, env, fetchImpl } = await withheldEnvironment();
+  const pushed = [];
+  const skipped = [];
+
+  const result = await resolveWithheldPost(postId, env, {
+    announced: true,
+    fetchImpl,
+    pushRunner: async () => {
+      throw new Error("The post alert must not be sent as well.");
+    },
+    skipRunner: async (_env, id) => {
+      skipped.push(id);
+      return { skipped: true };
+    },
+  });
+
+  assert.equal(result.complete, true);
+  assert.equal(result.announced, true);
+  assert.equal(pushed.length, 0);
+  // The cursor must still move, or the syndication fallback resends the post.
+  assert.deepEqual(skipped, [postId]);
+  assert.equal(store.data.has(`pipeline:pending:${postId}`), false);
+  assert.equal(store.data.has(`pipeline:processed:${postId}`), true);
+});
+
+test("an expired hold sends the post rather than losing it", async () => {
+  const { store, env, fetchImpl } = await withheldEnvironment();
+  const held = JSON.parse(store.data.get(`pipeline:pending:${postId}`));
+  held.pushWithheldUntil = new Date(Date.now() - 1_000).toISOString();
+  store.data.set(`pipeline:pending:${postId}`, JSON.stringify(held));
+  const pushed = [];
+
+  const result = await processPendingPost(postId, env, {
+    fetchImpl,
+    pushRunner: async (_env, tweets) => {
+      pushed.push(...tweets);
+      return { enabled: true, complete: true, delivered: 1 };
+    },
+  });
+
+  assert.equal(result.complete, true);
+  assert.equal(result.reason, "deadline");
+  assert.equal(pushed.length, 1);
+  assert.equal(store.data.has(`pipeline:pending:${postId}`), false);
 });
 
 test("keeps failed pipeline work queued for the retry Cron", async () => {
@@ -331,4 +448,144 @@ test("keeps failed pipeline work queued for the retry Cron", async () => {
   const job = JSON.parse(store.data.get(`pipeline:pending:${postId}`));
   assert.equal(job.attempts, 1);
   assert.match(job.lastError, /X post lookup failed/);
+});
+
+const verdictSecret = "tracker-verdict-secret-longer-than-32-characters";
+
+async function verdictRequest(body, env, { secret = verdictSecret } = {}) {
+  const text = JSON.stringify(body);
+  const signature = await signAutomationPayload(text, secret, {
+    context: TRACKER_VERDICT_SIGNATURE_CONTEXT,
+  });
+
+  return activityWorker.fetch(
+    new Request("https://events.example/tracker-verdict", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-hxhstatus-signature": signature,
+      },
+      body: text,
+    }),
+    env,
+    { waitUntil() {} },
+  );
+}
+
+function verdictBody(overrides = {}) {
+  return {
+    requestedAt: new Date().toISOString(),
+    revision: "2094673907626414299",
+    postIds: [],
+    milestones: { chapters: [], publication: null },
+    ...overrides,
+  };
+}
+
+test("the verdict endpoint is closed until its own secret is configured", async () => {
+  const response = await verdictRequest(verdictBody(), {
+    ...baseEnv,
+    X_EVENT_STATE: new MemoryKv(),
+  });
+  assert.equal(response.status, 503);
+});
+
+test("a verdict must be signed with the verdict context", async () => {
+  const env = {
+    ...baseEnv,
+    X_EVENT_STATE: new MemoryKv(),
+    TRACKER_VERDICT_SECRET: verdictSecret,
+    PUSH_NOTIFICATIONS_ENABLED: "false",
+  };
+
+  const forged = await verdictRequest(verdictBody(), env, {
+    secret: "another-secret-that-is-also-long-enough-here",
+  });
+  assert.equal(forged.status, 401);
+
+  // A signature made for the dispatch direction must not be replayable here.
+  const text = JSON.stringify(verdictBody());
+  const crossContext = await activityWorker.fetch(
+    new Request("https://events.example/tracker-verdict", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-hxhstatus-signature": await signAutomationPayload(
+          text,
+          verdictSecret,
+        ),
+      },
+      body: text,
+    }),
+    env,
+    { waitUntil() {} },
+  );
+  assert.equal(crossContext.status, 401);
+
+  const accepted = await verdictRequest(verdictBody(), env);
+  assert.equal(accepted.status, 200);
+});
+
+test("a stale or malformed verdict is refused", async () => {
+  const env = {
+    ...baseEnv,
+    X_EVENT_STATE: new MemoryKv(),
+    TRACKER_VERDICT_SECRET: verdictSecret,
+    PUSH_NOTIFICATIONS_ENABLED: "false",
+  };
+
+  const stale = await verdictRequest(
+    verdictBody({ requestedAt: "2020-01-01T00:00:00.000Z" }),
+    env,
+  );
+  assert.equal(stale.status, 400);
+
+  const malformed = [
+    verdictBody({ revision: "not a revision!" }),
+    verdictBody({ postIds: ["not-a-snowflake"] }),
+    verdictBody({ milestones: { chapters: "none", publication: null } }),
+    verdictBody({
+      milestones: {
+        chapters: [{ chapter: 428, from: "invented", to: "delivered" }],
+        publication: null,
+      },
+    }),
+    verdictBody({
+      milestones: { chapters: [], publication: { from: "x", to: "hiatus" } },
+    }),
+    verdictBody({ unexpected: true }),
+  ];
+
+  for (const body of malformed) {
+    const response = await verdictRequest(body, env);
+    assert.equal(response.status, 400, JSON.stringify(body));
+  }
+});
+
+test("a dry-run verdict resolves nothing", async () => {
+  const store = new MemoryKv();
+  const env = {
+    ...baseEnv,
+    X_EVENT_STATE: store,
+    TRACKER_VERDICT_SECRET: verdictSecret,
+    PUSH_NOTIFICATIONS_ENABLED: "false",
+  };
+  await enqueueActivityEvent(activityData(), env);
+
+  const response = await verdictRequest(
+    verdictBody({
+      dryRun: true,
+      postIds: [postId],
+      milestones: {
+        chapters: [{ chapter: 428, from: "background", to: "delivered" }],
+        publication: null,
+      },
+    }),
+    env,
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).dryRun, true);
+  // The queued post is untouched: a rehearsal must not release or drop it.
+  assert.equal(store.data.has(`pipeline:pending:${postId}`), true);
 });
