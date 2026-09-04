@@ -167,6 +167,36 @@ wrangler.jsonc
 Exclude `worker/*.test.mjs`. This dashboard setting is intentionally not stored
 in `wrangler.jsonc`.
 
+## KV budget
+
+The Free plan allows 100,000 KV reads a day but only **1,000 writes and 1,000
+`list` requests**, and Wrangler or dashboard operations count too. `list` is the
+scarce resource, so the rule is that nothing may spend it on a schedule.
+
+An idle Cron tick costs one `list` (the pipeline retry queue) and nothing else.
+Two things used to make it cost more, and both are gone:
+
+- The legacy migration listed a prefix that is empty in production, every tick.
+  It is now behind `PUSH_LEGACY_MIGRATION_ENABLED`.
+- Pending verification listed the pending prefix to almost always find nothing.
+  It now asks the Durable Object, whose SQLite already indexes state.
+
+The syndication clock lived in a KV key, costing a read every tick and a write
+every third one. It is derived from `controller.scheduledTime` instead.
+
+Delivery used to renew every reached subscriber's lease, at one KV write each.
+That put a hard ceiling near a thousand deliveries a day regardless of anything
+else. The registry now extends a lease only once
+`PUSH_RENEW_AFTER_SECONDS` of it has elapsed, and SQLite holds the expiry, so
+the usual push costs no KV operation for the lease at all. A dead endpoint is
+still removed immediately on a `404`/`410`, which is what actually keeps the
+registry clean.
+
+What remains proportional to the audience is one `list` per 32 subscribers per
+broadcast, plus one read per subscriber. At a few thousand subscribers and a
+handful of notifications a week that stays well inside the quota; past that,
+paginate from the Durable Object rather than `push:verified:`.
+
 ## Tracker milestone notifications
 
 A post alert and a tracker milestone describe the same event, so subscribers
