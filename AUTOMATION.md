@@ -222,9 +222,24 @@ response. It sends nothing, resolves no held post, and **does not write the
 announced record**; a rehearsal that consumed that record would silence the real
 milestone permanently.
 
-For an end-to-end check including delivery, use `wrangler dev`: its KV is local
-and holds no real subscriber, so nothing can reach production. `npm run
-push:setup-local` writes a local VAPID pair into `.dev.vars`.
+For an end-to-end check including delivery, use the local Wrangler state, which
+holds no production subscriber:
+
+```bash
+npm run push:setup-local   # once: a local VAPID pair in .dev.vars
+npm run cf:dev             # then open the site and enable notifications
+npm run push:send-local    # a real, encrypted notification to that browser
+```
+
+`push:send-local` takes an optional payload, so any milestone can be rehearsed:
+
+```bash
+npm run push:send-local -- '{"v":1,"kind":"tracker-milestone","locale":"fr","revision":"test","chapters":[],"publication":"hiatus"}'
+```
+
+It reads local KV only and never passes `--remote`, so it cannot reach a
+production subscriber. Chrome's DevTools no longer offer a push payload field,
+which is why this exists.
 
 ## Browser push notifications
 
