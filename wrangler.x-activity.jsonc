@@ -28,10 +28,6 @@
   },
   "vars": {
     "AUTOMATION_ENABLED": "true",
-    // Rehearsal mode: milestone notifications are computed, logged and returned
-    // in the verdict response, but never sent and never recorded as announced.
-    // Remove this line to start notifying subscribers for real.
-    "TRACKER_VERDICT_DRY_RUN": "true",
     "PUSH_NOTIFICATIONS_ENABLED": "true",
     "PUSH_INITIAL_TWEET_ID": "2094673907626414299",
     "VAPID_PUBLIC_KEY": "BDDiMqC-8OtxjviwRNsKba57GJWACZJXDfL1Snw6uLCeJZxs-fTQEF6-NrKe0vuhfSU3E72Jgtd1at7NpWmGZKc",
