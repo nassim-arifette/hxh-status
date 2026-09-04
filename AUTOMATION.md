@@ -27,16 +27,19 @@ X Activity post.create webhook on a secret callback path
   -> fetch the canonical post and image URLs from the official X API
   -> sign the exact dispatch payload with an independent HMAC secret
   -> dispatch the payload and signature to the serialized GitHub Action
-  -> broadcast browser notifications from the same event
+  -> withhold the post alert until the Action reports a verdict
   -> serialized GitHub Action
   -> verify signature and freshness before Gemini or repository writes
   -> Gemini extraction
   -> deterministic validation
+  -> report the verdict to the Worker before the slow build steps
+  -> Worker announces tracker milestones, or releases the held post alert
   -> update data/state/share PNGs atomically
   -> Cloudflare deploy from the resulting repository update
 
-Retry Cron (every minute)
+Retry Cron (every five minutes)
   -> resume incomplete webhook jobs from KV through the same serialized runner
+  -> release any post alert whose verdict never arrived
 
 Fallback Cron (every 15 minutes)
   -> fetch the legacy syndication list
@@ -163,6 +166,65 @@ wrangler.jsonc
 
 Exclude `worker/*.test.mjs`. This dashboard setting is intentionally not stored
 in `wrangler.jsonc`.
+
+## Tracker milestone notifications
+
+A post alert and a tracker milestone describe the same event, so subscribers
+must not receive both. The Worker cannot know which one applies at the moment a
+post arrives — that takes Gemini and the deterministic validation — so it holds
+the post alert for up to ten minutes and waits for the Action to report back.
+
+```
+post arrives  -> alert withheld inside the existing pipeline job
+verdict says a chapter moved  -> milestone announced, post alert dropped,
+                                 push cursor advanced so the fallback is a no-op
+verdict says nothing moved    -> post alert released as-is
+no verdict within ten minutes -> post alert released by the Cron
+```
+
+The hold lives in `pipeline:pending:<postId>`, the record the retry Cron already
+lists, so waiting costs no extra KV listing.
+
+A milestone is a chapter climbing the status ladder, never a chapter appearing:
+adding rows for future chapters is silent because they start at `unknown`, the
+lowest rank. `push:announced-milestones` records what was announced and is
+written only once delivery succeeds, so a replayed verdict is silent and a
+failed send is retried rather than swallowed.
+
+Publication state follows the chapters. A scheduled chapter means the series is
+running — Jump schedules before anything is published, and the five-week gap
+cannot see that — while the gap alone is what eventually reports a hiatus.
+
+### Configuration
+
+| Name | Where | Purpose |
+| --- | --- | --- |
+| `TRACKER_VERDICT_SECRET` | Worker secret **and** GitHub secret | HMAC for the Action's verdict, independent of `AUTOMATION_PAYLOAD_SECRET` |
+| `TRACKER_VERDICT_URL` | GitHub secret | `https://<events worker>/tracker-verdict` |
+| `TRACKER_VERDICT_DRY_RUN` | Worker var, optional | `"true"` reports what would be sent without sending or recording it |
+
+The two directions sign with different contexts, so a captured dispatch
+signature cannot be replayed as a verdict. Set the Worker secret with:
+
+```bash
+npx wrangler secret put TRACKER_VERDICT_SECRET --config wrangler.x-activity.jsonc
+```
+
+Until that secret exists the endpoint answers `503` and every post alert falls
+through to the ten-minute deadline, which is the safe default: subscribers keep
+receiving post alerts and simply never receive milestones.
+
+### Rehearsing without notifying anyone
+
+`TRACKER_VERDICT_DRY_RUN="true"` walks the whole decision — diff, deduplication,
+payload, locale — logs the notification it would send, and returns it in the
+response. It sends nothing, resolves no held post, and **does not write the
+announced record**; a rehearsal that consumed that record would silence the real
+milestone permanently.
+
+For an end-to-end check including delivery, use `wrangler dev`: its KV is local
+and holds no real subscriber, so nothing can reach production. `npm run
+push:setup-local` writes a local VAPID pair into `.dev.vars`.
 
 ## Browser push notifications
 

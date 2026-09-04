@@ -55,8 +55,22 @@ jobs:
           AUTOMATION_PAYLOAD_SIGNATURE: ${{ inputs.signature }}
           AUTOMATION_PAYLOAD_SECRET: ${{ secrets.AUTOMATION_PAYLOAD_SECRET }}
           AUTOMATION_REVIEW_FILE: ${{ runner.temp }}/togashi-review.md
+          AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/togashi-verdict.json
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run automation:process
+
+      # Runs before the build on purpose: the Worker is holding this batch's
+      # post alerts, and every minute here is a minute a subscriber waits. A
+      # failure only costs specificity, since the Worker releases a withheld
+      # post on its own deadline, so it must never block the tracker update.
+      - name: Report the tracker verdict
+        if: steps.process.outputs.verdict_written == 'true'
+        continue-on-error: true
+        env:
+          AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/togashi-verdict.json
+          TRACKER_VERDICT_URL: ${{ secrets.TRACKER_VERDICT_URL }}
+          TRACKER_VERDICT_SECRET: ${{ secrets.TRACKER_VERDICT_SECRET }}
+        run: node scripts/notify-tracker-verdict.mjs
 
       - name: Regenerate share images after a status change
         if: steps.process.outputs.status_changed == 'true'

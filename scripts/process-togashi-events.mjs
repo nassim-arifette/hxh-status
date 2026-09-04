@@ -7,6 +7,10 @@ import {
   validateAutomationPayload,
 } from "../automation/contracts.mjs";
 import { analyzeTweet } from "../automation/gemini.mjs";
+import {
+  trackerMilestones,
+  trackerRevision,
+} from "../automation/milestones.mjs";
 import { applyAnalyzedEvents } from "../automation/reducer.mjs";
 import {
   assertFreshAutomationPayload,
@@ -147,6 +151,23 @@ if (result.reviewItems.length > 0 && process.env.AUTOMATION_REVIEW_FILE) {
     reviewMarkdown(result.reviewItems),
     "utf8",
   );
+}
+
+// The Worker is holding every post alert from this batch until it hears what
+// the reducer decided. Write that verdict — including "nothing moved", which is
+// what releases the post alert straight away instead of letting it time out.
+if (process.env.AUTOMATION_VERDICT_FILE) {
+  await writeFile(
+    process.env.AUTOMATION_VERDICT_FILE,
+    JSON.stringify({
+      requestedAt: new Date().toISOString(),
+      revision: trackerRevision(result.statusData),
+      postIds: freshTweets.map((tweet) => tweet.id),
+      milestones: trackerMilestones(statusData, result.statusData),
+    }),
+    "utf8",
+  );
+  await setOutput("verdict_written", "true");
 }
 
 await Promise.all([
