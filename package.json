@@ -15,7 +15,7 @@
     "translations:check": "node scripts/check-translations.mjs",
     "push:setup-local": "node scripts/setup-local-push.mjs",
     "push:send-local": "node scripts/send-local-push.mjs",
-    "automation:test": "node --test automation/contracts.test.mjs automation/gemini.test.mjs automation/milestone-dedupe.test.mjs automation/milestones.test.mjs automation/payload-auth.test.mjs automation/reducer.test.mjs worker/github.test.mjs worker/index.test.mjs worker/push-notifications.test.mjs worker/service-worker.test.mjs worker/x-activity-webhook.test.mjs worker/x-timeline.test.mjs",
+    "automation:test": "node --test automation/contracts.test.mjs automation/gemini.test.mjs automation/milestone-dedupe.test.mjs automation/milestones.test.mjs automation/payload-auth.test.mjs automation/reducer.test.mjs worker/github.test.mjs worker/index.test.mjs worker/push-notifications.test.mjs worker/push-subscription-registry.test.mjs worker/service-worker.test.mjs worker/x-activity-webhook.test.mjs worker/x-timeline.test.mjs",
     "automation:process": "node scripts/process-togashi-events.mjs",
     "cf:dev": "npm run build && wrangler dev",
     "cf:dev:cron": "npm run build && wrangler dev --test-scheduled",

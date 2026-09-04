@@ -295,6 +295,28 @@ async function registryCommand(env, command, id, details = {}) {
   return response.json();
 }
 
+// Asks the registry which registrations are pending instead of listing the KV
+// prefix. The Cron ran that list every five minutes and almost always found
+// nothing, which alone was over a quarter of the daily KV list quota.
+async function registryPendingIds(env) {
+  const registry = requirePushRegistry(env).getByName("global");
+  const response = await registry.fetch("https://push-registry/pending-ids", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "{}",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Push registry pending query failed (${response.status}).`);
+  }
+
+  const { ids } = await response.json();
+  if (!Array.isArray(ids)) {
+    throw new Error("Push registry returned an invalid pending list.");
+  }
+  return ids.filter((id) => /^[a-f0-9]{64}$/.test(id));
+}
+
 function storedRecord(subscription, locale, state) {
   const now = new Date().toISOString();
   return {
@@ -552,16 +574,14 @@ export async function verifyPendingPushSubscriptions(
   }
 
   assertPushDeliveryConfigured(env);
-  const store = requirePushStore(env);
-  const page = await store.list({
-    prefix: PENDING_SUBSCRIPTION_PREFIX,
-    limit: MAX_SUBSCRIPTIONS_TO_VERIFY,
-  });
+  const names = (await registryPendingIds(env))
+    .slice(0, MAX_SUBSCRIPTIONS_TO_VERIFY)
+    .map((id) => pendingSubscriptionKey(id));
   let verified = 0;
   let removed = 0;
   let pending = 0;
 
-  for (const { name } of page.keys) {
+  for (const name of names) {
     const record = await loadStoredSubscription(
       env,
       name,

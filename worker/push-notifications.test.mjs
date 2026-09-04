@@ -69,6 +69,15 @@ class MemoryRegistry {
 
   async handle(input, options) {
     const path = new URL(input).pathname;
+
+    if (path === "/pending-ids") {
+      return Response.json({
+        ids: [...this.entries]
+          .filter(([, state]) => state === "pending")
+          .map(([id]) => id),
+      });
+    }
+
     const { id, record, revision } = JSON.parse(options.body);
     const existing = this.entries.get(id);
     const activeKey = `push:verified:${id}`;
@@ -609,7 +618,7 @@ test("legacy records are revalidated and moved onto finite leases", async () => 
   );
 });
 
-test("the legacy sweep issues no KV list while it stays disabled", async () => {
+test("an idle maintenance tick issues no KV list at all", async () => {
   const store = new MemoryKv();
   const env = makeEnv(store);
   const subscription = await validSubscription("legacy-disabled");
@@ -628,8 +637,10 @@ test("the legacy sweep issues no KV list while it stays disabled", async () => {
   const result = await maintainPushSubscriptions(env, async () => {});
 
   assert.equal(result.migrated, 0);
-  // Only the pending-verification sweep may list; the legacy prefix must not.
-  assert.equal(lists, 1);
+  // The Cron runs this 288 times a day against a KV list quota of 1000, so an
+  // idle tick must not spend a single one: the legacy sweep is disabled and
+  // pending registrations are queried from the registry's own index.
+  assert.equal(lists, 0);
   assert.equal(store.data.has(`push:subscription:${id}`), true);
 });
 

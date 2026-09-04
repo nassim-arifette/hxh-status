@@ -1,6 +1,15 @@
 export const PUSH_ACTIVE_TTL_SECONDS = 180 * 24 * 60 * 60;
 export const PUSH_PENDING_TTL_SECONDS = 10 * 60;
 
+// A broadcast renews the lease of every subscriber it reaches. Rewriting the
+// KV record each time costs one write per subscriber per notification, which
+// is what would exhaust the daily write quota long before the audience got
+// large. The lease only has to be extended once it has actually started to
+// age, so leave it alone until this much of it has elapsed. SQLite already
+// holds the expiry, so the common path now costs no KV operation at all.
+export const PUSH_RENEW_AFTER_SECONDS = 30 * 24 * 60 * 60;
+
+const PENDING_QUERY_LIMIT = 32;
 const DEFAULT_ACTIVE_LIMIT = 5_000;
 const DEFAULT_PENDING_LIMIT = 256;
 const REGISTRATION_ID_PATTERN = /^[a-f0-9]{64}$/;
@@ -141,7 +150,10 @@ export class PushSubscriptionRegistry {
     let body;
     try {
       const input = await request.json();
-      if (path === "/upsert" || path === "/migrate") {
+      if (path === "/pending-ids") {
+        // A query over the registry, not an operation on one registration.
+        body = {};
+      } else if (path === "/upsert" || path === "/migrate") {
         body = validateRequestBody(input, { record: true });
       } else if (
         path === "/promote" ||
@@ -160,6 +172,19 @@ export class PushSubscriptionRegistry {
     const sql = this.context.storage.sql;
     const store = this.env.PUSH_SUBSCRIPTIONS;
     sql.exec("DELETE FROM push_registrations WHERE expires_at <= ?", now);
+
+    // SQLite already indexes which registrations are pending, so the Cron can
+    // ask instead of paying a KV list every five minutes to usually learn that
+    // there is nothing to do.
+    if (path === "/pending-ids") {
+      const rows = sql
+        .exec(
+          "SELECT id FROM push_registrations WHERE state = 'pending' LIMIT ?",
+          PENDING_QUERY_LIMIT,
+        )
+        .toArray();
+      return json({ ids: rows.map((row) => row.id) });
+    }
 
     if (path === "/upsert" || path === "/migrate") {
       if (path === "/migrate" && !(await store.get(legacyKey(body.id)))) {
@@ -325,6 +350,14 @@ export class PushSubscriptionRegistry {
       if (existing?.state !== "active") {
         return json({ error: "Active registration not found." }, { status: 404 });
       }
+
+      // Still fresh: nothing to extend, and no reason to touch KV.
+      const elapsed =
+        PUSH_ACTIVE_TTL_SECONDS * 1_000 - (existing.expires_at - now);
+      if (elapsed < PUSH_RENEW_AFTER_SECONDS * 1_000) {
+        return json({ state: "active", created: false, renewed: false });
+      }
+
       const raw = await store.get(activeKey(body.id));
       const record = parseStoredRecord(raw);
       if (!record) {
@@ -352,7 +385,7 @@ export class PushSubscriptionRegistry {
         );
         throw error;
       }
-      return json({ state: "active", created: false });
+      return json({ state: "active", created: false, renewed: true });
     }
 
     if (path === "/release" || path === "/release-if-current") {

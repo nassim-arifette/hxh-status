@@ -6,6 +6,7 @@ import {
   processPendingPost,
   resolveWithheldPost,
   serializePipeline,
+  shouldRunSyndicationFallback,
   verifyWebhookSignature,
 } from "./x-activity-webhook.mjs";
 import activityWorker from "./x-activity-webhook.mjs";
@@ -588,4 +589,23 @@ test("a dry-run verdict resolves nothing", async () => {
   assert.equal((await response.json()).dryRun, true);
   // The queued post is untouched: a rehearsal must not release or drop it.
   assert.equal(store.data.has(`pipeline:pending:${postId}`), true);
+});
+
+test("the syndication fallback runs every fifteen minutes off the schedule", () => {
+  const at = (minute) => Date.UTC(2026, 8, 4, 12, minute, 0, 0);
+
+  // The Cron fires every five minutes; only every third tick may repair.
+  const firing = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+    .filter((minute) => shouldRunSyndicationFallback(at(minute)));
+
+  assert.deepEqual(firing, [0, 15, 30, 45]);
+
+  // Across a full day that is 96 runs, and no KV key is consulted to know it.
+  let runs = 0;
+  for (let minute = 0; minute < 24 * 60; minute += 5) {
+    if (shouldRunSyndicationFallback(Date.UTC(2026, 8, 4) + minute * 60_000)) {
+      runs += 1;
+    }
+  }
+  assert.equal(runs, 96);
 });

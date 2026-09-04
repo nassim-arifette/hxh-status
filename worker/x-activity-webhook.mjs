@@ -32,7 +32,6 @@ const X_TIMEOUT_MS = 15_000;
 const EVENT_PREFIX = "pipeline:event:";
 const PENDING_PREFIX = "pipeline:pending:";
 const PROCESSED_PREFIX = "pipeline:processed:";
-const FALLBACK_LAST_RUN_KEY = "pipeline:fallback:last-run";
 const FALLBACK_INTERVAL_MS = 15 * 60 * 1_000;
 // How long a post alert waits for the Action to say whether it moved a chapter.
 // Long enough for Gemini to exhaust its three attempts, short enough that an
@@ -573,17 +572,21 @@ async function processQueuedPosts(env) {
   }
 }
 
-async function runSyndicationFallback(env) {
-  const store = env.X_EVENT_STATE;
-  if (!store) throw new Error("X_EVENT_STATE is not configured.");
-  const now = Date.now();
-  const lastRun = Date.parse((await store.get(FALLBACK_LAST_RUN_KEY)) ?? "");
+// The Cron fires every five minutes but the syndication repair only needs to
+// run every fifteen. This used to be gated on a KV key, which cost a read on
+// every tick and a write on every third one — roughly a hundred writes a day
+// to keep a clock. The schedule already carries the time, so derive it.
+export function shouldRunSyndicationFallback(scheduledTime) {
+  const minutes = Math.floor(scheduledTime / 60_000);
+  return minutes % (FALLBACK_INTERVAL_MS / 60_000) === 0;
+}
 
-  if (Number.isFinite(lastRun) && now - lastRun < FALLBACK_INTERVAL_MS) {
+async function runSyndicationFallback(env, scheduledTime) {
+  if (!env.X_EVENT_STATE) throw new Error("X_EVENT_STATE is not configured.");
+  if (!shouldRunSyndicationFallback(scheduledTime)) {
     return { skipped: true };
   }
 
-  await store.put(FALLBACK_LAST_RUN_KEY, new Date(now).toISOString());
   await siteWorker.scheduled({ cron: "fallback" }, env);
   return { skipped: false };
 }
@@ -898,7 +901,11 @@ const worker = {
     return json({ error: "Method not allowed." }, { status: 405 });
   },
 
-  async scheduled(_controller, env) {
+  async scheduled(controller, env) {
+    const scheduledTime = Number.isFinite(controller?.scheduledTime)
+      ? controller.scheduledTime
+      : Date.now();
+
     return serializePipeline(async () => {
       const errors = [];
       // Name every failure in the logs; the AggregateError alone never says
@@ -927,7 +934,9 @@ const worker = {
       // an immediate no-op.
       await runTask("processQueuedPosts", () => processQueuedPosts(env));
 
-      await runTask("runSyndicationFallback", () => runSyndicationFallback(env));
+      await runTask("runSyndicationFallback", () =>
+        runSyndicationFallback(env, scheduledTime),
+      );
 
       if (errors.length > 0) {
         throw new AggregateError(errors, "One or more scheduled tasks failed.");
