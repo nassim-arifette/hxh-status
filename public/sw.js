@@ -5,20 +5,33 @@ const notificationCopy = {
     onePost: "New Togashi post",
     manyPosts: (count) => `${count} new Togashi posts`,
     fallbackBody: "Yoshihiro Togashi posted on X.",
-    statuses: {
-      inking: "Character inking complete",
-      background: "Background specifications complete",
-      delivered: "Delivered to Jump",
-      scheduled: "Scheduled for publication",
-      published: "Published",
+    milestoneTitle: {
+      inking: (chapter) => `Chapter ${chapter}: the inking is done!`,
+      background: (chapter) => `Chapter ${chapter}: the backgrounds are done!`,
+      delivered: (chapter) => `Chapter ${chapter} has been delivered to Jump!`,
+      scheduled: (chapter) => `Chapter ${chapter} has a release date!`,
+      published: (chapter) => `Chapter ${chapter} is out!`,
     },
-    chapterTitle: (chapter) => `Chapter ${chapter}`,
-    manyChapters: (count) => `${count} chapters updated`,
+    milestoneBody: {
+      inking: "Togashi has finished the character linework.",
+      background: "The background instructions are complete.",
+      delivered: "The finished manuscript is now with Jump.",
+      scheduled: "Jump has scheduled it for publication.",
+      published: "Go read it.",
+    },
+    statuses: {
+      inking: "inked",
+      background: "backgrounds done",
+      delivered: "at Jump",
+      scheduled: "scheduled",
+      published: "out now",
+    },
+    manyChapters: (count) => `${count} chapters moved forward!`,
     chapterLine: (chapter, label) => `${chapter}: ${label}`,
-    hiatusTitle: "Hunter × Hunter is on hiatus",
-    hiatusBody: "No new chapter is scheduled.",
-    publishingTitle: "Hunter × Hunter is publishing again",
-    publishingBody: "Chapters are being released again.",
+    hiatusTitle: "Hunter × Hunter is going on a break",
+    hiatusBody: "No new chapter is scheduled for now.",
+    publishingTitle: "Hunter × Hunter is back!",
+    publishingBody: "Jump has scheduled the next chapter.",
   },
   fr: {
     enabledTitle: "Les alertes Togashi sont activées",
@@ -27,20 +40,33 @@ const notificationCopy = {
     onePost: "Nouveau post de Togashi",
     manyPosts: (count) => `${count} nouveaux posts de Togashi`,
     fallbackBody: "Yoshihiro Togashi a publié un nouveau post sur X.",
-    statuses: {
-      inking: "Encrage des personnages terminé",
-      background: "Spécifications des arrière-plans terminées",
-      delivered: "Remis au Jump",
-      scheduled: "Publication programmée",
-      published: "Publié",
+    milestoneTitle: {
+      inking: (chapter) => `Chapitre ${chapter} : l’encrage est terminé !`,
+      background: (chapter) => `Chapitre ${chapter} : les décors sont bouclés !`,
+      delivered: (chapter) => `Le chapitre ${chapter} a été livré au Jump !`,
+      scheduled: (chapter) => `Le chapitre ${chapter} a une date de sortie !`,
+      published: (chapter) => `Le chapitre ${chapter} est sorti !`,
     },
-    chapterTitle: (chapter) => `Chapitre ${chapter}`,
-    manyChapters: (count) => `${count} chapitres mis à jour`,
+    milestoneBody: {
+      inking: "Togashi a fini l’encrage des personnages.",
+      background: "Les instructions de décors sont terminées.",
+      delivered: "Le manuscrit terminé est entre les mains du Jump.",
+      scheduled: "Le Jump a programmé sa publication.",
+      published: "Bonne lecture.",
+    },
+    statuses: {
+      inking: "encré",
+      background: "décors bouclés",
+      delivered: "chez le Jump",
+      scheduled: "programmé",
+      published: "disponible",
+    },
+    manyChapters: (count) => `${count} chapitres ont avancé !`,
     chapterLine: (chapter, label) => `${chapter} : ${label}`,
-    hiatusTitle: "Hunter × Hunter est en hiatus",
-    hiatusBody: "Aucun nouveau chapitre n’est programmé.",
-    publishingTitle: "Hunter × Hunter repart en publication",
-    publishingBody: "Les chapitres reparaissent.",
+    hiatusTitle: "Hunter × Hunter part en pause",
+    hiatusBody: "Aucun nouveau chapitre n’est programmé pour l’instant.",
+    publishingTitle: "Hunter × Hunter revient !",
+    publishingBody: "Le Jump a programmé la suite.",
   },
   ja: {
     enabledTitle: "Togashi post alerts are on",
@@ -48,20 +74,33 @@ const notificationCopy = {
     onePost: "New Togashi post",
     manyPosts: (count) => `${count} new Togashi posts`,
     fallbackBody: "Yoshihiro Togashi posted on X.",
-    statuses: {
-      inking: "Character inking complete",
-      background: "Background specifications complete",
-      delivered: "Delivered to Jump",
-      scheduled: "Scheduled for publication",
-      published: "Published",
+    milestoneTitle: {
+      inking: (chapter) => `Chapter ${chapter}: the inking is done!`,
+      background: (chapter) => `Chapter ${chapter}: the backgrounds are done!`,
+      delivered: (chapter) => `Chapter ${chapter} has been delivered to Jump!`,
+      scheduled: (chapter) => `Chapter ${chapter} has a release date!`,
+      published: (chapter) => `Chapter ${chapter} is out!`,
     },
-    chapterTitle: (chapter) => `Chapter ${chapter}`,
-    manyChapters: (count) => `${count} chapters updated`,
+    milestoneBody: {
+      inking: "Togashi has finished the character linework.",
+      background: "The background instructions are complete.",
+      delivered: "The finished manuscript is now with Jump.",
+      scheduled: "Jump has scheduled it for publication.",
+      published: "Go read it.",
+    },
+    statuses: {
+      inking: "inked",
+      background: "backgrounds done",
+      delivered: "at Jump",
+      scheduled: "scheduled",
+      published: "out now",
+    },
+    manyChapters: (count) => `${count} chapters moved forward!`,
     chapterLine: (chapter, label) => `${chapter}: ${label}`,
-    hiatusTitle: "Hunter × Hunter is on hiatus",
-    hiatusBody: "No new chapter is scheduled.",
-    publishingTitle: "Hunter × Hunter is publishing again",
-    publishingBody: "Chapters are being released again.",
+    hiatusTitle: "Hunter × Hunter is going on a break",
+    hiatusBody: "No new chapter is scheduled for now.",
+    publishingTitle: "Hunter × Hunter is back!",
+    publishingBody: "Jump has scheduled the next chapter.",
   },
 };
 
@@ -134,15 +173,21 @@ function buildNotification(payload) {
       };
     }
 
+    // One chapter gets a whole sentence; several get a headline and a list,
+    // because five sentences in a row would not fit a notification anyway.
+    if (payload.chapters.length === 1) {
+      const [only] = payload.chapters;
+      return {
+        title: copy.milestoneTitle[only.to](only.chapter),
+        body: copy.milestoneBody[only.to],
+        tag,
+        url: "/",
+      };
+    }
+
     return {
-      title:
-        payload.chapters.length > 1
-          ? copy.manyChapters(payload.chapters.length)
-          : copy.chapterTitle(payload.chapters[0].chapter),
-      body:
-        payload.chapters.length > 1
-          ? lines.join(" · ")
-          : copy.statuses[payload.chapters[0].to],
+      title: copy.manyChapters(payload.chapters.length),
+      body: lines.join(" · "),
       tag,
       url: "/",
     };

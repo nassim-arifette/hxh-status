@@ -37,11 +37,11 @@ function milestone(overrides = {}) {
   };
 }
 
-test("one chapter names the chapter and its milestone", () => {
+test("one chapter reads as a sentence, not a status code", () => {
   const notification = buildNotification(milestone());
 
-  assert.equal(notification.title, "Chapter 428");
-  assert.equal(notification.body, "Delivered to Jump");
+  assert.equal(notification.title, "Chapter 428 has been delivered to Jump!");
+  assert.equal(notification.body, "The finished manuscript is now with Jump.");
   assert.equal(notification.tag, "tracker-2094673907626414299");
   assert.equal(notification.url, "/");
 });
@@ -49,11 +49,30 @@ test("one chapter names the chapter and its milestone", () => {
 test("the reader's own language is used", () => {
   const notification = buildNotification(milestone({ locale: "fr" }));
 
-  assert.equal(notification.title, "Chapitre 428");
-  assert.equal(notification.body, "Remis au Jump");
+  assert.equal(notification.title, "Le chapitre 428 a été livré au Jump !");
+  assert.equal(notification.body, "Le manuscrit terminé est entre les mains du Jump.");
 });
 
-test("several chapters collapse into a count and a list", () => {
+test("every milestone has its own sentence", () => {
+  const titles = ["inking", "background", "delivered", "scheduled", "published"].map(
+    (to) =>
+      buildNotification(milestone({ locale: "fr", chapters: [{ chapter: 428, to }] }))
+        .title,
+  );
+
+  assert.deepEqual(titles, [
+    "Chapitre 428 : l’encrage est terminé !",
+    "Chapitre 428 : les décors sont bouclés !",
+    "Le chapitre 428 a été livré au Jump !",
+    "Le chapitre 428 a une date de sortie !",
+    "Le chapitre 428 est sorti !",
+  ]);
+
+  // Every sentence must be distinct, or a status is quietly reusing another's.
+  assert.equal(new Set(titles).size, titles.length);
+});
+
+test("several chapters collapse into a headline and a short list", () => {
   const notification = buildNotification(
     milestone({
       locale: "fr",
@@ -65,10 +84,10 @@ test("several chapters collapse into a count and a list", () => {
     }),
   );
 
-  assert.equal(notification.title, "3 chapitres mis à jour");
+  assert.equal(notification.title, "3 chapitres ont avancé !");
   assert.equal(
     notification.body,
-    "428 : Remis au Jump · 429 : Spécifications des arrière-plans terminées · 430 : Encrage des personnages terminé",
+    "428 : chez le Jump · 429 : décors bouclés · 430 : encré",
   );
 });
 
@@ -76,8 +95,8 @@ test("a hiatus flip outranks the chapters it travelled with", () => {
   const alone = buildNotification(
     milestone({ chapters: [], publication: "hiatus" }),
   );
-  assert.equal(alone.title, "Hunter × Hunter is on hiatus");
-  assert.equal(alone.body, "No new chapter is scheduled.");
+  assert.equal(alone.title, "Hunter × Hunter is going on a break");
+  assert.equal(alone.body, "No new chapter is scheduled for now.");
 
   const together = buildNotification(
     milestone({
@@ -85,13 +104,13 @@ test("a hiatus flip outranks the chapters it travelled with", () => {
       publication: "hiatus",
     }),
   );
-  assert.equal(together.title, "Hunter × Hunter is on hiatus");
-  assert.equal(together.body, "428: Published");
+  assert.equal(together.title, "Hunter × Hunter is going on a break");
+  assert.equal(together.body, "428: out now");
 
   const resumed = buildNotification(
     milestone({ chapters: [], publication: "publishing" }),
   );
-  assert.equal(resumed.title, "Hunter × Hunter is publishing again");
+  assert.equal(resumed.title, "Hunter × Hunter is back!");
 });
 
 test("a milestone payload that fails validation falls back, never throws", () => {
