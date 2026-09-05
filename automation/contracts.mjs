@@ -3,6 +3,15 @@ export const TOGASHI_USER_ID = "1528978792617611264";
 export const TOGASHI_SCREEN_NAME = "Un4v5s8bgsVk9Xp";
 export const TOGASHI_SOURCE_LABEL = "Yoshihiro Togashi on X";
 export const AUTO_STATUSES = ["inking", "background", "delivered"];
+export const PUBLIC_TRANSLATION_LOCALES = [
+  "ar",
+  "en",
+  "es",
+  "fr",
+  "ja",
+  "pt",
+  "zh",
+];
 
 // The tracker's full vocabulary, ordered from "nothing confirmed" to "readable
 // now". Every consumer ranks statuses off this one list so a milestone means
@@ -96,6 +105,31 @@ export const analysisSchema = {
   ],
 };
 
+const translationsSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: Object.fromEntries(
+    PUBLIC_TRANSLATION_LOCALES.map((locale) => [
+      locale,
+      { type: "string", minLength: 1, maxLength: 10_000 },
+    ]),
+  ),
+  required: PUBLIC_TRANSLATION_LOCALES,
+};
+
+// Analysis and translation deliberately share one model request. The reducer
+// still consumes only `analysis`, while the other branch is validated and
+// persisted for the public feed. API traffic never reaches Gemini.
+export const tweetProcessingSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    analysis: analysisSchema,
+    translations: translationsSchema,
+  },
+  required: ["analysis", "translations"],
+};
+
 export const imageVerificationSchema = {
   type: "object",
   additionalProperties: false,
@@ -157,6 +191,65 @@ function assertNonEmptyString(value, label, maxLength) {
   if (value.trim().length === 0) {
     throw new Error(`${label} must not be empty.`);
   }
+}
+
+function preservedTranslationTokens(value) {
+  return (
+    String(value).match(
+      /https?:\/\/[^\s]+|@[A-Za-z0-9_]{1,15}|#[\p{L}\p{N}_]+|\d+(?:[.,]\d+)?/gu,
+    ) ?? []
+  );
+}
+
+export function validateTweetTranslations(value, sourceText) {
+  if (!isObject(value)) {
+    throw new Error("Tweet translations must be an object.");
+  }
+
+  assertExactKeys(value, PUBLIC_TRANSLATION_LOCALES, "Tweet translations");
+  assertString(sourceText, "Tweet source text");
+
+  const requiredTokens = [...new Set(preservedTranslationTokens(sourceText))];
+
+  for (const locale of PUBLIC_TRANSLATION_LOCALES) {
+    const translation = value[locale];
+    assertNonEmptyString(translation, `translations.${locale}`, 10_000);
+
+    if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/u.test(translation)) {
+      throw new Error(`translations.${locale} contains control characters.`);
+    }
+
+    for (const token of requiredTokens) {
+      if (!translation.includes(token)) {
+        throw new Error(
+          `translations.${locale} does not preserve source token ${token}.`,
+        );
+      }
+    }
+  }
+
+  if (value.ja !== sourceText) {
+    throw new Error("translations.ja must preserve the original post exactly.");
+  }
+
+  return value;
+}
+
+export function validateTweetProcessing(value, sourceText) {
+  if (!isObject(value)) {
+    throw new Error("Gemini processing result must be an object.");
+  }
+
+  assertExactKeys(
+    value,
+    ["analysis", "translations"],
+    "Gemini processing result",
+  );
+
+  return {
+    analysis: validateModelAnalysis(value.analysis),
+    translations: validateTweetTranslations(value.translations, sourceText),
+  };
 }
 
 export function compareSnowflakeIds(left, right) {

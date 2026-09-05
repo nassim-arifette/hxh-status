@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "posts": [
+    {
+      "id": "2094673907626414299",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-09-01T06:29:11.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2094673907626414299",
+      "originalText": "No.427、原稿完成。 https://t.co/MohufGEVuG",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HRHGz-LaUAASmgj.jpg"
+      ],
+      "translation": {
+        "status": "available",
+        "provider": "manual",
+        "model": null,
+        "generatedAt": "2026-09-05T16:24:31.932Z",
+        "texts": {
+          "ar": "الفصل 427، اكتملت المخطوطة. https://t.co/MohufGEVuG",
+          "en": "No. 427, manuscript complete. https://t.co/MohufGEVuG",
+          "es": "N.º 427: manuscrito terminado. https://t.co/MohufGEVuG",
+          "fr": "N° 427 : manuscrit terminé. https://t.co/MohufGEVuG",
+          "ja": "No.427、原稿完成。 https://t.co/MohufGEVuG",
+          "pt": "Nº 427: manuscrito concluído. https://t.co/MohufGEVuG",
+          "zh": "第427话，原稿完成。 https://t.co/MohufGEVuG"
+        }
+      },
+      "tracker": {
+        "decision": "apply",
+        "changes": [
+          {
+            "chapter": 427,
+            "from": "unknown",
+            "to": "delivered"
+          }
+        ]
+      }
+    }
+  ]
+}

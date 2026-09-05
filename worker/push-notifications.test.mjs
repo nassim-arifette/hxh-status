@@ -670,6 +670,19 @@ test("subscription API rejects cross-origin, oversized, and SSRF endpoints", asy
   );
   assert.equal(malicious.status, 400);
 
+  const expiring = await handlePushApi(
+    jsonRequest("/api/push/subscriptions", "POST", {
+      locale: "en",
+      subscription: {
+        ...subscription,
+        expirationTime: Date.now() + 60_000,
+      },
+    }),
+    env,
+  );
+  assert.equal(expiring.status, 400);
+  assert.equal(env.PUSH_REGISTRY.entries.size, 0);
+
   const oversized = await handlePushApi(
     new Request("https://hxhstatus.com/api/push/subscriptions", {
       method: "POST",
@@ -769,6 +782,33 @@ test("one new Togashi post is sent once and advances the push cursor", async () 
     },
   );
   assert.deepEqual(second, { enabled: true, complete: true, delivered: 0 });
+});
+
+test("a cached post translation is used for the subscriber locale", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  await subscribe(env, await validSubscription("translated"), "fr");
+  const latest = {
+    ...tweet(),
+    translations: {
+      ar: "منشور مترجم",
+      en: "Translated post",
+      es: "Publicación traducida",
+      fr: "Publication traduite",
+      ja: "翻訳された投稿",
+      pt: "Publicação traduzida",
+      zh: "已翻译的帖子",
+    },
+  };
+  const sent = [];
+
+  await deliverPushForTweets(env, [latest], async (_env, _subscription, payload) => {
+    sent.push(payload);
+  });
+
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].locale, "fr");
+  assert.equal(sent[0].text, "Publication traduite");
 });
 
 test("a stale KV record is ignored if its registry lease vanished", async () => {

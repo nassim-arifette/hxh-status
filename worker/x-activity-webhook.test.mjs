@@ -6,6 +6,7 @@ import {
   processPendingPost,
   resolveWithheldPost,
   serializePipeline,
+  shouldSuppressPostNotification,
   shouldRunSyndicationFallback,
   verifyWebhookSignature,
 } from "./x-activity-webhook.mjs";
@@ -362,13 +363,20 @@ async function withheldEnvironment() {
   return { store, env, fetchImpl };
 }
 
-test("a verdict with no milestone releases the post alert itself", async () => {
+test("a verdict with no milestone releases the translated post alert", async () => {
   const { store, env, fetchImpl } = await withheldEnvironment();
   const pushed = [];
+  const translations = Object.fromEntries(
+    ["ar", "en", "es", "fr", "ja", "pt", "zh"].map((locale) => [
+      locale,
+      locale === "fr" ? "Traduction française" : `Translation ${locale}`,
+    ]),
+  );
 
   const result = await resolveWithheldPost(postId, env, {
     announced: false,
     fetchImpl,
+    translations,
     pushRunner: async (_env, tweets) => {
       pushed.push(...tweets);
       return { enabled: true, complete: true, delivered: 1 };
@@ -379,6 +387,7 @@ test("a verdict with no milestone releases the post alert itself", async () => {
   assert.equal(result.announced, false);
   assert.equal(pushed.length, 1);
   assert.equal(pushed[0].id, postId);
+  assert.equal(pushed[0].translations.fr, "Traduction française");
   assert.equal(store.data.has(`pipeline:pending:${postId}`), false);
   assert.equal(store.data.has(`pipeline:processed:${postId}`), true);
   assert.equal(JSON.parse(store.data.get("togashi:latest-post")).id, postId);
@@ -483,6 +492,22 @@ function verdictBody(overrides = {}) {
   };
 }
 
+function translatedVerdictBody(posts, overrides = {}) {
+  const body = verdictBody(overrides);
+  delete body.postIds;
+  body.posts = posts;
+  return body;
+}
+
+function pushTranslations() {
+  return Object.fromEntries(
+    ["ar", "en", "es", "fr", "ja", "pt", "zh"].map((locale) => [
+      locale,
+      `Post 434 (${locale})`,
+    ]),
+  );
+}
+
 test("the verdict endpoint is closed until its own secret is configured", async () => {
   const response = await verdictRequest(verdictBody(), {
     ...baseEnv,
@@ -555,12 +580,71 @@ test("a stale or malformed verdict is refused", async () => {
       milestones: { chapters: [], publication: { from: "x", to: "hiatus" } },
     }),
     verdictBody({ unexpected: true }),
+    translatedVerdictBody([
+      {
+        id: postId,
+        notification: "raw",
+        translations: { fr: "incomplete" },
+      },
+    ]),
+    translatedVerdictBody([
+      {
+        id: postId,
+        notification: "milestone",
+        translations: pushTranslations(),
+      },
+    ]),
+    translatedVerdictBody([
+      {
+        id: postId,
+        notification: "milestone",
+        translations: null,
+      },
+    ]),
   ];
 
   for (const body of malformed) {
     const response = await verdictRequest(body, env);
     assert.equal(response.status, 400, JSON.stringify(body));
   }
+});
+
+test("a batch suppresses only posts represented by a milestone", async () => {
+  assert.equal(
+    shouldSuppressPostNotification(
+      { notification: "milestone", translations: null },
+      true,
+    ),
+    true,
+  );
+  assert.equal(
+    shouldSuppressPostNotification(
+      { notification: "raw", translations: pushTranslations() },
+      true,
+    ),
+    false,
+  );
+
+  const env = {
+    ...baseEnv,
+    X_EVENT_STATE: new MemoryKv(),
+    TRACKER_VERDICT_SECRET: verdictSecret,
+    PUSH_NOTIFICATIONS_ENABLED: "false",
+  };
+  const response = await verdictRequest(
+    translatedVerdictBody(
+      [
+        {
+          id: postId,
+          notification: "raw",
+          translations: pushTranslations(),
+        },
+      ],
+      { dryRun: true },
+    ),
+    env,
+  );
+  assert.equal(response.status, 200);
 });
 
 test("a dry-run verdict resolves nothing", async () => {

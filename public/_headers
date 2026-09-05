@@ -7,6 +7,13 @@
   Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
+/api/v1/*
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=300, stale-while-revalidate=3600
+  Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+  X-Content-Type-Options: nosniff
+
 # The filename is stable but the image is regenerated on every status change,
 # so `immutable` served a chart that could never refresh. Revalidation is cheap
 # against the ETag, and consumers can pin a version with ?r=<revision>.

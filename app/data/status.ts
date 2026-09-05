@@ -25,6 +25,7 @@ export type ChapterRecord = {
 
 type StatusData = {
   lastUpdated: string;
+  hiatusAfterChapter?: number;
   chapters: ChapterRecord[];
 };
 
@@ -54,6 +55,7 @@ function assertStatusData(value: unknown): asserts value is StatusData {
 
   const candidate = value as {
     lastUpdated?: unknown;
+    hiatusAfterChapter?: unknown;
     chapters?: unknown;
   };
 
@@ -64,6 +66,11 @@ function assertStatusData(value: unknown): asserts value is StatusData {
     candidate.chapters.length === 0
   ) {
     throw new Error("Status data has invalid top-level fields.");
+  }
+
+  if (candidate.hiatusAfterChapter !== undefined &&
+      (!Number.isInteger(candidate.hiatusAfterChapter) || Number(candidate.hiatusAfterChapter) < 1)) {
+    throw new Error("Status data has an invalid hiatus chapter.");
   }
 
   const chapterNumbers = new Set<number>();
@@ -214,8 +221,6 @@ export const latestUpdate = togashiUpdates.reduce(
   togashiUpdates[0] ?? chapters[0],
 );
 
-export const statusDataRevision = sourcePostId(latestUpdate) ?? lastUpdated;
-
 const dayMs = 24 * 60 * 60 * 1000;
 
 function daysBetween(releaseAt: string, throughDate: string) {
@@ -239,7 +244,10 @@ const hasScheduledChapter = chapters.some(
 // `automation/milestones.mjs`; change both together.
 export const publicationStatus: "publishing" | "hiatus" =
   hasScheduledChapter ||
-  (latestPublished.releaseAt &&
+  (latestPublished.chapter !== currentStatusData.hiatusAfterChapter &&
+    latestPublished.releaseAt &&
     daysBetween(latestPublished.releaseAt, lastUpdated) <= 35)
     ? "publishing"
     : "hiatus";
+
+export const statusDataRevision = `${sourcePostId(latestUpdate) ?? lastUpdated}-p${latestPublished.chapter}-${publicationStatus === "hiatus" ? "h" : "r"}`;

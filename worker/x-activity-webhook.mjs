@@ -1,5 +1,6 @@
 import {
   AUTOMATION_SCHEMA_VERSION,
+  PUBLIC_TRANSLATION_LOCALES,
   TOGASHI_SCREEN_NAME,
   TOGASHI_USER_ID,
   TRACKER_STATUSES,
@@ -37,7 +38,7 @@ const FALLBACK_INTERVAL_MS = 15 * 60 * 1_000;
 // Long enough for Gemini to exhaust its three attempts, short enough that an
 // incident does not swallow the notification entirely.
 const WITHHELD_WINDOW_MS = 10 * 60 * 1_000;
-const MAX_VERDICT_BYTES = 20_000;
+const MAX_VERDICT_BYTES = 40_000;
 const TRACKER_VERDICT_PATH = "/tracker-verdict";
 const encoder = new TextEncoder();
 let pipelineTail = Promise.resolve();
@@ -436,6 +437,7 @@ export async function resolveWithheldPost(
     pushRunner = deliverPushForTweets,
     skipRunner = skipPostBroadcast,
     reason = "verdict",
+    translations = null,
   } = {},
 ) {
   const store = env.X_EVENT_STATE;
@@ -450,7 +452,9 @@ export async function resolveWithheldPost(
   if (announced) {
     await skipRunner(env, postId);
   } else {
-    const push = await pushRunner(env, [tweet]);
+    const push = await pushRunner(env, [
+      translations === null ? tweet : { ...tweet, translations },
+    ]);
     if (!push.enabled || !push.complete) {
       throw new Error("Push notification delivery is still pending.");
     }
@@ -591,6 +595,36 @@ async function runSyndicationFallback(env, scheduledTime) {
   return { skipped: false };
 }
 
+function validateVerdictTranslations(value) {
+  if (value === null) return null;
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new TypeError("Verdict translations are invalid.");
+  }
+
+  const actual = Object.keys(value).sort();
+  const expected = [...PUBLIC_TRANSLATION_LOCALES].sort();
+  if (
+    actual.length !== expected.length ||
+    actual.some((key, index) => key !== expected[index])
+  ) {
+    throw new TypeError("Verdict translations have invalid locales.");
+  }
+
+  for (const locale of PUBLIC_TRANSLATION_LOCALES) {
+    const text = value[locale];
+    if (
+      typeof text !== "string" ||
+      text.trim().length === 0 ||
+      Array.from(text).length > 180 ||
+      /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/u.test(text)
+    ) {
+      throw new TypeError(`Verdict translation ${locale} is invalid.`);
+    }
+  }
+
+  return value;
+}
+
 function validateVerdict(body) {
   if (!body || typeof body !== "object" || Array.isArray(body)) {
     throw new TypeError("Verdict payload is invalid.");
@@ -600,6 +634,7 @@ function validateVerdict(body) {
     "requestedAt",
     "revision",
     "postIds",
+    "posts",
     "milestones",
     "dryRun",
   ]);
@@ -612,11 +647,54 @@ function validateVerdict(body) {
   ) {
     throw new TypeError("Verdict revision is invalid.");
   }
-  if (!Array.isArray(body.postIds) || body.postIds.length > 5) {
-    throw new TypeError("Verdict post IDs are invalid.");
+  const hasLegacyPostIds = Object.hasOwn(body, "postIds");
+  const hasPostResults = Object.hasOwn(body, "posts");
+  if (hasLegacyPostIds === hasPostResults) {
+    throw new TypeError("Verdict must contain exactly one post result format.");
   }
-  for (const id of body.postIds) {
-    assertSnowflakeId(id, "Verdict post ID");
+
+  let posts;
+  if (hasLegacyPostIds) {
+    if (!Array.isArray(body.postIds) || body.postIds.length > 5) {
+      throw new TypeError("Verdict post IDs are invalid.");
+    }
+    posts = body.postIds.map((id) => {
+      assertSnowflakeId(id, "Verdict post ID");
+      return { id, notification: null, translations: null };
+    });
+  } else {
+    if (!Array.isArray(body.posts) || body.posts.length > 5) {
+      throw new TypeError("Verdict post results are invalid.");
+    }
+    posts = body.posts.map((post) => {
+      if (!post || typeof post !== "object" || Array.isArray(post)) {
+        throw new TypeError("Verdict post result is invalid.");
+      }
+      const keys = Object.keys(post).sort();
+      if (
+        keys.length !== 3 ||
+        keys[0] !== "id" ||
+        keys[1] !== "notification" ||
+        keys[2] !== "translations"
+      ) {
+        throw new TypeError("Verdict post result has unexpected fields.");
+      }
+      assertSnowflakeId(post.id, "Verdict post ID");
+      if (!["milestone", "raw"].includes(post.notification)) {
+        throw new TypeError("Verdict post notification is invalid.");
+      }
+      const translations = validateVerdictTranslations(post.translations);
+      if (
+        (post.notification === "milestone" && translations !== null) ||
+        (post.notification === "raw" && translations === null)
+      ) {
+        throw new TypeError("Verdict post translations do not match its action.");
+      }
+      return { ...post, translations };
+    });
+  }
+  if (new Set(posts.map((post) => post.id)).size !== posts.length) {
+    throw new TypeError("Verdict post IDs must be unique.");
   }
   if (body.dryRun !== undefined && typeof body.dryRun !== "boolean") {
     throw new TypeError("Verdict dryRun is invalid.");
@@ -657,7 +735,22 @@ function validateVerdict(body) {
     throw new TypeError("Verdict publication change is invalid.");
   }
 
-  return body;
+  return {
+    requestedAt: body.requestedAt,
+    revision: body.revision,
+    posts,
+    milestones: body.milestones,
+    ...(body.dryRun === undefined ? {} : { dryRun: body.dryRun }),
+  };
+}
+
+export function shouldSuppressPostNotification(
+  postResult,
+  carriesMilestones,
+) {
+  return postResult.notification === null
+    ? carriesMilestones
+    : postResult.notification === "milestone";
 }
 
 // The Action reports what the reducer decided, for every run — including
@@ -709,6 +802,19 @@ async function handleTrackerVerdict(request, env) {
     publication: verdict.milestones.publication,
   };
   const carriesMilestones = hasMilestones(milestones);
+  const explicitActions = verdict.posts.filter(
+    (post) => post.notification !== null,
+  );
+  if (
+    explicitActions.length > 0 &&
+    explicitActions.some((post) => post.notification === "milestone") !==
+      carriesMilestones
+  ) {
+    return json(
+      { error: "Verdict post actions and milestones disagree." },
+      { status: 400 },
+    );
+  }
 
   return serializePipeline(async () => {
     const announcement = await deliverMilestones(
@@ -723,15 +829,16 @@ async function handleTrackerVerdict(request, env) {
     // A dry run must not resolve anything: releasing a post here would send a
     // real notification, and suppressing one would lose it.
     if (!dryRun) {
-      for (const postId of verdict.postIds) {
+      for (const post of verdict.posts) {
         try {
-          await resolveWithheldPost(postId, env, {
-            announced: carriesMilestones,
+          await resolveWithheldPost(post.id, env, {
+            announced: shouldSuppressPostNotification(post, carriesMilestones),
+            translations: post.translations,
           });
           resolved += 1;
         } catch (error) {
           // One stuck post must not strand the others; the Cron retries it.
-          failures.push({ postId, error: safeError(error) });
+          failures.push({ postId: post.id, error: safeError(error) });
         }
       }
     }
@@ -744,7 +851,7 @@ async function handleTrackerVerdict(request, env) {
         carriesMilestones,
         announced: announcement.announced ?? 0,
         duplicate: announcement.duplicate ?? false,
-        posts: verdict.postIds.length,
+        posts: verdict.posts.length,
         resolved,
         failures,
       }),

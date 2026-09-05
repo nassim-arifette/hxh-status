@@ -7,6 +7,8 @@ import {
   evaluateAnalysis,
   validateAutomationPayload,
   validateModelAnalysis,
+  validateTweetProcessing,
+  validateTweetTranslations,
 } from "./contracts.mjs";
 
 function tweet(fullText = "No.434\u3001\u4EBA\u7269\u30DA\u30F3\u5165\u308C\u5B8C\u4E86\u3002") {
@@ -189,4 +191,58 @@ test("empty evidence and oversized snowflakes are rejected", () => {
   payload.tweets[0].id = "1".repeat(21);
 
   assert.throws(() => validateAutomationPayload(payload), /at most 20 digits/);
+});
+
+test("tweet translations are complete and preserve source tokens", () => {
+  const source =
+    "No.434、原稿完成。 @Un4v5s8bgsVk9Xp #HUNTERxHUNTER https://t.co/example";
+  const translated = Object.fromEntries(
+    ["ar", "en", "es", "fr", "ja", "pt", "zh"].map((locale) => [
+      locale,
+      locale === "ja"
+        ? source
+        : `434 @Un4v5s8bgsVk9Xp #HUNTERxHUNTER https://t.co/example ${locale}`,
+    ]),
+  );
+
+  assert.equal(validateTweetTranslations(translated, source), translated);
+
+  assert.throws(
+    () =>
+      validateTweetTranslations(
+        { ...translated, fr: "Traduction sans les jetons obligatoires" },
+        source,
+      ),
+    /does not preserve source token/,
+  );
+  assert.throws(
+    () => validateTweetTranslations({ ...translated, de: "434" }, source),
+    /unexpected or missing fields/,
+  );
+});
+
+test("combined Gemini output keeps analysis and translation contracts separate", () => {
+  const source = tweet().fullText;
+  const translated = Object.fromEntries(
+    ["ar", "en", "es", "fr", "ja", "pt", "zh"].map((locale) => [
+      locale,
+      locale === "ja" ? source : `Chapter 434 (${locale})`,
+    ]),
+  );
+  const rawAnalysis = analysis({
+    chapter: 434,
+    proposedStatus: "inking",
+    completionScope: "whole_chapter",
+    evidenceBasis: "explicit_tweet_text",
+    evidence: "No.434、人物ペン入れ完了",
+    confidence: 0.99,
+  });
+
+  const result = validateTweetProcessing(
+    { analysis: rawAnalysis, translations: translated },
+    source,
+  );
+
+  assert.equal(result.analysis, rawAnalysis);
+  assert.equal(result.translations, translated);
 });

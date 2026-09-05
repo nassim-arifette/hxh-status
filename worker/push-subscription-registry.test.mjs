@@ -111,6 +111,48 @@ test("a subscription becomes active through upsert then promote", async () => {
   assert.deepEqual(await inspected.json(), { state: "active" });
 });
 
+test("repeating an unchanged subscription refresh does not rewrite KV", async () => {
+  const { registry, store } = await activeRegistry();
+  const before = { gets: store.gets, puts: store.puts };
+  const refreshed = record();
+  refreshed.revision = "11111111-2222-4333-8444-555555555555";
+
+  const response = await call(registry, "/upsert", {
+    id,
+    record: refreshed,
+  });
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { state: "active", created: false });
+  assert.equal(store.puts - before.puts, 0);
+  assert.equal(store.gets - before.gets, 1);
+  assert.equal(
+    JSON.parse(store.data.get(`push:verified:${id}`)).revision,
+    revision,
+  );
+});
+
+test("repeating an unchanged pending registration preserves its verifier revision", async () => {
+  const { registry, store } = makeRegistry();
+  await call(registry, "/upsert", { id, record: record() });
+  const before = { gets: store.gets, puts: store.puts };
+  const refreshed = record();
+  refreshed.revision = "11111111-2222-4333-8444-555555555555";
+
+  const response = await call(registry, "/upsert", {
+    id,
+    record: refreshed,
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(store.puts - before.puts, 0);
+  assert.equal(store.gets - before.gets, 1);
+  assert.equal(
+    JSON.parse(store.data.get(`push:pending-subscription:${id}`)).revision,
+    revision,
+  );
+});
+
 test("renewing a fresh lease costs no KV operation at all", async () => {
   const { registry, store } = await activeRegistry();
   const before = { gets: store.gets, puts: store.puts };

@@ -105,10 +105,15 @@ jobs:
       - name: Commit the validated result
         if: steps.process.outputs.state_changed == 'true'
         env:
+          FEED_CHANGED: ${{ steps.process.outputs.feed_changed }}
           STATUS_CHANGED: ${{ steps.process.outputs.status_changed }}
         shell: bash
         run: |
           git add automation/state.json
+
+          if [ "$FEED_CHANGED" = "true" ]; then
+            git add app/data/togashi-posts.json
+          fi
 
           if [ "$STATUS_CHANGED" = "true" ]; then
             git add app/data/status-data.json public/share
@@ -117,6 +122,12 @@ jobs:
           while IFS= read -r path; do
             case "$path" in
               automation/state.json)
+                ;;
+              app/data/togashi-posts.json)
+                if [ "$FEED_CHANGED" != "true" ]; then
+                  echo "Unexpected Togashi feed artifact: $path" >&2
+                  exit 1
+                fi
                 ;;
               app/data/status-data.json|public/share/*)
                 if [ "$STATUS_CHANGED" != "true" ]; then

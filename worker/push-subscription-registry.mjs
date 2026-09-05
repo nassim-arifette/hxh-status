@@ -8,6 +8,8 @@ export const PUSH_PENDING_TTL_SECONDS = 10 * 60;
 // age, so leave it alone until this much of it has elapsed. SQLite already
 // holds the expiry, so the common path now costs no KV operation at all.
 export const PUSH_RENEW_AFTER_SECONDS = 30 * 24 * 60 * 60;
+const PUSH_PENDING_REFRESH_AFTER_SECONDS =
+  Math.floor(PUSH_PENDING_TTL_SECONDS / 2);
 
 const PENDING_QUERY_LIMIT = 32;
 const DEFAULT_ACTIVE_LIMIT = 5_000;
@@ -108,6 +110,15 @@ function parseStoredRecord(raw) {
   }
 }
 
+function hasSameSubscriptionDetails(current, incoming) {
+  return (
+    current?.version === 2 &&
+    current.locale === incoming.locale &&
+    JSON.stringify(current.subscription) ===
+      JSON.stringify(incoming.subscription)
+  );
+}
+
 export class PushSubscriptionRegistry {
   constructor(context, env) {
     this.context = context;
@@ -198,7 +209,34 @@ export class PushSubscriptionRegistry {
         ),
       );
       const state = existing?.state ?? "pending";
+      const ttl =
+        state === "active"
+          ? PUSH_ACTIVE_TTL_SECONDS
+          : PUSH_PENDING_TTL_SECONDS;
+      const previous =
+        existing === null
+          ? null
+          : parseStoredRecord(
+              await store.get(
+                state === "active" ? activeKey(body.id) : pendingKey(body.id),
+              ),
+            );
       let created = false;
+
+      if (
+        path === "/upsert" &&
+        existing &&
+        hasSameSubscriptionDetails(previous, body.record)
+      ) {
+        const elapsed = ttl * 1_000 - (existing.expires_at - now);
+        const refreshAfter =
+          state === "active"
+            ? PUSH_RENEW_AFTER_SECONDS
+            : PUSH_PENDING_REFRESH_AFTER_SECONDS;
+        if (elapsed < refreshAfter * 1_000) {
+          return json({ state, created: false });
+        }
+      }
 
       if (!existing) {
         const activeLimit = configuredLimit(
@@ -236,10 +274,6 @@ export class PushSubscriptionRegistry {
         );
         created = true;
       } else {
-        const ttl =
-          state === "active"
-            ? PUSH_ACTIVE_TTL_SECONDS
-            : PUSH_PENDING_TTL_SECONDS;
         sql.exec(
           "UPDATE push_registrations SET expires_at = ? WHERE id = ?",
           now + ttl * 1_000,
@@ -247,10 +281,6 @@ export class PushSubscriptionRegistry {
         );
       }
 
-      const previous =
-        state === "active"
-          ? parseStoredRecord(await store.get(activeKey(body.id)))
-          : null;
       const record = {
         ...body.record,
         state,
@@ -258,11 +288,6 @@ export class PushSubscriptionRegistry {
           ? { verifiedAt: previous?.verifiedAt ?? new Date(now).toISOString() }
           : {}),
       };
-      const ttl =
-        state === "active"
-          ? PUSH_ACTIVE_TTL_SECONDS
-          : PUSH_PENDING_TTL_SECONDS;
-
       try {
         await store.put(
           state === "active" ? activeKey(body.id) : pendingKey(body.id),

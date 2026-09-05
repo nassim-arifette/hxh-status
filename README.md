@@ -72,16 +72,27 @@ official source.
 
 ## Translate the site
 
-English interface text lives in `messages/en.json`. French is public at
-[https://hxhstatus.com/fr](https://hxhstatus.com/fr). Japanese currently uses
-the English catalog as an unlisted, non-indexed translation draft at
-[http://localhost:3000/ja](http://localhost:3000/ja).
+English interface text lives in `messages/en.json`. English, French, Japanese,
+Spanish, Brazilian Portuguese, Simplified Chinese, and Arabic are published.
+Their routes, selector entries, metadata, service-worker copy, and text
+direction all come from `lib/locales.json`.
 
 See [TRANSLATING.md](TRANSLATING.md) for the contributor workflow and run
 `npm run translations:check` before opening a pull request. A maintainer does
 the one-time locale registration; translators then edit only their assigned
 `messages/{locale}.json` values. Publishing a reviewed locale automatically
 adds it to language detection, the selector, the sitemap, and hreflang metadata.
+
+## Public API
+
+The build publishes versioned, CORS-enabled JSON for the tracker and Togashi's
+validated posts. Each new post is translated once during ingestion and stored
+by post ID; API reads are static Cloudflare asset requests and never invoke
+Gemini or X. Localized endpoints cover all seven published languages.
+
+See [API.md](API.md) for endpoints, response examples, translation fallbacks,
+and the five-minute polling contract for bots. `/status.json` remains available
+for existing integrations, while new consumers should use `/api/v1/status.json`.
 
 ## Deploy
 

@@ -31,6 +31,11 @@ const MAX_BODY_BYTES = 8_192;
 const MAX_SUBSCRIPTIONS_PER_RUN = 32;
 const MAX_SUBSCRIPTIONS_TO_VERIFY = 8;
 const MAX_LEGACY_SUBSCRIPTIONS_TO_MIGRATE = 8;
+// A pending registry lease lasts ten minutes. Refuse a browser endpoint that
+// expires sooner than that lease (plus clock/scheduling slack), otherwise an
+// invalid record can occupy the verifier's first page until the server lease
+// is swept.
+const MIN_NEW_SUBSCRIPTION_LIFETIME_MS = 11 * 60 * 1_000;
 const VALID_LOCALES = new Set(["en", "fr", "ja", "es", "pt", "zh", "ar"]);
 const PUSH_ENDPOINT_HOSTS = [
   /^fcm\.googleapis\.com$/,
@@ -332,6 +337,13 @@ function storedRecord(subscription, locale, state) {
 
 async function storeSubscription(env, input, locale) {
   const subscription = await validateSubscription(input);
+  if (
+    subscription.expirationTime !== null &&
+    subscription.expirationTime - Date.now() <
+      MIN_NEW_SUBSCRIPTION_LIFETIME_MS
+  ) {
+    throw new TypeError("Push subscription expires too soon to verify.");
+  }
   const id = await subscriptionKey(subscription.endpoint);
   await registryCommand(env, "upsert", id, {
     record: storedRecord(subscription, locale, "pending"),
@@ -355,13 +367,17 @@ function compactText(value) {
 }
 
 function notificationPayload(tweet, count, locale) {
+  const normalizedLocale = normalizeLocale(locale);
+  const translatedText = tweet.translations?.[normalizedLocale];
   return {
     v: 1,
     kind: "togashi-post",
-    locale: normalizeLocale(locale),
+    locale: normalizedLocale,
     tweetId: tweet.id,
     count,
-    text: compactText(tweet.fullText),
+    text: compactText(
+      typeof translatedText === "string" ? translatedText : tweet.fullText,
+    ),
   };
 }
 

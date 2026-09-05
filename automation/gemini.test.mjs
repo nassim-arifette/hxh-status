@@ -19,8 +19,8 @@ function tweet(overrides = {}) {
   };
 }
 
-function completedResponse(analysis) {
-  const output = JSON.stringify(analysis);
+function completedResponse(value) {
+  const output = JSON.stringify(value);
   return new Response(
     JSON.stringify({
       status: "completed",
@@ -59,6 +59,22 @@ function confirmedAnalysis() {
   };
 }
 
+function translations(source = tweet().fullText) {
+  return {
+    ar: "اكتمل تحبير الشخصيات للفصل 434.",
+    en: "No. 434, character inking complete.",
+    es: "N.º 434: entintado de personajes terminado.",
+    fr: "N° 434 : encrage des personnages terminé.",
+    ja: source,
+    pt: "Nº 434: arte-final dos personagens concluída.",
+    zh: "第434话，人物勾线完成。",
+  };
+}
+
+function processedResult(analysis, source = tweet().fullText) {
+  return { analysis, translations: translations(source) };
+}
+
 test("Gemini request uses a system instruction and validates completed output", async () => {
   let requests = 0;
   const analysis = confirmedAnalysis();
@@ -82,17 +98,23 @@ test("Gemini request uses a system instruction and validates completed output", 
       assert.equal(body.model, "gemini-test");
       assert.equal(body.store, false);
       assert.match(body.system_instruction, /untrusted\s+evidence/);
+      assert.match(body.system_instruction, /faithful translator/);
       assert.match(
         body.system_instruction,
         /\u4EBA\u7269\u30DA\u30F3\u5165\u308C\u5B8C\u4E86/u,
       );
       assert.doesNotMatch(body.input[0].text, /You are a conservative/);
-      return completedResponse(analysis);
+      assert.deepEqual(body.response_format.schema.required, [
+        "analysis",
+        "translations",
+      ]);
+      return completedResponse(processedResult(analysis));
     },
   });
 
   assert.equal(requests, 1);
   assert.deepEqual(result.analysis, analysis);
+  assert.deepEqual(result.translations, translations());
   assert.equal(result.verification, null);
 });
 
@@ -123,23 +145,40 @@ test("non-completed Gemini responses are rejected", async () => {
 
 test("missing media without deterministic text is forced to human review", async () => {
   let requests = 0;
+  const source = "https://t.co/example";
   const result = await analyzeTweet({
     tweet: tweet({
-      fullText: "https://t.co/example",
+      fullText: source,
       mediaUrls: ["https://pbs.twimg.com/media/example.jpg"],
     }),
     currentChapters: [{ chapter: 434, status: "unknown" }],
     apiKey: "test-key",
     model: "gemini-test",
-    fetchImpl: async () => {
+    fetchImpl: async (url) => {
       requests += 1;
-      throw new Error("temporary network failure");
+      if (url === "https://pbs.twimg.com/media/example.jpg") {
+        throw new Error("temporary network failure");
+      }
+
+      return completedResponse({
+        analysis: {
+          schemaVersion: 1,
+          postClassification: "not_production_related",
+          chapterUpdates: [],
+          requiresHumanReview: false,
+          explanation: "No production statement is present in the text.",
+        },
+        translations: Object.fromEntries(
+          Object.keys(translations()).map((locale) => [locale, source]),
+        ),
+      });
     },
   });
 
-  assert.equal(requests, 1);
+  assert.equal(requests, 2);
   assert.equal(result.analysis.postClassification, "ambiguous");
   assert.equal(result.analysis.requiresHumanReview, true);
+  assert.equal(result.translations.fr, source);
   assert.equal(result.mediaErrors.length, 1);
 });
 

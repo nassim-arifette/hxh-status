@@ -12,6 +12,7 @@ import historyData from "./data/publication-history.json";
 import LanguageSwitcher from "./language-switcher";
 import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
+import { ARCS } from "./data/arcs";
 import {
   chapters,
   lastUpdated,
@@ -66,108 +67,11 @@ const chaptersThisYear = issues.filter(
   (issue) => issue.year === currentYear && issue.released,
 ).length;
 
-const publicationByYear = (() => {
-  const grouped = new Map<number, PublicationIssue[]>();
+import { Legend } from "./status-legend";
+import { PublicationHistory } from "./publication-history";
 
-  for (const issue of issues) {
-    const current = grouped.get(issue.year) ?? [];
-    current.push(issue);
-    grouped.set(issue.year, current);
-  }
-
-  return [...grouped.entries()]
-    .sort(([a], [b]) => b - a)
-    .map(([year, yearIssues]) => ({
-      year,
-      issues: [...yearIssues].sort((a, b) => a.number - b.number),
-    }));
-})();
-
-export function Legend({
-  messages,
-  statusMeta,
-}: {
-  messages: Messages;
-  statusMeta: StatusMap;
-}) {
-  return (
-    <div className="legend" aria-label={messages.production.legendAria}>
-      {(Object.keys(statusMeta) as ChapterStatus[]).map((status) => {
-        const meta = statusMeta[status];
-        const StatusIcon = meta.icon;
-
-        return (
-          <div className="legend-item" data-status={status} key={status}>
-            <span className="legend-icon" aria-hidden="true">
-              <StatusIcon size={15} strokeWidth={2.2} />
-            </span>
-            <span>{meta.label}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-export function PublicationHistory({
-  messages,
-}: {
-  messages: Messages["history"];
-}) {
-  return (
-    <div
-      className="history-scroll"
-      tabIndex={0}
-      aria-label={messages.chartAria}
-    >
-      <div className="history-chart">
-        {publicationByYear.map(({ year, issues: yearIssues }) => {
-          const publishedCount = yearIssues.filter(
-            (issue) => issue.released,
-          ).length;
-
-          return (
-            <div className="history-row" key={year}>
-              <span className="history-year">{year}</span>
-              <div className="history-cells">
-                {yearIssues.map((issue) => {
-                  const detail = formatMessage(
-                    issue.released
-                      ? messages.publishedIssue
-                      : messages.emptyIssue,
-                    {
-                      chapter: issue.chapter ?? "",
-                      issue: issue.number,
-                    },
-                  );
-
-                  return (
-                    <span
-                      className="history-cell"
-                      data-released={issue.released ? "true" : "false"}
-                      key={issue.year + "-" + issue.number}
-                      title={detail}
-                      aria-label={detail}
-                      role="img"
-                    />
-                  );
-                })}
-              </div>
-              <span
-                className="history-count"
-                aria-label={formatMessage(messages.chapterCountAria, {
-                  count: publishedCount,
-                })}
-              >
-                {String(publishedCount).padStart(2, "0")}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+export { Legend, PublicationHistory };
+export type { StatusMap };
 
 function CaptureSiteLabel() {
   return <span className="capture-site-label">hxhstatus.com</span>;
@@ -195,8 +99,6 @@ export function ProductionSection({
   locale = "en",
   messages = englishMessages,
 }: LocalizedSectionProps) {
-  const statusMeta = getStatusMeta(messages.statuses);
-
   return (
     <section
       className="content-section production-section"
@@ -221,7 +123,7 @@ export function ProductionSection({
         locale={locale}
         messages={messages}
       />
-      <Legend messages={messages} statusMeta={statusMeta} />
+      <Legend messages={messages} />
     </section>
   );
 }
@@ -269,17 +171,25 @@ export function PublicationHistorySection({
         )}
       </div>
 
-      <div className="history-key">
-        <span>
-          <i className="key-cell key-published" />{" "}
-          {messages.history.chapterPublished}
-        </span>
-        <span>
-          <i className="key-cell key-hiatus" /> {messages.history.noChapter}
-        </span>
+      <div className="history-key history-key-arcs">
+        <div className="history-arcs-legend">
+          {ARCS.map((arc) => (
+            <span key={arc.id} className="history-arc-legend-item">
+              <i
+                className="key-cell"
+                style={{ backgroundColor: arc.color, borderColor: arc.color }}
+              />
+              <span>{arc.name[locale] ?? arc.name.en}</span>
+            </span>
+          ))}
+          <span className="history-arc-legend-item">
+            <i className="key-cell key-hiatus" />
+            <span>{messages.history.noChapter}</span>
+          </span>
+        </div>
         <span className="history-key-count">{messages.history.countHint}</span>
       </div>
-      <PublicationHistory messages={messages.history} />
+      <PublicationHistory locale={locale} messages={messages.history} />
     </section>
   );
 }
@@ -288,7 +198,6 @@ export default function StatusDashboard({
   locale = "en",
   messages = englishMessages,
 }: StatusDashboardProps = {}) {
-  const nextChapterDate = nextChapter.preReleaseAt ?? nextChapter.releaseAt;
   const statusMeta = getStatusMeta(messages.statuses);
   const latestStatusLabel = statusMeta[latestUpdate.status].label;
   const latestStatus =
@@ -357,27 +266,22 @@ export default function StatusDashboard({
             <article className="metric metric-primary">
               <span>{messages.snapshot.latestPublished}</span>
               <strong>{latestPublished.chapter}</strong>
-              <small>WSJ #{latestPublished.jumpIssue}</small>
+              <small>
+                {latestPublished.jumpIssue ? `WSJ #${latestPublished.jumpIssue}` : ""}
+                {latestPublished.releaseAt ? (
+                  <>
+                    {latestPublished.jumpIssue ? " • " : ""}
+                    <LocalDate dateTime={latestPublished.releaseAt} locale={locale} />
+                  </>
+                ) : null}
+              </small>
             </article>
             <article className="metric">
               <span>{messages.snapshot.nextChapter}</span>
               <strong>{nextChapter.chapter}</strong>
               <small>
-                {nextChapterDate ? (
-                  nextChapter.preReleaseAt ? (
-                    <>
-                      <span className="sr-only">
-                        {messages.snapshot.estimatedPreRelease}:{" "}
-                      </span>
-                      <span aria-hidden="true">~ </span>
-                      <LocalDate dateTime={nextChapterDate} locale={locale} />
-                      <span aria-hidden="true">
-                        {" - " + messages.snapshot.preReleaseSuffix}
-                      </span>
-                    </>
-                  ) : (
-                    <LocalDate dateTime={nextChapterDate} locale={locale} />
-                  )
+                {nextChapter.releaseAt ? (
+                  <LocalDate dateTime={nextChapter.releaseAt} locale={locale} />
                 ) : (
                   statusMeta[nextChapter.status].shortLabel
                 )}
@@ -386,12 +290,10 @@ export default function StatusDashboard({
             <article className="metric">
               <span>{messages.snapshot.manuscriptsComplete}</span>
               <strong>{manuscriptsComplete.chapter}</strong>
-              <small>{messages.snapshot.throughChapter}</small>
             </article>
             <article className="metric">
               <span>{messages.snapshot.workConfirmed}</span>
               <strong>{workConfirmed.chapter}</strong>
-              <small>{messages.snapshot.throughChapter}</small>
             </article>
           </div>
         </section>

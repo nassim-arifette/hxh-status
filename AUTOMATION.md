@@ -30,11 +30,11 @@ X Activity post.create webhook on a secret callback path
   -> withhold the post alert until the Action reports a verdict
   -> serialized GitHub Action
   -> verify signature and freshness before Gemini or repository writes
-  -> Gemini extraction
-  -> deterministic validation
+  -> one Gemini call for extraction plus all seven post-text variants
+  -> independent deterministic validation of the tracker decision and translations
   -> report the verdict to the Worker before the slow build steps
-  -> Worker announces tracker milestones, or releases the held post alert
-  -> update data/state/share PNGs atomically
+  -> Worker announces tracker milestones, or releases the held post alert with its cached translation
+  -> cache translations by post ID and update data/state/share PNGs atomically
   -> Cloudflare deploy from the resulting repository update
 
 Retry Cron (every five minutes)
@@ -88,11 +88,23 @@ The model cannot write these fields or states:
 - `scheduled`
 - `published`
 - publication history
-- translations or interface copy
+- interface or notification copy
 
 Those require a separate official Weekly Shonen Jump or reader source and still
 need maintainer validation. Automating Togashi posts does not make official
 publication scheduling automatic.
+
+Gemini may write only the free-form post translations stored in
+`app/data/togashi-posts.json`. That output cannot change tracker state: the
+reducer reads the separate `analysis` field and still requires an exact match
+with the deterministic Japanese milestone grammar. All target languages are
+produced in the same model call, validated for complete locale coverage and
+preserved URLs, handles, hashtags, and numbers, then reused without another
+Gemini request.
+
+The public API is generated from this committed cache during `npm run build`.
+Cloudflare serves `/api/v1/*` as static assets, so bot polling performs no X,
+Gemini, KV, or dynamic Worker operation. See [API.md](API.md).
 
 ## Secrets and activation
 
@@ -192,6 +204,13 @@ the usual push costs no KV operation for the lease at all. A dead endpoint is
 still removed immediately on a `404`/`410`, which is what actually keeps the
 registry clean.
 
+The browser can also refresh its registration on normal page visits. An
+unchanged active registration now reuses its current revision and performs no
+KV write until the same renewal window has elapsed; an unchanged pending
+registration is similarly coalesced for half of its ten-minute lease. New
+subscriptions whose browser-supplied expiration is too close to survive the
+server verification window are rejected before they can occupy a pending slot.
+
 What remains proportional to the audience is one `list` per 32 subscribers per
 broadcast, plus one read per subscriber. At a few thousand subscribers and a
 handful of notifications a week that stays well inside the quota; past that,
@@ -208,9 +227,14 @@ the post alert for up to ten minutes and waits for the Action to report back.
 post arrives  -> alert withheld inside the existing pipeline job
 verdict says a chapter moved  -> milestone announced, post alert dropped,
                                  push cursor advanced so the fallback is a no-op
-verdict says nothing moved    -> post alert released as-is
-no verdict within ten minutes -> post alert released by the Cron
+verdict says nothing moved    -> post alert released in the subscriber's language
+no verdict within ten minutes -> original Japanese post released by the Cron
 ```
+
+The verdict assigns `milestone` or `raw` to each post ID separately. A batch
+that contains one production update and one unrelated post therefore suppresses
+only the alert represented by the milestone; the unrelated translated post is
+still delivered.
 
 The hold lives in `pipeline:pending:<postId>`, the record the retry Cron already
 lists, so waiting costs no extra KV listing.
@@ -278,9 +302,10 @@ only after a click. The service worker receives a closed payload and opens eithe
 the site or the validated Togashi post on X.
 
 The signed X Activity event is the primary notification trigger. The 15-minute
-syndication Cron uses the same cursor only to repair a missed event. Push delivery
-is independent from the Gemini decision: visitors are notified for every original
-Togashi post, even if it does not change a chapter status. Verified
+syndication Cron uses the same cursor only to repair a missed event. Every
+original Togashi post still produces either a tracker milestone or a post
+alert. A validated verdict attaches the cached translation to the latter; the
+ten-minute deadline falls back to the Japanese original if analysis is down. Verified
 subscriptions, the push cursor, and a retryable broadcast job are stored in the
 shared `PUSH_SUBSCRIPTIONS` KV binding. A globally unique Durable Object admits
 at most 5,000 total registrations, including at most 256 pending registrations.

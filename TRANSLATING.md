@@ -4,11 +4,15 @@ The website data and translations are kept separate. Chapter numbers, dates,
 sources, and publication history stay in `app/data/`. Translators only edit the
 message catalog prepared for their language.
 
-French is already public at `/fr`. Japanese, Spanish, Portuguese, Chinese, and
-Arabic are drafts: their catalogs are `messages/ja.json`, `messages/es.json`,
-`messages/pt.json`, `messages/zh.json`, and `messages/ar.json`, and their
-unlisted previews are `http://localhost:3000/ja` and the matching paths. The
-same workflow applies to every future language.
+English, French, Japanese, Spanish, Brazilian Portuguese, Simplified Chinese,
+and Arabic are public. Their catalogs are `messages/{locale}.json`, and their
+routes are `/`, `/fr`, `/ja`, `/es`, `/pt`, `/zh`, and `/ar`. The same workflow
+applies to every future language.
+
+These catalogs contain interface and notification copy. Free-form Togashi post
+translations are generated separately during ingestion, validated, and stored
+in `app/data/togashi-posts.json`; translators do not edit that archive as part
+of the interface workflow.
 
 ## Translation workflow
 

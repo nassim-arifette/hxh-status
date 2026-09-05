@@ -11,6 +11,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   formatMessage,
   getLocaleDirection,
   getOfficialReaders,
@@ -24,6 +29,12 @@ import {
   getStatusMeta,
   type StatusMeta,
 } from "./status-presentation";
+import {
+  getChapterTitle,
+  getVolumeLabel,
+  CHAPTER_TITLE_LABEL,
+  VOLUME_LABEL,
+} from "./data/chapter-titles";
 
 const compactDateOptions = {
   month: "short",
@@ -65,12 +76,14 @@ export function LocalDate({
 
 function ChapterGrid({
   chapters,
+  locale = "en",
   messages,
   selectedChapter,
   statusMeta,
   onSelect,
 }: {
   chapters: readonly ChapterRecord[];
+  locale?: Locale;
   messages: Messages;
   selectedChapter: number | null;
   statusMeta: StatusMap;
@@ -84,27 +97,71 @@ function ChapterGrid({
       {chapters.map((chapter) => {
         const meta = statusMeta[chapter.status];
         const StatusIcon = meta.icon;
+        const title = getChapterTitle(chapter.chapter, locale);
+        const volume = getVolumeLabel(chapter.chapter, locale);
 
         return (
-          <button
-            className="chapter-card"
-            data-status={chapter.status}
-            key={chapter.chapter}
-            onClick={(event) => onSelect(chapter, event.currentTarget)}
-            aria-label={formatMessage(messages.chapter.cardAria, {
-              chapter: chapter.chapter,
-              status: meta.label,
-            })}
-            aria-controls="chapter-details"
-            aria-expanded={selectedChapter === chapter.chapter}
-            aria-haspopup="dialog"
-            type="button"
-          >
-            <span className="chapter-number">{chapter.chapter}</span>
-            <span className="chapter-status-icon" aria-hidden="true">
-              <StatusIcon size={16} strokeWidth={2.2} />
-            </span>
-          </button>
+          <Tooltip key={chapter.chapter}>
+            <TooltipTrigger asChild>
+              <button
+                className="chapter-card"
+                data-status={chapter.status}
+                onClick={(event) => onSelect(chapter, event.currentTarget)}
+                aria-label={
+                  title
+                    ? `${formatMessage(messages.chapter.cardAria, {
+                        chapter: chapter.chapter,
+                        status: meta.label,
+                      })} - ${title}`
+                    : formatMessage(messages.chapter.cardAria, {
+                        chapter: chapter.chapter,
+                        status: meta.label,
+                      })
+                }
+                aria-controls="chapter-details"
+                aria-expanded={selectedChapter === chapter.chapter}
+                aria-haspopup="dialog"
+                type="button"
+              >
+                <span className="chapter-number">{chapter.chapter}</span>
+                <span className="chapter-status-icon" aria-hidden="true">
+                  <StatusIcon size={14} strokeWidth={2.2} />
+                </span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="top"
+              sideOffset={8}
+              className="chapter-tooltip-content"
+            >
+              <div className="chapter-tooltip-head">
+                <span>
+                  {messages.chapter.title} {chapter.chapter}
+                </span>
+                {title ? (
+                  <span className="chapter-tooltip-title">• {title}</span>
+                ) : (
+                  <span className="chapter-tooltip-title">• {volume}</span>
+                )}
+              </div>
+              <div className="chapter-tooltip-sub">
+                <span>{meta.label}</span>
+                {chapter.releaseAt ? (
+                  <span>
+                    • <LocalDate dateTime={chapter.releaseAt} locale={locale} />
+                  </span>
+                ) : null}
+                {chapter.jumpIssue ? (
+                  <span>
+                    •{" "}
+                    {formatMessage(messages.chapter.issue, {
+                      issue: chapter.jumpIssue,
+                    })}
+                  </span>
+                ) : null}
+              </div>
+            </TooltipContent>
+          </Tooltip>
         );
       })}
     </div>
@@ -131,17 +188,22 @@ function ChapterDetails({
   const meta = chapter ? statusMeta[chapter.status] : statusMeta.unknown;
   const StatusIcon = meta.icon;
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const chapterTitle = chapter ? getChapterTitle(chapter.chapter, locale) : undefined;
+  const volume = chapter ? getVolumeLabel(chapter.chapter, locale) : undefined;
+
   const sources = chapter
     ? chapter.sourceType === "official-reader"
       ? getOfficialReaders(locale, chapter.chapter)
       : chapter.source
-        ? [{
-            href: chapter.source,
-            label:
-              chapter.sourceType === "togashi-x"
-                ? messages.chapter.togashiSource
-                : (chapter.sourceLabel ?? messages.chapter.viewSource),
-          }]
+        ? [
+            {
+              href: chapter.source,
+              label:
+                chapter.sourceType === "togashi-x"
+                  ? messages.chapter.togashiSource
+                  : (chapter.sourceLabel ?? messages.chapter.viewSource),
+            },
+          ]
         : []
     : [];
 
@@ -166,13 +228,19 @@ function ChapterDetails({
         {chapter ? (
           <>
             <SheetHeader className="sheet-header">
-              <p className="eyebrow">{messages.chapter.title}</p>
+              <p className="eyebrow">
+                {volume ? `${volume} • ` : ""}
+                {messages.chapter.title}
+              </p>
               <SheetTitle
                 className="sheet-chapter"
                 ref={titleRef}
                 tabIndex={-1}
               >
-                {chapter.chapter}
+                <span>{chapter.chapter}</span>
+                {chapterTitle ? (
+                  <span className="sheet-chapter-name"> : {chapterTitle}</span>
+                ) : null}
               </SheetTitle>
               <SheetDescription className="sheet-description">
                 {formatMessage(messages.chapter.latestState, {
@@ -195,6 +263,18 @@ function ChapterDetails({
               <p className="sheet-explanation">{meta.description}</p>
 
               <dl className="detail-list">
+                {chapterTitle ? (
+                  <div>
+                    <dt>{CHAPTER_TITLE_LABEL[locale] ?? CHAPTER_TITLE_LABEL.en}</dt>
+                    <dd>{chapterTitle}</dd>
+                  </div>
+                ) : null}
+                {volume ? (
+                  <div>
+                    <dt>{VOLUME_LABEL[locale] ?? VOLUME_LABEL.en}</dt>
+                    <dd>{volume}</dd>
+                  </div>
+                ) : null}
                 {chapter.preReleaseAt ? (
                   <div>
                     <dt>{messages.chapter.estimatedPreRelease}</dt>
@@ -290,6 +370,7 @@ export default function ChapterTracker({
     <>
       <ChapterGrid
         chapters={chapters}
+        locale={locale}
         messages={messages}
         selectedChapter={selectedChapter?.chapter ?? null}
         statusMeta={statusMeta}

@@ -16,9 +16,15 @@ import {
   assertFreshAutomationPayload,
   verifyAutomationPayloadSignature,
 } from "../automation/payload-auth.mjs";
+import {
+  createTogashiPost,
+  mergeTogashiFeed,
+  validateTogashiFeed,
+} from "../automation/togashi-feed.mjs";
 
 const root = process.cwd();
 const statusPath = join(root, "app", "data", "status-data.json");
+const feedPath = join(root, "app", "data", "togashi-posts.json");
 const statePath = join(root, "automation", "state.json");
 
 async function readJson(path) {
@@ -48,6 +54,14 @@ function safeReviewText(value) {
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 1_000);
+}
+
+function compactPushText(value) {
+  const normalized = String(value).replace(/\s+/gu, " ").trim();
+  const characters = Array.from(normalized);
+  return characters.length > 180
+    ? `${characters.slice(0, 177).join("")}…`
+    : normalized;
 }
 
 function reviewMarkdown(reviewItems) {
@@ -98,9 +112,10 @@ if (
 
 const payload = validateAutomationPayload(JSON.parse(rawPayload));
 assertFreshAutomationPayload(payload);
-const [statusData, state] = await Promise.all([
+const [statusData, state, feed] = await Promise.all([
   readJson(statusPath),
   readJson(statePath),
+  readJson(feedPath).then(validateTogashiFeed),
 ]);
 
 const freshTweets = [...payload.tweets]
@@ -110,14 +125,18 @@ const freshTweets = [...payload.tweets]
   .sort((left, right) => compareSnowflakeIds(left.id, right.id));
 
 const analyzedEvents = [];
+const processingByTweetId = new Map();
+const geminiModel = process.env.GEMINI_MODEL || "gemini-3.7-flash";
 
 for (const tweet of freshTweets) {
   const result = await analyzeTweet({
     tweet,
     currentChapters: statusData.chapters,
     apiKey: process.env.GEMINI_API_KEY,
-    model: process.env.GEMINI_MODEL || "gemini-3.7-flash",
+    model: geminiModel,
   });
+
+  processingByTweetId.set(tweet.id, result);
 
   analyzedEvents.push({
     tweetId: tweet.id,
@@ -137,12 +156,37 @@ const result = applyAnalyzedEvents({
   analyzedEvents,
 });
 
+const auditByTweetId = new Map(
+  result.state.recentEvents.map((event) => [event.tweetId, event]),
+);
+const incomingPosts = freshTweets.map((tweet) => {
+  const processing = processingByTweetId.get(tweet.id);
+  const audit = auditByTweetId.get(tweet.id);
+  if (!processing || !audit) {
+    throw new Error(`Missing public feed data for tweet ${tweet.id}.`);
+  }
+
+  return createTogashiPost({
+    tweet,
+    translations: processing.translations ?? null,
+    translationModel: geminiModel,
+    translatedAt: payload.requestedAt,
+    audit,
+  });
+});
+const nextFeed = mergeTogashiFeed(feed, incomingPosts);
+const feedChanged = JSON.stringify(nextFeed) !== JSON.stringify(feed);
+
 if (result.statusChanged) {
   await writeJsonAtomically(statusPath, result.statusData);
 }
 
 if (result.stateChanged) {
   await writeJsonAtomically(statePath, result.state);
+}
+
+if (feedChanged) {
+  await writeJsonAtomically(feedPath, nextFeed);
 }
 
 if (result.reviewItems.length > 0 && process.env.AUTOMATION_REVIEW_FILE) {
@@ -157,12 +201,35 @@ if (result.reviewItems.length > 0 && process.env.AUTOMATION_REVIEW_FILE) {
 // the reducer decided. Write that verdict — including "nothing moved", which is
 // what releases the post alert straight away instead of letting it time out.
 if (process.env.AUTOMATION_VERDICT_FILE) {
+  const posts = freshTweets.map((tweet) => {
+    const processing = processingByTweetId.get(tweet.id);
+    const audit = auditByTweetId.get(tweet.id);
+    if (!processing || !audit) {
+      throw new Error(`Missing verdict data for tweet ${tweet.id}.`);
+    }
+
+    const notification = audit.changes.length > 0 ? "milestone" : "raw";
+    return {
+      id: tweet.id,
+      notification,
+      translations:
+        notification === "raw" && processing.translations
+          ? Object.fromEntries(
+              Object.entries(processing.translations).map(([locale, text]) => [
+                locale,
+                compactPushText(text),
+              ]),
+            )
+          : null,
+    };
+  });
+
   await writeFile(
     process.env.AUTOMATION_VERDICT_FILE,
     JSON.stringify({
       requestedAt: new Date().toISOString(),
       revision: trackerRevision(result.statusData),
-      postIds: freshTweets.map((tweet) => tweet.id),
+      posts,
       milestones: trackerMilestones(statusData, result.statusData),
     }),
     "utf8",
@@ -173,6 +240,7 @@ if (process.env.AUTOMATION_VERDICT_FILE) {
 await Promise.all([
   setOutput("status_changed", String(result.statusChanged)),
   setOutput("state_changed", String(result.stateChanged)),
+  setOutput("feed_changed", String(feedChanged)),
   setOutput("review_needed", String(result.reviewItems.length > 0)),
   setOutput("review_tweet_id", result.reviewItems[0]?.tweetId ?? ""),
 ]);
@@ -182,6 +250,7 @@ console.log(
     analyzed: freshTweets.length,
     statusChanged: result.statusChanged,
     stateChanged: result.stateChanged,
+    feedChanged,
     reviews: result.reviewItems.length,
   }),
 );

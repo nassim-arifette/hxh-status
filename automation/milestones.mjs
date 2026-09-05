@@ -82,6 +82,8 @@ export function publicationState(statusData) {
 
   const latestPublished = completeThrough(chapters, STATUS_RANK.published);
 
+  if (latestPublished.chapter === statusData.hiatusAfterChapter) return "hiatus";
+
   return latestPublished.releaseAt &&
     daysBetween(latestPublished.releaseAt, statusData.lastUpdated) <=
       HIATUS_GAP_DAYS
@@ -169,7 +171,10 @@ export function trackerRevision(statusData) {
     return chapter.chapter > best.chapter ? chapter : best;
   }, undefined);
 
-  return (latest && sourcePostId(latest)) || statusData.lastUpdated;
+  const published = completeThrough(orderedChapters(statusData), STATUS_RANK.published);
+  const base = (latest && sourcePostId(latest)) || statusData.lastUpdated;
+  // Official publication changes need a new image/API revision even without a tweet.
+  return `${base}-p${published.chapter}-${publicationState(statusData) === "hiatus" ? "h" : "r"}`;
 }
 
 // Everything a third party would otherwise have to re-derive from the raw

@@ -1,5 +1,6 @@
 {
   "lastUpdated": "2026-09-02",
+  "hiatusAfterChapter": 420,
   "chapters": [
     {
       "chapter": 411,
@@ -68,7 +69,6 @@
       "chapter": 420,
       "status": "scheduled",
       "releaseAt": "2026-09-07T00:00:00+09:00",
-      "preReleaseAt": "2026-09-03T12:00:00+09:00",
       "updatedAt": "2026-09-01",
       "sourceType": "official-reader"
     },
@@ -176,12 +176,33 @@
       "sourceLabel": "Yoshihiro Togashi on X",
       "sourceType": "togashi-x"
     },
-    { "chapter": 434, "status": "unknown" },
-    { "chapter": 435, "status": "unknown" },
-    { "chapter": 436, "status": "unknown" },
-    { "chapter": 437, "status": "unknown" },
-    { "chapter": 438, "status": "unknown" },
-    { "chapter": 439, "status": "unknown" },
-    { "chapter": 440, "status": "unknown" }
+    {
+      "chapter": 434,
+      "status": "unknown"
+    },
+    {
+      "chapter": 435,
+      "status": "unknown"
+    },
+    {
+      "chapter": 436,
+      "status": "unknown"
+    },
+    {
+      "chapter": 437,
+      "status": "unknown"
+    },
+    {
+      "chapter": 438,
+      "status": "unknown"
+    },
+    {
+      "chapter": 439,
+      "status": "unknown"
+    },
+    {
+      "chapter": 440,
+      "status": "unknown"
+    }
   ]
 }
