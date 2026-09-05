@@ -1451,7 +1451,7 @@ export const CHAPTER_TITLES: Record<number, ChapterTitleInfo> = {
     "original": "邪拳＝ジャンケン!?",
     "titles": {
       "en": "Janken",
-      "fr": "Jaken <nowiki>=</nowiki> Jan-Ken ?",
+      "fr": "Jaken = Jan-Ken ?",
       "ja": "邪拳＝ジャンケン!?",
       "es": "¿¡Jaken = JanKen!?"
     }
@@ -1578,11 +1578,11 @@ export const CHAPTER_TITLES: Record<number, ChapterTitleInfo> = {
   },
   "158": {
     "number": 158,
-    "original": "似た者同士<sup>2</sup>+1",
+    "original": "似た者同士²+1",
     "titles": {
       "en": "Two of a Kind +1",
       "fr": "Personnes semblables² + 1",
-      "ja": "似た者同士<sup>2</sup>+1",
+      "ja": "似た者同士²+1",
       "es": "Compañeros Parecidos +1"
     }
   },

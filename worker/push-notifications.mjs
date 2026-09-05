@@ -459,7 +459,7 @@ async function removeRegistration(env, id, revision = null) {
   }
 }
 
-async function loadStoredSubscription(env, key, prefix, expectedState) {
+async function loadStoredSubscription(env, key, prefix, expectedState, onRemoved = () => {}) {
   const store = requirePushStore(env);
   const raw = await store.get(key);
   if (!raw) return null;
@@ -476,10 +476,20 @@ async function loadStoredSubscription(env, key, prefix, expectedState) {
     }
     const registration = await registryCommand(env, "inspect", id);
     if (registration.state !== expectedState) return null;
+    let subscription;
+    try {
+      subscription = await validateSubscription(record.subscription);
+    } catch {
+      // A positively invalid subscription with a known revision can be
+      // removed without racing a newer locale/endpoint refresh. Missing KV
+      // reads, malformed lifecycle metadata and outages still rely on leases.
+      if (await removeRegistration(env, id, record.revision)) onRemoved();
+      return null;
+    }
     return {
       id,
       revision: record.revision,
-      subscription: await validateSubscription(record.subscription),
+      subscription,
       locale: normalizeLocale(record.locale),
       verifiedAt: record.verifiedAt ?? null,
     };
@@ -598,14 +608,17 @@ export async function verifyPendingPushSubscriptions(
   let pending = 0;
 
   for (const name of names) {
+    let invalidRemoved = false;
     const record = await loadStoredSubscription(
       env,
       name,
       PENDING_SUBSCRIPTION_PREFIX,
       "pending",
+      () => { invalidRemoved = true; },
     );
     if (!record) {
-      removed += 1;
+      if (invalidRemoved) removed += 1;
+      else pending += 1;
       continue;
     }
 
@@ -1110,6 +1123,19 @@ export async function deliverMilestones(
 
   assertPushDeliveryConfigured(env);
   const store = requirePushStore(env);
+  // Resume the persisted recipient cursor/retry list before starting another
+  // milestone. Rebuilding a job here would resend to successful recipients.
+  if (!dryRun) {
+    const pending = await store.get(MILESTONE_PENDING_KEY);
+    if (pending) {
+      const job = JSON.parse(pending);
+      if (!job.announcement || !isNotificationState(job.state)) {
+        throw new Error("Invalid pending milestone notification.");
+      }
+      const result = await deliverMilestoneJob(env, job, sendPush);
+      if (!result.complete || job.announcement.revision === revision) return result;
+    }
+  }
   const state = await loadAnnouncedState(store, milestones);
   const selection = selectUnnotified(state, milestones);
 
@@ -1133,7 +1159,11 @@ export async function deliverMilestones(
     };
   }
 
-  let job = { announcement, state: selection.state, cursor: null };
+  return deliverMilestoneJob(env, { announcement, state: selection.state, cursor: null }, sendPush);
+}
+
+async function deliverMilestoneJob(env, job, sendPush) {
+  const store = requirePushStore(env);
   let delivered = 0;
 
   // Two subscribers fit in one page today; the loop is what keeps a larger
@@ -1146,7 +1176,7 @@ export async function deliverMilestones(
       return {
         enabled: true,
         complete: true,
-        announced: announcement.chapters.length,
+        announced: job.announcement.chapters.length,
         delivered,
       };
     }

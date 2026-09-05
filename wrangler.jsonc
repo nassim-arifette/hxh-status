@@ -42,7 +42,7 @@
     "PUSH_PENDING_SUBSCRIPTION_LIMIT": "256"
   },
   // Static files still bypass the Worker whenever an asset matches. The Worker
-  // only handles the Cron and delegates unmatched HTTP requests back to ASSETS.
+  // handles the push API and delegates unmatched HTTP requests back to ASSETS.
   "assets": {
     "directory": "./out",
     "binding": "ASSETS",

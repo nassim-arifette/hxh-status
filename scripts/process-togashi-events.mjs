@@ -124,6 +124,10 @@ const freshTweets = [...payload.tweets]
   )
   .sort((left, right) => compareSnowflakeIds(left.id, right.id));
 
+if (state.pendingVerdict && freshTweets.length > 0) {
+  throw new Error("Deliver the committed pending verdict before processing another batch.");
+}
+
 const analyzedEvents = [];
 const processingByTweetId = new Map();
 const geminiModel = process.env.GEMINI_MODEL || "gemini-3.7-flash";
@@ -181,10 +185,6 @@ if (result.statusChanged) {
   await writeJsonAtomically(statusPath, result.statusData);
 }
 
-if (result.stateChanged) {
-  await writeJsonAtomically(statePath, result.state);
-}
-
 if (feedChanged) {
   await writeJsonAtomically(feedPath, nextFeed);
 }
@@ -200,7 +200,7 @@ if (result.reviewItems.length > 0 && process.env.AUTOMATION_REVIEW_FILE) {
 // The Worker is holding every post alert from this batch until it hears what
 // the reducer decided. Write that verdict — including "nothing moved", which is
 // what releases the post alert straight away instead of letting it time out.
-if (process.env.AUTOMATION_VERDICT_FILE) {
+if (process.env.AUTOMATION_VERDICT_FILE && freshTweets.length > 0) {
   const posts = freshTweets.map((tweet) => {
     const processing = processingByTweetId.get(tweet.id);
     const audit = auditByTweetId.get(tweet.id);
@@ -224,17 +224,28 @@ if (process.env.AUTOMATION_VERDICT_FILE) {
     };
   });
 
-  await writeFile(
-    process.env.AUTOMATION_VERDICT_FILE,
-    JSON.stringify({
+  result.state.pendingVerdict = {
+    payload,
+    verdict: {
       requestedAt: new Date().toISOString(),
       revision: trackerRevision(result.statusData),
       posts,
       milestones: trackerMilestones(statusData, result.statusData),
-    }),
-    "utf8",
-  );
+    },
+  };
+  result.stateChanged = true;
+}
+
+if (result.state.pendingVerdict && process.env.AUTOMATION_VERDICT_FILE) {
+  await writeJsonAtomically(process.env.AUTOMATION_VERDICT_FILE, result.state.pendingVerdict.verdict);
   await setOutput("verdict_written", "true");
+}
+
+if (result.stateChanged) {
+  if (Buffer.byteLength(JSON.stringify(result.state), "utf8") > 100_000) {
+    throw new Error("Automation state exceeds the GitHub reader safety limit.");
+  }
+  await writeJsonAtomically(statePath, result.state);
 }
 
 await Promise.all([

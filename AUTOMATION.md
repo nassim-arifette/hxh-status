@@ -239,6 +239,14 @@ still delivered.
 The hold lives in `pipeline:pending:<postId>`, the record the retry Cron already
 lists, so waiting costs no extra KV listing.
 
+`automation/state.json` retains one `pendingVerdict` with its original validated
+payload and cached translations until the Action verifies deployment, delivers
+the verdict and commits its acknowledgement. Pending delivery takes priority
+over new analysis. The fallback retries that committed payload without calling
+X for analysis or Gemini again, including after the tweet cursor has advanced.
+If a push arrives too late for the ten-minute hold, the Japanese fallback may
+already have been sent; the later tracker milestone remains a distinct update.
+
 A milestone is a chapter climbing the status ladder, never a chapter appearing:
 adding rows for future chapters is silent because they start at `unknown`, the
 lowest rank. `push:announced-milestones` records what was announced and is
@@ -246,8 +254,41 @@ written only once delivery succeeds, so a replayed verdict is silent and a
 failed send is retried rather than swallowed.
 
 Publication state follows the chapters. A scheduled chapter means the series is
-running — Jump schedules before anything is published, and the five-week gap
-cannot see that — while the gap alone is what eventually reports a hiatus.
+running. An explicit `hiatusAfterChapter` marks an announced end of a run: when
+that chapter is published and no later chapter is scheduled, the series enters
+hiatus immediately. Otherwise the five-week gap remains the fallback. A later
+scheduled chapter resumes publication and the old hiatus marker no longer
+applies once that later chapter has been published.
+
+### Official publication schedule
+
+`automation/publication-schedule.json` schedules chapter 420 for **6 September
+2026, 17:00 Europe/Paris (15:00 UTC)**. Preparation begins at **16:57 Paris
+(14:57 UTC)**, as authorized by the maintainer. The chapter can appear published
+a few minutes early if the build finishes quickly; the displayed official date
+stays 17:00. Queueing and deployment latency can delay the live change.
+
+The event Worker's extra UTC Cron dispatches `publication-status.yml`. Its
+existing five-minute Cron retries failures for seven days, while the GitHub
+schedule provides a backup. These triggers only dispatch a workflow: the Action
+checks the reviewed date and official-reader source again before any mutation.
+No X request or Gemini call is needed by this publication task.
+
+The workflow shares the Togashi automation concurrency group, updates the
+chapter and hiatus state, builds the site and share images, and pushes the
+validated files. Both workflows then wait for the public JSON to contain their
+exact revision before sending the signed notification verdict. A failed build,
+push, or deployment cannot announce a new tracker state.
+
+The publication workflow records completion in `automation/publication-state.json`
+only after notification delivery succeeds. Retrying after a commit resumes that
+delivery; the Worker retains the recipient cursor and retry list and deduplicates
+completed milestones. It sends one localized notification covering chapter 420
+and the hiatus, using the existing subscriber preferences.
+
+Run `node scripts/process-publication.mjs --check` for a read-only schedule check.
+Manual `workflow_dispatch` before 16:57 is a no-op, so the installed workflow can
+be checked in production without publishing early or notifying subscribers.
 
 ### Configuration
 

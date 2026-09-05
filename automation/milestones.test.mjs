@@ -209,7 +209,7 @@ test("the revision tracks the newest Togashi post, not the newest chapter", () =
     },
   ]);
 
-  assert.equal(trackerRevision(data), "2094673907626414299");
+  assert.equal(trackerRevision(data), "2094673907626414299-p419-r");
 
   // Same-day updates fall back to the larger snowflake, which does not fit in
   // a Number and must not be compared as one.
@@ -231,9 +231,9 @@ test("the revision tracks the newest Togashi post, not the newest chapter", () =
     },
   ]);
 
-  assert.equal(trackerRevision(sameDay), "2094673907626414300");
+  assert.equal(trackerRevision(sameDay), "2094673907626414300-p419-r");
 });
 
 test("a tracker with no Togashi post falls back to the update date", () => {
-  assert.equal(trackerRevision(publishing), "2026-09-02");
+  assert.equal(trackerRevision(publishing), "2026-09-02-p419-r");
 });

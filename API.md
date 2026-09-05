@@ -6,7 +6,7 @@ cross-origin reads.
 
 The API is generated as static files during the site build and served from
 Cloudflare's asset cache. A request never calls X, Gemini, GitHub, KV, or the
-dynamic Worker. Gemini runs once when the automation ingests a new post; the
+dynamic Worker. Gemini processes each new post during ingestion (with bounded retries on transient failures); the
 validated translations are then stored by post ID and reused by notifications
 and every API representation.
 

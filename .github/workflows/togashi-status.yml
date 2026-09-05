@@ -59,25 +59,16 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run automation:process
 
-      # Runs before the build on purpose: the Worker is holding this batch's
-      # post alerts, and every minute here is a minute a subscriber waits. A
-      # failure only costs specificity, since the Worker releases a withheld
-      # post on its own deadline, so it must never block the tracker update.
-      - name: Report the tracker verdict
-        if: steps.process.outputs.verdict_written == 'true'
-        continue-on-error: true
-        env:
-          AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/togashi-verdict.json
-          TRACKER_VERDICT_URL: ${{ secrets.TRACKER_VERDICT_URL }}
-          TRACKER_VERDICT_SECRET: ${{ secrets.TRACKER_VERDICT_SECRET }}
-        run: node scripts/notify-tracker-verdict.mjs
-
       - name: Regenerate share images after a status change
         if: steps.process.outputs.status_changed == 'true'
         run: |
           npm run build
           npx playwright install --with-deps --only-shell chromium
           node scripts/generate-share-images.mjs
+
+      - name: Verify the translated feed export
+        if: steps.process.outputs.feed_changed == 'true' && steps.process.outputs.status_changed != 'true'
+        run: npm run build
 
       - name: Open a review issue for ambiguous evidence
         if: steps.process.outputs.review_needed == 'true'
@@ -168,4 +159,23 @@ jobs:
             git commit -m "chore: record Togashi post"
           fi
 
+          git push origin HEAD:main
+
+      - name: Deliver the committed tracker verdict
+        if: steps.process.outputs.verdict_written == 'true'
+        env:
+          AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/togashi-verdict.json
+          TRACKER_VERDICT_URL: ${{ secrets.TRACKER_VERDICT_URL }}
+          TRACKER_VERDICT_SECRET: ${{ secrets.TRACKER_VERDICT_SECRET }}
+        run: node scripts/flush-tracker-verdict.mjs
+
+      - name: Acknowledge the delivered tracker verdict
+        if: steps.process.outputs.verdict_written == 'true'
+        shell: bash
+        run: |
+          git add automation/state.json
+          test "$(git diff --cached --name-only)" = "automation/state.json"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: acknowledge tracker notification delivery"
           git push origin HEAD:main

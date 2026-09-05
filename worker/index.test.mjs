@@ -102,6 +102,24 @@ test("disabled automation performs no network calls", async () => {
   assert.equal(calls, 0);
 });
 
+test("an acknowledged tweet with a pending verdict is retried without loading X", async () => {
+  const router = fetchRouter();
+  await runAutomation(env, router.fetch);
+  const original = router.calls.find((call) => call.url.endsWith("/dispatches"));
+  const payload = JSON.parse(JSON.parse(original.options.body).inputs.payload);
+  const pendingState = state(payload.tweets.at(-1).id);
+  pendingState.pendingVerdict = { payload, verdict: { revision: "pending" } };
+  const calls = [];
+  const result = await runAutomation(env, async (url, options) => {
+    calls.push({ url, options });
+    if (url.includes("/contents/")) return Response.json(pendingState);
+    return router.fetch(url, options);
+  }, () => assert.fail("A verdict retry must not query X"));
+  assert.equal(result.pendingVerdict, true);
+  const retry = JSON.parse(JSON.parse(calls.find((call) => call.url.endsWith("/dispatches")).options.body).inputs.payload);
+  assert.deepEqual(retry.tweets, payload.tweets);
+});
+
 test("an active workflow suppresses duplicate dispatches", async () => {
   const router = fetchRouter({ active: true });
   const result = await runAutomation(env, router.fetch);

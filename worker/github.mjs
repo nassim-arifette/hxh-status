@@ -147,3 +147,20 @@ export async function dispatchAutomationWorkflow(
     );
   }
 }
+
+// This workflow has no caller-supplied data: it uses the reviewed release
+// schedule in main and verifies the date again before making any change.
+export async function dispatchPublicationWorkflow(
+  { token, repository, branch }, fetchImpl = fetch,
+) {
+  const [owner, repo] = repositoryParts(repository);
+  const response = await githubFetch(
+    `${GITHUB_API}/repos/${owner}/${repo}/actions/workflows/publication-status.yml/dispatches`,
+    {
+      method: "POST",
+      headers: { ...githubHeaders(token, "application/vnd.github+json"), "Content-Type": "application/json" },
+      body: JSON.stringify({ ref: branch }),
+    }, fetchImpl,
+  );
+  if (response.status !== 204) throw new Error(`Publication dispatch failed (${response.status}).`);
+}

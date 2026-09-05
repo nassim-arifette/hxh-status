@@ -482,6 +482,66 @@ test("new registrations remain short-lived until a push service accepts them", a
   );
 });
 
+test("expired stored pending subscriptions are actually removed so the next browser can verify", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  for (let i = 0; i < 9; i++) {
+    const subscription = await validSubscription(`expiry-queue-${i}`);
+    await registerPending(env, subscription);
+    if (i < 8) {
+      const key = `push:pending-subscription:${await subscriptionId(subscription.endpoint)}`;
+      const record = JSON.parse(await store.get(key));
+      record.subscription.expirationTime = Date.now() - 1;
+      await store.put(key, JSON.stringify(record));
+    }
+  }
+  assert.deepEqual(await verifyPendingPushSubscriptions(env, () => assert.fail("Expired recipient sent")),
+    { enabled: true, verified: 0, removed: 8, pending: 0 });
+  assert.equal(env.PUSH_REGISTRY.entries.size, 1);
+  assert.equal((await verifyPendingPushSubscriptions(env, async () => {})).verified, 1);
+});
+
+test("invalid-record cleanup cannot remove a concurrent valid replacement", async () => {
+  const store = new MemoryKv();
+  const env = makeEnv(store);
+  const subscription = await validSubscription("invalid-refresh-race");
+  await registerPending(env, subscription);
+  const key = `push:pending-subscription:${await subscriptionId(subscription.endpoint)}`;
+  const valid = JSON.parse(await store.get(key));
+  await store.put(key, JSON.stringify({ ...valid, subscription: { ...subscription, expirationTime: Date.now() - 1 } }));
+  const originalHandle = env.PUSH_REGISTRY.handle.bind(env.PUSH_REGISTRY);
+  env.PUSH_REGISTRY.handle = async (url, options) => {
+    if (new URL(url).pathname === "/release-if-current") {
+      await store.put(key, JSON.stringify({ ...valid, locale: "fr", revision: crypto.randomUUID() }));
+    }
+    return originalHandle(url, options);
+  };
+  const result = await verifyPendingPushSubscriptions(env, () => assert.fail("Expired recipient sent"));
+  assert.equal(result.removed, 0);
+  assert.equal(result.pending, 1);
+  assert.equal(JSON.parse(await store.get(key)).locale, "fr");
+  assert.equal((await verifyPendingPushSubscriptions(env, async () => {})).verified, 1);
+});
+
+test("malformed metadata and registry outages are retained until lease expiry, never counted as deleted", async () => {
+  for (const malformed of [true, false]) {
+    const store = new MemoryKv();
+    const env = makeEnv(store);
+    const subscription = await validSubscription(`unresolved-${malformed}`);
+    await registerPending(env, subscription);
+    const key = `push:pending-subscription:${await subscriptionId(subscription.endpoint)}`;
+    if (malformed) await store.put(key, "{");
+    else {
+      const handle = env.PUSH_REGISTRY.handle.bind(env.PUSH_REGISTRY);
+      env.PUSH_REGISTRY.handle = (url, options) => new URL(url).pathname === "/inspect"
+        ? new Response(null, { status: 503 }) : handle(url, options);
+    }
+    assert.deepEqual(await verifyPendingPushSubscriptions(env, () => assert.fail("Unexpected send")),
+      { enabled: true, verified: 0, removed: 0, pending: 1 });
+    assert.ok(store.data.has(key));
+  }
+});
+
 test("pending verification promotes the newest concurrent locale revision", async () => {
   const store = new MemoryKv();
   const env = makeEnv(store);
@@ -1228,4 +1288,23 @@ test("the announced record is written only once delivery finishes", async () => 
   });
   assert.equal(sends, 1);
   assert.equal(retry.announced, 1);
+});
+
+test("milestone retries send only to failed recipients and preserve a later milestone", async () => {
+  const env = makeEnv();
+  const healthy = await validSubscription("milestone-healthy");
+  const retrying = await validSubscription("milestone-retry");
+  await subscribe(env, healthy);
+  await subscribe(env, retrying);
+  const first = { milestones: milestoneBatch([{ chapter: 420, from: "scheduled", to: "published" }]), revision: "release420" };
+  const sent = [];
+  await assert.rejects(deliverMilestones(env, first, { sendPush: async (_env, sub) => {
+    if (sub.endpoint === retrying.endpoint) throw { statusCode: 503 };
+    sent.push(sub.endpoint);
+  } }));
+  await deliverMilestones(env, first, { sendPush: async (_env, sub) => sent.push(sub.endpoint) });
+  assert.deepEqual(sent.sort(), [healthy.endpoint, retrying.endpoint].sort());
+  assert.equal((await deliverMilestones(env, first, { sendPush: () => assert.fail("Duplicate milestone") })).duplicate, true);
+  const second = { milestones: milestoneBatch([{ chapter: 421, from: "background", to: "delivered" }]), revision: "later421" };
+  assert.equal((await deliverMilestones(env, second, { sendPush: async () => {} })).announced, 1);
 });

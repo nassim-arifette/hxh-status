@@ -84,14 +84,14 @@ test("a new chapter tracked as unknown never reaches the announcer", () => {
   assert.deepEqual(selection.chapters, []);
 });
 
-test("the first publication state is recorded silently, later flips announce", () => {
+test("the first explicit publication transition is announced even with an unset ledger", () => {
   const state = seedNotificationState(tracked);
 
   const cold = selectUnnotified(
     state,
     milestones([], { from: "publishing", to: "hiatus" }),
   );
-  assert.equal(cold.publication, null);
+  assert.equal(cold.publication, "hiatus");
   assert.equal(cold.state.publication, "hiatus");
 
   const flip = selectUnnotified(

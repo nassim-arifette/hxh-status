@@ -10,6 +10,7 @@ import {
   validateAutomationPayload,
 } from "../automation/contracts.mjs";
 import { hasMilestones } from "../automation/milestones.mjs";
+import { dispatchDuePublications } from "./scheduled-publication.mjs";
 import {
   TRACKER_VERDICT_SIGNATURE_CONTEXT,
   assertFreshAutomationPayload,
@@ -858,7 +859,8 @@ async function handleTrackerVerdict(request, env) {
     );
 
     return json({
-      ok: failures.length === 0,
+      ok: failures.length === 0 && announcement.complete === true,
+      complete: announcement.complete,
       dryRun,
       announced: announcement.announced ?? 0,
       duplicate: announcement.duplicate ?? false,
@@ -1031,6 +1033,10 @@ const worker = {
           errors.push(error);
         }
       };
+
+      await runTask("dispatchDuePublications", () =>
+        dispatchDuePublications(env, scheduledTime),
+      );
 
       await runTask("maintainPushSubscriptions", () =>
         maintainPushSubscriptions(env),

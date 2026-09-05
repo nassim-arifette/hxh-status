@@ -88,10 +88,7 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
         { listId, expectedUserId },
         fetchImpl,
       ));
-  const [tweets, state] = await Promise.all([
-    loadTimeline(),
-    fetchAutomationState(githubConfig, fetchImpl),
-  ]);
+  const state = await fetchAutomationState(githubConfig, fetchImpl);
 
   if (
     state?.schemaVersion !== AUTOMATION_SCHEMA_VERSION ||
@@ -99,6 +96,19 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
   ) {
     throw new Error("Repository automation state does not match this list.");
   }
+
+  if (state.pendingVerdict) {
+    const payload = validateAutomationPayload({
+      ...state.pendingVerdict.payload, requestedAt: new Date().toISOString(),
+    });
+    if (env.AUTOMATION_DRY_RUN === "true") return { dispatched: false, count: 0, pendingVerdict: true };
+    await dispatchAutomationWorkflow({
+      ...githubConfig, payload, payloadSecret: requiredEnv(env, "AUTOMATION_PAYLOAD_SECRET"),
+    }, fetchImpl);
+    return { dispatched: true, count: 0, pendingVerdict: true };
+  }
+
+  const tweets = await loadTimeline();
 
   const unseen = selectUnseenTweets(
     tweets,

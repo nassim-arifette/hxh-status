@@ -76,10 +76,10 @@ export function selectUnnotified(state, milestones) {
     nextChapters[milestone.chapter] = rank;
   }
 
-  // A first run has no announced publication state, so record it silently
-  // rather than telling everyone the series is publishing.
+  // An explicit transition is real even if earlier chapter-only verdicts left
+  // the publication ledger unset. Initial seeding itself stays silent.
   const publication =
-    milestones.publication && state.publication !== null &&
+    milestones.publication && milestones.publication.from !== milestones.publication.to &&
     state.publication !== milestones.publication.to
       ? milestones.publication.to
       : null;

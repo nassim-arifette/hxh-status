@@ -53,20 +53,20 @@ actions with `hxhstatus.com`, and captures them as
 `out/share/publication-history.png`. The same files are kept in
 `public/share/` so Share and Copy also work during local development. These
 PNGs are generated once, committed with the data update, and then served as
-immutable static assets; site traffic never launches a browser or regenerates
+static assets cached for five minutes and revalidated; site traffic never launches a browser or regenerates
 them. The regular `npm run build` deliberately reuses the committed PNGs so
 Cloudflare does not need Playwright or Chromium system libraries.
 
 ## Togashi update automation
 
-A small Cloudflare Cron Worker can watch the public X list dedicated to Togashi
+The separate togashi-events Cloudflare Worker watches Togashi through signed X events and a scheduled fallback
 and dispatch a serialized GitHub Action. Gemini is treated only as a
 conservative extractor: a production status changes automatically only when
 Gemini and deterministic Japanese text rules agree. Dates, Jump issues,
 publication state, and publication history remain protected.
 
-The automation is disabled by default until its secrets and repository
-permissions are configured. See [AUTOMATION.md](AUTOMATION.md) for the
+Automation is enabled in the checked-in configuration; its secrets and repository
+permissions must be configured before deployment. See [AUTOMATION.md](AUTOMATION.md) for the
 architecture, safety rules, setup, tests, and the parts that still require an
 official source.
 
@@ -98,10 +98,12 @@ for existing integrations, while new consumers should use `/api/v1/status.json`.
 
 `next.config.ts` sets `output: "export"`, so `npm run build` emits the site
 to `out/`. Cloudflare serves matching files directly as static assets; a very
-small Worker handles only the scheduled X check and unmatched HTTP requests.
+small Worker handles the push API and unmatched HTTP requests. The separate
+togashi-events Worker owns scheduled jobs and X webhooks.
 No Next.js server or framework adapter is needed.
 
-`wrangler.jsonc` declares both the static asset directory and the Cron Worker.
+`wrangler.jsonc` declares the static assets and public push Worker.
+The scheduled event Worker is configured in wrangler.x-activity.jsonc.
 Static asset requests bypass Worker execution by default. Keep this file in the
 repository so Wrangler does not infer a server-rendered OpenNext deployment.
 

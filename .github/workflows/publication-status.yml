@@ -1,0 +1,81 @@
+name: Scheduled chapter publication
+
+on:
+  workflow_dispatch:
+  # Backup for the Cloudflare trigger. All dates are rechecked from the
+  # reviewed schedule; dispatching early never publishes a chapter.
+  schedule:
+    - cron: "57 14 6 9 *"
+    - cron: "7,22,37,52 15 6 9 *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: togashi-status-main
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/publication-verdict.json
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - run: git pull --ff-only origin main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Apply due official publications
+        id: publication
+        run: node scripts/process-publication.mjs
+      - name: Build and verify the new tracker
+        if: steps.publication.outputs.status_changed == 'true'
+        run: |
+          npm ci
+          npm run automation:test
+          npm run lint
+          npm run translations:check
+          npm run build
+          npx playwright install --with-deps --only-shell chromium
+          node scripts/generate-share-images.mjs
+      - name: Commit and deploy the publication
+        if: steps.publication.outputs.status_changed == 'true'
+        shell: bash
+        run: |
+          git add app/data/status-data.json public/share
+          while IFS= read -r path; do
+            case "$path" in
+              app/data/status-data.json|public/share/*) ;;
+              *) echo "Unexpected publication artifact: $path" >&2; exit 1 ;;
+            esac
+          done < <(git diff --cached --name-only)
+          test -z "$(git ls-files --others --exclude-standard)"
+          git diff --exit-code
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: publish scheduled chapter and update hiatus status"
+          git push origin HEAD:main
+      - name: Wait for the public tracker
+        if: steps.publication.outputs.publication_due == 'true'
+        run: node scripts/wait-for-tracker-deployment.mjs
+      - name: Send the publication and hiatus notification
+        if: steps.publication.outputs.publication_due == 'true'
+        env:
+          TRACKER_VERDICT_URL: ${{ secrets.TRACKER_VERDICT_URL }}
+          TRACKER_VERDICT_SECRET: ${{ secrets.TRACKER_VERDICT_SECRET }}
+        run: node scripts/notify-tracker-verdict.mjs
+      - name: Record successful delivery
+        if: steps.publication.outputs.publication_due == 'true'
+        shell: bash
+        run: |
+          node scripts/process-publication.mjs --complete
+          git add automation/publication-state.json
+          test "$(git diff --cached --name-only)" = "automation/publication-state.json"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: record completed publication notification"
+          git push origin HEAD:main

@@ -40,9 +40,14 @@ for (let attempt = 0; attempt < ATTEMPTS; attempt += 1) {
       body,
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
-    const text = (await response.text()).slice(0, 500);
+    const responseBody = await response.text();
+    const text = responseBody.slice(0, 500);
 
     if (response.ok) {
+      const receipt = JSON.parse(responseBody);
+      if (receipt.ok !== true || receipt.complete === false || receipt.dryRun === true) {
+        throw new Error("Tracker verdict has not completed delivery.");
+      }
       console.log(
         JSON.stringify({ message: "Tracker verdict delivered.", body: text }),
       );

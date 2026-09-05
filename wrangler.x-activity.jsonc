@@ -24,7 +24,9 @@
     ]
   },
   "triggers": {
-    "crons": ["*/5 * * * *"]
+    // UTC: 14:57 on September 6 = 16:57 in Paris (2026).
+    // The existing five-minute trigger retries if a job or deployment fails.
+    "crons": ["*/5 * * * *", "57 14 6 9 *"]
   },
   "vars": {
     "AUTOMATION_ENABLED": "true",
