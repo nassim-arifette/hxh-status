@@ -56,19 +56,27 @@ function InlineScript({ html }: { html: string }) {
 export function LocalDate({
   dateTime,
   locale = "en",
+  showTime = false,
 }: {
   dateTime: string;
   locale?: Locale;
+  showTime?: boolean;
 }) {
   const id = useId();
+  const timeOptions: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "2-digit" };
+  const separator = locale === "ar" ? "، " : locale === "ja" || locale === "zh" ? " " : ", ";
+  const dateLabel = formatLocalDate(dateTime, compactDateOptions, locale);
+  const label = showTime
+    ? `${formatLocalDate(dateTime, timeOptions, locale)}${separator}${dateLabel}`
+    : dateLabel;
 
   return (
     <>
       <time id={id} dateTime={dateTime} suppressHydrationWarning>
-        {formatLocalDate(dateTime, compactDateOptions, locale)}
+        {label}
       </time>
       <InlineScript
-        html={`{var n=document.getElementById(${JSON.stringify(id)});if(n)n.textContent=new Intl.DateTimeFormat(${JSON.stringify(locale)},${JSON.stringify(compactDateOptions)}).format(new Date(${JSON.stringify(dateTime)}))}`}
+        html={`{var n=document.getElementById(${JSON.stringify(id)});if(n){var d=new Date(${JSON.stringify(dateTime)});n.textContent=${showTime ? `new Intl.DateTimeFormat(${JSON.stringify(locale)},${JSON.stringify(timeOptions)}).format(d)+${JSON.stringify(separator)}+` : ""}new Intl.DateTimeFormat(${JSON.stringify(locale)},${JSON.stringify(compactDateOptions)}).format(d)}}`}
       />
     </>
   );
@@ -148,7 +156,7 @@ function ChapterGrid({
                 <span>{meta.label}</span>
                 {chapter.releaseAt ? (
                   <span>
-                    • <LocalDate dateTime={chapter.releaseAt} locale={locale} />
+                    • <LocalDate dateTime={chapter.releaseAt} locale={locale} showTime={chapter.status === "scheduled"} />
                   </span>
                 ) : null}
                 {chapter.jumpIssue ? (
@@ -294,7 +302,7 @@ function ChapterDetails({
                         : messages.chapter.officialPublication}
                     </dt>
                     <dd>
-                      <LocalDate dateTime={chapter.releaseAt} locale={locale} />
+                      <LocalDate dateTime={chapter.releaseAt} locale={locale} showTime={chapter.status === "scheduled"} />
                     </dd>
                   </div>
                 ) : null}

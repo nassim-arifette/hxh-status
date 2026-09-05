@@ -275,7 +275,7 @@ export default function StatusDashboard({
               <strong>{nextChapter.chapter}</strong>
               <small>
                 {nextChapter.releaseAt ? (
-                  <LocalDate dateTime={nextChapter.releaseAt} locale={locale} />
+                  <LocalDate dateTime={nextChapter.releaseAt} locale={locale} showTime />
                 ) : (
                   statusMeta[nextChapter.status].shortLabel
                 )}
