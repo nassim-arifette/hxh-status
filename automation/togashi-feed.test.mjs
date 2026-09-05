@@ -42,9 +42,10 @@ test("new posts are localized once, deduplicated, and sorted newest first", () =
       createdAt: "2026-09-03T03:00:00.000Z",
       url: canonicalTweetUrl(id),
       fullText: source,
-      mediaUrls: [],
+      mediaUrls: ["https://pbs.twimg.com/media/example.jpg"],
     },
     translations: translations(),
+    imageTexts: [{ imageIndex: 1, originalText: source, translations: translations() }],
     translationModel: "gemini-test",
     translatedAt: "2026-09-03T03:01:00.000Z",
     audit: {
@@ -59,6 +60,7 @@ test("new posts are localized once, deduplicated, and sorted newest first", () =
   );
 
   assert.equal(merged.posts.length, 1);
+  assert.equal(merged.posts[0].imageTexts[0].translations.fr, translations().fr);
   assert.equal(merged.posts[0].id, id);
   assert.equal(merged.posts[0].translation.provider, "gemini");
   assert.equal(merged.posts[0].translation.texts.fr, translations().fr);

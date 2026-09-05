@@ -79,9 +79,18 @@
     "legendAria": "状态说明"
   },
   "latestUpdate": {
+    "translatedByGemini": "由 Gemini 从日语翻译",
+    "translated": "译自日语",
+    "originalText": "日语原文",
+    "translationUnavailable": "翻译暂不可用 · 日语原文",
+    "showOriginal": "查看原文",
+    "imageAlt": "富坚义博帖子所附的第 {index} 张图片",
+    "noPost": "暂无富坚义博的帖子。",
     "eyebrow": "富坚最新进度",
     "sentence": "第 {chapter} 话：{status}。",
-    "viewPost": "查看动态"
+    "viewPost": "查看动态",
+    "imageText": "图片 {index} 中的文字",
+    "imageTextByGemini": "由 Gemini 识别并翻译"
   },
   "history": {
     "eyebrow": "1998-2026",

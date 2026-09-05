@@ -129,6 +129,13 @@ valid translation. A localized endpoint then returns the original Japanese in
 `false`. Consumers should always retain the source URL and treat translations
 as machine-generated unless `translation.provider` says `manual`.
 
+Posts also expose `imageTexts` for readable text extracted from attached images.
+Each item has a one-based `imageIndex` pointing into `mediaUrls`, `originalText`,
+and `translations` for all seven locales. Localized endpoints instead provide
+`text` and `language` alongside the index and original text. An empty array (or
+an absent field in older cached posts) means no image transcription is available.
+Image text is kept separate from the tweet and never added to `text.value`.
+
 ## Polling and cache use
 
 Poll no more often than `pollAfterSeconds`, currently five minutes. Store the

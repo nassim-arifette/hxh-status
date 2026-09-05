@@ -16,17 +16,17 @@
       ],
       "translation": {
         "status": "available",
-        "provider": "manual",
-        "model": null,
-        "generatedAt": "2026-09-05T16:24:31.932Z",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-05T19:31:19.573Z",
         "texts": {
-          "ar": "الفصل 427، اكتملت المخطوطة. https://t.co/MohufGEVuG",
-          "en": "No. 427, manuscript complete. https://t.co/MohufGEVuG",
-          "es": "N.º 427: manuscrito terminado. https://t.co/MohufGEVuG",
-          "fr": "N° 427 : manuscrit terminé. https://t.co/MohufGEVuG",
+          "ar": "رقم 427، اكتملت المخطوطة. https://t.co/MohufGEVuG",
+          "en": "No.427, manuscript complete. https://t.co/MohufGEVuG",
+          "es": "No.427, manuscrito terminado. https://t.co/MohufGEVuG",
+          "fr": "No.427, manuscrit terminé. https://t.co/MohufGEVuG",
           "ja": "No.427、原稿完成。 https://t.co/MohufGEVuG",
-          "pt": "Nº 427: manuscrito concluído. https://t.co/MohufGEVuG",
-          "zh": "第427话，原稿完成。 https://t.co/MohufGEVuG"
+          "pt": "No.427, manuscrito concluído. https://t.co/MohufGEVuG",
+          "zh": "No.427，原稿完成。 https://t.co/MohufGEVuG"
         }
       },
       "tracker": {
@@ -38,7 +38,22 @@
             "to": "delivered"
           }
         ]
-      }
+      },
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "共同印刷 様\n週刊少年ジャンプ 号\n品名 H×H 427話\n総頁数 19 P\n入稿印 返却印\n編集担当\n製版①\n製版②\n活版\n営業\nPompompurin\n©'24 SANRIO Ⓓ\n入稿日 平成 年 月 日\n返却日 平成 年 月 日",
+          "translations": {
+            "ar": "إلى كودو للطباعة\nويكلي شونن جامب العدد\nاسم العمل: H×H الفصل 427\nإجمالي الصفحات: 19 ص\nختم الإرسال ختم الإرجاع\nالمحرر المسؤول\nصنع الألواح ①\nصنع الألواح ②\nالطباعة البارزة\nالمبيعات\nPompompurin\n©'24 SANRIO Ⓓ\nتاريخ الإرسال: هيسي سنة شهر يوم\nتاريخ الإرجاع: هيسي سنة شهر يوم",
+            "en": "To Kyodo Printing Co., Ltd.\nWeekly Shonen Jump Issue\nTitle: H×H Chapter 427\nTotal Pages: 19 P\nSubmission Stamp Return Stamp\nEditor in Charge\nPlatemaking ①\nPlatemaking ②\nLetterpress\nSales\nPompompurin\n©'24 SANRIO Ⓓ\nSubmission Date: Heisei [ ] Year [ ] Month [ ] Day\nReturn Date: Heisei [ ] Year [ ] Month [ ] Day",
+            "es": "Para Kyodo Printing Co., Ltd.\nWeekly Shonen Jump Número\nNombre del producto: H×H Capítulo 427\nTotal de páginas: 19 P\nSello de entrega Sello de devolución\nEditor a cargo\nFotomecánica ①\nFotomecánica ②\nTipografía\nVentas\nPompompurin\n©'24 SANRIO Ⓓ\nFecha de entrega: Heisei Año Mes Día\nFecha de devolución: Heisei Año Mes Día",
+            "fr": "À l'attention de Kyodo Printing Co., Ltd.\nWeekly Shonen Jump Numéro\nNom du produit : H×H Chapitre 427\nNombre total de pages : 19 P\nTampon de soumission Tampon de retour\nÉditeur responsable\nPhotogravure ①\nPhotogravure ②\nTypographie\nCommercial\nPompompurin\n©'24 SANRIO Ⓓ\nDate de soumission : Heisei Année Mois Jour\nDate de retour : Heisei Année Mois Jour",
+            "ja": "共同印刷 様\n週刊少年ジャンプ 号\n品名 H×H 427話\n総頁数 19 P\n入稿印 返却印\n編集担当\n製版①\n製版②\n活版\n営業\nPompompurin\n©'24 SANRIO Ⓓ\n入稿日 平成 年 月 日\n返却日 平成 年 月 日",
+            "pt": "Para Kyodo Printing Co., Ltd.\nWeekly Shonen Jump Edição\nNome do produto: H×H Capítulo 427\nTotal de páginas: 19 P\nCarimbo de envio Carimbo de devolução\nEditor responsável\nClicheria ①\nClicheria ②\nTipografia\nComercial\nPompompurin\n©'24 SANRIO Ⓓ\nData de envio: Heisei Ano Mês Dia\nData de devolução: Heisei Ano Mês Dia",
+            "zh": "共同印刷 阁下\n周刊少年Jump 号\n品名 H×H 第427话\n总页数 19 P\n投稿印 归还印\n责任编辑\n制版①\n制版②\n活版\n业务\nPompompurin\n©'24 SANRIO Ⓓ\n投稿日 平成 年 月 日\n归还日 平成 年 月 日"
+          }
+        }
+      ]
     }
   ]
 }

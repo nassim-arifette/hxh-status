@@ -173,6 +173,7 @@ const incomingPosts = freshTweets.map((tweet) => {
   return createTogashiPost({
     tweet,
     translations: processing.translations ?? null,
+    imageTexts: processing.imageTexts ?? [],
     translationModel: geminiModel,
     translatedAt: payload.requestedAt,
     audit,

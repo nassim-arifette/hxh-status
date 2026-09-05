@@ -52,6 +52,12 @@ function localizedPost(post, locale) {
       generatedAt: post.translation.generatedAt,
     },
     mediaUrls: post.mediaUrls,
+    imageTexts: (post.imageTexts ?? []).map((image) => ({
+      imageIndex: image.imageIndex,
+      originalText: image.originalText,
+      text: image.translations[locale],
+      language: locale,
+    })),
     tracker: post.tracker,
   };
 }

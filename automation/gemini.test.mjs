@@ -72,7 +72,7 @@ function translations(source = tweet().fullText) {
 }
 
 function processedResult(analysis, source = tweet().fullText) {
-  return { analysis, translations: translations(source) };
+  return { analysis, translations: translations(source), imageTexts: [] };
 }
 
 test("Gemini request uses a system instruction and validates completed output", async () => {
@@ -99,14 +99,20 @@ test("Gemini request uses a system instruction and validates completed output", 
       assert.equal(body.store, false);
       assert.match(body.system_instruction, /untrusted\s+evidence/);
       assert.match(body.system_instruction, /faithful translator/);
+      assert.match(body.system_instruction, /Yoshihiro Togashi/);
+      assert.match(body.system_instruction, /HUNTER x HUNTER \(HxH\)/);
+      assert.match(body.system_instruction, /standalone illustrations/);
+      assert.match(body.system_instruction, /requiresHumanReview: false/);
       assert.match(
         body.system_instruction,
         /\u4EBA\u7269\u30DA\u30F3\u5165\u308C\u5B8C\u4E86/u,
       );
-      assert.doesNotMatch(body.input[0].text, /You are a conservative/);
+      assert.equal(body.input[0].type, "user_input");
+      assert.doesNotMatch(body.input[0].content[0].text, /You are a conservative/);
       assert.deepEqual(body.response_format.schema.required, [
         "analysis",
         "translations",
+        "imageTexts",
       ]);
       return completedResponse(processedResult(analysis));
     },
@@ -143,6 +149,43 @@ test("non-completed Gemini responses are rejected", async () => {
   );
 });
 
+test("a tweet image and its text are sent as content in one v1 user input step", async () => {
+  const mediaUrl = "https://pbs.twimg.com/media/example.jpg";
+  const bytes = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
+  const result = await analyzeTweet({
+    tweet: tweet({ mediaUrls: [mediaUrl] }),
+    currentChapters: [{ chapter: 434, status: "unknown" }],
+    apiKey: "test-key",
+    model: "gemini-test",
+    fetchImpl: async (url, options) => {
+      if (url === mediaUrl) {
+        return new Response(bytes, { headers: { "content-type": "image/jpeg" } });
+      }
+
+      const body = JSON.parse(options.body);
+      assert.equal(body.input.length, 1);
+      assert.equal(body.input[0].type, "user_input");
+      const [text, label, image] = body.input[0].content;
+      assert.equal(label.text, "IMAGE_INDEX: 1");
+      assert.equal(text.type, "text");
+      assert.ok(text.text.includes(tweet().fullText));
+      assert.deepEqual(image, {
+        type: "image",
+        data: bytes.toString("base64"),
+        mime_type: "image/jpeg",
+      });
+      return completedResponse({
+        ...processedResult(confirmedAnalysis()),
+        imageTexts: [{ imageIndex: 1, originalText: tweet().fullText, translations: translations() }],
+      });
+    },
+  });
+
+  assert.deepEqual(result.mediaErrors, []);
+  assert.equal(result.imageTexts[0].translations.fr, translations().fr);
+  assert.equal(result.translations.fr, translations().fr);
+});
+
 test("missing media without deterministic text is forced to human review", async () => {
   let requests = 0;
   const source = "https://t.co/example";
@@ -161,6 +204,7 @@ test("missing media without deterministic text is forced to human review", async
       }
 
       return completedResponse({
+        imageTexts: [],
         analysis: {
           schemaVersion: 1,
           postClassification: "not_production_related",

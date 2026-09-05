@@ -79,9 +79,18 @@
     "legendAria": "Legenda dos status"
   },
   "latestUpdate": {
+    "translatedByGemini": "Traduzido do japonês pelo Gemini",
+    "translated": "Traduzido do japonês",
+    "originalText": "Texto original em japonês",
+    "translationUnavailable": "Tradução indisponível · Texto original em japonês",
+    "showOriginal": "Ver texto original",
+    "imageAlt": "Imagem {index} anexada à publicação de Yoshihiro Togashi",
+    "noPost": "Nenhuma publicação de Togashi está disponível no momento.",
     "eyebrow": "Última atualização do Togashi",
     "sentence": "Capítulo {chapter}: {status}.",
-    "viewPost": "Ver publicação"
+    "viewPost": "Ver publicação",
+    "imageText": "Texto da imagem {index}",
+    "imageTextByGemini": "Transcrito e traduzido pelo Gemini"
   },
   "history": {
     "eyebrow": "1998-2026",

@@ -9,6 +9,7 @@ import {
   validateModelAnalysis,
   validateTweetProcessing,
   validateTweetTranslations,
+  validateImageTexts,
 } from "./contracts.mjs";
 
 function tweet(fullText = "No.434\u3001\u4EBA\u7269\u30DA\u30F3\u5165\u308C\u5B8C\u4E86\u3002") {
@@ -86,40 +87,51 @@ test("text evidence requires Gemini and deterministic grammar to agree", () => {
   ]);
 });
 
-test("image evidence always requires human review", () => {
+test("explicit image completion text can update a chapter automatically", () => {
   const post = tweet("https://t.co/example");
   post.mediaUrls = ["https://pbs.twimg.com/media/example.jpg"];
-  const rawAnalysis = analysis({
+  const update = {
     chapter: 434,
     proposedStatus: "background",
     completionScope: "whole_chapter",
     evidenceBasis: "explicit_image_text",
-    evidence: "No.434 \u80CC\u666F\u6307\u5B9A\u66F8\u5B8C\u4E86",
+    evidence: "No.434 背景指定書完了",
     confidence: 0.99,
-  });
+  };
 
-  const accepted = evaluateAnalysis(post, rawAnalysis, {
-    schemaVersion: 1,
-    confirmed: true,
-    confirmations: [
-      {
-        chapter: 434,
-        proposedStatus: "background",
-        evidence: "No.434 \u80CC\u666F\u6307\u5B9A\u66F8\u5B8C\u4E86",
-        confidence: 0.99,
-      },
-    ],
-    explanation: "Visible text confirmed.",
-  });
-  const rejected = evaluateAnalysis(post, rawAnalysis, {
-    schemaVersion: 1,
-    confirmed: false,
-    confirmations: [],
-    explanation: "The image is unclear.",
-  });
+  const accepted = evaluateAnalysis(post, analysis(update));
+  assert.equal(accepted.decision, "apply");
+  assert.deepEqual(accepted.updates, [
+    { chapter: 434, proposedStatus: "background" },
+  ]);
 
-  assert.equal(accepted.decision, "review");
-  assert.equal(rejected.decision, "review");
+  for (const invalid of [
+    { chapter: 435 },
+    { proposedStatus: "delivered" },
+    { evidence: "No.434" },
+    { confidence: 0.97 },
+    { evidenceBasis: "visual_inference" },
+  ]) {
+    const result = evaluateAnalysis(post, analysis({ ...update, ...invalid }));
+    assert.equal(result.decision, "review");
+    assert.deepEqual(result.updates, []);
+  }
+  post.mediaUrls = [];
+  assert.equal(evaluateAnalysis(post, analysis(update)).decision, "review");
+});
+
+test("standalone artwork does not update the tracker or require review", () => {
+  const post = tweet("https://t.co/example");
+  post.mediaUrls = ["https://pbs.twimg.com/media/example.jpg"];
+  const result = evaluateAnalysis(post, {
+    schemaVersion: 1,
+    postClassification: "not_production_related",
+    chapterUpdates: [],
+    requiresHumanReview: false,
+    explanation: "Togashi shared a standalone illustration, without a production claim.",
+  });
+  assert.equal(result.decision, "ignore");
+  assert.deepEqual(result.updates, []);
 });
 
 test("protected statuses and untrusted media hosts are rejected", () => {
@@ -239,10 +251,25 @@ test("combined Gemini output keeps analysis and translation contracts separate",
   });
 
   const result = validateTweetProcessing(
-    { analysis: rawAnalysis, translations: translated },
+    { analysis: rawAnalysis, translations: translated, imageTexts: [] },
     source,
   );
 
   assert.equal(result.analysis, rawAnalysis);
   assert.equal(result.translations, translated);
+});
+
+
+test("image transcriptions preserve translations and reject invalid image references", () => {
+  const originalText = "19 P";
+  const image = {
+    imageIndex: 2,
+    originalText,
+    translations: Object.fromEntries(["ar", "en", "es", "fr", "ja", "pt", "zh"].map(locale => [locale, originalText])),
+  };
+  assert.deepEqual(validateImageTexts([image], [2]), [image]);
+  assert.throws(() => validateImageTexts([image], [1]), /unavailable/);
+  assert.throws(() => validateImageTexts([image, image], [2]), /duplicate/);
+  assert.throws(() => validateImageTexts([{ ...image, translations: { ...image.translations, fr: "20 pages" } }], [2]), /preserve/);
+  assert.deepEqual(validateImageTexts([], []), []);
 });

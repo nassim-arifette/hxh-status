@@ -79,9 +79,18 @@
     "legendAria": "Leyenda de estados"
   },
   "latestUpdate": {
+    "translatedByGemini": "Traducido del japonés por Gemini",
+    "translated": "Traducido del japonés",
+    "originalText": "Texto original en japonés",
+    "translationUnavailable": "Traducción no disponible · Texto original en japonés",
+    "showOriginal": "Ver texto original",
+    "imageAlt": "Imagen {index} adjunta a la publicación de Yoshihiro Togashi",
+    "noPost": "Todavía no hay publicaciones de Togashi disponibles.",
     "eyebrow": "Última actualización de Togashi",
     "sentence": "Capítulo {chapter}: {status}.",
-    "viewPost": "Ver publicación"
+    "viewPost": "Ver publicación",
+    "imageText": "Texto de la imagen {index}",
+    "imageTextByGemini": "Transcrito y traducido por Gemini"
   },
   "history": {
     "eyebrow": "1998-2026",

@@ -71,9 +71,19 @@ For tweet text, Gemini and a deterministic Japanese expression must identify
 the exact same chapter and milestone. The accepted completion expressions are
 kept in `automation/contracts.mjs`.
 
-Image-only claims, partial-page progress, ambiguous wording, unknown chapters,
-and any disagreement are sent to human review. Images never produce an
-automatic status change by themselves.
+Clearly readable image text can also confirm a milestone automatically when
+Gemini quotes a matching chapter number and accepted completion expression,
+identifies whole-chapter completion, and reports confidence of at least 0.98.
+An illustration or manuscript photo alone does not establish completion.
+The same Gemini request separately transcribes readable image text and translates
+it into every supported locale. These cached `imageTexts` are shown in the latest
+post section and public API. Unreadable fragments are omitted, and text-free
+images have no transcription entry. Image transcription does not itself change
+the tracker.
+Standalone artwork and unrelated posts are translated without changing the
+tracker or requesting review. Ambiguous production claims, unknown chapters,
+and disagreements still require review; partial progress cannot update a
+whole-chapter status.
 
 The reducer is monotonic. It cannot move a chapter backward and it preserves
 every unrelated field.

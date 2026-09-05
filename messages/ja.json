@@ -79,9 +79,18 @@
     "legendAria": "ステータス凡例"
   },
   "latestUpdate": {
+    "translatedByGemini": "Geminiによる日本語からの翻訳",
+    "translated": "日本語からの翻訳",
+    "originalText": "日本語の原文",
+    "translationUnavailable": "翻訳を利用できません · 日本語の原文",
+    "showOriginal": "原文を表示",
+    "imageAlt": "冨樫義博の投稿に添付された画像{index}",
+    "noPost": "冨樫義博の投稿はまだありません。",
     "eyebrow": "冨樫先生の最新進捗",
     "sentence": "No.{chapter}：{status}。",
-    "viewPost": "投稿を見る"
+    "viewPost": "投稿を見る",
+    "imageText": "画像{index}内のテキスト",
+    "imageTextByGemini": "Geminiによる文字起こし"
   },
   "history": {
     "eyebrow": "1998-2026",

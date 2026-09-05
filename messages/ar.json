@@ -79,9 +79,18 @@
     "legendAria": "دليل الحالات"
   },
   "latestUpdate": {
+    "translatedByGemini": "مترجم من اليابانية بواسطة Gemini",
+    "translated": "مترجم من اليابانية",
+    "originalText": "النص الأصلي باليابانية",
+    "translationUnavailable": "الترجمة غير متاحة · النص الأصلي باليابانية",
+    "showOriginal": "عرض النص الأصلي",
+    "imageAlt": "الصورة {index} المرفقة بمنشور يوشيهيرو توغاشي",
+    "noPost": "لا تتوفر منشورات لتوغاشي حاليًا.",
     "eyebrow": "آخر تحديث من توغاشي",
     "sentence": "الفصل {chapter}: {status}.",
-    "viewPost": "عرض المنشور"
+    "viewPost": "عرض المنشور",
+    "imageText": "النص في الصورة {index}",
+    "imageTextByGemini": "استُخرج النص وتُرجم بواسطة Gemini"
   },
   "history": {
     "eyebrow": "1998-2026",

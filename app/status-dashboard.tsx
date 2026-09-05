@@ -1,5 +1,3 @@
-import { CalendarDays, ExternalLink } from "lucide-react";
-
 import {
   formatMessage,
   getLocaleDirection,
@@ -10,6 +8,7 @@ import englishMessages from "@/messages/en.json";
 import ChapterTracker, { LocalDate } from "./chapter-tracker";
 import historyData from "./data/publication-history.json";
 import LanguageSwitcher from "./language-switcher";
+import LatestTogashiUpdate from "./latest-togashi-update";
 import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
 import { ARCS } from "./data/arcs";
@@ -17,7 +16,6 @@ import {
   chapters,
   lastUpdated,
   latestPublished,
-  latestUpdate,
   manuscriptsComplete,
   nextChapter,
   publicationStatus,
@@ -28,7 +26,6 @@ import {
 import {
   formatDate,
   getStatusMeta,
-  lowerFirst,
   type StatusMeta,
 } from "./status-presentation";
 
@@ -199,9 +196,6 @@ export default function StatusDashboard({
   messages = englishMessages,
 }: StatusDashboardProps = {}) {
   const statusMeta = getStatusMeta(messages.statuses);
-  const latestStatusLabel = statusMeta[latestUpdate.status].label;
-  const latestStatus =
-    locale === "en" ? lowerFirst(latestStatusLabel) : latestStatusLabel;
   const publicationStatusLabel =
     publicationStatus === "publishing"
       ? messages.snapshot.publishing
@@ -300,32 +294,7 @@ export default function StatusDashboard({
 
         <ProductionSection locale={locale} messages={messages} />
 
-        <section className="latest-update" aria-labelledby="latest-update-title">
-          <div className="update-date">
-            <CalendarDays size={17} aria-hidden="true" />
-            <span>
-              {formatDate(latestUpdate.updatedAt, undefined, locale)}
-            </span>
-          </div>
-          <div className="update-copy">
-            <p className="eyebrow">{messages.latestUpdate.eyebrow}</p>
-            <h2 id="latest-update-title">
-              {formatMessage(messages.latestUpdate.sentence, {
-                chapter: latestUpdate.chapter,
-                status: latestStatus,
-              })}
-            </h2>
-          </div>
-          <a
-            href={latestUpdate.source}
-            className="source-link update-link"
-            rel="noreferrer"
-            target="_blank"
-          >
-            {messages.latestUpdate.viewPost}
-            <ExternalLink size={15} />
-          </a>
-        </section>
+        <LatestTogashiUpdate locale={locale} messages={messages.latestUpdate} />
 
         <PublicationHistorySection locale={locale} messages={messages} />
 

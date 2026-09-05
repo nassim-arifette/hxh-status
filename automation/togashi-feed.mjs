@@ -8,6 +8,7 @@ import {
   compareSnowflakeIds,
   isAllowedMediaUrl,
   validateTweetTranslations,
+  validateImageTexts,
 } from "./contracts.mjs";
 
 export const TOGASHI_FEED_SCHEMA_VERSION = 1;
@@ -145,6 +146,7 @@ export function validateTogashiPost(value, label = "Togashi post") {
       "mediaUrls",
       "translation",
       "tracker",
+      ...(Object.hasOwn(value, "imageTexts") ? ["imageTexts"] : []),
     ],
     label,
   );
@@ -175,6 +177,7 @@ export function validateTogashiPost(value, label = "Togashi post") {
   }
 
   validateTranslation(value.translation, value.originalText, `${label}.translation`);
+  validateImageTexts(value.imageTexts ?? [], value.mediaUrls.map((_, index) => index + 1));
   validateTracker(value.tracker, `${label}.tracker`);
   return value;
 }
@@ -211,6 +214,7 @@ export function validateTogashiFeed(value) {
 export function createTogashiPost({
   tweet,
   translations,
+  imageTexts = [],
   translationModel,
   translatedAt,
   audit,
@@ -227,6 +231,7 @@ export function createTogashiPost({
     url: canonicalTweetUrl(tweet.id),
     originalText: tweet.fullText,
     mediaUrls: [...tweet.mediaUrls],
+    imageTexts,
     translation: hasTranslations
       ? {
           status: "available",

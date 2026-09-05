@@ -373,8 +373,7 @@ select {
 }
 
 .publishing-status h1,
-.section-heading h2,
-.latest-update h2 {
+.section-heading h2 {
   margin: 0;
   color: var(--foreground);
   letter-spacing: -0.035em;
@@ -904,45 +903,6 @@ select {
   color: var(--status-color);
 }
 
-.latest-update {
-  display: grid;
-  grid-template-columns: 180px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 32px;
-  margin: 24px 0;
-  padding: 24px 30px;
-  border: 1px solid rgba(120, 201, 99, 0.2);
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(23, 43, 24, 0.3) 0%, rgba(17, 21, 18, 0.88) 100%);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transition: border-color 150ms ease, box-shadow 150ms ease;
-}
-
-.latest-update:hover {
-  border-color: rgba(120, 201, 99, 0.36);
-  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), 0 0 24px -4px rgba(120, 201, 99, 0.12);
-}
-
-.update-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--accent-green);
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.update-copy h2 {
-  margin-top: 4px;
-  font-size: 1.18rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-
 .source-link {
   width: fit-content;
   display: inline-flex;
@@ -956,25 +916,6 @@ select {
 
 .source-link:hover {
   color: #9ddd8d;
-}
-
-.update-link {
-  justify-self: end;
-  padding: 8px 18px;
-  border-radius: 999px;
-  background: rgba(120, 201, 99, 0.1);
-  border: 1px solid rgba(120, 201, 99, 0.28);
-  color: var(--accent-green);
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 140ms ease;
-}
-
-.update-link:hover {
-  background: rgba(120, 201, 99, 0.22);
-  border-color: var(--accent-green);
-  color: #bbf7ad;
-  transform: translateY(-1px);
 }
 
 .history-section {
@@ -1570,21 +1511,6 @@ select {
 
   .legend-item {
     font-size: 0.7rem;
-  }
-
-  .latest-update {
-    grid-template-columns: 1fr auto;
-    gap: 14px 20px;
-    padding: 21px 20px;
-  }
-
-  .update-date {
-    grid-column: 1 / -1;
-  }
-
-  .update-copy h2 {
-    font-size: 1rem;
-    line-height: 1.4;
   }
 
   .history-key {

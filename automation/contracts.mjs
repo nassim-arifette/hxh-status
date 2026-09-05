@@ -126,8 +126,22 @@ export const tweetProcessingSchema = {
   properties: {
     analysis: analysisSchema,
     translations: translationsSchema,
+    imageTexts: {
+      type: "array",
+      maxItems: 4,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          imageIndex: { type: "integer", minimum: 1, maximum: 4 },
+          originalText: { type: "string", minLength: 1, maxLength: 10000 },
+          translations: translationsSchema,
+        },
+        required: ["imageIndex", "originalText", "translations"],
+      },
+    },
   },
-  required: ["analysis", "translations"],
+  required: ["analysis", "translations", "imageTexts"],
 };
 
 export const imageVerificationSchema = {
@@ -235,20 +249,39 @@ export function validateTweetTranslations(value, sourceText) {
   return value;
 }
 
-export function validateTweetProcessing(value, sourceText) {
+export function validateImageTexts(value, imageIndexes) {
+  if (!Array.isArray(value) || value.length > 4) {
+    throw new Error("Image texts must be an array of at most four items.");
+  }
+  const seen = new Set();
+  for (const item of value) {
+    if (!isObject(item)) throw new Error("Image text must be an object.");
+    assertExactKeys(item, ["imageIndex", "originalText", "translations"], "Image text");
+    if (!Number.isInteger(item.imageIndex) || !imageIndexes.includes(item.imageIndex) || seen.has(item.imageIndex)) {
+      throw new Error("Image text references an unavailable or duplicate image.");
+    }
+    seen.add(item.imageIndex);
+    assertNonEmptyString(item.originalText, "Image original text", 10000);
+    validateTweetTranslations(item.translations, item.originalText);
+  }
+  return value;
+}
+
+export function validateTweetProcessing(value, sourceText, imageIndexes = []) {
   if (!isObject(value)) {
     throw new Error("Gemini processing result must be an object.");
   }
 
   assertExactKeys(
     value,
-    ["analysis", "translations"],
+    ["analysis", "translations", "imageTexts"],
     "Gemini processing result",
   );
 
   return {
     analysis: validateModelAnalysis(value.analysis),
     translations: validateTweetTranslations(value.translations, sourceText),
+    imageTexts: validateImageTexts(value.imageTexts, imageIndexes),
   };
 }
 
@@ -584,13 +617,6 @@ export function evaluateAnalysis(tweet, rawAnalysis) {
   }
 
   const chapters = new Set();
-  const imageUpdates = analysis.chapterUpdates.filter(
-    (update) => update.evidenceBasis === "explicit_image_text",
-  );
-  if (imageUpdates.length > 0) {
-    return review("Image-only milestones require human review.");
-  }
-
   const modelTextMilestones = analysis.chapterUpdates.filter(
     (update) => update.evidenceBasis === "explicit_tweet_text",
   );
@@ -642,6 +668,17 @@ export function evaluateAnalysis(tweet, rawAnalysis) {
       if (!hasExactEvidence || !hasKnownPattern) {
         return review(
           "Tweet text does not match a known completed-stage expression.",
+        );
+      }
+    } else if (update.evidenceBasis === "explicit_image_text") {
+      const hasKnownPattern = deterministicTextMatches(update.evidence).some(
+        (match) =>
+          match.chapter === update.chapter &&
+          match.proposedStatus === update.proposedStatus,
+      );
+      if (!tweet.mediaUrls?.length || !hasKnownPattern) {
+        return review(
+          "Image evidence requires attached media and an explicit matching completed-stage expression.",
         );
       }
     } else {
