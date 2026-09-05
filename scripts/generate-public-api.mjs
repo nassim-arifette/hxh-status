@@ -77,17 +77,82 @@ function openApiDocument() {
     },
     content: { "application/json": { schema } },
   });
+  const chartOperation = (operationId, summary) => ({
+    operationId,
+    summary,
+    description:
+      "Returns the current chart directly as a PNG, without authentication. " +
+      "Use the revisioned URL from index.json charts to refresh bot image caches. " +
+      "Images are generated with tracker updates, never on request.",
+    parameters: [
+      localeParameter,
+      {
+        name: "r",
+        in: "query",
+        required: false,
+        description:
+          "Cache revision from the API chart URL; not a historical snapshot selector.",
+        schema: { type: "string" },
+      },
+      {
+        name: "If-None-Match",
+        in: "header",
+        required: false,
+        description: "ETag returned by a previous request.",
+        schema: { type: "string" },
+      },
+    ],
+    responses: {
+      200: {
+        description: "Localized chart PNG.",
+        headers: {
+          "Cache-Control": {
+            schema: { type: "string" },
+            description: "Cached for five minutes, then revalidated.",
+          },
+          ETag: {
+            schema: { type: "string" },
+            description: "Validator for conditional requests.",
+          },
+        },
+        content: {
+          "image/png": { schema: { type: "string", format: "binary" } },
+        },
+      },
+      304: { description: "The chart has not changed; reuse the cached image." },
+      404: { description: "The requested locale or chart does not exist." },
+    },
+  });
 
   return {
     openapi: "3.1.0",
     info: {
       title: "HxHStatus public API",
-      version: "1.0.0",
+      version: "1.1.0",
       description:
-        "Read-only tracker and cached Yoshihiro Togashi post translations.",
+        "Read-only tracker, localized chart PNGs, and cached Yoshihiro Togashi post translations.",
     },
     servers: [{ url: ORIGIN }],
+    security: [],
     paths: {
+      "/api/v1/index.json": {
+        get: {
+          operationId: "getApiIndex",
+          summary: "Endpoint index, supported locales, and revisioned chart URLs",
+          responses: {
+            200: jsonResponse("API discovery document.", { type: "object" }),
+          },
+        },
+      },
+      "/share/{locale}/production.png": {
+        get: chartOperation("getProductionChart", "Chart 1: production tracker PNG"),
+      },
+      "/share/{locale}/publication-history.png": {
+        get: chartOperation(
+          "getPublicationHistoryChart",
+          "Chart 2: publication history PNG",
+        ),
+      },
       "/api/v1/status.json": {
         get: {
           summary: "Current HUNTER x HUNTER tracker state",
@@ -177,8 +242,11 @@ const index = apiEnvelope("/api/v1/index.json", {
     togashiPosts: `${ORIGIN}/api/v1/togashi/posts.json`,
     localizedLatestPattern: `${ORIGIN}/api/v1/togashi/latest/{locale}.json`,
     localizedPostsPattern: `${ORIGIN}/api/v1/togashi/posts/{locale}.json`,
+    productionChartPattern: `${ORIGIN}/share/{locale}/production.png`,
+    publicationHistoryChartPattern: `${ORIGIN}/share/{locale}/publication-history.png`,
   },
   locales: PUBLIC_TRANSLATION_LOCALES,
+  charts: status.charts,
 });
 
 await Promise.all([

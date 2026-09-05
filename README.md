@@ -90,6 +90,11 @@ validated posts. Each new post is translated once during ingestion and stored
 by post ID; API reads are static Cloudflare asset requests and never invoke
 Gemini or X. Localized endpoints cover all seven published languages.
 
+Bots can get chart 1 directly from `GET /share/{locale}/production.png` and
+chart 2 from `GET /share/{locale}/publication-history.png`. Both return PNG
+bytes. `/api/v1/index.json` lists these operations and supplies revisioned
+image URLs for each language, also described in OpenAPI.
+
 See [API.md](API.md) for endpoints, response examples, translation fallbacks,
 and the five-minute polling contract for bots. `/status.json` remains available
 for existing integrations, while new consumers should use `/api/v1/status.json`.
