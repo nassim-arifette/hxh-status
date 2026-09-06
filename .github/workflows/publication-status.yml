@@ -2,11 +2,10 @@ name: Scheduled chapter publication
 
 on:
   workflow_dispatch:
-  # Backup for the Cloudflare trigger. All dates are rechecked from the
-  # reviewed schedule; dispatching early never publishes a chapter.
+  # Periodic fallback for the Cloudflare trigger. All dates are rechecked from
+  # the reviewed schedule; running when nothing is due is a quick no-op.
   schedule:
-    - cron: "57 14 6 9 *"
-    - cron: "7,22,37,52 15 6 9 *"
+    - cron: "*/15 * * * *"
 
 permissions:
   contents: write

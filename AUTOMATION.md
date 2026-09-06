@@ -280,9 +280,14 @@ stays 17:00. Queueing and deployment latency can delay the live change.
 
 The event Worker's extra UTC Cron dispatches `publication-status.yml`. Its
 existing five-minute Cron retries failures for seven days, while the GitHub
-schedule provides a backup. These triggers only dispatch a workflow: the Action
-checks the reviewed date and official-reader source again before any mutation.
-No X request or Gemini call is needed by this publication task.
+schedule (`*/15 * * * *`) provides a periodic safety net without requiring
+hardcoded dates. Firing when nothing is due exits immediately as a no-op.
+Note that GitHub automatically disables scheduled workflows after 60 days of
+repository inactivity; given the long hiatuses characteristic of the series,
+the Cloudflare Worker trigger is retained as the primary dispatch mechanism.
+These triggers only dispatch a workflow: the Action checks the reviewed date
+and official-reader source again before any mutation. No X request or Gemini
+call is needed by this publication task.
 
 The workflow shares the Togashi automation concurrency group, updates the
 chapter and hiatus state, builds the site and share images, and pushes the
