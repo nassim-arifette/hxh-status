@@ -51,17 +51,17 @@ function buildEntries(locale: Locale, messages: Messages): FaqEntry[] {
   const readers = getOfficialReaders(locale);
   const entries: FaqEntry[] = [];
 
-  const publishing = publicationStatus === "publishing";
-  const publishingValues = {
-    chapter: latestPublished.chapter,
-    status: publishing ? messages.snapshot.publishing : messages.snapshot.hiatus,
-  };
-  const publishingTemplate = publishing ? faq.publishingYes : faq.publishingNo;
+  // The yes/no branch already carries the publication state, so the sentence
+  // states it in prose instead of splicing the status label into itself.
+  const publishingAnswer = formatMessage(
+    publicationStatus === "publishing" ? faq.publishingYes : faq.publishingNo,
+    { chapter: latestPublished.chapter },
+  );
   entries.push({
     id: "publishing",
     question: faq.publishingQuestion,
-    answer: formatMessage(publishingTemplate, publishingValues),
-    plainAnswer: formatMessage(publishingTemplate, publishingValues),
+    answer: publishingAnswer,
+    plainAnswer: publishingAnswer,
   });
 
   if (nextChapter.releaseAt) {
@@ -123,7 +123,7 @@ function buildEntries(locale: Locale, messages: Messages): FaqEntry[] {
     plainAnswer: [
       faq.stagesIntro,
       ...EXPLAINED_STAGES.map(
-        (stage) => `${statusMeta[stage].label} — ${statusMeta[stage].description}`,
+        (stage) => `${statusMeta[stage].label}: ${statusMeta[stage].description}`,
       ),
     ].join(" "),
   });
