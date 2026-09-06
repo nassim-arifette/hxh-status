@@ -1,3 +1,18 @@
+# Baseline hardening for every document and asset. More specific blocks below
+# re-declare what they need to differ on; `/sw.js` keeps its own stricter CSP.
+#
+# `unsafe-inline` in script-src is unavoidable: the static export ships Next's
+# inline hydration payload and the beforeInteractive locale script, and
+# `output: export` leaves no request-time hook to mint a nonce. The directives
+# that still bite are frame-ancestors, object-src, base-uri and form-action.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; frame-src 'none'; object-src 'none'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://pbs.twimg.com; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests
+
 /opengraph-image
   Content-Type: image/png
 
@@ -21,6 +36,7 @@
   Content-Type: image/png
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
 
 /_next/static/*
   Cache-Control: public, max-age=31556952, immutable
