@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest an idea or enhancement for HxH Status
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        HxH Status is strictly factual and based on verified public sources. We do not accept features displaying speculative countdowns, rumors, or unverified leaks.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Need
+      description: Is your feature request related to a problem or missing functionality?
+      placeholder: Describe the motivation or problem...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe what you would like to see happen.
+      placeholder: Describe your proposed feature or change...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or features you've considered?
+    validations:
+      required: false

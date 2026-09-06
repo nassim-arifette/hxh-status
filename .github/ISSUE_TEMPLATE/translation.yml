@@ -1,0 +1,33 @@
+name: Translation
+description: Propose a new translation or fixes to existing translations
+title: "i18n: "
+labels: ["translation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping translate HxH Status! Please read [TRANSLATING.md](https://github.com/nassim-arifette/hxh-status/blob/main/TRANSLATING.md) for detailed workflow instructions.
+  - type: dropdown
+    id: locale
+    attributes:
+      label: Target Language / Locale
+      description: Choose the language catalog for your translation or issue.
+      options:
+        - "en (English)"
+        - "fr (French)"
+        - "ja (Japanese)"
+        - "es (Spanish)"
+        - "pt (Brazilian Portuguese)"
+        - "zh (Simplified Chinese)"
+        - "ar (Arabic)"
+        - "New language (not yet registered)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Translation Details
+      description: Describe the changes, missing keys, or propose new language translation.
+      placeholder: Provide details or proposed translation values...
+    validations:
+      required: true

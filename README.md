@@ -137,6 +137,12 @@ account.
 Any other static host can serve `out/`; the optional monitoring automation
 would need an equivalent scheduler.
 
+## Contributing
+
+Contributions are welcome! Whether you are reporting an issue, updating verified chapter data, or contributing translations, please review our [CONTRIBUTING.md](CONTRIBUTING.md) guide.
+
+For translations specifically, refer to [TRANSLATING.md](TRANSLATING.md).
+
 ## Sources
 
 - [Yoshihiro Togashi on X](https://x.com/Un4v5s8bgsVk9Xp)
