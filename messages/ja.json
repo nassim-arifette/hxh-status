@@ -77,7 +77,16 @@
     "eyebrow": "カキン王位継承戦",
     "title": "制作進捗",
     "chapterStatusAria": "各話の制作進捗",
-    "legendAria": "ステータス凡例"
+    "legendAria": "ステータス凡例",
+    "viewChapters": "話数",
+    "viewVolumes": "巻数",
+    "viewSwitcherAria": "表示切替",
+    "volumeTitle": "{volume}（{start}〜{end}話）",
+    "volumePublished": "{count}/{total}話 掲載済",
+    "volumeMissing": "単行本化まであと{count}話",
+    "volumeInProduction": "{count}/{total}話 制作中",
+    "volumeReady": "単行本収録分完了",
+    "currentVolumeBanner": "次巻（{volume}）：単行本化まであと{count}話"
   },
   "latestUpdate": {
     "translatedByGemini": "Geminiによる日本語からの翻訳",
