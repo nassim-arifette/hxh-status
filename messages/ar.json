@@ -172,6 +172,23 @@
     "shareSuccess": "تمت مشاركة {label} كصورة PNG.",
     "shareFallback": "تعذرت مشاركة {label}، لذلك تم تنزيل ملف PNG بدلًا من ذلك."
   },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "الأسئلة الشائعة",
+    "publishingQuestion": "هل يُنشر HUNTER×HUNTER حاليًا؟",
+    "publishingYes": "نعم — {status}. آخر فصل صدر رسميًا هو الفصل {chapter}.",
+    "publishingNo": "لا — {status}. آخر فصل صدر رسميًا هو الفصل {chapter}.",
+    "nextQuestion": "متى يصدر الفصل القادم؟",
+    "nextScheduled": "الفصل {chapter} مقرر للنشر في {date}.",
+    "nextUnscheduled": "الفصل {chapter} لم يُعلن له تاريخ نشر بعد. المرحلة المؤكدة: {status}.",
+    "togashiQuestion": "هل ما زال توغاشي يعمل على HUNTER×HUNTER؟",
+    "togashiAnswer": "نعم — آخر تقدم مؤكد يخص الفصل {chapter}: {status}.",
+    "stagesQuestion": "ماذا تعني مراحل الإنتاج؟",
+    "stagesIntro": "لا يتتبع الموقع إلا المراحل التي أكدها توغاشي أو Weekly Shonen Jump علنًا:",
+    "readQuestion": "أين يُقرأ HUNTER×HUNTER رسميًا؟",
+    "readIntro": "عبر المنصات الرسمية المتاحة بلغتك:",
+    "sourcesQuestion": "من أين تأتي معلومات HxH Status؟"
+  },
   "footer": {
     "disclaimer": "متتبع غير رسمي لفصول HUNTER×HUNTER وتقدم إنتاجها.",
     "sources": "المصادر: يوشيهيرو توغاشي، Weekly Shonen Jump، MANGA Plus."

@@ -172,6 +172,23 @@
     "shareSuccess": "{label}をPNG画像として共有しました。",
     "shareFallback": "{label}を共有できなかったため、代わりにPNGをダウンロードしました。"
   },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "よくある質問",
+    "publishingQuestion": "HUNTER×HUNTERは現在掲載中ですか？",
+    "publishingYes": "はい。{status}です。最新の掲載はNo.{chapter}です。",
+    "publishingNo": "いいえ。{status}です。最新の掲載はNo.{chapter}です。",
+    "nextQuestion": "次回の掲載はいつですか？",
+    "nextScheduled": "No.{chapter}は{date}に掲載予定です。",
+    "nextUnscheduled": "No.{chapter}の掲載日はまだ発表されていません。確認済みの進捗：{status}。",
+    "togashiQuestion": "冨樫義博先生は現在もHUNTER×HUNTERを執筆していますか？",
+    "togashiAnswer": "はい。確認できた最新の進捗はNo.{chapter}（{status}）です。",
+    "stagesQuestion": "制作の各段階は何を意味しますか？",
+    "stagesIntro": "本サイトでは、冨樫義博先生または週刊少年ジャンプが公表した進捗のみを掲載しています：",
+    "readQuestion": "HUNTER×HUNTERを公式に読むには？",
+    "readIntro": "お使いの言語で利用できる公式配信サービスをご利用ください：",
+    "sourcesQuestion": "HxH Statusの情報源は何ですか？"
+  },
   "footer": {
     "disclaimer": "HUNTER×HUNTERの非公式掲載・制作進捗トラッカーです。",
     "sources": "出典：冨樫義博、週刊少年ジャンプ、少年ジャンプ＋、ゼブラック。"

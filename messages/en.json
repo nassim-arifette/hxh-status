@@ -172,6 +172,23 @@
     "shareSuccess": "{label} shared as a PNG image.",
     "shareFallback": "{label} could not be shared, so the PNG was downloaded instead."
   },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Frequently asked questions",
+    "publishingQuestion": "Is HUNTER×HUNTER currently being published?",
+    "publishingYes": "Yes — {status}. The most recent official release is chapter {chapter}.",
+    "publishingNo": "No — {status}. The most recent official release is chapter {chapter}.",
+    "nextQuestion": "When is the next chapter released?",
+    "nextScheduled": "Chapter {chapter} is scheduled for {date}.",
+    "nextUnscheduled": "Chapter {chapter} has no announced release date yet. Confirmed stage: {status}.",
+    "togashiQuestion": "Is Togashi still working on HUNTER×HUNTER?",
+    "togashiAnswer": "Yes — the most recent confirmed progress is chapter {chapter}: {status}.",
+    "stagesQuestion": "What do the production stages mean?",
+    "stagesIntro": "The tracker only follows stages confirmed publicly by Togashi or Weekly Shonen Jump:",
+    "readQuestion": "Where can I read HUNTER×HUNTER officially?",
+    "readIntro": "Through the official readers available for your language:",
+    "sourcesQuestion": "Where does HxH Status information come from?"
+  },
   "footer": {
     "disclaimer": "Unofficial HUNTER×HUNTER chapter and production tracker.",
     "sources": "Sources: Yoshihiro Togashi, Weekly Shonen Jump, VIZ, MANGA Plus."

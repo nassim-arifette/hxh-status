@@ -172,6 +172,23 @@
     "shareSuccess": "已将 {label} 作为 PNG 图片分享。",
     "shareFallback": "无法分享 {label}，因此改为下载 PNG。"
   },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "常见问题",
+    "publishingQuestion": "《HUNTER×HUNTER》目前在连载吗？",
+    "publishingYes": "是。{status}。最新刊载的是第 {chapter} 话。",
+    "publishingNo": "否。{status}。最新刊载的是第 {chapter} 话。",
+    "nextQuestion": "下一话什么时候刊载？",
+    "nextScheduled": "第 {chapter} 话预计于 {date} 刊载。",
+    "nextUnscheduled": "第 {chapter} 话尚未公布刊载日期。已确认的进度：{status}。",
+    "togashiQuestion": "富坚义博目前还在创作《HUNTER×HUNTER》吗？",
+    "togashiAnswer": "是。已确认的最新进度为第 {chapter} 话：{status}。",
+    "stagesQuestion": "制作进度的各个阶段是什么意思？",
+    "stagesIntro": "本站只收录富坚义博或《周刊少年Jump》公开确认的进度：",
+    "readQuestion": "在哪里可以正式阅读《HUNTER×HUNTER》？",
+    "readIntro": "请通过你所用语言可用的正版渠道阅读：",
+    "sourcesQuestion": "HxH Status 的信息来源是什么？"
+  },
   "footer": {
     "disclaimer": "非官方《HUNTER×HUNTER（全职猎人）》章节与制作进度追踪站。",
     "sources": "来源：富坚义博、《周刊少年Jump》、MANGA Plus。"

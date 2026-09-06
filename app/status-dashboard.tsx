@@ -6,6 +6,7 @@ import {
 } from "@/lib/i18n";
 import englishMessages from "@/messages/en.json";
 import ChapterTracker, { LocalDate } from "./chapter-tracker";
+import Faq from "./faq";
 import historyData from "./data/publication-history.json";
 import LanguageSwitcher from "./language-switcher";
 import LatestTogashiUpdate from "./latest-togashi-update";
@@ -297,6 +298,8 @@ export default function StatusDashboard({
         <LatestTogashiUpdate locale={locale} messages={messages.latestUpdate} />
 
         <PublicationHistorySection locale={locale} messages={messages} />
+
+        <Faq locale={locale} messages={messages} />
 
         <footer className="site-footer">
           <p>{messages.footer.disclaimer}</p>

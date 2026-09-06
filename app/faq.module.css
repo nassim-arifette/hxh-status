@@ -1,0 +1,132 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.item {
+  border-bottom: 1px solid var(--border);
+}
+
+.item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 17px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.item summary::-webkit-details-marker {
+  display: none;
+}
+
+/* A CSS caret keeps the row free of an icon import, and flips on open. The
+   block direction handles RTL on its own, so no logical-property juggling. */
+.item summary::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-inline-end: 2px;
+  border-right: 1.5px solid var(--text-muted);
+  border-bottom: 1.5px solid var(--text-muted);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform 150ms ease;
+}
+
+.item[open] summary::after {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.item summary:hover::after {
+  border-color: var(--foreground);
+}
+
+.item summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.question {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  font-weight: 520;
+  line-height: 1.5;
+}
+
+.item summary:hover .question {
+  color: var(--accent-green);
+}
+
+.answer {
+  padding: 0 0 20px;
+  max-width: 660px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+.answer p {
+  margin: 0;
+}
+
+.intro {
+  margin: 0 0 12px;
+}
+
+.stages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+}
+
+.stage dt {
+  color: var(--foreground);
+  font-size: 0.8rem;
+  font-weight: 560;
+}
+
+.stage dd {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+}
+
+.readers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.readers a {
+  color: var(--accent-green);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.readers a:hover {
+  border-bottom-color: var(--accent-green);
+}
+
+.readers a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (max-width: 720px) {
+  .item summary {
+    padding: 15px 0;
+    gap: 14px;
+  }
+
+  .question {
+    font-size: 0.9rem;
+  }
+}
