@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Check out main
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           # A duplicate dispatch can wait behind the concurrency group. Resolve
           # main when the job starts instead of checking out its older event SHA.
