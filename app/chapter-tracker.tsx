@@ -98,7 +98,7 @@ function ChapterGrid({
   onSelect: (chapter: ChapterRecord, trigger: HTMLButtonElement) => void;
 }) {
   return (
-    <div
+    <ul
       className="chapter-grid"
       aria-label={messages.production.chapterStatusAria}
     >
@@ -109,7 +109,8 @@ function ChapterGrid({
         const volume = getVolumeLabel(chapter.chapter, locale);
 
         return (
-          <Tooltip key={chapter.chapter}>
+          <li key={chapter.chapter}>
+            <Tooltip>
             <TooltipTrigger asChild>
               <button
                 className="chapter-card"
@@ -170,9 +171,10 @@ function ChapterGrid({
               </div>
             </TooltipContent>
           </Tooltip>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }
 

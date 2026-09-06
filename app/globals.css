@@ -662,9 +662,18 @@ select {
   display: grid;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 9px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chapter-grid > li {
+  display: flex;
+  min-width: 0;
 }
 
 .chapter-card {
+  width: 100%;
   --status-color: var(--unknown);
   --status-bg: var(--unknown-bg);
   --status-border: var(--unknown-border);
