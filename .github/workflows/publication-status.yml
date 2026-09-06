@@ -19,8 +19,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/publication-verdict.json
     steps:
       - uses: actions/checkout@v6
         with:
@@ -31,6 +29,8 @@ jobs:
           node-version: 24
       - name: Apply due official publications
         id: publication
+        env:
+          AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/publication-verdict.json
         run: node scripts/process-publication.mjs
       - name: Build and verify the new tracker
         if: steps.publication.outputs.status_changed == 'true'
@@ -61,10 +61,13 @@ jobs:
           git push origin HEAD:main
       - name: Wait for the public tracker
         if: steps.publication.outputs.publication_due == 'true'
+        env:
+          AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/publication-verdict.json
         run: node scripts/wait-for-tracker-deployment.mjs
       - name: Send the publication and hiatus notification
         if: steps.publication.outputs.publication_due == 'true'
         env:
+          AUTOMATION_VERDICT_FILE: ${{ runner.temp }}/publication-verdict.json
           TRACKER_VERDICT_URL: ${{ secrets.TRACKER_VERDICT_URL }}
           TRACKER_VERDICT_SECRET: ${{ secrets.TRACKER_VERDICT_SECRET }}
         run: node scripts/notify-tracker-verdict.mjs
