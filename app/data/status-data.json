@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-02",
+  "lastUpdated": "2026-09-07",
   "hiatusAfterChapter": 420,
   "chapters": [
     {
@@ -67,9 +67,9 @@
     },
     {
       "chapter": 420,
-      "status": "scheduled",
+      "status": "published",
       "releaseAt": "2026-09-07T00:00:00+09:00",
-      "updatedAt": "2026-09-01",
+      "updatedAt": "2026-09-07",
       "sourceType": "official-reader"
     },
     {
