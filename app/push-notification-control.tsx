@@ -50,6 +50,18 @@ async function parseJsonResponse<T>(response: Response): Promise<T> {
   return data;
 }
 
+function isIOSUninstalled() {
+  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isStandalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    ("standalone" in navigator &&
+      (navigator as { standalone?: boolean }).standalone === true);
+  return isIOS && !isStandalone;
+}
+
 export default function PushNotificationControl({
   locale,
   messages,
@@ -81,7 +93,12 @@ export default function PushNotificationControl({
         "Notification" in window;
 
       if (!isSupported) {
-        if (!cancelled) setState("unsupported");
+        if (!cancelled) {
+          setState("unsupported");
+          if (isIOSUninstalled()) {
+            showFeedback(messages.iosPrompt);
+          }
+        }
         return;
       }
 
@@ -225,6 +242,20 @@ export default function PushNotificationControl({
     }
   }
 
+  const isIOSPromptNeeded = state === "unsupported" && isIOSUninstalled();
+
+  function handleButtonClick() {
+    if (isIOSPromptNeeded) {
+      showFeedback(messages.iosPrompt);
+      return;
+    }
+    if (subscribed) {
+      void disableNotifications();
+    } else {
+      void enableNotifications();
+    }
+  }
+
   const label =
     state === "on"
       ? messages.on
@@ -250,13 +281,25 @@ export default function PushNotificationControl({
   return (
     <div className="push-notification-control">
       <button
-        aria-label={subscribed ? messages.disable : messages.description}
+        aria-label={
+          isIOSPromptNeeded
+            ? messages.iosPrompt
+            : subscribed
+              ? messages.disable
+              : messages.description
+        }
         aria-pressed={subscribed}
         className="push-notification-button"
         data-state={state}
-        disabled={busy || state === "unsupported"}
-        onClick={subscribed ? disableNotifications : enableNotifications}
-        title={subscribed ? messages.disable : messages.description}
+        disabled={busy || (state === "unsupported" && !isIOSPromptNeeded)}
+        onClick={handleButtonClick}
+        title={
+          isIOSPromptNeeded
+            ? messages.iosPrompt
+            : subscribed
+              ? messages.disable
+              : messages.description
+        }
         type="button"
       >
         <Icon

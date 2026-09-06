@@ -26,6 +26,7 @@
     "enabledBody": "富坚义博发布新动态时，你将收到提醒。",
     "permissionDenied": "通知已被阻止。请在浏览器设置中允许通知后再开启提醒。",
     "setupError": "无法更改富坚动态提醒，请重试。",
+    "iosPrompt": "要在 iOS 上启用通知，请先将此网站添加到主屏幕。",
     "disabled": "富坚动态提醒已关闭。"
   },
   "push": {

@@ -26,6 +26,7 @@
     "enabledBody": "You will be notified whenever Yoshihiro Togashi posts.",
     "permissionDenied": "Notifications are blocked. Allow them in your browser settings to enable alerts.",
     "setupError": "Togashi alerts could not be changed. Please try again.",
+    "iosPrompt": "To enable alerts on iOS, add this site to your home screen first.",
     "disabled": "Togashi alerts are off."
   },
   "push": {

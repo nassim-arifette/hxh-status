@@ -26,6 +26,7 @@
     "enabledBody": "Recibirás una notificación cada vez que Yoshihiro Togashi publique algo nuevo.",
     "permissionDenied": "Las notificaciones están bloqueadas. Permítelas en la configuración del navegador para activar las alertas.",
     "setupError": "No se pudieron cambiar las alertas de Togashi. Inténtalo de nuevo.",
+    "iosPrompt": "Para activar las alertas en iOS, añade primero este sitio a tu pantalla de inicio.",
     "disabled": "Las alertas de Togashi están desactivadas."
   },
   "push": {
