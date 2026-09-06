@@ -111,7 +111,17 @@
     "chapterCountAria": "{count} chapitres",
     "chapterPublished": "Chapitre publié",
     "noChapter": "Aucun chapitre",
-    "countHint": "colonne de droite : chapitres / année"
+    "countHint": "colonne de droite : chapitres / année",
+    "arcComparison": "Comparaison des arcs",
+    "arcComparisonSubtitle": "La Guerre de succession comparée aux arcs précédents",
+    "currentArcBadge": "Arc en cours",
+    "metricChapters": "Chapitres",
+    "metricDuration": "Durée",
+    "rankChapters": "{rank}e arc le plus long · {count} chapitres",
+    "rankDuration": "{rank}e par durée calendaire · {duration}",
+    "durationYears": "{years} ans",
+    "durationMonths": "{months} mois",
+    "arcChaptersCount": "{count} chap."
   },
   "chapter": {
     "title": "Chapitre",

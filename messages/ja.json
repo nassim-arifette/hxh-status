@@ -111,7 +111,17 @@
     "chapterCountAria": "{count}話",
     "chapterPublished": "掲載あり",
     "noChapter": "掲載なし",
-    "countHint": "右端：年間掲載話数"
+    "countHint": "右端：年間掲載話数",
+    "arcComparison": "エピソード比較",
+    "arcComparisonSubtitle": "過去の編と王位継承編の比較",
+    "currentArcBadge": "連載中",
+    "metricChapters": "話数",
+    "metricDuration": "期間",
+    "rankChapters": "話数第{rank}位 · {count}話",
+    "rankDuration": "連載期間第{rank}位 · {duration}",
+    "durationYears": "{years}年",
+    "durationMonths": "{months}ヶ月",
+    "arcChaptersCount": "{count}話"
   },
   "chapter": {
     "title": "話数",

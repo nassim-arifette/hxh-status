@@ -111,7 +111,17 @@
     "chapterCountAria": "{count} capítulos",
     "chapterPublished": "Capítulo publicado",
     "noChapter": "Sem capítulo",
-    "countHint": "coluna à direita: capítulos / ano"
+    "countHint": "coluna à direita: capítulos / ano",
+    "arcComparison": "Comparação dos arcos",
+    "arcComparisonSubtitle": "A Guerra de Sucessão comparada aos arcos anteriores",
+    "currentArcBadge": "Arco atual",
+    "metricChapters": "Capítulos",
+    "metricDuration": "Duração",
+    "rankChapters": "{rank}º arco mais longo · {count} capítulos",
+    "rankDuration": "{rank}º por duração no calendário · {duration}",
+    "durationYears": "{years} anos",
+    "durationMonths": "{months} meses",
+    "arcChaptersCount": "{count} cap."
   },
   "chapter": {
     "title": "Capítulo",

@@ -111,7 +111,17 @@
     "chapterCountAria": "{count} فصل",
     "chapterPublished": "فصل منشور",
     "noChapter": "لا يوجد فصل",
-    "countHint": "العمود الأيمن: الفصول / السنة"
+    "countHint": "العمود الأيمن: الفصول / السنة",
+    "arcComparison": "مقارنة الفصول القصصية",
+    "arcComparisonSubtitle": "مقارنة حرب الخلافة بالفصول القصصية السابقة",
+    "currentArcBadge": "الفصل الحالي",
+    "metricChapters": "الفصول",
+    "metricDuration": "المدة",
+    "rankChapters": "المركز {rank} في الطول · {count} فصل",
+    "rankDuration": "المركز {rank} في المدة الزمنية · {duration}",
+    "durationYears": "{years} سنة",
+    "durationMonths": "{months} شهر",
+    "arcChaptersCount": "{count} فصل"
   },
   "chapter": {
     "title": "الفصل",

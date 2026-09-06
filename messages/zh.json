@@ -111,7 +111,17 @@
     "chapterCountAria": "{count} 话",
     "chapterPublished": "有新话",
     "noChapter": "无新话",
-    "countHint": "右侧：每年刊载话数"
+    "countHint": "右侧：每年刊载话数",
+    "arcComparison": "篇章对比",
+    "arcComparisonSubtitle": "王位继承篇与历代篇章对比",
+    "currentArcBadge": "连载中",
+    "metricChapters": "话数",
+    "metricDuration": "历时",
+    "rankChapters": "篇幅第 {rank} 位 · {count} 话",
+    "rankDuration": "历时第 {rank} 位 · {duration}",
+    "durationYears": "{years} 年",
+    "durationMonths": "{months} 个月",
+    "arcChaptersCount": "{count} 话"
   },
   "chapter": {
     "title": "话数",
