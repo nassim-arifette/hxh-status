@@ -77,7 +77,16 @@
     "eyebrow": "卡金王位继承战",
     "title": "制作进度",
     "chapterStatusAria": "各话制作进度",
-    "legendAria": "状态说明"
+    "legendAria": "状态说明",
+    "viewChapters": "话数",
+    "viewVolumes": "单行本",
+    "viewSwitcherAria": "选择视图",
+    "volumeTitle": "{volume}（第{start}–{end}话）",
+    "volumePublished": "{count}/{total} 已刊登",
+    "volumeMissing": "距单行本发售还需{count}话",
+    "volumeInProduction": "{count}/{total} 制作中",
+    "volumeReady": "已达到单行本收录篇幅",
+    "currentVolumeBanner": "下一单行本：{volume} · 距收录还需{count}话"
   },
   "latestUpdate": {
     "translatedByGemini": "由 Gemini 从日语翻译",

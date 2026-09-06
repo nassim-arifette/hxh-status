@@ -2,6 +2,8 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 import { PUBLIC_TRANSLATION_LOCALES } from "../automation/contracts.mjs";
+import { buildBadges } from "../automation/badges.mjs";
+import { buildFeedsAndCalendar } from "../automation/feeds.mjs";
 import { validateTogashiFeed } from "../automation/togashi-feed.mjs";
 
 const ORIGIN = "https://hxhstatus.com";
@@ -209,6 +211,68 @@ function openApiDocument() {
           },
         },
       },
+      "/feed.xml": {
+        get: {
+          operationId: "getAtomFeed",
+          summary: "Atom 1.0 syndication feed for HUNTER x HUNTER updates (English / default)",
+          responses: {
+            200: {
+              description: "Atom 1.0 XML feed.",
+              content: { "application/atom+xml": { schema: { type: "string" } } },
+            },
+          },
+        },
+      },
+      "/{locale}/feed.xml": {
+        get: {
+          operationId: "getLocalizedAtomFeed",
+          summary: "Localized Atom 1.0 syndication feed for HUNTER x HUNTER updates",
+          parameters: [localeParameter],
+          responses: {
+            200: {
+              description: "Localized Atom 1.0 XML feed.",
+              content: { "application/atom+xml": { schema: { type: "string" } } },
+            },
+          },
+        },
+      },
+      "/releases.ics": {
+        get: {
+          operationId: "getReleasesCalendar",
+          summary: "iCalendar (.ics) calendar subscription of chapter release dates",
+          responses: {
+            200: {
+              description: "iCalendar VCALENDAR document.",
+              content: { "text/calendar": { schema: { type: "string" } } },
+            },
+          },
+        },
+      },
+      "/badge/{locale}/status.svg": {
+        get: {
+          operationId: "getLocalizedStatusBadge",
+          summary: "Embeddable SVG status badge (shields.io style)",
+          parameters: [localeParameter],
+          responses: {
+            200: {
+              description: "SVG status badge.",
+              content: { "image/svg+xml": { schema: { type: "string" } } },
+            },
+          },
+        },
+      },
+      "/badge/status.svg": {
+        get: {
+          operationId: "getStatusBadge",
+          summary: "Embeddable SVG status badge in English (default)",
+          responses: {
+            200: {
+              description: "SVG status badge.",
+              content: { "image/svg+xml": { schema: { type: "string" } } },
+            },
+          },
+        },
+      },
     },
   };
 }
@@ -221,13 +285,23 @@ try {
   );
 }
 
-const [feed, status, localeRegistry] = await Promise.all([
+const [feed, status, localeRegistry, statusData] = await Promise.all([
   readJson(join(root, "app", "data", "togashi-posts.json")).then(
     validateTogashiFeed,
   ),
   readJson(join(outDirectory, "status.json")),
   readJson(join(root, "lib", "locales.json")),
+  readJson(join(root, "app", "data", "status-data.json")),
 ]);
+
+const messagesByLocale = Object.fromEntries(
+  await Promise.all(
+    PUBLIC_TRANSLATION_LOCALES.map(async (locale) => [
+      locale,
+      await readJson(join(root, "messages", `${locale}.json`)),
+    ]),
+  ),
+);
 
 const publishedLocales = Object.keys(localeRegistry.locales)
   .filter((locale) => localeRegistry.locales[locale].published)
@@ -250,6 +324,14 @@ const index = apiEnvelope("/api/v1/index.json", {
     localizedPostsPattern: `${ORIGIN}/api/v1/togashi/posts/{locale}.json`,
     productionChartPattern: `${ORIGIN}/share/{locale}/production.png`,
     publicationHistoryChartPattern: `${ORIGIN}/share/{locale}/publication-history.png`,
+    feed: `${ORIGIN}/feed.xml`,
+    localizedFeedPattern: `${ORIGIN}/{locale}/feed.xml`,
+    releasesCalendar: `${ORIGIN}/releases.ics`,
+    badgeStatus: `${ORIGIN}/badge/status.svg`,
+    badgeLocalizedStatusPattern: `${ORIGIN}/badge/{locale}/status.svg`,
+    badgeLatest: `${ORIGIN}/badge/latest.svg`,
+    badgeProgress: `${ORIGIN}/badge/progress.svg`,
+    badgeNext: `${ORIGIN}/badge/next.svg`,
   },
   locales: PUBLIC_TRANSLATION_LOCALES,
   charts: status.charts,
@@ -270,6 +352,21 @@ await Promise.all([
       posts: feed.posts,
     }),
   ),
+  buildFeedsAndCalendar({
+    outDir: outDirectory,
+    publicDir: join(root, "public"),
+    statusData,
+    togashiPosts: feed.posts,
+    messagesByLocale,
+    locales: PUBLIC_TRANSLATION_LOCALES,
+    origin: ORIGIN,
+  }),
+  buildBadges({
+    outDir: outDirectory,
+    publicDir: join(root, "public"),
+    statusData,
+    locales: PUBLIC_TRANSLATION_LOCALES,
+  }),
   ...PUBLIC_TRANSLATION_LOCALES.flatMap((locale) => [
     writeJson(
       join(apiDirectory, "togashi", "latest", `${locale}.json`),
@@ -291,7 +388,7 @@ await Promise.all([
 
 console.log(
   JSON.stringify({
-    message: "Wrote the public HxHStatus API.",
+    message: "Wrote the public HxHStatus API, Atom feeds, and releases calendar.",
     posts: feed.posts.length,
     locales: PUBLIC_TRANSLATION_LOCALES.join(","),
   }),
