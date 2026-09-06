@@ -1,5 +1,7 @@
 # HxH Status
 
+[![CI](https://github.com/nassim-arifette/hxh-status/actions/workflows/ci.yml/badge.svg)](https://github.com/nassim-arifette/hxh-status/actions/workflows/ci.yml)
+
 **[hxhstatus.com](https://hxhstatus.com)**
 
 A minimal, sourced HUNTER×HUNTER publication and production tracker.
