@@ -1,5 +1,4 @@
 import type { Locale } from "@/lib/i18n";
-import type { ChapterRecord } from "./status";
 
 export type ChapterTitleInfo = {
   number: number;
@@ -4311,82 +4310,11 @@ export function getVolumeNumber(chapter: number): number {
   return 42;
 }
 
-export function formatVolumeName(vol: number, locale: Locale = "en"): string {
+export function getVolumeLabel(chapter: number, locale: Locale = "en"): string {
+  const vol = getVolumeNumber(chapter);
   const prefix = VOLUME_LABEL[locale] ?? VOLUME_LABEL.en;
   if (locale === "ja") return `${vol}巻`;
   if (locale === "zh") return `第${vol}卷`;
+  if (locale === "ar") return `${prefix} ${vol}`;
   return `${prefix} ${vol}`;
 }
-
-export function getVolumeLabel(chapter: number, locale: Locale = "en"): string {
-  const vol = getVolumeNumber(chapter);
-  return formatVolumeName(vol, locale);
-}
-
-export type VolumeInfo = {
-  volume: number;
-  label: string;
-  startChapter: number;
-  endChapter: number;
-  totalChapters: number;
-  publishedCount: number;
-  inProductionCount: number;
-  missingCount: number;
-  chapters: ChapterRecord[];
-  isReady: boolean;
-};
-
-export type VolumeTrackerSummary = {
-  volumes: VolumeInfo[];
-  currentVolume: VolumeInfo;
-};
-
-export function deriveVolumeProgress(
-  chapters: readonly ChapterRecord[],
-  locale: Locale = "en",
-): VolumeTrackerSummary {
-  const volumeMap = new Map<number, ChapterRecord[]>();
-
-  for (const chapter of chapters) {
-    const vol = getVolumeNumber(chapter.chapter);
-    const list = volumeMap.get(vol) ?? [];
-    list.push(chapter);
-    volumeMap.set(vol, list);
-  }
-
-  const sortedVolumeNumbers = [...volumeMap.keys()].sort((a, b) => a - b);
-  const volumes: VolumeInfo[] = sortedVolumeNumbers.map((vol) => {
-    const volChapters = volumeMap.get(vol)!;
-    const startChapter = Math.min(...volChapters.map((c) => c.chapter));
-    const endChapter = Math.max(...volChapters.map((c) => c.chapter));
-    const publishedCount = volChapters.filter((c) => c.status === "published").length;
-    const inProductionCount = volChapters.filter((c) => c.status !== "unknown").length;
-    const totalChapters = 10;
-    const missingCount = Math.max(0, totalChapters - publishedCount);
-    const isReady = publishedCount >= totalChapters;
-
-    return {
-      volume: vol,
-      label: formatVolumeName(vol, locale),
-      startChapter,
-      endChapter,
-      totalChapters,
-      publishedCount,
-      inProductionCount,
-      missingCount,
-      chapters: volChapters,
-      isReady,
-    };
-  });
-
-  const currentVolume =
-    volumes.find((v) => !v.isReady && v.inProductionCount > 0) ??
-    volumes.find((v) => !v.isReady) ??
-    volumes[volumes.length - 1];
-
-  return {
-    volumes,
-    currentVolume,
-  };
-}
-
