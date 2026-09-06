@@ -69,4 +69,4 @@ See [TRANSLATING.md](TRANSLATING.md) for the translation workflow, placeholder r
 
 ## Security
 
-If you discover a security vulnerability, please refer to our [Security Policy](SECURITY.md) to report it privately.
+If you discover a security vulnerability, please report it privately to the repository maintainers.
