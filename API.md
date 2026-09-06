@@ -26,6 +26,11 @@ and every API representation.
 | `GET /feed.xml` | Atom 1.0 syndication feed (English / default) |
 | `GET /{locale}/feed.xml` | Localized Atom 1.0 syndication feed |
 | `GET /releases.ics` | iCalendar (.ics) subscription for chapter releases |
+| `GET /badge/status.svg` | Embeddable status SVG badge (English / default) |
+| `GET /badge/{locale}/status.svg` | Localized status overview SVG badge |
+| `GET /badge/{locale}/latest.svg` | Last published chapter SVG badge |
+| `GET /badge/{locale}/progress.svg` | Confirmed progress stage SVG badge |
+| `GET /badge/{locale}/next.svg` | Next chapter and stage SVG badge |
 
 Supported locale values are `ar`, `en`, `es`, `fr`, `ja`, `pt`, and `zh`.
 The existing `/status.json` remains available for compatibility.
@@ -157,6 +162,26 @@ HTML pages include `<link rel="alternate" type="application/atom+xml" ...>` in t
 - `GET https://hxhstatus.com/releases.ics`
 
 One-click calendar subscription for HUNTER×HUNTER chapter release dates, driven by `releaseAt` timestamps in `status-data.json`. Imports cleanly into Google Calendar, Apple Calendar, and Outlook.
+
+## Embeddable SVG badges
+
+Embeddable shields.io-style SVG badges are generated statically at build time and served with the standard 5-minute cache with `must-revalidate`. They render with high contrast across light and dark backgrounds.
+
+### Endpoints
+
+| Endpoint | Example |
+| --- | --- |
+| `GET /badge/status.svg` | Overall publication state and latest progress |
+| `GET /badge/{locale}/status.svg` | Localized overview badge (`ar`, `en`, `es`, `fr`, `ja`, `pt`, `zh`) |
+| `GET /badge/{locale}/latest.svg` | Latest officially published chapter |
+| `GET /badge/{locale}/progress.svg` | Confirmed production progress |
+| `GET /badge/{locale}/next.svg` | Next chapter number and its production stage |
+
+### Markdown embed example
+
+```markdown
+[![HxH Status](https://hxhstatus.com/badge/status.svg)](https://hxhstatus.com)
+```
 
 ## Polling and cache use
 

@@ -2,6 +2,7 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 import { PUBLIC_TRANSLATION_LOCALES } from "../automation/contracts.mjs";
+import { buildBadges } from "../automation/badges.mjs";
 import { buildFeedsAndCalendar } from "../automation/feeds.mjs";
 import { validateTogashiFeed } from "../automation/togashi-feed.mjs";
 
@@ -247,6 +248,31 @@ function openApiDocument() {
           },
         },
       },
+      "/badge/{locale}/status.svg": {
+        get: {
+          operationId: "getLocalizedStatusBadge",
+          summary: "Embeddable SVG status badge (shields.io style)",
+          parameters: [localeParameter],
+          responses: {
+            200: {
+              description: "SVG status badge.",
+              content: { "image/svg+xml": { schema: { type: "string" } } },
+            },
+          },
+        },
+      },
+      "/badge/status.svg": {
+        get: {
+          operationId: "getStatusBadge",
+          summary: "Embeddable SVG status badge in English (default)",
+          responses: {
+            200: {
+              description: "SVG status badge.",
+              content: { "image/svg+xml": { schema: { type: "string" } } },
+            },
+          },
+        },
+      },
     },
   };
 }
@@ -301,6 +327,11 @@ const index = apiEnvelope("/api/v1/index.json", {
     feed: `${ORIGIN}/feed.xml`,
     localizedFeedPattern: `${ORIGIN}/{locale}/feed.xml`,
     releasesCalendar: `${ORIGIN}/releases.ics`,
+    badgeStatus: `${ORIGIN}/badge/status.svg`,
+    badgeLocalizedStatusPattern: `${ORIGIN}/badge/{locale}/status.svg`,
+    badgeLatest: `${ORIGIN}/badge/latest.svg`,
+    badgeProgress: `${ORIGIN}/badge/progress.svg`,
+    badgeNext: `${ORIGIN}/badge/next.svg`,
   },
   locales: PUBLIC_TRANSLATION_LOCALES,
   charts: status.charts,
@@ -329,6 +360,12 @@ await Promise.all([
     messagesByLocale,
     locales: PUBLIC_TRANSLATION_LOCALES,
     origin: ORIGIN,
+  }),
+  buildBadges({
+    outDir: outDirectory,
+    publicDir: join(root, "public"),
+    statusData,
+    locales: PUBLIC_TRANSLATION_LOCALES,
   }),
   ...PUBLIC_TRANSLATION_LOCALES.flatMap((locale) => [
     writeJson(
