@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
+  <id>https://hxhstatus.com/ja/feed.xml</id>
+  <title type="text">HxH Status - HUNTER×HUNTER 最新話・制作進捗トラッカー</title>
+  <subtitle type="text">HUNTER×HUNTERの掲載状況と、冨樫義博先生が公表した今後の話数の制作進捗を、出典付きで追跡する非公式サイトです。</subtitle>
+  <updated>2026-09-07T00:00:00.000Z</updated>
+  <link rel="self" href="https://hxhstatus.com/ja/feed.xml" type="application/atom+xml" />
+  <link rel="alternate" href="https://hxhstatus.com/ja" type="text/html" />
+  <author>
+    <name>HxH Status</name>
+    <uri>https://hxhstatus.com</uri>
+  </author>
+  <icon>https://hxhstatus.com/favicon.svg</icon>
+  <logo>https://hxhstatus.com/icon-192.png</logo>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-420-published</id>
+    <title type="text">第420話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-420" />
+    <updated>2026-09-07T00:00:00.000Z</updated>
+    <published>2026-09-07T00:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 41&lt;/p&gt;&lt;p&gt;Release: 2026-09-07T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-420&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:post-2094673907626414299</id>
+    <title type="text">冨樫先生の新しい投稿: No.427、原稿完成。</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2094673907626414299" />
+    <updated>2026-09-01T06:29:11.000Z</updated>
+    <published>2026-09-01T06:29:11.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+      <uri>https://x.com/Un4v5s8bgsVk9Xp</uri>
+    </author>
+    <summary type="text">No.427、原稿完成。</summary>
+    <content type="html">&lt;p&gt;No.427、原稿完成。 https://t.co/MohufGEVuG&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;https://pbs.twimg.com/media/HRHGz-LaUAASmgj.jpg&quot; alt=&quot;Yoshihiro Togashi post image&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2094673907626414299&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-427-delivered</id>
+    <title type="text">第427話：原稿完成</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2094673907626414299" />
+    <updated>2026-09-01T00:00:00.000Z</updated>
+    <published>2026-09-01T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2094673907626414299&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-419-published</id>
+    <title type="text">第419話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-419" />
+    <updated>2026-08-30T15:00:00.000Z</updated>
+    <published>2026-08-30T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 40&lt;/p&gt;&lt;p&gt;Release: 2026-08-31T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-419&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-430-background</id>
+    <title type="text">第430話：背景指定書作成完了</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2093900520406855763" />
+    <updated>2026-08-30T00:00:00.000Z</updated>
+    <published>2026-08-30T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">背景指定書の作成が完了しました。</summary>
+    <content type="html">&lt;p&gt;背景指定書の作成が完了しました。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2093900520406855763&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-429-background</id>
+    <title type="text">第429話：背景指定書作成完了</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2092902182790341023" />
+    <updated>2026-08-27T00:00:00.000Z</updated>
+    <published>2026-08-27T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">背景指定書の作成が完了しました。</summary>
+    <content type="html">&lt;p&gt;背景指定書の作成が完了しました。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2092902182790341023&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-426-delivered</id>
+    <title type="text">第426話：原稿完成</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2092132894814998720" />
+    <updated>2026-08-25T00:00:00.000Z</updated>
+    <published>2026-08-25T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2092132894814998720&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-418-published</id>
+    <title type="text">第418話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-418" />
+    <updated>2026-08-23T15:00:00.000Z</updated>
+    <published>2026-08-23T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 39&lt;/p&gt;&lt;p&gt;Release: 2026-08-24T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-418&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-425-delivered</id>
+    <title type="text">第425話：原稿完成</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2087170463839682713" />
+    <updated>2026-08-11T00:00:00.000Z</updated>
+    <published>2026-08-11T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2087170463839682713&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-417-published</id>
+    <title type="text">第417話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-417" />
+    <updated>2026-08-09T15:00:00.000Z</updated>
+    <published>2026-08-09T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 37/38&lt;/p&gt;&lt;p&gt;Release: 2026-08-10T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-417&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-424-delivered</id>
+    <title type="text">第424話：原稿完成</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2086132321166794760" />
+    <updated>2026-08-08T00:00:00.000Z</updated>
+    <published>2026-08-08T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2086132321166794760&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-433-inking</id>
+    <title type="text">第433話：人物ペン入れ完了</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2084155567363539307" />
+    <updated>2026-08-03T00:00:00.000Z</updated>
+    <published>2026-08-03T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">冨樫先生が人物ペン入れ完了を報告しました。</summary>
+    <content type="html">&lt;p&gt;冨樫先生が人物ペン入れ完了を報告しました。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2084155567363539307&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-416-published</id>
+    <title type="text">第416話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-416" />
+    <updated>2026-08-02T15:00:00.000Z</updated>
+    <published>2026-08-02T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 36&lt;/p&gt;&lt;p&gt;Release: 2026-08-03T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-416&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-415-published</id>
+    <title type="text">第415話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-415" />
+    <updated>2026-07-26T15:00:00.000Z</updated>
+    <published>2026-07-26T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 35&lt;/p&gt;&lt;p&gt;Release: 2026-07-27T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-415&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-414-published</id>
+    <title type="text">第414話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-414" />
+    <updated>2026-07-19T15:00:00.000Z</updated>
+    <published>2026-07-19T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 34&lt;/p&gt;&lt;p&gt;Release: 2026-07-20T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-414&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-413-published</id>
+    <title type="text">第413話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-413" />
+    <updated>2026-07-12T15:00:00.000Z</updated>
+    <published>2026-07-12T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 33&lt;/p&gt;&lt;p&gt;Release: 2026-07-13T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-413&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-432-inking</id>
+    <title type="text">第432話：人物ペン入れ完了</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2075732291931009110" />
+    <updated>2026-07-11T00:00:00.000Z</updated>
+    <published>2026-07-11T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">冨樫先生が人物ペン入れ完了を報告しました。</summary>
+    <content type="html">&lt;p&gt;冨樫先生が人物ペン入れ完了を報告しました。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2075732291931009110&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-423-delivered</id>
+    <title type="text">第423話：原稿完成</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2074538142506549407" />
+    <updated>2026-07-07T00:00:00.000Z</updated>
+    <published>2026-07-07T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2074538142506549407&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-412-published</id>
+    <title type="text">第412話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-412" />
+    <updated>2026-07-05T15:00:00.000Z</updated>
+    <published>2026-07-05T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 32&lt;/p&gt;&lt;p&gt;Release: 2026-07-06T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-412&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-428-background</id>
+    <title type="text">第428話：背景指定書作成完了</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730" />
+    <updated>2026-07-03T00:00:00.000Z</updated>
+    <published>2026-07-03T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">背景指定書の作成が完了しました。</summary>
+    <content type="html">&lt;p&gt;背景指定書の作成が完了しました。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-422-delivered</id>
+    <title type="text">第422話：原稿完成</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2072287279197126773" />
+    <updated>2026-07-01T00:00:00.000Z</updated>
+    <published>2026-07-01T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2072287279197126773&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-411-published</id>
+    <title type="text">第411話：掲載開始</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja#chapter-411" />
+    <updated>2026-06-28T15:00:00.000Z</updated>
+    <published>2026-06-28T15:00:00.000Z</published>
+    <author>
+      <name>Weekly Shonen Jump</name>
+    </author>
+    <summary type="text">最新話が公式に掲載されました。</summary>
+    <content type="html">&lt;p&gt;最新話が公式に掲載されました。&lt;/p&gt;&lt;p&gt;Weekly Shonen Jump Issue 31&lt;/p&gt;&lt;p&gt;Release: 2026-06-29T00:00:00+09:00&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja#chapter-411&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-431-inking</id>
+    <title type="text">第431話：人物ペン入れ完了</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2066167513214505229" />
+    <updated>2026-06-14T00:00:00.000Z</updated>
+    <published>2026-06-14T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">冨樫先生が人物ペン入れ完了を報告しました。</summary>
+    <content type="html">&lt;p&gt;冨樫先生が人物ペン入れ完了を報告しました。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2066167513214505229&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-421-delivered</id>
+    <title type="text">第421話：原稿完成</title>
+    <link rel="alternate" href="https://x.com/Un4v5s8bgsVk9Xp/status/2059299316800569524" />
+    <updated>2026-05-26T00:00:00.000Z</updated>
+    <published>2026-05-26T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2059299316800569524&quot;&gt;Source / Details&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+</feed>

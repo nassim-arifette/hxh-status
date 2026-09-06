@@ -57,9 +57,11 @@ for (const locale of configuredLocales) {
     report("Invalid locale settings for " + locale + ".");
   }
 
+  const specificRoute = join(root, "app", locale, "page.tsx");
+  const dynamicRoute = join(root, "app", "[locale]", "page.tsx");
   const route = locale === referenceLocale
     ? join(root, "app", "page.tsx")
-    : join(root, "app", locale, "page.tsx");
+    : (await access(specificRoute).then(() => specificRoute, () => dynamicRoute));
   try {
     await access(route);
   } catch {

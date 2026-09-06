@@ -77,7 +77,16 @@
     "eyebrow": "حرب الخلافة في كاكين",
     "title": "متابعة الإنتاج",
     "chapterStatusAria": "حالة إنتاج الفصول",
-    "legendAria": "دليل الحالات"
+    "legendAria": "دليل الحالات",
+    "viewChapters": "الفصول",
+    "viewVolumes": "المجلدات",
+    "viewSwitcherAria": "اختر طريقة العرض",
+    "volumeTitle": "{volume} (الفصول {start}–{end})",
+    "volumePublished": "تم نشر {count}/{total}",
+    "volumeMissing": "متبقي {count} لصدور المجلد",
+    "volumeInProduction": "{count}/{total} قيد الإنتاج",
+    "volumeReady": "جاهز لإصدار المجلد",
+    "currentVolumeBanner": "المجلد القادم للإصدار: {volume} · متبقي {count} فصول"
   },
   "latestUpdate": {
     "translatedByGemini": "مترجم من اليابانية بواسطة Gemini",
