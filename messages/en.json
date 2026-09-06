@@ -77,7 +77,16 @@
     "eyebrow": "Kakin Succession War",
     "title": "Production tracker",
     "chapterStatusAria": "Chapter production status",
-    "legendAria": "Status legend"
+    "legendAria": "Status legend",
+    "viewChapters": "Chapters",
+    "viewVolumes": "Volumes",
+    "viewSwitcherAria": "Select tracker view",
+    "volumeTitle": "{volume} (Ch. {start}–{end})",
+    "volumePublished": "{count}/{total} published",
+    "volumeMissing": "{count} missing for volume release",
+    "volumeInProduction": "{count}/{total} in production",
+    "volumeReady": "Ready for volume release",
+    "currentVolumeBanner": "Next volume to release: {volume} · {count} chapters needed"
   },
   "latestUpdate": {
     "translatedByGemini": "Translated from Japanese by Gemini",
