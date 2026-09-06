@@ -1,8 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { trackerSummary } from "./milestones.mjs";
-
-const DEFAULT_ORIGIN = "https://hxhstatus.com";
 
 function escapeXml(unsafe) {
   if (typeof unsafe !== "string") return "";

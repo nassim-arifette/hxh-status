@@ -77,7 +77,16 @@
     "eyebrow": "Guerra de Sucessão de Kakin",
     "title": "Acompanhamento da produção",
     "chapterStatusAria": "Status de produção dos capítulos",
-    "legendAria": "Legenda dos status"
+    "legendAria": "Legenda dos status",
+    "viewChapters": "Capítulos",
+    "viewVolumes": "Volumes",
+    "viewSwitcherAria": "Selecionar visualização",
+    "volumeTitle": "{volume} (cap. {start}–{end})",
+    "volumePublished": "{count}/{total} publicados",
+    "volumeMissing": "{count} restantes para lançamento do volume",
+    "volumeInProduction": "{count}/{total} em produção",
+    "volumeReady": "Pronto para lançamento em volume",
+    "currentVolumeBanner": "Próximo volume a lançar: {volume} · {count} capítulos necessários"
   },
   "latestUpdate": {
     "translatedByGemini": "Traduzido do japonês pelo Gemini",
