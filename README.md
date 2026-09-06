@@ -1,6 +1,7 @@
 # HxH Status
 
 [![CI](https://github.com/nassim-arifette/hxh-status/actions/workflows/ci.yml/badge.svg)](https://github.com/nassim-arifette/hxh-status/actions/workflows/ci.yml)
+[![Status](https://hxhstatus.com/badge/status.svg)](https://hxhstatus.com)
 
 **[hxhstatus.com](https://hxhstatus.com)**
 
@@ -100,6 +101,27 @@ image URLs for each language, also described in OpenAPI.
 See [API.md](API.md) for endpoints, response examples, translation fallbacks,
 and the five-minute polling contract for bots. `/status.json` remains available
 for existing integrations, while new consumers should use `/api/v1/status.json`.
+
+## Embed status badge
+
+Embed an always-up-to-date status badge in your repository README, website, or forum:
+
+[![Status](https://hxhstatus.com/badge/status.svg)](https://hxhstatus.com)
+
+```markdown
+[![HxH Status](https://hxhstatus.com/badge/status.svg)](https://hxhstatus.com)
+```
+
+### Available variants
+
+| Variant | URL | Markdown snippet |
+| --- | --- | --- |
+| **Status overview** | `https://hxhstatus.com/badge/status.svg` | `[![HxH Status](https://hxhstatus.com/badge/status.svg)](https://hxhstatus.com)` |
+| **Latest published** | `https://hxhstatus.com/badge/latest.svg` | `[![HxH Latest](https://hxhstatus.com/badge/latest.svg)](https://hxhstatus.com)` |
+| **Confirmed progress** | `https://hxhstatus.com/badge/progress.svg` | `[![HxH Progress](https://hxhstatus.com/badge/progress.svg)](https://hxhstatus.com)` |
+| **Next chapter** | `https://hxhstatus.com/badge/next.svg` | `[![HxH Next](https://hxhstatus.com/badge/next.svg)](https://hxhstatus.com)` |
+
+For localized badges, replace `/badge/` with `/badge/{locale}/` (`ar`, `en`, `es`, `fr`, `ja`, `pt`, `zh`).
 
 ## Deploy
 

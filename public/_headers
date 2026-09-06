@@ -29,11 +29,41 @@
   Cross-Origin-Resource-Policy: cross-origin
   X-Content-Type-Options: nosniff
 
+/feed.xml
+  Content-Type: application/atom+xml; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=300, stale-while-revalidate=3600
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/*/feed.xml
+  Content-Type: application/atom+xml; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=300, stale-while-revalidate=3600
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/releases.ics
+  Content-Type: text/calendar; charset=utf-8
+  Cache-Control: public, max-age=300, s-maxage=300, stale-while-revalidate=3600
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
 # The filename is stable but the image is regenerated on every status change,
 # so `immutable` served a chart that could never refresh. Revalidation is cheap
 # against the ETag, and consumers can pin a version with ?r=<revision>.
 /share/*.png
   Content-Type: image/png
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+
+/badge/*.svg
+  Content-Type: image/svg+xml; charset=utf-8
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+
+/badge/*/*.svg
+  Content-Type: image/svg+xml; charset=utf-8
   Cache-Control: public, max-age=300, must-revalidate
   Access-Control-Allow-Origin: *
   Cross-Origin-Resource-Policy: cross-origin

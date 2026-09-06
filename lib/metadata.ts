@@ -36,6 +36,14 @@ export function createLocaleMetadata(
     alternates: {
       canonical: url,
       languages: published ? languageAlternates : undefined,
+      types: {
+        "application/atom+xml": [
+          {
+            url: locale === "en" ? "/feed.xml" : `/${locale}/feed.xml`,
+            title: `${messages.metadata.siteName} (${locale.toUpperCase()})`,
+          },
+        ],
+      },
     },
     openGraph: {
       title: messages.metadata.title,
