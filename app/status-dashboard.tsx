@@ -187,7 +187,11 @@ export function PublicationHistorySection({
         </div>
         <span className="history-key-count">{messages.history.countHint}</span>
       </div>
-      <PublicationHistory locale={locale} messages={messages.history} />
+      <PublicationHistory
+        capture={capture}
+        locale={locale}
+        messages={messages.history}
+      />
     </section>
   );
 }

@@ -32,8 +32,6 @@ import {
 import {
   getChapterTitle,
   getVolumeLabel,
-  deriveVolumeProgress,
-  type VolumeInfo,
   CHAPTER_TITLE_LABEL,
   VOLUME_LABEL,
 } from "./data/chapter-titles";
@@ -91,7 +89,6 @@ function ChapterGrid({
   selectedChapter,
   statusMeta,
   onSelect,
-  ariaLabel,
 }: {
   chapters: readonly ChapterRecord[];
   locale?: Locale;
@@ -99,12 +96,11 @@ function ChapterGrid({
   selectedChapter: number | null;
   statusMeta: StatusMap;
   onSelect: (chapter: ChapterRecord, trigger: HTMLButtonElement) => void;
-  ariaLabel?: string;
 }) {
   return (
     <ul
       className="chapter-grid"
-      aria-label={ariaLabel ?? messages.production.chapterStatusAria}
+      aria-label={messages.production.chapterStatusAria}
     >
       {chapters.map((chapter) => {
         const meta = statusMeta[chapter.status];
@@ -363,95 +359,6 @@ function ChapterDetails({
   );
 }
 
-function VolumeList({
-  volumes,
-  locale = "en",
-  messages,
-  selectedChapter,
-  statusMeta,
-  onSelect,
-}: {
-  volumes: readonly VolumeInfo[];
-  locale?: Locale;
-  messages: Messages;
-  selectedChapter: number | null;
-  statusMeta: StatusMap;
-  onSelect: (chapter: ChapterRecord, trigger: HTMLButtonElement) => void;
-}) {
-  return (
-    <div className="volume-list" aria-label={messages.production.viewVolumes}>
-      {volumes.map((vol) => {
-        const title = formatMessage(messages.production.volumeTitle, {
-          volume: vol.label,
-          start: vol.startChapter,
-          end: vol.endChapter,
-        });
-
-        return (
-          <section key={vol.volume} className="volume-card" aria-label={title}>
-            <div className="volume-header">
-              <div className="volume-info">
-                <h3 className="volume-title">{title}</h3>
-                <div className="volume-subtext">
-                  {vol.isReady ? (
-                    <span className="volume-badge volume-badge-ready">
-                      {messages.production.volumeReady}
-                    </span>
-                  ) : (
-                    <span className="volume-badge volume-badge-missing">
-                      {formatMessage(messages.production.volumeMissing, {
-                        count: vol.missingCount,
-                      })}
-                    </span>
-                  )}
-                  <span className="volume-count">
-                    {formatMessage(messages.production.volumePublished, {
-                      count: vol.publishedCount,
-                      total: vol.totalChapters,
-                    })}
-                  </span>
-                  {vol.inProductionCount > vol.publishedCount ? (
-                    <span className="volume-count">
-                      •{" "}
-                      {formatMessage(messages.production.volumeInProduction, {
-                        count: vol.inProductionCount,
-                        total: vol.totalChapters,
-                      })}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              <div className="volume-progress-track" aria-hidden="true">
-                <div
-                  className="volume-progress-fill is-published"
-                  style={{
-                    width: `${(vol.publishedCount / vol.totalChapters) * 100}%`,
-                  }}
-                />
-                <div
-                  className="volume-progress-fill is-in-production"
-                  style={{
-                    width: `${(Math.max(0, vol.inProductionCount - vol.publishedCount) / vol.totalChapters) * 100}%`,
-                  }}
-                />
-              </div>
-            </div>
-            <ChapterGrid
-              ariaLabel={title}
-              chapters={vol.chapters}
-              locale={locale}
-              messages={messages}
-              selectedChapter={selectedChapter}
-              statusMeta={statusMeta}
-              onSelect={onSelect}
-            />
-          </section>
-        );
-      })}
-    </div>
-  );
-}
-
 export default function ChapterTracker({
   chapters,
   lastUpdated,
@@ -466,93 +373,22 @@ export default function ChapterTracker({
   const [selectedChapter, setSelectedChapter] = useState<ChapterRecord | null>(
     null,
   );
-  const [viewMode, setViewMode] = useState<"chapters" | "volumes">("chapters");
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const statusMeta = getStatusMeta(messages.statuses);
-  const volumeSummary = deriveVolumeProgress(chapters, locale);
-
-  const handleSelectChapter = (
-    chapter: ChapterRecord,
-    trigger: HTMLButtonElement,
-  ) => {
-    openerRef.current = trigger;
-    setSelectedChapter(chapter);
-  };
 
   return (
     <>
-      <div className="tracker-view-controls">
-        <div className="tracker-current-volume">
-          <span className="tracker-current-volume-dot" aria-hidden="true" />
-          <span className="tracker-current-volume-text">
-            {formatMessage(messages.production.currentVolumeBanner, {
-              volume: volumeSummary.currentVolume.label,
-              count: volumeSummary.currentVolume.missingCount,
-            })}
-          </span>
-        </div>
-        <div
-          className="tracker-view-switch"
-          role="tablist"
-          aria-label={messages.production.viewSwitcherAria}
-        >
-          <button
-            type="button"
-            role="tab"
-            id="tracker-tab-chapters"
-            aria-selected={viewMode === "chapters"}
-            aria-controls="tracker-chapters-view"
-            className={`tracker-view-btn ${viewMode === "chapters" ? "is-active" : ""}`}
-            onClick={() => setViewMode("chapters")}
-          >
-            {messages.production.viewChapters}
-          </button>
-          <button
-            type="button"
-            role="tab"
-            id="tracker-tab-volumes"
-            aria-selected={viewMode === "volumes"}
-            aria-controls="tracker-volumes-view"
-            className={`tracker-view-btn ${viewMode === "volumes" ? "is-active" : ""}`}
-            onClick={() => setViewMode("volumes")}
-          >
-            {messages.production.viewVolumes}
-          </button>
-        </div>
-      </div>
-
-      {viewMode === "chapters" ? (
-        <div
-          id="tracker-chapters-view"
-          role="tabpanel"
-          aria-labelledby="tracker-tab-chapters"
-        >
-          <ChapterGrid
-            chapters={chapters}
-            locale={locale}
-            messages={messages}
-            selectedChapter={selectedChapter?.chapter ?? null}
-            statusMeta={statusMeta}
-            onSelect={handleSelectChapter}
-          />
-        </div>
-      ) : (
-        <div
-          id="tracker-volumes-view"
-          role="tabpanel"
-          aria-labelledby="tracker-tab-volumes"
-        >
-          <VolumeList
-            volumes={volumeSummary.volumes}
-            locale={locale}
-            messages={messages}
-            selectedChapter={selectedChapter?.chapter ?? null}
-            statusMeta={statusMeta}
-            onSelect={handleSelectChapter}
-          />
-        </div>
-      )}
-
+      <ChapterGrid
+        chapters={chapters}
+        locale={locale}
+        messages={messages}
+        selectedChapter={selectedChapter?.chapter ?? null}
+        statusMeta={statusMeta}
+        onSelect={(chapter, trigger) => {
+          openerRef.current = trigger;
+          setSelectedChapter(chapter);
+        }}
+      />
       <ChapterDetails
         chapter={selectedChapter}
         lastUpdated={lastUpdated}

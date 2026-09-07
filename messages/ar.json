@@ -77,16 +77,7 @@
     "eyebrow": "حرب الخلافة في كاكين",
     "title": "متابعة الإنتاج",
     "chapterStatusAria": "حالة إنتاج الفصول",
-    "legendAria": "دليل الحالات",
-    "viewChapters": "الفصول",
-    "viewVolumes": "المجلدات",
-    "viewSwitcherAria": "اختر طريقة العرض",
-    "volumeTitle": "{volume} (الفصول {start}–{end})",
-    "volumePublished": "تم نشر {count}/{total}",
-    "volumeMissing": "متبقي {count} لصدور المجلد",
-    "volumeInProduction": "{count}/{total} قيد الإنتاج",
-    "volumeReady": "جاهز لإصدار المجلد",
-    "currentVolumeBanner": "المجلد القادم للإصدار: {volume} · متبقي {count} فصول"
+    "legendAria": "دليل الحالات"
   },
   "latestUpdate": {
     "translatedByGemini": "مترجم من اليابانية بواسطة Gemini",
@@ -111,7 +102,17 @@
     "chapterCountAria": "{count} فصل",
     "chapterPublished": "فصل منشور",
     "noChapter": "لا يوجد فصل",
-    "countHint": "العمود الأيمن: الفصول / السنة"
+    "countHint": "العمود الأيمن: الفصول / السنة",
+    "arcComparison": "مقارنة الفصول القصصية",
+    "arcComparisonSubtitle": "مقارنة حرب الخلافة بالفصول القصصية السابقة",
+    "currentArcBadge": "الفصل الحالي",
+    "metricChapters": "الفصول",
+    "metricDuration": "المدة",
+    "rankChapters": "المركز {rank} في الطول · {count} فصل",
+    "rankDuration": "المركز {rank} في المدة الزمنية · {duration}",
+    "durationYears": "{years} سنة",
+    "durationMonths": "{months} شهر",
+    "arcChaptersCount": "{count} فصل"
   },
   "chapter": {
     "title": "الفصل",

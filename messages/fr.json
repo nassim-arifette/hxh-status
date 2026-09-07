@@ -77,16 +77,7 @@
     "eyebrow": "Guerre de succession de Kakin",
     "title": "Suivi de l'avancement",
     "chapterStatusAria": "Avancement de production des chapitres",
-    "legendAria": "Légende des statuts",
-    "viewChapters": "Chapitres",
-    "viewVolumes": "Tomes",
-    "viewSwitcherAria": "Choisir la vue du suivi",
-    "volumeTitle": "{volume} (Ch. {start}–{end})",
-    "volumePublished": "{count}/{total} publiés",
-    "volumeMissing": "{count} manquants pour parution en tome",
-    "volumeInProduction": "{count}/{total} en production",
-    "volumeReady": "Prêt pour parution en tome",
-    "currentVolumeBanner": "Prochain tome à paraître : {volume} · {count} chapitres manquants"
+    "legendAria": "Légende des statuts"
   },
   "latestUpdate": {
     "translatedByGemini": "Traduit du japonais par Gemini",
@@ -111,7 +102,17 @@
     "chapterCountAria": "{count} chapitres",
     "chapterPublished": "Chapitre publié",
     "noChapter": "Aucun chapitre",
-    "countHint": "colonne de droite : chapitres / année"
+    "countHint": "colonne de droite : chapitres / année",
+    "arcComparison": "Comparaison des arcs",
+    "arcComparisonSubtitle": "La Guerre de succession comparée aux arcs précédents",
+    "currentArcBadge": "Arc en cours",
+    "metricChapters": "Chapitres",
+    "metricDuration": "Durée",
+    "rankChapters": "{rank}e arc le plus long · {count} chapitres",
+    "rankDuration": "{rank}e par durée calendaire · {duration}",
+    "durationYears": "{years} ans",
+    "durationMonths": "{months} mois",
+    "arcChaptersCount": "{count} chap."
   },
   "chapter": {
     "title": "Chapitre",
