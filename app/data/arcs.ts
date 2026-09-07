@@ -227,3 +227,195 @@ export function getArcName(arcId: string | undefined, locale: Locale): string | 
   return def?.name[locale] ?? def?.name.en;
 }
 
+export const PRESENT_LABEL: Record<Locale, string> = {
+  en: "Present",
+  fr: "Présent",
+  ja: "現在",
+  es: "Presente",
+  pt: "Presente",
+  zh: "至今",
+  ar: "الآن",
+};
+
+export type PublicationIssueInput = {
+  year: number;
+  number: number;
+  released?: boolean;
+  chapter?: number | string;
+  date?: string;
+  arc?: string;
+};
+
+export type ArcStats = {
+  id: ArcId;
+  name: Record<Locale, string>;
+  color: string;
+  badgeBg: string;
+  years: string;
+  startYear: number;
+  startIssue: number;
+  endYear: number;
+  endIssue: number;
+  chapterCount: number;
+  startChapter?: number;
+  endChapter?: number;
+  spanIssues: number;
+  spanYears: number;
+  isCurrent: boolean;
+  chapterRank: number;
+  durationRank: number;
+};
+
+export type ArcComparisonSummary = {
+  arcs: ArcStats[];
+  currentArc: ArcStats;
+  totalArcs: number;
+  maxChapters: number;
+  maxSpanIssues: number;
+};
+
+export function formatArcYears(arc: ArcStats, locale: Locale = "en"): string {
+  if (arc.isCurrent) {
+    return `${arc.startYear}–${PRESENT_LABEL[locale] ?? PRESENT_LABEL.en}`;
+  }
+  if (arc.startYear === arc.endYear) {
+    return String(arc.startYear);
+  }
+  return `${arc.startYear}–${arc.endYear}`;
+}
+
+export function deriveArcStats(
+  issues: readonly PublicationIssueInput[],
+): ArcComparisonSummary {
+  const chronological = [...issues].sort((a, b) =>
+    a.year !== b.year ? a.year - b.year : a.number - b.number,
+  );
+
+  const arcStatsMap = new Map<
+    string,
+    {
+      firstIdx: number;
+      lastIdx: number;
+      firstIssue: PublicationIssueInput;
+      lastIssue: PublicationIssueInput;
+      matchingIssues: PublicationIssueInput[];
+    }
+  >();
+
+  chronological.forEach((issue, idx) => {
+    if (issue.released && issue.arc) {
+      if (!arcStatsMap.has(issue.arc)) {
+        arcStatsMap.set(issue.arc, {
+          firstIdx: idx,
+          lastIdx: idx,
+          firstIssue: issue,
+          lastIssue: issue,
+          matchingIssues: [],
+        });
+      }
+      const entry = arcStatsMap.get(issue.arc)!;
+      entry.lastIdx = idx;
+      entry.lastIssue = issue;
+      entry.matchingIssues.push(issue);
+    }
+  });
+
+  const rawStats: ArcStats[] = ARCS.map((arcDef) => {
+    const data = arcStatsMap.get(arcDef.id);
+    if (!data) {
+      return {
+        id: arcDef.id,
+        name: arcDef.name,
+        color: arcDef.color,
+        badgeBg: arcDef.badgeBg,
+        years: arcDef.years,
+        startYear: 0,
+        startIssue: 0,
+        endYear: 0,
+        endIssue: 0,
+        chapterCount: 0,
+        spanIssues: 0,
+        spanYears: 0,
+        isCurrent: arcDef.id === "succ-war",
+        chapterRank: 0,
+        durationRank: 0,
+      };
+    }
+
+    const spanIssues = data.lastIdx - data.firstIdx + 1;
+    const chapterCount = data.matchingIssues.length;
+    const numChapters = data.matchingIssues
+      .map((i) =>
+        typeof i.chapter === "number"
+          ? i.chapter
+          : parseInt(String(i.chapter), 10),
+      )
+      .filter((c) => !isNaN(c) && c > 0);
+    const startChapter =
+      numChapters.length ? Math.min(...numChapters) : undefined;
+    const endChapter =
+      numChapters.length ? Math.max(...numChapters) : undefined;
+
+    return {
+      id: arcDef.id,
+      name: arcDef.name,
+      color: arcDef.color,
+      badgeBg: arcDef.badgeBg,
+      years: arcDef.years,
+      startYear: data.firstIssue.year,
+      startIssue: data.firstIssue.number,
+      endYear: data.lastIssue.year,
+      endIssue: data.lastIssue.number,
+      chapterCount,
+      startChapter,
+      endChapter,
+      spanIssues,
+      spanYears: Number((spanIssues / 48).toFixed(1)),
+      isCurrent: arcDef.id === "succ-war",
+      chapterRank: 0,
+      durationRank: 0,
+    };
+  });
+
+  // Calculate chapter ranks (1 is longest)
+  const byChapters = [...rawStats].sort(
+    (a, b) => b.chapterCount - a.chapterCount,
+  );
+  byChapters.forEach((s, idx) => {
+    s.chapterRank = idx + 1;
+  });
+
+  // Calculate duration ranks (1 is longest running)
+  const byDuration = [...rawStats].sort((a, b) => b.spanIssues - a.spanIssues);
+  byDuration.forEach((s, idx) => {
+    s.durationRank = idx + 1;
+  });
+
+  const currentArc = rawStats.find((s) => s.isCurrent) ?? rawStats[0];
+  const maxChapters = Math.max(...rawStats.map((s) => s.chapterCount), 1);
+  const maxSpanIssues = Math.max(...rawStats.map((s) => s.spanIssues), 1);
+
+  return {
+    arcs: rawStats,
+    currentArc,
+    totalArcs: rawStats.length,
+    maxChapters,
+    maxSpanIssues,
+  };
+}
+
+export function formatArcDuration(
+  arc: ArcStats,
+  messages: {
+    durationYears: string;
+    durationMonths: string;
+  },
+): string {
+  if (arc.spanYears >= 1) {
+    return messages.durationYears.replace("{years}", String(arc.spanYears));
+  }
+  const months = Math.max(1, Math.round(arc.spanIssues / 4.3));
+  return messages.durationMonths.replace("{months}", String(months));
+}
+
+

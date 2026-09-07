@@ -55,3 +55,12 @@ next-env.d.ts
 /scripts/fetch-chapters.mjs
 /scripts/build-titles.mjs
 
+# issue generator scripts
+/create-issues.*
+/create_issues.*
+/create*issue*
+
+# security policy
+/SECURITY.md
+
+

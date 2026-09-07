@@ -77,16 +77,7 @@
     "eyebrow": "Kakin Succession War",
     "title": "Production tracker",
     "chapterStatusAria": "Chapter production status",
-    "legendAria": "Status legend",
-    "viewChapters": "Chapters",
-    "viewVolumes": "Volumes",
-    "viewSwitcherAria": "Select tracker view",
-    "volumeTitle": "{volume} (Ch. {start}–{end})",
-    "volumePublished": "{count}/{total} published",
-    "volumeMissing": "{count} missing for volume release",
-    "volumeInProduction": "{count}/{total} in production",
-    "volumeReady": "Ready for volume release",
-    "currentVolumeBanner": "Next volume to release: {volume} · {count} chapters needed"
+    "legendAria": "Status legend"
   },
   "latestUpdate": {
     "translatedByGemini": "Translated from Japanese by Gemini",
@@ -111,7 +102,17 @@
     "chapterCountAria": "{count} chapters",
     "chapterPublished": "Chapter published",
     "noChapter": "No chapter",
-    "countHint": "right column: chapters / year"
+    "countHint": "right column: chapters / year",
+    "arcComparison": "Story Arcs Comparison",
+    "arcComparisonSubtitle": "The Succession War compared to past arcs",
+    "currentArcBadge": "Current arc",
+    "metricChapters": "Chapters",
+    "metricDuration": "Duration",
+    "rankChapters": "#{rank} longest arc · {count} chapters",
+    "rankDuration": "#{rank} by calendar duration · {duration}",
+    "durationYears": "{years} yrs",
+    "durationMonths": "{months} mos",
+    "arcChaptersCount": "{count} ch."
   },
   "chapter": {
     "title": "Chapter",

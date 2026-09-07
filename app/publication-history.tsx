@@ -1,8 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
-import { getArcDefinition } from "./data/arcs";
+import {
+  getArcDefinition,
+  deriveArcStats,
+  formatArcYears,
+  formatArcDuration,
+} from "./data/arcs";
 import { getChapterTitle } from "./data/chapter-titles";
 import historyData from "./data/publication-history.json";
 
@@ -69,10 +74,173 @@ const publicationByYear = (() => {
     }));
 })();
 
-export function PublicationHistory({
+function ArcComparison({
+  issues,
   locale = "en",
   messages,
 }: {
+  issues: readonly PublicationIssue[];
+  locale?: Locale;
+  messages: Messages["history"];
+}) {
+  const [metric, setMetric] = useState<"chapters" | "duration">("chapters");
+  const summary = useMemo(() => deriveArcStats(issues), [issues]);
+
+  const sortedArcs = useMemo(() => {
+    return [...summary.arcs].sort((a, b) => {
+      if (metric === "chapters") {
+        return b.chapterCount - a.chapterCount;
+      }
+      return b.spanIssues - a.spanIssues;
+    });
+  }, [summary.arcs, metric]);
+
+  const currentArc = summary.currentArc;
+
+  return (
+    <section
+      className="arc-comparison"
+      aria-labelledby="arc-comparison-heading"
+    >
+      <div className="arc-comparison-header">
+        <div>
+          <h3 id="arc-comparison-heading" className="arc-comparison-title">
+            {messages.arcComparison}
+          </h3>
+          <p className="arc-comparison-subtitle">
+            {messages.arcComparisonSubtitle}
+          </p>
+        </div>
+
+        <div
+          className="arc-comparison-switch"
+          role="tablist"
+          aria-label={messages.arcComparison}
+        >
+          <button
+            type="button"
+            role="tab"
+            id="tab-metric-chapters"
+            aria-selected={metric === "chapters"}
+            aria-controls="arc-comparison-list"
+            className={`arc-comparison-tab ${metric === "chapters" ? "is-active" : ""}`}
+            onClick={() => setMetric("chapters")}
+          >
+            {messages.metricChapters}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="tab-metric-duration"
+            aria-selected={metric === "duration"}
+            aria-controls="arc-comparison-list"
+            className={`arc-comparison-tab ${metric === "duration" ? "is-active" : ""}`}
+            onClick={() => setMetric("duration")}
+          >
+            {messages.metricDuration}
+          </button>
+        </div>
+      </div>
+
+      <div className="arc-current-banner">
+        <div className="arc-current-header">
+          <div className="arc-current-name-wrapper">
+            <span className="arc-badge-current">{messages.currentArcBadge}</span>
+            <strong className="arc-current-name">
+              {currentArc.name[locale] ?? currentArc.name.en}
+            </strong>
+          </div>
+          <span className="arc-current-span">
+            {currentArc.startChapter && currentArc.endChapter
+              ? `Ch. ${currentArc.startChapter}–${currentArc.endChapter} · `
+              : ""}
+            {formatArcYears(currentArc, locale)}
+          </span>
+        </div>
+
+        <div className="arc-current-stats">
+          <div className="arc-current-stat-item">
+            <span className="arc-current-stat-pill">
+              {formatMessage(messages.rankChapters, {
+                rank: currentArc.chapterRank,
+                count: currentArc.chapterCount,
+              })}
+            </span>
+          </div>
+          <div className="arc-current-stat-item">
+            <span className="arc-current-stat-pill">
+              {formatMessage(messages.rankDuration, {
+                rank: currentArc.durationRank,
+                duration: formatArcDuration(currentArc, messages),
+              })}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div id="arc-comparison-list" className="arc-comparison-list" role="list">
+        {sortedArcs.map((arc) => {
+          const arcName = arc.name[locale] ?? arc.name.en;
+          const yearsText = formatArcYears(arc, locale);
+          const percent =
+            metric === "chapters"
+              ? (arc.chapterCount / summary.maxChapters) * 100
+              : (arc.spanIssues / summary.maxSpanIssues) * 100;
+          const statText =
+            metric === "chapters"
+              ? formatMessage(messages.arcChaptersCount, {
+                  count: arc.chapterCount,
+                })
+              : formatArcDuration(arc, messages);
+          const rank = metric === "chapters" ? arc.chapterRank : arc.durationRank;
+
+          return (
+            <div
+              key={arc.id}
+              className={`arc-row ${arc.isCurrent ? "is-current" : ""}`}
+              role="listitem"
+            >
+              <div className="arc-row-label">
+                <span className="arc-rank">#{rank}</span>
+                <span
+                  className="arc-indicator"
+                  style={{ backgroundColor: arc.color }}
+                  aria-hidden="true"
+                />
+                <span className="arc-name">{arcName}</span>
+                {arc.isCurrent ? (
+                  <span className="arc-mini-pill">{messages.currentArcBadge}</span>
+                ) : null}
+              </div>
+
+              <div className="arc-bar-track" aria-hidden="true">
+                <div
+                  className="arc-bar-fill"
+                  style={{
+                    width: `${percent}%`,
+                    backgroundColor: arc.color,
+                  }}
+                />
+              </div>
+
+              <div className="arc-row-stats">
+                <span className="arc-stat-value">{statText}</span>
+                <span className="arc-years">{yearsText}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+export function PublicationHistory({
+  capture = false,
+  locale = "en",
+  messages,
+}: {
+  capture?: boolean;
   locale?: Locale;
   messages: Messages["history"];
 }) {
@@ -309,6 +477,14 @@ export function PublicationHistory({
           )}
         </div>
       </div>
+
+      {!capture && (
+        <ArcComparison
+          issues={issues}
+          locale={locale}
+          messages={messages}
+        />
+      )}
     </div>
   );
 }
