@@ -57,18 +57,22 @@ const cspLine = original
   .find((line) => line.trim().startsWith("Content-Security-Policy:"));
 if (!cspLine) throw new Error("public/_headers has no Content-Security-Policy.");
 
-const basePolicy = cspLine.slice(cspLine.indexOf(":") + 1).trim();
-if (basePolicy.includes("'unsafe-inline'") && /script-src[^;]*'unsafe-inline'/.test(basePolicy)) {
+const fallbackPolicy = cspLine.slice(cspLine.indexOf(":") + 1).trim();
+if (!/script-src[^;]*'unsafe-inline'/.test(fallbackPolicy)) {
   throw new Error(
-    "script-src still allows 'unsafe-inline'; remove it from public/_headers so the hashes are the only way in.",
+    "The wildcard CSP must allow inline scripts so it cannot veto the stricter per-page hash policy.",
   );
 }
-if (!/script-src\s+'self'/.test(basePolicy)) {
+const strictPolicy = fallbackPolicy.replace(
+  /(script-src[^;]*)\s+'unsafe-inline'/,
+  "$1",
+);
+if (!/script-src\s+'self'/.test(strictPolicy)) {
   throw new Error("Cannot find \"script-src 'self'\" to extend with hashes.");
 }
 
 function policyWith(hashes) {
-  return basePolicy.replace(
+  return strictPolicy.replace(
     /script-src\s+'self'/,
     `script-src 'self' ${hashes.join(" ")}`,
   );
@@ -92,12 +96,11 @@ for await (const path of htmlFiles(outDirectory)) {
 
 pages.sort((a, b) => a.route.localeCompare(b.route));
 
-// The 404 page answers any unmatched path, so /* has to allow its scripts.
-const fallbackPolicy = policyWith(fallbackHashes);
-let updated = original.replace(
-  cspLine,
-  cspLine.slice(0, cspLine.indexOf(":") + 1) + " " + fallbackPolicy,
-);
+// Cloudflare applies both `/*` and the matching route block. The wildcard must
+// not veto the exact-route hashes, so it deliberately permits inline scripts;
+// the stricter policy below removes that permission and names only this page's
+// hashes. CSP intersection means the exact policy wins on every known page.
+let updated = original;
 
 const blocks = pages.map(({ route, hashes }) => {
   const policy = policyWith(hashes);

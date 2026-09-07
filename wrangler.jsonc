@@ -45,9 +45,9 @@
   // handles the push API and delegates unmatched HTTP requests back to ASSETS.
   "assets": {
     "directory": "./out",
-    // Only the root is negotiated for language; everything else is served
-    // straight from assets without waking the Worker.
-    "run_worker_first": ["/"],
+    // The Worker negotiates the root locale and owns the push API. Static
+    // pages/assets still bypass it, which keeps the fast asset path intact.
+    "run_worker_first": ["/", "/api/push/*"],
     "binding": "ASSETS",
     "not_found_handling": "404-page"
   }
