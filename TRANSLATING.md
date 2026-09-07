@@ -55,8 +55,9 @@ file per language, keyed by chapter number:
 }
 ```
 
-`app/data/chapter-titles/_source.json` holds the Japanese title of every
-chapter and the volume each one belongs to. Translate from the Japanese where
+`ja.json` holds the Japanese title of every chapter and doubles as the source
+every translation is made from; `_source.json` is the roster of chapter numbers
+and `_volumes.json` maps chapters to tankōbon. Translate from the Japanese where
 you can; `en.json` is the fallback a reader sees for any chapter your file
 does not cover, so a missing key shows English rather than breaking the page.
 

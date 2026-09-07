@@ -1,0 +1,200 @@
+{
+  "volumes": [
+    {
+      "volume": 1,
+      "from": 1,
+      "to": 8
+    },
+    {
+      "volume": 2,
+      "from": 9,
+      "to": 17
+    },
+    {
+      "volume": 3,
+      "from": 18,
+      "to": 26
+    },
+    {
+      "volume": 4,
+      "from": 27,
+      "to": 35
+    },
+    {
+      "volume": 5,
+      "from": 36,
+      "to": 44
+    },
+    {
+      "volume": 6,
+      "from": 45,
+      "to": 54
+    },
+    {
+      "volume": 7,
+      "from": 55,
+      "to": 63
+    },
+    {
+      "volume": 8,
+      "from": 64,
+      "to": 73
+    },
+    {
+      "volume": 9,
+      "from": 74,
+      "to": 83
+    },
+    {
+      "volume": 10,
+      "from": 84,
+      "to": 93
+    },
+    {
+      "volume": 11,
+      "from": 94,
+      "to": 103
+    },
+    {
+      "volume": 12,
+      "from": 104,
+      "to": 115
+    },
+    {
+      "volume": 13,
+      "from": 116,
+      "to": 127
+    },
+    {
+      "volume": 14,
+      "from": 128,
+      "to": 139
+    },
+    {
+      "volume": 15,
+      "from": 140,
+      "to": 151
+    },
+    {
+      "volume": 16,
+      "from": 152,
+      "to": 163
+    },
+    {
+      "volume": 17,
+      "from": 164,
+      "to": 175
+    },
+    {
+      "volume": 18,
+      "from": 176,
+      "to": 187
+    },
+    {
+      "volume": 19,
+      "from": 188,
+      "to": 199
+    },
+    {
+      "volume": 20,
+      "from": 200,
+      "to": 211
+    },
+    {
+      "volume": 21,
+      "from": 212,
+      "to": 223
+    },
+    {
+      "volume": 22,
+      "from": 224,
+      "to": 235
+    },
+    {
+      "volume": 23,
+      "from": 236,
+      "to": 247
+    },
+    {
+      "volume": 24,
+      "from": 248,
+      "to": 260
+    },
+    {
+      "volume": 25,
+      "from": 261,
+      "to": 270
+    },
+    {
+      "volume": 26,
+      "from": 271,
+      "to": 280
+    },
+    {
+      "volume": 27,
+      "from": 281,
+      "to": 290
+    },
+    {
+      "volume": 28,
+      "from": 291,
+      "to": 300
+    },
+    {
+      "volume": 29,
+      "from": 301,
+      "to": 310
+    },
+    {
+      "volume": 30,
+      "from": 311,
+      "to": 320
+    },
+    {
+      "volume": 31,
+      "from": 321,
+      "to": 330
+    },
+    {
+      "volume": 32,
+      "from": 331,
+      "to": 340
+    },
+    {
+      "volume": 33,
+      "from": 341,
+      "to": 350
+    },
+    {
+      "volume": 34,
+      "from": 351,
+      "to": 360
+    },
+    {
+      "volume": 35,
+      "from": 361,
+      "to": 370
+    },
+    {
+      "volume": 36,
+      "from": 371,
+      "to": 380
+    },
+    {
+      "volume": 37,
+      "from": 381,
+      "to": 390
+    },
+    {
+      "volume": 38,
+      "from": 391,
+      "to": 400
+    },
+    {
+      "volume": 39,
+      "from": 401,
+      "to": 410
+    }
+  ],
+  "chaptersPerLaterVolume": 10
+}

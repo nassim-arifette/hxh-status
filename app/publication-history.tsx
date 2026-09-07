@@ -4,21 +4,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
 import {
   getArcDefinition,
-  deriveArcStats,
   formatArcYears,
   formatArcDuration,
+  type ArcComparisonSummary,
 } from "./data/arcs";
-import { getChapterTitle } from "./data/chapter-titles";
-import historyData from "./data/publication-history.json";
-
-type PublicationIssue = {
-  year: number;
-  number: number;
-  released?: boolean;
-  chapter?: number | string;
-  date?: string;
-  arc?: string;
-};
+import type { ChapterTitles } from "./data/chapter-titles";
 
 type ActiveCellInfo = {
   year: number;
@@ -55,36 +45,24 @@ function getClampedX(
   return Math.max(minX, Math.min(rawX, maxX));
 }
 
-const issues = historyData as PublicationIssue[];
-
-const publicationByYear = (() => {
-  const grouped = new Map<number, PublicationIssue[]>();
-
-  for (const issue of issues) {
-    const current = grouped.get(issue.year) ?? [];
-    current.push(issue);
-    grouped.set(issue.year, current);
-  }
-
-  return [...grouped.entries()]
-    .sort(([a], [b]) => b - a)
-    .map(([year, yearIssues]) => ({
-      year,
-      issues: [...yearIssues].sort((a, b) => a.number - b.number),
-    }));
-})();
+// The server sends the chart already grouped and sorted, in a shape that
+// costs a fraction of the raw dataset to serialise: a released issue is
+// [issue, chapter, arcIndex] and an issue that carried no chapter is just its
+// number. Importing the dataset here instead would put all 1370 rows, and
+// every field of them, into the browser bundle.
+export type HistoryCell = number | readonly [number, number, number];
+export type HistoryYear = readonly [year: number, cells: readonly HistoryCell[]];
 
 function ArcComparison({
-  issues,
+  summary,
   locale = "en",
   messages,
 }: {
-  issues: readonly PublicationIssue[];
+  summary: ArcComparisonSummary;
   locale?: Locale;
   messages: Messages["history"];
 }) {
   const [metric, setMetric] = useState<"chapters" | "duration">("chapters");
-  const summary = useMemo(() => deriveArcStats(issues), [issues]);
 
   const sortedArcs = useMemo(() => {
     return [...summary.arcs].sort((a, b) => {
@@ -239,10 +217,18 @@ export function PublicationHistory({
   capture = false,
   locale = "en",
   messages,
+  years,
+  arcIds,
+  titles,
+  arcSummary,
 }: {
   capture?: boolean;
   locale?: Locale;
   messages: Messages["history"];
+  years: readonly HistoryYear[];
+  arcIds: readonly string[];
+  titles: ChapterTitles;
+  arcSummary: ArcComparisonSummary;
 }) {
   const chartRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -328,7 +314,10 @@ export function PublicationHistory({
   }, [activeCell]);
 
   const activeArcDef = getArcDefinition(activeCell?.arc);
-  const activeChapterTitle = getChapterTitle(activeCell?.chapter, locale);
+  const activeChapterTitle =
+    activeCell?.chapter === undefined
+      ? undefined
+      : titles[String(activeCell.chapter)];
   const chapterNum =
     activeCell?.chapter !== undefined
       ? typeof activeCell.chapter === "number"
@@ -350,16 +339,20 @@ export function PublicationHistory({
           onPointerMove={handlePointerMove}
           onPointerLeave={handlePointerLeave}
         >
-          {publicationByYear.map(({ year, issues: yearIssues }) => {
-            const publishedCount = yearIssues.filter(
-              (issue) => issue.released,
+          {years.map(([year, cells]) => {
+            const publishedCount = cells.filter((cell) =>
+              Array.isArray(cell),
             ).length;
 
             return (
               <div className="history-row" key={year}>
                 <span className="history-year">{year}</span>
                 <div className="history-cells">
-                  {yearIssues.map((issue) => {
+                  {cells.map((cell) => {
+                    const released = Array.isArray(cell);
+                    const issue = released
+                      ? { number: cell[0], chapter: cell[1], arc: arcIds[cell[2]], released: true }
+                      : { number: cell, chapter: undefined, arc: undefined, released: false };
                     const detail = formatMessage(
                       issue.released
                         ? messages.publishedIssue
@@ -371,7 +364,7 @@ export function PublicationHistory({
                     );
 
                     const isCellActive =
-                      activeCell?.year === issue.year &&
+                      activeCell?.year === year &&
                       activeCell?.issue === issue.number;
 
                     const arcDef = issue.arc ? getArcDefinition(issue.arc) : undefined;
@@ -382,7 +375,7 @@ export function PublicationHistory({
                           isCellActive ? "is-cell-active" : ""
                         }`}
                         data-released={issue.released ? "true" : "false"}
-                        data-year={issue.year}
+                        data-year={year}
                         data-issue={issue.number}
                         data-chapter={issue.chapter ?? ""}
                         data-arc={issue.arc ?? ""}
@@ -394,7 +387,7 @@ export function PublicationHistory({
                               } as React.CSSProperties)
                             : undefined
                         }
-                        key={issue.year + "-" + issue.number}
+                        key={year + "-" + issue.number}
                         title={detail}
                         aria-label={detail}
                         role="img"
@@ -480,7 +473,7 @@ export function PublicationHistory({
 
       {!capture && (
         <ArcComparison
-          issues={issues}
+          summary={arcSummary}
           locale={locale}
           messages={messages}
         />

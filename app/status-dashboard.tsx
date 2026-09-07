@@ -12,7 +12,9 @@ import LanguageSwitcher from "./language-switcher";
 import LatestTogashiUpdate from "./latest-togashi-update";
 import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
-import { ARCS } from "./data/arcs";
+import { ARCS, deriveArcStats } from "./data/arcs";
+import { getChapterTitles, getChapterTitlesFor } from "./data/chapter-titles";
+import type { HistoryYear } from "./publication-history";
 import {
   chapters,
   lastUpdated,
@@ -39,6 +41,7 @@ type PublicationIssue = {
   released?: boolean;
   chapter?: number | string;
   date?: string;
+  arc?: string;
 };
 
 type StatusMap = Record<ChapterStatus, StatusMeta>;
@@ -55,6 +58,41 @@ type StatusDashboardProps = {
 };
 
 const issues = historyData as PublicationIssue[];
+
+// The chart is grouped, sorted and compacted here so the browser receives
+// neither the raw dataset nor the work of rebuilding it. Arc ids repeat 422
+// times across the cells, so they are sent once as a table and referenced by
+// index.
+const arcIds = [...new Set(issues.map((issue) => issue.arc).filter(Boolean))] as string[];
+const arcIndex = new Map(arcIds.map((id, index) => [id, index]));
+
+const historyYears: HistoryYear[] = [
+  ...issues
+    .reduce((grouped, issue) => {
+      const year = grouped.get(issue.year) ?? [];
+      year.push(issue);
+      grouped.set(issue.year, year);
+      return grouped;
+    }, new Map<number, PublicationIssue[]>())
+    .entries(),
+]
+  .sort(([a], [b]) => b - a)
+  .map(([year, yearIssues]) => [
+    year,
+    [...yearIssues]
+      .sort((a, b) => a.number - b.number)
+      .map((issue) =>
+        issue.released
+          ? ([
+              issue.number,
+              Number(issue.chapter ?? 0),
+              arcIndex.get(issue.arc ?? "") ?? -1,
+            ] as const)
+          : issue.number,
+      ),
+  ]);
+
+const arcSummary = deriveArcStats(issues);
 
 const currentYear = issues.reduce(
   (latest, issue) => Math.max(latest, issue.year),
@@ -120,6 +158,10 @@ export function ProductionSection({
         lastUpdated={lastUpdated}
         locale={locale}
         messages={messages}
+        titles={getChapterTitlesFor(
+          locale,
+          chapters.map((chapter) => chapter.chapter),
+        )}
       />
       <Legend messages={messages} />
     </section>
@@ -191,6 +233,10 @@ export function PublicationHistorySection({
         capture={capture}
         locale={locale}
         messages={messages.history}
+        years={historyYears}
+        arcIds={arcIds}
+        titles={getChapterTitles(locale)}
+        arcSummary={arcSummary}
       />
     </section>
   );

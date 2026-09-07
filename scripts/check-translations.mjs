@@ -182,7 +182,8 @@ const titlesDirectory = join(root, "app", "data", "chapter-titles");
 const chapterSource = JSON.parse(
   await readFile(join(titlesDirectory, "_source.json"), "utf8"),
 );
-const chapterCount = Object.keys(chapterSource.chapters).length;
+const chapterRoster = new Set(chapterSource.chapters);
+const chapterCount = chapterRoster.size;
 
 for (const locale of configuredLocales) {
   let titles;
@@ -196,7 +197,7 @@ for (const locale of configuredLocales) {
   }
 
   const unknown = Object.keys(titles).filter(
-    (chapter) => !(chapter in chapterSource.chapters),
+    (chapter) => !chapterRoster.has(chapter),
   );
   if (unknown.length > 0) {
     report(

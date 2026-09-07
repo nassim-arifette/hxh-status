@@ -30,11 +30,11 @@ import {
   type StatusMeta,
 } from "./status-presentation";
 import {
-  getChapterTitle,
   getVolumeLabel,
   CHAPTER_TITLE_LABEL,
   VOLUME_LABEL,
-} from "./data/chapter-titles";
+} from "./data/chapter-meta";
+import type { ChapterTitles } from "./data/chapter-titles";
 
 const compactDateOptions = {
   month: "short",
@@ -88,6 +88,7 @@ function ChapterGrid({
   messages,
   selectedChapter,
   statusMeta,
+  titles,
   onSelect,
 }: {
   chapters: readonly ChapterRecord[];
@@ -95,6 +96,7 @@ function ChapterGrid({
   messages: Messages;
   selectedChapter: number | null;
   statusMeta: StatusMap;
+  titles: ChapterTitles;
   onSelect: (chapter: ChapterRecord, trigger: HTMLButtonElement) => void;
 }) {
   return (
@@ -105,7 +107,7 @@ function ChapterGrid({
       {chapters.map((chapter) => {
         const meta = statusMeta[chapter.status];
         const StatusIcon = meta.icon;
-        const title = getChapterTitle(chapter.chapter, locale);
+        const title = titles[String(chapter.chapter)];
         const volume = getVolumeLabel(chapter.chapter, locale);
 
         return (
@@ -185,6 +187,7 @@ function ChapterDetails({
   messages,
   openerRef,
   statusMeta,
+  titles,
   onOpenChange,
 }: {
   chapter: ChapterRecord | null;
@@ -193,12 +196,13 @@ function ChapterDetails({
   messages: Messages;
   openerRef: RefObject<HTMLButtonElement | null>;
   statusMeta: StatusMap;
+  titles: ChapterTitles;
   onOpenChange: (open: boolean) => void;
 }) {
   const meta = chapter ? statusMeta[chapter.status] : statusMeta.unknown;
   const StatusIcon = meta.icon;
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const chapterTitle = chapter ? getChapterTitle(chapter.chapter, locale) : undefined;
+  const chapterTitle = chapter ? titles[String(chapter.chapter)] : undefined;
   const volume = chapter ? getVolumeLabel(chapter.chapter, locale) : undefined;
 
   const sources = chapter
@@ -364,11 +368,13 @@ export default function ChapterTracker({
   lastUpdated,
   locale,
   messages,
+  titles,
 }: {
   chapters: readonly ChapterRecord[];
   lastUpdated: string;
   locale: Locale;
   messages: Messages;
+  titles: ChapterTitles;
 }) {
   const [selectedChapter, setSelectedChapter] = useState<ChapterRecord | null>(
     null,
@@ -384,6 +390,7 @@ export default function ChapterTracker({
         messages={messages}
         selectedChapter={selectedChapter?.chapter ?? null}
         statusMeta={statusMeta}
+        titles={titles}
         onSelect={(chapter, trigger) => {
           openerRef.current = trigger;
           setSelectedChapter(chapter);
@@ -396,6 +403,7 @@ export default function ChapterTracker({
         messages={messages}
         openerRef={openerRef}
         statusMeta={statusMeta}
+        titles={titles}
         onOpenChange={(open) => {
           if (!open) setSelectedChapter(null);
         }}
