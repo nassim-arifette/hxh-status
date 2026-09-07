@@ -1,8 +1,9 @@
 # Translating HxH Status
 
 The website data and translations are kept separate. Chapter numbers, dates,
-sources, and publication history stay in `app/data/`. Translators only edit the
-message catalog prepared for their language.
+sources, and publication history stay in `app/data/`. Translators edit two
+documents: the message catalog for the interface, and the chapter-title file
+for their language.
 
 English, French, Japanese, Spanish, Brazilian Portuguese, Simplified Chinese,
 and Arabic are public. Their catalogs are `messages/{locale}.json`, and their
@@ -40,6 +41,42 @@ Example:
 
 Only replace the value on the right. The key `nextChapter` must stay exactly
 the same.
+
+## Chapter titles
+
+Every chapter has a title, and they are the second thing a reader sees after
+the tracker itself. They live in `app/data/chapter-titles/{locale}.json`, one
+file per language, keyed by chapter number:
+
+```json
+{
+  "1": "O Dia da Partida",
+  "2": "Encontro na Tempestade"
+}
+```
+
+`app/data/chapter-titles/_source.json` holds the Japanese title of every
+chapter and the volume each one belongs to. Translate from the Japanese where
+you can; `en.json` is the fallback a reader sees for any chapter your file
+does not cover, so a missing key shows English rather than breaking the page.
+
+Rules:
+
+1. Keys are chapter numbers as strings. `"-1"` is the Kurapika side story.
+2. Never add a key that `_source.json` does not have.
+3. Leave a chapter out rather than committing an empty string or a copy of
+   the English title — coverage is measured, and a placeholder counts as done.
+4. Where an official edition exists in your language, prefer its wording over
+   a fresh translation. Brazilian Portuguese follows JBC; Simplified Chinese
+   follows Tong Li.
+
+`npm run translations:check` prints coverage per language and fails if a
+language loses titles it already had. When you add titles, raise that
+language's number in `titleCoverageFloor` in `scripts/check-translations.mjs`
+in the same pull request; the check tells you the new figure.
+
+These files are the source of truth. `app/data/chapter-titles.ts` only reads
+them and is no longer generated from a script.
 
 ## Starting another language
 
@@ -82,6 +119,8 @@ choosing a language in the header stores the preference for future visits.
 ## Before opening a pull request
 
 - `npm run translations:check` passes.
+- Chapter-title coverage did not drop, and `titleCoverageFloor` matches the
+  new figure when it went up.
 - No JSON keys or placeholders were changed.
 - The preview has no remaining English text, except proper names.
 - Dates are still shown without times and use the visitor's local timezone.

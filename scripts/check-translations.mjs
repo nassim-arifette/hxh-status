@@ -162,6 +162,78 @@ if (catalogLocales.includes(referenceLocale)) {
   }
 }
 
+// Chapter titles live outside the message catalogs, so the checks above say
+// nothing about them. Coverage is uneven by design — a locale gains titles as
+// a translator works through them — but it must never fall back, so each floor
+// is a count rather than a percentage: adding an untranslated chapter to
+// _source.json should not fail every locale at once. Raise a floor when a
+// translator fills a gap.
+const titleCoverageFloor = {
+  en: 421,
+  fr: 421,
+  ja: 421,
+  es: 370,
+  pt: 413,
+  zh: 419,
+  ar: 101,
+};
+
+const titlesDirectory = join(root, "app", "data", "chapter-titles");
+const chapterSource = JSON.parse(
+  await readFile(join(titlesDirectory, "_source.json"), "utf8"),
+);
+const chapterCount = Object.keys(chapterSource.chapters).length;
+
+for (const locale of configuredLocales) {
+  let titles;
+  try {
+    titles = JSON.parse(
+      await readFile(join(titlesDirectory, `${locale}.json`), "utf8"),
+    );
+  } catch {
+    report(`app/data/chapter-titles/${locale}.json is missing.`);
+    continue;
+  }
+
+  const unknown = Object.keys(titles).filter(
+    (chapter) => !(chapter in chapterSource.chapters),
+  );
+  if (unknown.length > 0) {
+    report(
+      `${locale}.json titles chapters absent from _source.json: ` +
+        unknown.slice(0, 10).join(", "),
+    );
+  }
+
+  const blank = Object.entries(titles).filter(
+    ([, title]) => typeof title !== "string" || title.trim() === "",
+  );
+  if (blank.length > 0) {
+    report(
+      `${locale}.json has empty titles for chapters: ` +
+        blank.slice(0, 10).map(([chapter]) => chapter).join(", "),
+    );
+  }
+
+  const translated = Object.keys(titles).length;
+  const percent = Math.round((translated / chapterCount) * 100);
+  const floor = titleCoverageFloor[locale];
+
+  if (floor === undefined) {
+    report(`No chapter-title coverage floor is set for ${locale}.`);
+  } else if (translated < floor) {
+    report(
+      `${locale} chapter titles regressed: ${translated}/${chapterCount} ` +
+        `(${percent}%), below the floor of ${floor}.`,
+    );
+  } else {
+    const gained = translated > floor ? ` (+${translated - floor}, raise the floor)` : "";
+    console.log(
+      `${locale} chapter titles: ${translated}/${chapterCount} (${percent}%)${gained}`,
+    );
+  }
+}
+
 // The service worker cannot read the message catalogs: it runs detached from
 // the page, so it ships a generated copy of the notification strings. A stale
 // copy is how a new locale or a reworded notification reaches subscribers
