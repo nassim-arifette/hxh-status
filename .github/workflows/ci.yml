@@ -16,6 +16,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # A workflow GitHub cannot parse never runs, so its own CI cannot report
+      # the breakage. This job is the one that still runs, so it checks the
+      # others. RUNNER_TEMP is the environment variable, usable in run: unlike
+      # the runner context that is rejected in a job-level env block.
+      - name: Lint workflow files
+        env:
+          ACTIONLINT_VERSION: "1.7.12"
+        run: |
+          curl -sSLo "$RUNNER_TEMP/actionlint.tar.gz" \
+            "https://github.com/rhysd/actionlint/releases/download/v$ACTIONLINT_VERSION/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint" -color
       - uses: actions/setup-node@v7
         with:
           node-version: 24
