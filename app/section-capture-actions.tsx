@@ -26,19 +26,15 @@ type SectionCaptureActionsProps = {
   messages: Messages["captureActions"];
 };
 
-function downloadImage(imageUrl: string, fileName: string, blob?: Blob) {
-  const objectUrl = blob ? URL.createObjectURL(blob) : null;
+function downloadImage(imageUrl: string, fileName: string) {
   const link = document.createElement("a");
 
-  link.href = objectUrl ?? imageUrl;
+  link.href = imageUrl;
   link.download = fileName;
   link.hidden = true;
   document.body.append(link);
   link.click();
   link.remove();
-  if (objectUrl) {
-    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-  }
 }
 
 function isErrorNamed(error: unknown, name: string) {
@@ -140,8 +136,7 @@ export default function SectionCaptureActions({
         supportsPng && typeof navigator.clipboard?.write === "function";
 
       if (!canCopyImage) {
-        const asset = await getImageAsset().catch(() => null);
-        downloadImage(imageUrl, fileName, asset?.blob);
+        downloadImage(imageUrl, fileName);
         showFeedback({
           action: "copy",
           label: messages.downloaded,
@@ -154,16 +149,10 @@ export default function SectionCaptureActions({
       const assetPromise = getImageAsset();
       const pngPromise = assetPromise.then(({ blob }) => blob);
 
-      let item: ClipboardItem;
       try {
-        item = new ClipboardItem({ "image/png": pngPromise });
-      } catch {
-        const { blob } = await assetPromise;
-        item = new ClipboardItem({ "image/png": blob });
-      }
-
-      try {
-        await navigator.clipboard.write([item]);
+        await navigator.clipboard.write([
+          new ClipboardItem({ "image/png": pngPromise }),
+        ]);
         showFeedback({
           action: "copy",
           label: messages.copied,
@@ -171,8 +160,8 @@ export default function SectionCaptureActions({
           tone: "success",
         });
       } catch {
-        const asset = await assetPromise.catch(() => null);
-        downloadImage(imageUrl, fileName, asset?.blob);
+        await assetPromise;
+        downloadImage(imageUrl, fileName);
         showFeedback({
           action: "copy",
           label: messages.downloaded,
@@ -201,8 +190,7 @@ export default function SectionCaptureActions({
         typeof navigator.share !== "function" ||
         typeof navigator.canShare !== "function"
       ) {
-        const asset = await getImageAsset().catch(() => null);
-        downloadImage(imageUrl, fileName, asset?.blob);
+        downloadImage(imageUrl, fileName);
         showFeedback({
           action: "share",
           label: messages.downloaded,
@@ -213,7 +201,7 @@ export default function SectionCaptureActions({
       }
 
       const hadCachedAsset = assetRef.current !== null;
-      const { file, blob } = await getImageAsset();
+      const { file } = await getImageAsset();
       const shareData: ShareData = {
         files: [file],
         text: formatMessage(messages.shareText, { label }),
@@ -222,7 +210,7 @@ export default function SectionCaptureActions({
       const fileOnlyShareData: ShareData = { files: [file] };
 
       if (!navigator.canShare(fileOnlyShareData)) {
-        downloadImage(imageUrl, fileName, blob);
+        downloadImage(imageUrl, fileName);
         showFeedback({
           action: "share",
           label: messages.downloaded,
@@ -257,7 +245,7 @@ export default function SectionCaptureActions({
           return;
         }
 
-        downloadImage(imageUrl, fileName, blob);
+        downloadImage(imageUrl, fileName);
         showFeedback({
           action: "share",
           label: messages.downloaded,
