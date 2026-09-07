@@ -114,6 +114,47 @@
     "durationMonths": "{months}ヶ月",
     "arcChaptersCount": "{count}話"
   },
+  "stats": {
+    "title": "休載・掲載データ統計",
+    "subtitle": "28年間の週刊少年ジャンプ掲載履歴から算出した実績（1998〜2026年）",
+    "methodology": "ジャンプ掲載履歴から自動集計した確定実績です。予測や再開日の推測は含みません。",
+    "currentHiatus": {
+      "title": "現在の休載状況",
+      "justStarted": "休載開始直後 · 経過号数 0号",
+      "elapsed": "ジャンプ {issues}号分（{days}日間）",
+      "since": "第{chapter}話（{jumpIssue}号）掲載後〜",
+      "rank": "歴代休載期間 第{rank}位（全{total}回中）",
+      "rankJustStarted": "歴代休載期間 同率{rank}位（全{total}回中）"
+    },
+    "historicalHiatus": {
+      "title": "過去の休載期間",
+      "majorMedian": "{issues}号分（約{years}年）",
+      "majorMedianLabel": "長期休載の中央値（10号以上、N={count}）",
+      "record": "{issues}号分（約{years}年）",
+      "recordLabel": "歴代最長休載（{startYear}年{startIssue}号〜{endYear}年{endIssue}号）",
+      "allMedian": "全休載（{count}回）の中央値は{issues}号分"
+    },
+    "publicationPace": {
+      "title": "連続掲載ペース",
+      "modernBatch": "1回あたり {batch}話",
+      "modernBatchLabel": "2017年以降の連続掲載は100%が10話単位（単行本6巻分）",
+      "historicalMedian": "全{total}回の連続掲載中央値：{count}話",
+      "recordRun": "歴代最長連続掲載：{count}話（{startYear}〜{endYear}年）"
+    },
+    "productionLeadTime": {
+      "title": "原稿完成から掲載まで",
+      "medianDelay": "約{days}日間",
+      "medianDelayLabel": "原稿納品からジャンプ発売までの中央値（N={count}回）",
+      "currentDelivered": "次回掲載分：原稿完成 {delivered}/{target}話",
+      "footnote": "冨樫先生の原稿完成報告からジャンプ掲載日までの実測値"
+    },
+    "publicationRate": {
+      "title": "通算掲載率",
+      "rate": "掲載率 {percent}%",
+      "rateLabel": "ジャンプ通算{total}号中 {published}話掲載",
+      "hiatusRate": "1998年以降の休載率 {percent}%"
+    }
+  },
   "chapter": {
     "title": "話数",
     "close": "閉じる",

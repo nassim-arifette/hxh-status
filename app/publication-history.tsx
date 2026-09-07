@@ -9,6 +9,7 @@ import {
   type ArcComparisonSummary,
 } from "./data/arcs";
 import type { ChapterTitles } from "./data/chapter-titles";
+import type { HiatusStatsSummary } from "./data/hiatus-stats";
 
 type ActiveCellInfo = {
   year: number;
@@ -52,6 +53,200 @@ function getClampedX(
 // every field of them, into the browser bundle.
 export type HistoryCell = number | readonly [number, number, number];
 export type HistoryYear = readonly [year: number, cells: readonly HistoryCell[]];
+
+function HiatusStats({
+  summary,
+  messages,
+}: {
+  summary: HiatusStatsSummary;
+  messages: Messages["stats"];
+}) {
+  const current = summary.currentHiatus;
+  const historical = summary.historicalHiatuses;
+  const runs = summary.publicationRuns;
+  const leadTime = summary.leadTime;
+  const rate = summary.publicationRate;
+
+  const currentDurationText = current.isJustStarted
+    ? messages.currentHiatus.justStarted
+    : formatMessage(messages.currentHiatus.elapsed, {
+        issues: current.elapsedIssues,
+        days: current.elapsedDays,
+      });
+
+  const currentRankText = current.isJustStarted
+    ? formatMessage(messages.currentHiatus.rankJustStarted, {
+        rank: current.historicalRank,
+        total: current.totalHistoricalHiatuses,
+      })
+    : formatMessage(messages.currentHiatus.rank, {
+        rank: current.historicalRank,
+        total: current.totalHistoricalHiatuses,
+      });
+
+  return (
+    <section className="hiatus-stats" aria-labelledby="hiatus-stats-heading">
+      <div className="hiatus-stats-header">
+        <div>
+          <h3 id="hiatus-stats-heading" className="hiatus-stats-title">
+            {messages.title}
+          </h3>
+          <p className="hiatus-stats-subtitle">{messages.subtitle}</p>
+        </div>
+        <div className="hiatus-stats-methodology">
+          <span className="hiatus-stats-methodology-tag">
+            {messages.methodology}
+          </span>
+        </div>
+      </div>
+
+      <div className="hiatus-stats-grid">
+        {/* Card 1: Current Hiatus */}
+        <div className="hiatus-stat-card current-hiatus-card">
+          <div className="hiatus-stat-card-header">
+            <span className="hiatus-stat-label">
+              {messages.currentHiatus.title}
+            </span>
+            <span className="hiatus-stat-badge badge-active">
+              {currentRankText}
+            </span>
+          </div>
+          <div className="hiatus-stat-value">{currentDurationText}</div>
+          <div className="hiatus-stat-sub">
+            {formatMessage(messages.currentHiatus.since, {
+              chapter: current.sinceChapter,
+              jumpIssue: current.sinceJumpIssue,
+            })}
+          </div>
+        </div>
+
+        {/* Card 2: Historical Hiatuses */}
+        <div className="hiatus-stat-card">
+          <div className="hiatus-stat-card-header">
+            <span className="hiatus-stat-label">
+              {messages.historicalHiatus.title}
+            </span>
+          </div>
+          <div className="hiatus-stat-value">
+            {formatMessage(messages.historicalHiatus.majorMedian, {
+              issues: historical.medianIssuesMajor,
+              years: Number((historical.medianIssuesMajor / 48).toFixed(1)),
+            })}
+          </div>
+          <div className="hiatus-stat-sub">
+            {formatMessage(messages.historicalHiatus.majorMedianLabel, {
+              count: historical.majorCount,
+            })}
+          </div>
+          <div className="hiatus-stat-detail">
+            {formatMessage(messages.historicalHiatus.recordLabel, {
+              startYear: historical.maxHiatus.startYear,
+              startIssue: historical.maxHiatus.startIssue,
+              endYear: historical.maxHiatus.endYear,
+              endIssue: historical.maxHiatus.endIssue,
+            })}
+            :{" "}
+            <strong>
+              {formatMessage(messages.historicalHiatus.record, {
+                issues: historical.maxIssues,
+                years: historical.maxHiatus.approxYears,
+              })}
+            </strong>
+          </div>
+          <div className="hiatus-stat-footnote">
+            {formatMessage(messages.historicalHiatus.allMedian, {
+              issues: historical.medianIssuesAll,
+              count: historical.totalCount,
+            })}
+          </div>
+        </div>
+
+        {/* Card 3: Publication Pace / Runs */}
+        <div className="hiatus-stat-card">
+          <div className="hiatus-stat-card-header">
+            <span className="hiatus-stat-label">
+              {messages.publicationPace.title}
+            </span>
+          </div>
+          <div className="hiatus-stat-value">
+            {formatMessage(messages.publicationPace.modernBatch, {
+              batch: runs.modernBatchSize,
+            })}
+          </div>
+          <div className="hiatus-stat-sub">
+            {messages.publicationPace.modernBatchLabel}
+          </div>
+          <div className="hiatus-stat-detail">
+            {formatMessage(messages.publicationPace.historicalMedian, {
+              count: runs.medianRunLength,
+              total: runs.totalRunsCount,
+            })}
+          </div>
+          <div className="hiatus-stat-footnote">
+            {formatMessage(messages.publicationPace.recordRun, {
+              count: runs.longestRun.length,
+              startYear: runs.longestRun.startYear,
+              endYear: runs.longestRun.endYear,
+            })}
+          </div>
+        </div>
+
+        {/* Card 4: Production Lead Time */}
+        <div className="hiatus-stat-card">
+          <div className="hiatus-stat-card-header">
+            <span className="hiatus-stat-label">
+              {messages.productionLeadTime.title}
+            </span>
+          </div>
+          <div className="hiatus-stat-value">
+            {formatMessage(messages.productionLeadTime.medianDelay, {
+              days: Math.round(leadTime.medianLeadTimeDays),
+            })}
+          </div>
+          <div className="hiatus-stat-sub">
+            {formatMessage(messages.productionLeadTime.medianDelayLabel, {
+              count: leadTime.observedBatchesCount,
+            })}
+          </div>
+          <div className="hiatus-stat-detail">
+            {formatMessage(messages.productionLeadTime.currentDelivered, {
+              delivered: leadTime.currentDeliveredCount,
+              target: leadTime.currentDeliveredTarget,
+            })}
+          </div>
+          <div className="hiatus-stat-footnote">
+            {messages.productionLeadTime.footnote}
+          </div>
+        </div>
+
+        {/* Card 5: Publication Rate */}
+        <div className="hiatus-stat-card">
+          <div className="hiatus-stat-card-header">
+            <span className="hiatus-stat-label">
+              {messages.publicationRate.title}
+            </span>
+          </div>
+          <div className="hiatus-stat-value">
+            {formatMessage(messages.publicationRate.rate, {
+              percent: rate.publishedPercentage,
+            })}
+          </div>
+          <div className="hiatus-stat-sub">
+            {formatMessage(messages.publicationRate.rateLabel, {
+              published: rate.totalChaptersPublished,
+              total: rate.totalJumpIssues,
+            })}
+          </div>
+          <div className="hiatus-stat-detail">
+            {formatMessage(messages.publicationRate.hiatusRate, {
+              percent: rate.hiatusPercentage,
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function ArcComparison({
   summary,
@@ -217,18 +412,22 @@ export function PublicationHistory({
   capture = false,
   locale = "en",
   messages,
+  statsMessages,
   years,
   arcIds,
   titles,
   arcSummary,
+  hiatusStats,
 }: {
   capture?: boolean;
   locale?: Locale;
   messages: Messages["history"];
+  statsMessages?: Messages["stats"];
   years: readonly HistoryYear[];
   arcIds: readonly string[];
   titles: ChapterTitles;
   arcSummary: ArcComparisonSummary;
+  hiatusStats?: HiatusStatsSummary;
 }) {
   const chartRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -470,6 +669,10 @@ export function PublicationHistory({
           )}
         </div>
       </div>
+
+      {!capture && hiatusStats && statsMessages && (
+        <HiatusStats summary={hiatusStats} messages={statsMessages} />
+      )}
 
       {!capture && (
         <ArcComparison

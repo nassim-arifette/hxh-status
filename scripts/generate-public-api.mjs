@@ -5,6 +5,7 @@ import { PUBLIC_TRANSLATION_LOCALES } from "../automation/contracts.mjs";
 import { buildBadges } from "../automation/badges.mjs";
 import { buildFeedsAndCalendar } from "../automation/feeds.mjs";
 import { validateTogashiFeed } from "../automation/togashi-feed.mjs";
+import { deriveHiatusStats } from "../app/data/hiatus-stats.ts";
 
 const ORIGIN = "https://hxhstatus.com";
 const API_VERSION = 1;
@@ -171,6 +172,19 @@ function openApiDocument() {
           },
         },
       },
+      "/api/v1/stats.json": {
+        get: {
+          summary: "Descriptive hiatus, publication pace, and production lead-time statistics",
+          responses: {
+            200: jsonResponse(
+              "Build-time derived descriptive statistics from 1998-2026 Jump publication history.",
+              {
+                type: "object",
+              },
+            ),
+          },
+        },
+      },
       "/api/v1/togashi/latest.json": {
         get: {
           summary: "Latest Togashi post with every cached translation",
@@ -285,14 +299,17 @@ try {
   );
 }
 
-const [feed, status, localeRegistry, statusData] = await Promise.all([
+const [feed, status, localeRegistry, statusData, historyData] = await Promise.all([
   readJson(join(root, "app", "data", "togashi-posts.json")).then(
     validateTogashiFeed,
   ),
   readJson(join(outDirectory, "status.json")),
   readJson(join(root, "lib", "locales.json")),
   readJson(join(root, "app", "data", "status-data.json")),
+  readJson(join(root, "app", "data", "publication-history.json")),
 ]);
+
+const statsSummary = deriveHiatusStats(historyData, statusData);
 
 const messagesByLocale = Object.fromEntries(
   await Promise.all(
@@ -318,6 +335,7 @@ const index = apiEnvelope("/api/v1/index.json", {
   documentation: `${ORIGIN}/api/v1/openapi.json`,
   endpoints: {
     status: `${ORIGIN}/api/v1/status.json`,
+    stats: `${ORIGIN}/api/v1/stats.json`,
     latestTogashiPost: `${ORIGIN}/api/v1/togashi/latest.json`,
     togashiPosts: `${ORIGIN}/api/v1/togashi/posts.json`,
     localizedLatestPattern: `${ORIGIN}/api/v1/togashi/latest/{locale}.json`,
@@ -341,6 +359,10 @@ await Promise.all([
   writeJson(join(apiDirectory, "index.json"), index),
   writeJson(join(apiDirectory, "openapi.json"), openApiDocument()),
   writeJson(join(apiDirectory, "status.json"), status),
+  writeJson(
+    join(apiDirectory, "stats.json"),
+    apiEnvelope("/api/v1/stats.json", { stats: statsSummary }),
+  ),
   writeJson(
     join(apiDirectory, "togashi", "latest.json"),
     apiEnvelope("/api/v1/togashi/latest.json", { post: latestPost }),

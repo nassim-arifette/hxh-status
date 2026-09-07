@@ -114,6 +114,47 @@
     "durationMonths": "{months} mois",
     "arcChaptersCount": "{count} chap."
   },
+  "stats": {
+    "title": "Statistiques de hiatus et parution",
+    "subtitle": "Rythme de publication observé sur 28 ans (1998–2026)",
+    "methodology": "Calculé au build d'après les parutions du Weekly Shōnen Jump. Données strictement descriptives, sans spéculation.",
+    "currentHiatus": {
+      "title": "Hiatus actuel",
+      "justStarted": "Vient de débuter · 0 numéro Jump écoulé",
+      "elapsed": "{issues} numéros Jump ({days} jours)",
+      "since": "Depuis le chapitre {chapter} (WSJ {jumpIssue})",
+      "rank": "Rang #{rank} sur {total} hiatus historiques",
+      "rankJustStarted": "Ex æquo #{rank} sur {total} hiatus historiques"
+    },
+    "historicalHiatus": {
+      "title": "Hiatus passés",
+      "majorMedian": "{issues} numéros (~{years} ans)",
+      "majorMedianLabel": "Médiane des hiatus majeurs (≥10 numéros, N={count})",
+      "record": "{issues} numéros (~{years} ans)",
+      "recordLabel": "Pause record ({startYear} #{startIssue} – {endYear} #{endIssue})",
+      "allMedian": "{issues} numéro(s) de médiane sur les {count} pauses"
+    },
+    "publicationPace": {
+      "title": "Séries de parution",
+      "modernBatch": "{batch} chapitres / série",
+      "modernBatchLabel": "100 % des séries depuis 2017 (6 tomes complets)",
+      "historicalMedian": "{count} chapitres de médiane sur {total} séries",
+      "recordRun": "Série record : {count} chapitres ({startYear}–{endYear})"
+    },
+    "productionLeadTime": {
+      "title": "Manuscrit à la parution",
+      "medianDelay": "~{days} jours de délai",
+      "medianDelayLabel": "Délai médian livraison-parution (N={count} lots)",
+      "currentDelivered": "{delivered} sur {target} manuscrits livrés pour le prochain lot",
+      "footnote": "Délai observé entre la fin des manuscrits confirmée et la sortie Jump"
+    },
+    "publicationRate": {
+      "title": "Taux de présence",
+      "rate": "{percent} % de présence",
+      "rateLabel": "{published} chapitres sur {total} numéros Jump",
+      "hiatusRate": "{percent} % de taux de hiatus depuis 1998"
+    }
+  },
   "chapter": {
     "title": "Chapitre",
     "close": "Fermer",

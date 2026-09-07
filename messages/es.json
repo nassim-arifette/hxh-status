@@ -114,6 +114,47 @@
     "durationMonths": "{months} meses",
     "arcChaptersCount": "{count} cap."
   },
+  "stats": {
+    "title": "Estadísticas de pausas y publicación",
+    "subtitle": "Ritmo de publicación observado a lo largo de 28 años (1998–2026)",
+    "methodology": "Calculado al compilar a partir de datos del Weekly Shōnen Jump. Observaciones estrictamente descriptivas, sin especulaciones.",
+    "currentHiatus": {
+      "title": "Pausa actual",
+      "justStarted": "Recién comenzada · 0 números de Jump transcurridos",
+      "elapsed": "{issues} números de Jump ({days} días)",
+      "since": "Desde el capítulo {chapter} (WSJ {jumpIssue})",
+      "rank": "Puesto #{rank} de {total} pausas históricas",
+      "rankJustStarted": "Empatado en el puesto #{rank} de {total} pausas históricas"
+    },
+    "historicalHiatus": {
+      "title": "Pausas anteriores",
+      "majorMedian": "{issues} números (~{years} años)",
+      "majorMedianLabel": "Mediana de pausas mayores (≥10 números, N={count})",
+      "record": "{issues} números (~{years} años)",
+      "recordLabel": "Pausa récord ({startYear} #{startIssue} – {endYear} #{endIssue})",
+      "allMedian": "Mediana de {issues} número(s) en las {count} pausas registradas"
+    },
+    "publicationPace": {
+      "title": "Rachas de publicación",
+      "modernBatch": "{batch} capítulos / tanda",
+      "modernBatchLabel": "100 % de las rachas desde 2017 (6 tandas de tomo)",
+      "historicalMedian": "Mediana de {count} capítulos en las {total} rachas",
+      "recordRun": "Racha récord: {count} capítulos ({startYear}–{endYear})"
+    },
+    "productionLeadTime": {
+      "title": "Del manuscrito a la publicación",
+      "medianDelay": "~{days} días de intervalo",
+      "medianDelayLabel": "Intervalo mediano entre entrega y salida (N={count} tandas)",
+      "currentDelivered": "{delivered} de {target} manuscritos entregados para la próxima tanda",
+      "footnote": "Intervalo observado entre los manuscritos confirmados y la salida en Jump"
+    },
+    "publicationRate": {
+      "title": "Tasa de publicación",
+      "rate": "{percent} % de presencia",
+      "rateLabel": "{published} capítulos en {total} números de Jump",
+      "hiatusRate": "{percent} % de tasa de pausa desde 1998"
+    }
+  },
   "chapter": {
     "title": "Capítulo",
     "close": "Cerrar",

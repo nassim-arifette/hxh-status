@@ -1863,3 +1863,145 @@ select {
     margin-top: 2px;
   }
 }
+
+/* Hiatus & Publication Statistics */
+.hiatus-stats {
+  margin-top: 24px;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+}
+
+.hiatus-stats-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hiatus-stats-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.hiatus-stats-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 3px 0 0 0;
+}
+
+.hiatus-stats-methodology {
+  max-width: 400px;
+}
+
+.hiatus-stats-methodology-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+.hiatus-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+.hiatus-stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 140px;
+}
+
+.hiatus-stat-card.current-hiatus-card {
+  border-color: rgba(74, 222, 128, 0.35);
+  background: linear-gradient(180deg, rgba(74, 222, 128, 0.06) 0%, var(--card) 100%);
+}
+
+.hiatus-stat-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hiatus-stat-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.hiatus-stat-badge {
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.hiatus-stat-badge.badge-active {
+  background: rgba(74, 222, 128, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.hiatus-stat-value {
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.hiatus-stat-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.hiatus-stat-detail {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.hiatus-stat-footnote {
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+  line-height: 1.3;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 768px) {
+  .hiatus-stats-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hiatus-stats-methodology {
+    max-width: 100%;
+  }
+
+  .hiatus-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

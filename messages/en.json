@@ -114,6 +114,47 @@
     "durationMonths": "{months} mos",
     "arcChaptersCount": "{count} ch."
   },
+  "stats": {
+    "title": "Hiatus & Publication Statistics",
+    "subtitle": "Observed publication rhythm across 28 years (1998–2026)",
+    "methodology": "Calculated at build time from Weekly Shōnen Jump data. Strictly descriptive observations, no predictions.",
+    "currentHiatus": {
+      "title": "Current hiatus",
+      "justStarted": "Just started · 0 Jump issues elapsed",
+      "elapsed": "{issues} Jump issues ({days} days)",
+      "since": "Since chapter {chapter} (WSJ {jumpIssue})",
+      "rank": "Rank #{rank} of {total} historical hiatuses",
+      "rankJustStarted": "Tied #{rank} of {total} historical hiatuses"
+    },
+    "historicalHiatus": {
+      "title": "Past hiatuses",
+      "majorMedian": "{issues} issues (~{years} yrs)",
+      "majorMedianLabel": "Median major hiatus (≥10 issues, N={count})",
+      "record": "{issues} issues (~{years} yrs)",
+      "recordLabel": "Record hiatus ({startYear} #{startIssue} – {endYear} #{endIssue})",
+      "allMedian": "{issues} issue(s) median across all {count} breaks"
+    },
+    "publicationPace": {
+      "title": "Publication runs",
+      "modernBatch": "{batch} chapters / run",
+      "modernBatchLabel": "100% of runs since 2017 (6 volume batches)",
+      "historicalMedian": "{count} chapters median across all {total} runs",
+      "recordRun": "Longest run: {count} chapters ({startYear}–{endYear})"
+    },
+    "productionLeadTime": {
+      "title": "Manuscript to release",
+      "medianDelay": "~{days} days lead time",
+      "medianDelayLabel": "Median delivery-to-release delay (N={count} batches)",
+      "currentDelivered": "{delivered} of {target} manuscripts delivered for next batch",
+      "footnote": "Observed from confirmed Togashi manuscripts to official Jump release"
+    },
+    "publicationRate": {
+      "title": "Publication rate",
+      "rate": "{percent}% presence",
+      "rateLabel": "{published} chapters across {total} Jump issues",
+      "hiatusRate": "{percent}% hiatus rate since 1998"
+    }
+  },
   "chapter": {
     "title": "Chapter",
     "close": "Close",

@@ -8,11 +8,13 @@ import englishMessages from "@/messages/en.json";
 import ChapterTracker, { LocalDate } from "./chapter-tracker";
 import Faq from "./faq";
 import historyData from "./data/publication-history.json";
+import statusData from "./data/status-data.json";
 import LanguageSwitcher from "./language-switcher";
 import LatestTogashiUpdate from "./latest-togashi-update";
 import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
 import { ARCS, deriveArcStats } from "./data/arcs";
+import { deriveHiatusStats } from "./data/hiatus-stats";
 import { getChapterTitles, getChapterTitlesFor } from "./data/chapter-titles";
 import type { HistoryYear } from "./publication-history";
 import {
@@ -93,6 +95,7 @@ const historyYears: HistoryYear[] = [
   ]);
 
 const arcSummary = deriveArcStats(issues);
+const hiatusStatsSummary = deriveHiatusStats(issues, statusData);
 
 const currentYear = issues.reduce(
   (latest, issue) => Math.max(latest, issue.year),
@@ -233,10 +236,12 @@ export function PublicationHistorySection({
         capture={capture}
         locale={locale}
         messages={messages.history}
+        statsMessages={messages.stats}
         years={historyYears}
         arcIds={arcIds}
         titles={getChapterTitles(locale)}
         arcSummary={arcSummary}
+        hiatusStats={hiatusStatsSummary}
       />
     </section>
   );

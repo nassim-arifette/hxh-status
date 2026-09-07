@@ -16,6 +16,7 @@ and every API representation.
 | --- | --- |
 | `GET /api/v1/index.json` | Endpoint index, supported locales, and revisioned chart URLs |
 | `GET /api/v1/status.json` | Current tracker state, chapter rows, and chart URLs |
+| `GET /api/v1/stats.json` | Descriptive hiatus, publication pace, and lead-time statistics |
 | `GET /share/{locale}/production.png` | Chart 1: production tracker, returned directly as a PNG |
 | `GET /share/{locale}/publication-history.png` | Chart 2: publication history, returned directly as a PNG |
 | `GET /api/v1/togashi/latest.json` | Latest post with every cached translation |
@@ -143,6 +144,97 @@ and `translations` for all seven locales. Localized endpoints instead provide
 `text` and `language` alongside the index and original text. An empty array (or
 an absent field in older cached posts) means no image transcription is available.
 Image text is kept separate from the tweet and never added to `text.value`.
+
+## Hiatus and publication pace statistics
+
+`GET /api/v1/stats.json` returns build-time derived descriptive statistics from 28 years of Weekly Shōnen Jump publication history (1998–2026) and current manuscript status:
+
+```json
+{
+  "schemaVersion": 1,
+  "self": "https://hxhstatus.com/api/v1/stats.json",
+  "pollAfterSeconds": 300,
+  "stats": {
+    "currentHiatus": {
+      "elapsedIssues": 0,
+      "elapsedDays": 0,
+      "sinceDate": "2026-09-07",
+      "sinceChapter": 420,
+      "sinceJumpIssue": "2026 #41",
+      "historicalRank": 87,
+      "totalHistoricalHiatuses": 86,
+      "isJustStarted": true
+    },
+    "historicalHiatuses": {
+      "totalCount": 86,
+      "medianIssuesAll": 1,
+      "majorThreshold": 10,
+      "majorCount": 13,
+      "medianIssuesMajor": 56,
+      "medianDaysMajorApprox": 392,
+      "maxIssues": 184,
+      "maxHiatus": {
+        "startYear": 2019,
+        "startIssue": 1,
+        "endYear": 2022,
+        "endIssue": 46,
+        "issues": 184,
+        "approxYears": 3.8
+      }
+    },
+    "publicationRuns": {
+      "totalRunsCount": 87,
+      "medianRunLength": 3,
+      "modernBatchSize": 10,
+      "modernRunsCount": 6,
+      "modernBatchConsistencyPercent": 100,
+      "longestRun": {
+        "startYear": 2011,
+        "startIssue": 35,
+        "endYear": 2012,
+        "endIssue": 16,
+        "startChapter": 311,
+        "endChapter": 340,
+        "length": 30
+      }
+    },
+    "publicationRate": {
+      "totalJumpIssues": 1370,
+      "totalChaptersPublished": 422,
+      "publishedPercentage": 30.8,
+      "hiatusPercentage": 69.2
+    },
+    "leadTime": {
+      "observedBatchesCount": 2,
+      "medianLeadTimeDays": 82.5,
+      "currentDeliveredCount": 7,
+      "currentDeliveredTarget": 10,
+      "observations": [
+        {
+          "batch": "Ch. 391–400",
+          "startChapter": 391,
+          "endChapter": 400,
+          "deliveryDate": "2022-07-25",
+          "releaseDate": "2022-10-24",
+          "delayDays": 91,
+          "source": "Yoshihiro Togashi on X (@Un4v5s8bgsVk9Xp) & WSJ 2022 #47"
+        },
+        {
+          "batch": "Ch. 401–410",
+          "startChapter": 401,
+          "endChapter": 410,
+          "deliveryDate": "2024-07-25",
+          "releaseDate": "2024-10-07",
+          "delayDays": 74,
+          "source": "Yoshihiro Togashi on X (@Un4v5s8bgsVk9Xp) & WSJ 2024 #45"
+        }
+      ]
+    }
+  }
+}
+```
+
+The data is strictly descriptive. No estimated return dates or countdowns are calculated or returned.
 
 ## Atom feeds and calendar subscription
 
