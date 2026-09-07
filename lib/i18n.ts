@@ -29,6 +29,9 @@ export const publicLocales = locales.filter(
   (locale) => localeSettings[locale].published,
 );
 export const localePreferenceKey = "hxhstatus.locale";
+// Mirrors localePreferenceKey for the Worker, which negotiates "/" and has no
+// access to localStorage. worker/locale-redirect.mjs reads this name.
+export const localeCookieName = "hxhstatus_locale";
 export const siteUrl = "https://hxhstatus.com";
 
 export function getLocalePath(locale: Locale) {

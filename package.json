@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/generate-sw-copy.mjs && next build && node scripts/generate-status-json.mjs && node scripts/generate-public-api.mjs",
+    "build": "node scripts/generate-sw-copy.mjs && next build && node scripts/set-html-lang.mjs && node scripts/generate-status-json.mjs && node scripts/generate-public-api.mjs",
     "sw:copy": "node scripts/generate-sw-copy.mjs",
     "share:build": "npm run build && playwright install --only-shell chromium && node scripts/generate-share-images.mjs",
     "start": "wrangler dev",

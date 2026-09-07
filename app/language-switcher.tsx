@@ -4,6 +4,7 @@ import { ChevronDown, Languages } from "lucide-react";
 
 import {
   getLocalePath,
+  localeCookieName,
   localeOptions,
   localePreferenceKey,
   type Locale,
@@ -30,6 +31,13 @@ export default function LanguageSwitcher({
     } catch {
       // Navigation still works when storage is disabled by the browser.
     }
+
+    // The Worker negotiates "/" and cannot read localStorage, so the same
+    // choice is mirrored into a cookie it can see. Without this, returning to
+    // the bare domain would hand the reader their browser language again
+    // rather than the language they picked.
+    document.cookie =
+      `${localeCookieName}=${nextLocale};path=/;max-age=31536000;samesite=lax`;
 
     document.documentElement.lang = nextLocale;
     const nextUrl = new URL(getLocalePath(nextLocale), window.location.origin);

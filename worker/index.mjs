@@ -11,6 +11,7 @@ import {
 } from "./github.mjs";
 import { fetchTimelineTweets, selectUnseenTweets } from "./x-timeline.mjs";
 import { handlePushApi, runPushNotifications } from "./push-notifications.mjs";
+import { localeRedirect } from "./locale-redirect.mjs";
 
 export { PushSubscriptionRegistry } from "./push-subscription-registry.mjs";
 
@@ -151,6 +152,14 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
 
 const worker = {
   async fetch(request, env) {
+    // Negotiating "/" here is what lets the page ship without a redirect
+    // script: a non-English reader is sent to their locale before any HTML
+    // is downloaded, instead of rendering English and navigating away from
+    // it. assets.run_worker_first limits this to "/", so every other path
+    // still bypasses the Worker entirely.
+    const redirect = localeRedirect(request);
+    if (redirect) return redirect;
+
     const pushResponse = await handlePushApi(request, env);
     return pushResponse ?? env.ASSETS.fetch(request);
   },
