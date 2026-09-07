@@ -1864,144 +1864,185 @@ select {
   }
 }
 
-/* Hiatus & Publication Statistics */
-.hiatus-stats {
-  margin-top: 24px;
-  padding: 18px;
-  border-radius: 12px;
-  background: var(--surface-raised);
-  border: 1px solid var(--border);
-}
-
-.hiatus-stats-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.hiatus-stats-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--foreground);
-  margin: 0;
-}
-
-.hiatus-stats-subtitle {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin: 3px 0 0 0;
-}
-
-.hiatus-stats-methodology {
-  max-width: 400px;
-}
-
-.hiatus-stats-methodology-tag {
-  display: inline-block;
-  font-size: 0.72rem;
+/* Hiatus & publication statistics.
+   The cards borrow the snapshot strip at the top of the page: one rounded
+   container, hairline dividers, label above a large tabular figure. Five
+   equal cards left an orphan on its own row, so the break the reader came to
+   check gets a full-width band and the four reference figures share a row. */
+.section-lede {
+  margin: -18px 0 24px;
+  max-width: 62ch;
   color: var(--text-secondary);
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 5px 10px;
-  border-radius: 6px;
-  line-height: 1.4;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
-.hiatus-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 12px;
-}
-
-.hiatus-stat-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
+.stat-current {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-height: 140px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(48, 34, 8, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.hiatus-stat-card.current-hiatus-card {
-  border-color: rgba(74, 222, 128, 0.35);
-  background: linear-gradient(180deg, rgba(74, 222, 128, 0.06) 0%, var(--card) 100%);
-}
-
-.hiatus-stat-card-header {
+.stat-current-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 16px;
 }
 
-.hiatus-stat-label {
-  font-size: 0.74rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-}
-
-.hiatus-stat-badge {
-  font-size: 0.68rem;
-  padding: 2px 7px;
-  border-radius: 9999px;
-  font-weight: 500;
-}
-
-.hiatus-stat-badge.badge-active {
-  background: rgba(74, 222, 128, 0.15);
-  color: #4ade80;
-  border: 1px solid rgba(74, 222, 128, 0.3);
-}
-
-.hiatus-stat-value {
-  font-size: 1.22rem;
+.stat-current-value {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(1.2rem, 1.8vw, 1.55rem);
   font-weight: 700;
-  color: var(--foreground);
   letter-spacing: -0.02em;
   line-height: 1.25;
+  color: #f6b03e;
+  font-variant-numeric: tabular-nums;
 }
 
-.hiatus-stat-sub {
-  font-size: 0.78rem;
+.stat-current-since {
   color: var(--text-muted);
-  line-height: 1.35;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.01em;
 }
 
-.hiatus-stat-detail {
-  font-size: 0.75rem;
+.stat-rank {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border: 1px solid rgba(245, 158, 11, 0.34);
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.1);
+  color: #f6b03e;
+  font-size: 0.72rem;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(17, 21, 18, 0.6);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 18px 20px 16px;
+  border-left: 1px solid var(--border);
+  transition: background-color 150ms ease;
+}
+
+.stat:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.stat:first-child {
+  border-left: 0;
+}
+
+.stat-label {
   color: var(--text-secondary);
-  line-height: 1.35;
-  margin-top: 2px;
-}
-
-.hiatus-stat-footnote {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.7rem;
-  color: var(--muted-foreground);
-  line-height: 1.3;
-  margin-top: auto;
-  padding-top: 6px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
-  .hiatus-stats-header {
+.stat-value {
+  margin: 4px 0 2px;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-sub {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.stat-detail {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.stat-detail strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.stat-footnote {
+  margin-top: auto;
+  padding-top: 10px;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+/* Geist Mono carries no Arabic glyphs, so a mono Arabic sentence falls through
+   to a face that renders it loosely spaced and hard to read. Figures keep their
+   tabular alignment from font-variant-numeric either way. */
+[dir="rtl"] .stat-current-value,
+[dir="rtl"] .stat-value {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.stat-methodology {
+  margin: 14px 0 0;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat:nth-child(3) {
+    border-left: 0;
+  }
+
+  .stat:nth-child(n + 3) {
+    border-top: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 560px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    border-left: 0;
+  }
+
+  .stat + .stat {
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-current-head {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .hiatus-stats-methodology {
-    max-width: 100%;
-  }
-
-  .hiatus-stats-grid {
-    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 

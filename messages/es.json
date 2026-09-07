@@ -115,8 +115,9 @@
     "arcChaptersCount": "{count} cap."
   },
   "stats": {
+    "eyebrow": "1998-2026",
     "title": "Estadísticas de pausas y publicación",
-    "subtitle": "Ritmo de publicación observado a lo largo de 28 años (1998–2026)",
+    "subtitle": "Ritmo de publicación observado a lo largo de 28 años",
     "methodology": "Calculado al compilar a partir de datos del Weekly Shōnen Jump. Observaciones estrictamente descriptivas, sin especulaciones.",
     "currentHiatus": {
       "title": "Pausa actual",

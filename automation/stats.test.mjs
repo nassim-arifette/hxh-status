@@ -103,4 +103,30 @@ test("deriveHiatusStats calculates rank correctly when hiatuses elapse", () => {
   // Past hiatuses were: 1 issue, 2 issues.
   // Current has 2 issues. Past hiatuses strictly longer than 2: 0. Rank: 1.
   assert.equal(stats.currentHiatus.historicalRank, 1);
+  // The current break is one of the ranked items, so it counts in the total.
+  assert.equal(stats.currentHiatus.totalHistoricalHiatuses, 3);
+});
+
+test("a break that has not started yet ranks last, not past the end", () => {
+  // Chapter just published: no unreleased issue has followed it yet. Ranking
+  // the current break among breaks strictly longer than zero puts it last, so
+  // a total that left it out produced "#87 of 86".
+  const stats = deriveHiatusStats([
+    { year: 1998, number: 1, released: true, chapter: 1 },
+    { year: 1998, number: 2, released: false },
+    { year: 1998, number: 3, released: true, chapter: 2 },
+    { year: 1998, number: 4, released: false },
+    { year: 1998, number: 5, released: false },
+    { year: 1998, number: 6, released: true, chapter: 3 },
+  ]);
+
+  assert.equal(stats.currentHiatus.elapsedIssues, 0);
+  assert.equal(stats.currentHiatus.isJustStarted, true);
+  assert.equal(stats.currentHiatus.historicalRank, 3);
+  assert.equal(stats.currentHiatus.totalHistoricalHiatuses, 3);
+  assert.ok(
+    stats.currentHiatus.historicalRank <=
+      stats.currentHiatus.totalHistoricalHiatuses,
+    "a rank can never exceed the number of things ranked",
+  );
 });

@@ -302,7 +302,10 @@ export function deriveHiatusStats(
       sinceChapter,
       sinceJumpIssue,
       historicalRank,
-      totalHistoricalHiatuses: pastHiatuses.length,
+      // The rank places the current break inside the ranking, so the total
+      // has to count it too. Counting only the finished ones reported the
+      // shortest-ever break as "#87 of 86".
+      totalHistoricalHiatuses: pastHiatuses.length + 1,
       isJustStarted: elapsedIssues === 0,
     },
     historicalHiatuses: {

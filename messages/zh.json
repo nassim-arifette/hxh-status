@@ -115,8 +115,9 @@
     "arcChaptersCount": "{count} 话"
   },
   "stats": {
+    "eyebrow": "1998-2026",
     "title": "休刊与连载数据统计",
-    "subtitle": "基于28年《周刊少年Jump》连载历史的客观数据（1998–2026）",
+    "subtitle": "基于28年《周刊少年Jump》连载历史的客观数据",
     "methodology": "于构建时从《周刊少年Jump》刊登数据自动计算。仅包含客观记录，无任何推测或预测。",
     "currentHiatus": {
       "title": "当前休刊状态",

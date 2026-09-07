@@ -15,6 +15,7 @@ import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
 import { ARCS, deriveArcStats } from "./data/arcs";
 import { deriveHiatusStats } from "./data/hiatus-stats";
+import { HiatusStatistics } from "./hiatus-statistics";
 import { getChapterTitles, getChapterTitlesFor } from "./data/chapter-titles";
 import type { HistoryYear } from "./publication-history";
 import {
@@ -236,12 +237,33 @@ export function PublicationHistorySection({
         capture={capture}
         locale={locale}
         messages={messages.history}
-        statsMessages={messages.stats}
         years={historyYears}
         arcIds={arcIds}
         titles={getChapterTitles(locale)}
         arcSummary={arcSummary}
-        hiatusStats={hiatusStatsSummary}
+      />
+    </section>
+  );
+}
+
+export function HiatusStatisticsSection({
+  messages = englishMessages,
+}: LocalizedSectionProps) {
+  return (
+    <section
+      className="content-section stats-section"
+      aria-labelledby="stats-title"
+    >
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">{messages.stats.eyebrow}</p>
+          <h2 id="stats-title">{messages.stats.title}</h2>
+        </div>
+      </div>
+      <p className="section-lede">{messages.stats.subtitle}</p>
+      <HiatusStatistics
+        summary={hiatusStatsSummary}
+        messages={messages.stats}
       />
     </section>
   );
@@ -353,6 +375,8 @@ export default function StatusDashboard({
         <LatestTogashiUpdate locale={locale} messages={messages.latestUpdate} />
 
         <PublicationHistorySection locale={locale} messages={messages} />
+
+        <HiatusStatisticsSection messages={messages} />
 
         <Faq locale={locale} messages={messages} />
 

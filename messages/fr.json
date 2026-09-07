@@ -115,8 +115,9 @@
     "arcChaptersCount": "{count} chap."
   },
   "stats": {
+    "eyebrow": "1998-2026",
     "title": "Statistiques de hiatus et parution",
-    "subtitle": "Rythme de publication observé sur 28 ans (1998–2026)",
+    "subtitle": "Rythme de publication observé sur 28 ans",
     "methodology": "Calculé au build d'après les parutions du Weekly Shōnen Jump. Données strictement descriptives, sans spéculation.",
     "currentHiatus": {
       "title": "Hiatus actuel",
