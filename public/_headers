@@ -57,6 +57,12 @@
   Access-Control-Allow-Origin: *
   Cross-Origin-Resource-Policy: cross-origin
 
+/share/*/*.png
+  Content-Type: image/png
+  Cache-Control: public, max-age=300, must-revalidate
+  Access-Control-Allow-Origin: *
+  Cross-Origin-Resource-Policy: cross-origin
+
 /badge/*.svg
   Content-Type: image/svg+xml; charset=utf-8
   Cache-Control: public, max-age=300, must-revalidate
