@@ -8,23 +8,17 @@ function Stat({
   label,
   value,
   sub,
-  detail,
-  footnote,
 }: {
   label: string;
   value: string;
-  sub: string;
-  detail?: React.ReactNode;
-  footnote?: string;
+  sub: React.ReactNode;
 }) {
   return (
-    <div className="stat">
+    <article className="stat">
       <span className="stat-label">{label}</span>
       <strong className="stat-value">{value}</strong>
       <span className="stat-sub">{sub}</span>
-      {detail ? <span className="stat-detail">{detail}</span> : null}
-      {footnote ? <span className="stat-footnote">{footnote}</span> : null}
-    </div>
+    </article>
   );
 }
 
@@ -56,10 +50,8 @@ export function HiatusStatistics({
   );
 
   return (
-    <>
-      {/* The break the reader came to check, given the weight the page gives
-          the status headline rather than an equal share of a five-card grid. */}
-      <div className="stat-current">
+    <div className="stats-overview">
+      <article className="stat-current">
         <div className="stat-current-head">
           <span className="stat-label">{messages.currentHiatus.title}</span>
           <span className="stat-rank">{rank}</span>
@@ -71,7 +63,7 @@ export function HiatusStatistics({
             jumpIssue: current.sinceJumpIssue,
           })}
         </span>
-      </div>
+      </article>
 
       <div className="stat-grid">
         <Stat
@@ -80,30 +72,26 @@ export function HiatusStatistics({
             issues: historical.medianIssuesMajor,
             years: Number((historical.medianIssuesMajor / 48).toFixed(1)),
           })}
-          sub={formatMessage(messages.historicalHiatus.majorMedianLabel, {
-            count: historical.majorCount,
-          })}
-          detail={
+          sub={
             <>
-              {formatMessage(messages.historicalHiatus.recordLabel, {
-                startYear: historical.maxHiatus.startYear,
-                startIssue: historical.maxHiatus.startIssue,
-                endYear: historical.maxHiatus.endYear,
-                endIssue: historical.maxHiatus.endIssue,
+              {formatMessage(messages.historicalHiatus.majorMedianLabel, {
+                count: historical.majorCount,
               })}
-              {": "}
-              <strong>
+              <span className="stat-supporting">
                 {formatMessage(messages.historicalHiatus.record, {
                   issues: historical.maxIssues,
                   years: historical.maxHiatus.approxYears,
                 })}
-              </strong>
+                {" · "}
+                {formatMessage(messages.historicalHiatus.recordLabel, {
+                  startYear: historical.maxHiatus.startYear,
+                  startIssue: historical.maxHiatus.startIssue,
+                  endYear: historical.maxHiatus.endYear,
+                  endIssue: historical.maxHiatus.endIssue,
+                })}
+              </span>
             </>
           }
-          footnote={formatMessage(messages.historicalHiatus.allMedian, {
-            issues: historical.medianIssuesAll,
-            count: historical.totalCount,
-          })}
         />
 
         <Stat
@@ -111,31 +99,18 @@ export function HiatusStatistics({
           value={formatMessage(messages.publicationPace.modernBatch, {
             batch: runs.modernBatchSize,
           })}
-          sub={messages.publicationPace.modernBatchLabel}
-          detail={formatMessage(messages.publicationPace.historicalMedian, {
-            count: runs.medianRunLength,
-            total: runs.totalRunsCount,
-          })}
-          footnote={formatMessage(messages.publicationPace.recordRun, {
-            count: runs.longestRun.length,
-            startYear: runs.longestRun.startYear,
-            endYear: runs.longestRun.endYear,
-          })}
-        />
-
-        <Stat
-          label={messages.productionLeadTime.title}
-          value={formatMessage(messages.productionLeadTime.medianDelay, {
-            days: Math.round(leadTime.medianLeadTimeDays),
-          })}
-          sub={formatMessage(messages.productionLeadTime.medianDelayLabel, {
-            count: leadTime.observedBatchesCount,
-          })}
-          detail={formatMessage(messages.productionLeadTime.currentDelivered, {
-            delivered: leadTime.currentDeliveredCount,
-            target: leadTime.currentDeliveredTarget,
-          })}
-          footnote={messages.productionLeadTime.footnote}
+          sub={
+            <>
+              {messages.publicationPace.modernBatchLabel}
+              <span className="stat-supporting">
+                {formatMessage(messages.publicationPace.recordRun, {
+                  count: runs.longestRun.length,
+                  startYear: runs.longestRun.startYear,
+                  endYear: runs.longestRun.endYear,
+                })}
+              </span>
+            </>
+          }
         />
 
         <Stat
@@ -143,17 +118,40 @@ export function HiatusStatistics({
           value={formatMessage(messages.publicationRate.rate, {
             percent: rate.publishedPercentage,
           })}
-          sub={formatMessage(messages.publicationRate.rateLabel, {
-            published: rate.totalChaptersPublished,
-            total: rate.totalJumpIssues,
-          })}
-          footnote={formatMessage(messages.publicationRate.hiatusRate, {
-            percent: rate.hiatusPercentage,
-          })}
+          sub={
+            <>
+              {formatMessage(messages.publicationRate.rateLabel, {
+                published: rate.totalChaptersPublished,
+                total: rate.totalJumpIssues,
+              })}
+              <span className="stat-supporting">
+                {formatMessage(messages.publicationRate.hiatusRate, {
+                  percent: rate.hiatusPercentage,
+                })}
+              </span>
+            </>
+          }
         />
       </div>
 
+      <div className="stat-context">
+        <div>
+          <span className="stat-context-label">{messages.productionLeadTime.title}</span>
+          <strong>
+            {formatMessage(messages.productionLeadTime.medianDelay, {
+              days: Math.round(leadTime.medianLeadTimeDays),
+            })}
+          </strong>
+        </div>
+        <span>
+          {formatMessage(messages.productionLeadTime.currentDelivered, {
+            delivered: leadTime.currentDeliveredCount,
+            target: leadTime.currentDeliveredTarget,
+          })}
+        </span>
+      </div>
+
       <p className="stat-methodology">{messages.methodology}</p>
-    </>
+    </div>
   );
 }

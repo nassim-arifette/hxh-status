@@ -1865,28 +1865,60 @@ select {
 }
 
 /* Hiatus & publication statistics.
-   The cards borrow the snapshot strip at the top of the page: one rounded
-   container, hairline dividers, label above a large tabular figure. Five
-   equal cards left an orphan on its own row, so the break the reader came to
-   check gets a full-width band and the four reference figures share a row. */
+   This section deliberately keeps the data hierarchy shallow: one prominent
+   answer, three reference metrics and a compact production context row. */
+.stats-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-section::before {
+  content: "";
+  position: absolute;
+  top: -130px;
+  right: -110px;
+  width: 360px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.stats-section .section-heading {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 10px;
+}
+
 .section-lede {
-  margin: -18px 0 24px;
-  max-width: 62ch;
+  position: relative;
+  z-index: 1;
+  margin: 0 0 26px;
+  max-width: 58ch;
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   line-height: 1.6;
+}
+
+.stats-overview {
+  position: relative;
+  z-index: 1;
 }
 
 .stat-current {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 20px 22px;
-  margin-bottom: 14px;
-  border: 1px solid var(--border);
+  gap: 7px;
+  padding: 24px 26px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(245, 158, 11, 0.24);
   border-radius: 16px;
-  background: rgba(48, 34, 8, 0.5);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background:
+    linear-gradient(110deg, rgba(245, 158, 11, 0.1), transparent 58%),
+    rgba(17, 21, 18, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 16px 34px -26px rgba(245, 158, 11, 0.45);
 }
 
 .stat-current-head {
@@ -1897,136 +1929,144 @@ select {
 }
 
 .stat-current-value {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: clamp(1.2rem, 1.8vw, 1.55rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  max-width: 26ch;
+  margin-top: 3px;
   color: #f6b03e;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  font-weight: 720;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+  line-height: 1.16;
 }
 
 .stat-current-since {
   color: var(--text-muted);
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   letter-spacing: 0.01em;
 }
 
 .stat-rank {
   flex-shrink: 0;
-  padding: 4px 10px;
-  border: 1px solid rgba(245, 158, 11, 0.34);
+  padding: 5px 10px;
+  border: 1px solid rgba(245, 158, 11, 0.26);
   border-radius: 999px;
-  background: rgba(245, 158, 11, 0.1);
-  color: #f6b03e;
-  font-size: 0.72rem;
-  font-weight: 550;
+  background: rgba(245, 158, 11, 0.08);
+  color: #efb45b;
+  font-size: 0.7rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
-  background: rgba(17, 21, 18, 0.6);
+  background: rgba(17, 21, 18, 0.58);
 }
 
 .stat {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 18px 20px 16px;
+  gap: 7px;
+  padding: 20px 21px 18px;
   border-left: 1px solid var(--border);
   transition: background-color 150ms ease;
 }
 
 .stat:hover {
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(255, 255, 255, 0.024);
 }
 
 .stat:first-child {
   border-left: 0;
 }
 
-.stat-label {
+.stat-label,
+.stat-context-label {
   color: var(--text-secondary);
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 0.67rem;
+  font-weight: 650;
+  letter-spacing: 0.085em;
   text-transform: uppercase;
 }
 
 .stat-value {
-  margin: 4px 0 2px;
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  margin: 3px 0 1px;
   color: var(--foreground);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(1.22rem, 1.7vw, 1.55rem);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 1.18;
 }
 
 .stat-sub {
   color: var(--text-secondary);
-  font-size: 0.78rem;
-  line-height: 1.45;
+  font-size: 0.76rem;
+  line-height: 1.5;
 }
 
-.stat-detail {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  line-height: 1.45;
-}
-
-.stat-detail strong {
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
-.stat-footnote {
-  margin-top: auto;
-  padding-top: 10px;
+.stat-supporting {
+  display: block;
+  margin-top: 6px;
   color: var(--text-muted);
   font-size: 0.7rem;
-  line-height: 1.4;
-  opacity: 0.75;
+  line-height: 1.45;
 }
 
-/* Geist Mono carries no Arabic glyphs, so a mono Arabic sentence falls through
-   to a face that renders it loosely spaced and hard to read. Figures keep their
-   tabular alignment from font-variant-numeric either way. */
+.stat-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 12px;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.018);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.stat-context > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.stat-context strong {
+  color: var(--foreground);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Geist Mono carries no Arabic glyphs, so mono Arabic text falls through to a
+   face that renders it loosely spaced. Keep only the Latin-script UI mono. */
 [dir="rtl"] .stat-current-value,
-[dir="rtl"] .stat-value {
+[dir="rtl"] .stat-value,
+[dir="rtl"] .stat-context strong {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .stat-methodology {
-  margin: 14px 0 0;
+  margin: 12px 2px 0;
   color: var(--text-muted);
-  font-size: 0.74rem;
+  font-size: 0.69rem;
   line-height: 1.5;
+  opacity: 0.78;
 }
 
 @media (max-width: 900px) {
-  .stat-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .stat:nth-child(3) {
-    border-left: 0;
-  }
-
-  .stat:nth-child(n + 3) {
-    border-top: 1px solid var(--border);
-  }
-}
-
-@media (max-width: 560px) {
   .stat-grid {
     grid-template-columns: 1fr;
   }
@@ -2038,11 +2078,43 @@ select {
   .stat + .stat {
     border-top: 1px solid var(--border);
   }
+}
+
+@media (max-width: 560px) {
+  .section-lede {
+    margin-bottom: 20px;
+  }
+
+  .stat-current {
+    padding: 19px 17px;
+  }
 
   .stat-current-head {
     flex-direction: column;
     align-items: flex-start;
+    gap: 9px;
+  }
+
+  .stat-current-value {
+    font-size: 1.32rem;
+  }
+
+  .stat {
+    padding: 17px 16px;
+  }
+
+  .stat-context,
+  .stat-context > div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .stat-context {
     gap: 8px;
+  }
+
+  .stat-context > div {
+    gap: 4px;
   }
 }
 
