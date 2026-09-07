@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type RefObject } from "react";
+import { useRef, useState, type RefObject } from "react";
 import { ExternalLink } from "lucide-react";
 
 import {
@@ -35,23 +35,13 @@ import {
   VOLUME_LABEL,
 } from "./data/chapter-meta";
 import type { ChapterTitles } from "./data/chapter-titles";
-
-const compactDateOptions = {
-  month: "short",
-  day: "numeric",
-} satisfies Intl.DateTimeFormatOptions;
+import {
+  compactDateOptions,
+  localDateSeparator,
+  timeOptions,
+} from "./local-date";
 
 type StatusMap = Record<ChapterRecord["status"], StatusMeta>;
-
-function InlineScript({ html }: { html: string }) {
-  return (
-    <script
-      type={typeof window === "undefined" ? "text/javascript" : "text/plain"}
-      suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
-}
 
 export function LocalDate({
   dateTime,
@@ -62,23 +52,23 @@ export function LocalDate({
   locale?: Locale;
   showTime?: boolean;
 }) {
-  const id = useId();
-  const timeOptions: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "2-digit" };
-  const separator = locale === "ar" ? "، " : locale === "ja" || locale === "zh" ? " " : ", ";
+  const separator = localDateSeparator(locale);
   const dateLabel = formatLocalDate(dateTime, compactDateOptions, locale);
   const label = showTime
     ? `${formatLocalDate(dateTime, timeOptions, locale)}${separator}${dateLabel}`
     : dateLabel;
 
+  // The shared script in the root layout rewrites this in the visitor's
+  // timezone; everything it needs is on the element.
   return (
-    <>
-      <time id={id} dateTime={dateTime} suppressHydrationWarning>
-        {label}
-      </time>
-      <InlineScript
-        html={`{var n=document.getElementById(${JSON.stringify(id)});if(n){var d=new Date(${JSON.stringify(dateTime)});n.textContent=${showTime ? `new Intl.DateTimeFormat(${JSON.stringify(locale)},${JSON.stringify(timeOptions)}).format(d)+${JSON.stringify(separator)}+` : ""}new Intl.DateTimeFormat(${JSON.stringify(locale)},${JSON.stringify(compactDateOptions)}).format(d)}}`}
-      />
-    </>
+    <time
+      dateTime={dateTime}
+      data-local-date={dateTime}
+      {...(showTime ? { "data-show-time": "" } : {})}
+      suppressHydrationWarning
+    >
+      {label}
+    </time>
   );
 }
 
