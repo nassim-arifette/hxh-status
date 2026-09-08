@@ -7,7 +7,6 @@ import { dirname, join } from "node:path";
 import {
   deriveHiatusStats,
   calculateMedian,
-  LEAD_TIME_OBSERVATIONS,
 } from "../app/data/hiatus-stats.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -46,9 +45,8 @@ test("deriveHiatusStats computes factual stats from full publication history", (
   // Publication runs
   assert.equal(stats.publicationRuns.totalRunsCount, 87);
   assert.equal(stats.publicationRuns.medianRunLength, 3);
-  assert.equal(stats.publicationRuns.modernBatchSize, 10);
-  assert.equal(stats.publicationRuns.modernRunsCount, 6);
-  assert.equal(stats.publicationRuns.modernBatchConsistencyPercent, 100);
+  assert.equal(stats.publicationRuns.recentBatchSize, 10);
+  assert.equal(stats.publicationRuns.recentRunsCount, 6);
   assert.equal(stats.publicationRuns.longestRun.length, 30);
   assert.equal(stats.publicationRuns.longestRun.startChapter, 311);
   assert.equal(stats.publicationRuns.longestRun.endChapter, 340);
@@ -57,35 +55,15 @@ test("deriveHiatusStats computes factual stats from full publication history", (
   assert.equal(stats.publicationRate.totalJumpIssues, 1370);
   assert.equal(stats.publicationRate.totalChaptersPublished, 422);
   assert.equal(stats.publicationRate.publishedPercentage, 30.8);
-  assert.equal(stats.publicationRate.hiatusPercentage, 69.2);
 
   // Current hiatus right after chapter 420
   assert.equal(stats.currentHiatus.sinceChapter, 420);
   assert.equal(stats.currentHiatus.sinceJumpIssue, "2026 #41");
   assert.equal(stats.currentHiatus.elapsedIssues, 0);
   assert.equal(stats.currentHiatus.isJustStarted, true);
-  assert.equal(stats.currentHiatus.historicalRank, 87);
-
-  // Production lead time
-  assert.equal(stats.leadTime.observedBatchesCount, LEAD_TIME_OBSERVATIONS.length);
-  assert.ok(stats.leadTime.medianLeadTimeDays > 0);
-  assert.equal(stats.leadTime.currentDeliveredCount, 7);
-  assert.equal(stats.leadTime.currentDeliveredTarget, 10);
 });
 
-test("LEAD_TIME_OBSERVATIONS have valid sources and dates", () => {
-  assert.ok(LEAD_TIME_OBSERVATIONS.length >= 2);
-  for (const obs of LEAD_TIME_OBSERVATIONS) {
-    assert.ok(obs.batch.length > 0);
-    assert.ok(obs.delayDays > 0);
-    assert.ok(obs.deliveryDate.match(/^\d{4}-\d{2}-\d{2}$/));
-    assert.ok(obs.releaseDate.match(/^\d{4}-\d{2}-\d{2}$/));
-    assert.ok(obs.source.length > 0);
-  }
-});
-
-test("deriveHiatusStats calculates rank correctly when hiatuses elapse", () => {
-  // Mock history ending with an unreleased hiatus of 60 issues
+test("deriveHiatusStats reports an ongoing hiatus without ranking it", () => {
   const mockIssues = [
     { year: 1998, number: 1, released: true, chapter: 1 },
     { year: 1998, number: 2, released: false }, // past hiatus 1 issue
@@ -100,33 +78,22 @@ test("deriveHiatusStats calculates rank correctly when hiatuses elapse", () => {
   const stats = deriveHiatusStats(mockIssues);
   assert.equal(stats.currentHiatus.elapsedIssues, 2);
   assert.equal(stats.currentHiatus.isJustStarted, false);
-  // Past hiatuses were: 1 issue, 2 issues.
-  // Current has 2 issues. Past hiatuses strictly longer than 2: 0. Rank: 1.
-  assert.equal(stats.currentHiatus.historicalRank, 1);
-  // The current break is one of the ranked items, so it counts in the total.
-  assert.equal(stats.currentHiatus.totalHistoricalHiatuses, 3);
+  assert.equal("historicalRank" in stats.currentHiatus, false);
+  assert.equal("totalHistoricalHiatuses" in stats.currentHiatus, false);
 });
 
-test("a break that has not started yet ranks last, not past the end", () => {
-  // Chapter just published: no unreleased issue has followed it yet. Ranking
-  // the current break among breaks strictly longer than zero puts it last, so
-  // a total that left it out produced "#87 of 86".
+test("recent publication pattern is derived from consecutive run lengths", () => {
   const stats = deriveHiatusStats([
-    { year: 1998, number: 1, released: true, chapter: 1 },
-    { year: 1998, number: 2, released: false },
-    { year: 1998, number: 3, released: true, chapter: 2 },
-    { year: 1998, number: 4, released: false },
-    { year: 1998, number: 5, released: false },
-    { year: 1998, number: 6, released: true, chapter: 3 },
+    { year: 2000, number: 1, released: true, chapter: 1 },
+    { year: 2000, number: 2, released: true, chapter: 2 },
+    { year: 2000, number: 3, released: false },
+    { year: 2000, number: 4, released: true, chapter: 3 },
+    { year: 2000, number: 5, released: true, chapter: 4 },
+    { year: 2000, number: 6, released: false },
+    { year: 2000, number: 7, released: true, chapter: 5 },
+    { year: 2000, number: 8, released: true, chapter: 6 },
   ]);
 
-  assert.equal(stats.currentHiatus.elapsedIssues, 0);
-  assert.equal(stats.currentHiatus.isJustStarted, true);
-  assert.equal(stats.currentHiatus.historicalRank, 3);
-  assert.equal(stats.currentHiatus.totalHistoricalHiatuses, 3);
-  assert.ok(
-    stats.currentHiatus.historicalRank <=
-      stats.currentHiatus.totalHistoricalHiatuses,
-    "a rank can never exceed the number of things ranked",
-  );
+  assert.equal(stats.publicationRuns.recentBatchSize, 2);
+  assert.equal(stats.publicationRuns.recentRunsCount, 3);
 });
