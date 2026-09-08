@@ -1947,18 +1947,6 @@ select {
   letter-spacing: 0.01em;
 }
 
-.stat-rank {
-  flex-shrink: 0;
-  padding: 5px 10px;
-  border: 1px solid rgba(245, 158, 11, 0.26);
-  border-radius: 999px;
-  background: rgba(245, 158, 11, 0.08);
-  color: #efb45b;
-  font-size: 0.7rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1986,8 +1974,7 @@ select {
   border-left: 0;
 }
 
-.stat-label,
-.stat-context-label {
+.stat-label {
   color: var(--text-secondary);
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 0.67rem;
@@ -2021,40 +2008,10 @@ select {
   line-height: 1.45;
 }
 
-.stat-context {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 12px;
-  padding: 13px 16px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.018);
-  color: var(--text-muted);
-  font-size: 0.72rem;
-  line-height: 1.45;
-}
-
-.stat-context > div {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.stat-context strong {
-  color: var(--foreground);
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.8rem;
-  font-weight: 650;
-  font-variant-numeric: tabular-nums;
-}
-
 /* Geist Mono carries no Arabic glyphs, so mono Arabic text falls through to a
    face that renders it loosely spaced. Keep only the Latin-script UI mono. */
 [dir="rtl"] .stat-current-value,
-[dir="rtl"] .stat-value,
-[dir="rtl"] .stat-context strong {
+[dir="rtl"] .stat-value {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
@@ -2103,18 +2060,5 @@ select {
     padding: 17px 16px;
   }
 
-  .stat-context,
-  .stat-context > div {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .stat-context {
-    gap: 8px;
-  }
-
-  .stat-context > div {
-    gap: 4px;
-  }
 }
 

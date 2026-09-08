@@ -16,16 +16,6 @@ export type PublicationRunRecord = {
   length: number;
 };
 
-export type LeadTimeObservation = {
-  batch: string;
-  startChapter: number;
-  endChapter: number;
-  deliveryDate: string;
-  releaseDate: string;
-  delayDays: number;
-  source: string;
-};
-
 export type PublicationIssueInput = {
   year: number;
   number: number;
@@ -54,8 +44,6 @@ export type HiatusStatsSummary = {
     sinceDate: string;
     sinceChapter: number;
     sinceJumpIssue: string;
-    historicalRank: number;
-    totalHistoricalHiatuses: number;
     isJustStarted: boolean;
   };
   historicalHiatuses: {
@@ -78,9 +66,8 @@ export type HiatusStatsSummary = {
   publicationRuns: {
     totalRunsCount: number;
     medianRunLength: number;
-    modernBatchSize: number;
-    modernRunsCount: number;
-    modernBatchConsistencyPercent: number;
+    recentBatchSize: number;
+    recentRunsCount: number;
     longestRun: {
       startYear: number;
       startIssue: number;
@@ -95,37 +82,8 @@ export type HiatusStatsSummary = {
     totalJumpIssues: number;
     totalChaptersPublished: number;
     publishedPercentage: number;
-    hiatusPercentage: number;
-  };
-  leadTime: {
-    observedBatchesCount: number;
-    medianLeadTimeDays: number;
-    currentDeliveredCount: number;
-    currentDeliveredTarget: number;
-    observations: readonly LeadTimeObservation[];
   };
 };
-
-export const LEAD_TIME_OBSERVATIONS: readonly LeadTimeObservation[] = [
-  {
-    batch: "Ch. 391–400",
-    startChapter: 391,
-    endChapter: 400,
-    deliveryDate: "2022-07-25",
-    releaseDate: "2022-10-24",
-    delayDays: 91,
-    source: "Yoshihiro Togashi on X (@Un4v5s8bgsVk9Xp) & WSJ 2022 #47",
-  },
-  {
-    batch: "Ch. 401–410",
-    startChapter: 401,
-    endChapter: 410,
-    deliveryDate: "2024-07-25",
-    releaseDate: "2024-10-07",
-    delayDays: 74,
-    source: "Yoshihiro Togashi on X (@Un4v5s8bgsVk9Xp) & WSJ 2024 #45",
-  },
-];
 
 export function calculateMedian(numbers: readonly number[]): number {
   if (numbers.length === 0) return 0;
@@ -230,13 +188,6 @@ export function deriveHiatusStats(
     ),
   );
 
-  // Hiatus rankings: 1 is longest
-  // Count past hiatuses with strictly more issues
-  const strictlyLonger = pastHiatuses.filter(
-    (h) => h.issues > elapsedIssues,
-  ).length;
-  const historicalRank = strictlyLonger + 1;
-
   // All hiatus statistics
   const allHiatusLengths = pastHiatuses.map((h) => h.issues);
   const majorThreshold = 10;
@@ -257,12 +208,13 @@ export function deriveHiatusStats(
 
   // Run statistics
   const runLengths = pastRuns.map((r) => r.length);
-  const modernRuns = pastRuns.filter((r) => r.startYear >= 2017);
-  const modernBatch10Runs = modernRuns.filter((r) => r.length === 10);
-  const modernBatchConsistencyPercent =
-    modernRuns.length > 0
-      ? Math.round((modernBatch10Runs.length / modernRuns.length) * 100)
-      : 100;
+  const latestRun = pastRuns.at(-1);
+  const recentBatchSize = latestRun?.length ?? 0;
+  let recentRunsCount = 0;
+  for (let index = pastRuns.length - 1; index >= 0; index--) {
+    if (pastRuns[index].length !== recentBatchSize) break;
+    recentRunsCount++;
+  }
 
   const longestRunRecord = [...pastRuns].sort(
     (a, b) => b.length - a.length,
@@ -284,15 +236,6 @@ export function deriveHiatusStats(
   const publishedPercentage = Number(
     ((totalChaptersPublished / (totalJumpIssues || 1)) * 100).toFixed(1),
   );
-  const hiatusPercentage = Number((100 - publishedPercentage).toFixed(1));
-
-  // Lead time stats
-  const leadTimeDelays = LEAD_TIME_OBSERVATIONS.map((o) => o.delayDays);
-  const medianLeadTimeDays = calculateMedian(leadTimeDelays);
-
-  const currentDeliveredCount = (statusData?.chapters ?? []).filter(
-    (c) => c.status === "delivered",
-  ).length;
 
   return {
     currentHiatus: {
@@ -301,11 +244,6 @@ export function deriveHiatusStats(
       sinceDate,
       sinceChapter,
       sinceJumpIssue,
-      historicalRank,
-      // The rank places the current break inside the ranking, so the total
-      // has to count it too. Counting only the finished ones reported the
-      // shortest-ever break as "#87 of 86".
-      totalHistoricalHiatuses: pastHiatuses.length + 1,
       isJustStarted: elapsedIssues === 0,
     },
     historicalHiatuses: {
@@ -330,9 +268,8 @@ export function deriveHiatusStats(
     publicationRuns: {
       totalRunsCount: pastRuns.length,
       medianRunLength: calculateMedian(runLengths),
-      modernBatchSize: 10,
-      modernRunsCount: modernRuns.length,
-      modernBatchConsistencyPercent,
+      recentBatchSize,
+      recentRunsCount,
       longestRun: {
         startYear: longestRunRecord.startYear,
         startIssue: longestRunRecord.startIssue,
@@ -347,14 +284,6 @@ export function deriveHiatusStats(
       totalJumpIssues,
       totalChaptersPublished,
       publishedPercentage,
-      hiatusPercentage,
-    },
-    leadTime: {
-      observedBatchesCount: LEAD_TIME_OBSERVATIONS.length,
-      medianLeadTimeDays,
-      currentDeliveredCount,
-      currentDeliveredTarget: 10,
-      observations: LEAD_TIME_OBSERVATIONS,
     },
   };
 }

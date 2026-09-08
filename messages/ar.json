@@ -123,9 +123,7 @@
       "title": "الانقطاع الحالي",
       "justStarted": "بدأ للتو · مضى 0 عدد من جامب",
       "elapsed": "{issues} أعداد من جامب ({days} يومًا)",
-      "since": "منذ الفصل {chapter} (العدد {jumpIssue})",
-      "rank": "المرتبة #{rank} من بين {total} انقطاعًا تاريخيًا",
-      "rankJustStarted": "بالتساوي في المرتبة #{rank} من بين {total} انقطاعًا تاريخيًا"
+      "since": "منذ الفصل {chapter} (العدد {jumpIssue})"
     },
     "historicalHiatus": {
       "title": "الانقطاعات السابقة",
@@ -138,22 +136,14 @@
     "publicationPace": {
       "title": "سلاسل النشر المستمر",
       "modernBatch": "{batch} فصول / دفعة",
-      "modernBatchLabel": "100% من السلاسل منذ 2017 (6 دفعات مجلدات)",
+      "modernBatchLabel": "آخر {count} سلاسل نشر كانت كل منها {batch} فصول",
       "historicalMedian": "وسيط {count} فصول عبر كل السلاسل البالغة {total}",
       "recordRun": "أطول سلسلة: {count} فصول ({startYear}–{endYear})"
-    },
-    "productionLeadTime": {
-      "title": "من المخطوطة إلى الصدور",
-      "medianDelay": "~{days} يومًا مهلة",
-      "medianDelayLabel": "الوسيط الزمني بين التسليم والنشر (N={count} دفعات)",
-      "currentDelivered": "تم تسليم {delivered} من {target} مخطوطات للدفعة القادمة",
-      "footnote": "مرصود من إعلانات توغاشي الموثقة للمخطوطات حتى صدور جامب"
     },
     "publicationRate": {
       "title": "معدل النشر",
       "rate": "{percent}% نسبة الحضور",
-      "rateLabel": "{published} فصلاً عبر {total} أعداد من جامب",
-      "hiatusRate": "{percent}% معدل الانقطاع منذ 1998"
+      "rateLabel": "{published} فصلاً عبر {total} أعداد من جامب"
     }
   },
   "chapter": {

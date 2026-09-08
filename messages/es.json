@@ -123,9 +123,7 @@
       "title": "Pausa actual",
       "justStarted": "Recién comenzada · 0 números de Jump transcurridos",
       "elapsed": "{issues} números de Jump ({days} días)",
-      "since": "Desde el capítulo {chapter} (WSJ {jumpIssue})",
-      "rank": "Puesto #{rank} de {total} pausas históricas",
-      "rankJustStarted": "Empatado en el puesto #{rank} de {total} pausas históricas"
+      "since": "Desde el capítulo {chapter} (WSJ {jumpIssue})"
     },
     "historicalHiatus": {
       "title": "Pausas anteriores",
@@ -138,22 +136,14 @@
     "publicationPace": {
       "title": "Rachas de publicación",
       "modernBatch": "{batch} capítulos / tanda",
-      "modernBatchLabel": "100 % de las rachas desde 2017 (6 tandas de tomo)",
+      "modernBatchLabel": "Las últimas {count} rachas de publicación tuvieron {batch} capítulos cada una",
       "historicalMedian": "Mediana de {count} capítulos en las {total} rachas",
       "recordRun": "Racha récord: {count} capítulos ({startYear}–{endYear})"
-    },
-    "productionLeadTime": {
-      "title": "Del manuscrito a la publicación",
-      "medianDelay": "~{days} días de intervalo",
-      "medianDelayLabel": "Intervalo mediano entre entrega y salida (N={count} tandas)",
-      "currentDelivered": "{delivered} de {target} manuscritos entregados para la próxima tanda",
-      "footnote": "Intervalo observado entre los manuscritos confirmados y la salida en Jump"
     },
     "publicationRate": {
       "title": "Tasa de publicación",
       "rate": "{percent} % de presencia",
-      "rateLabel": "{published} capítulos en {total} números de Jump",
-      "hiatusRate": "{percent} % de tasa de pausa desde 1998"
+      "rateLabel": "{published} capítulos en {total} números de Jump"
     }
   },
   "chapter": {

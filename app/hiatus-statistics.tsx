@@ -32,7 +32,6 @@ export function HiatusStatistics({
   const current = summary.currentHiatus;
   const historical = summary.historicalHiatuses;
   const runs = summary.publicationRuns;
-  const leadTime = summary.leadTime;
   const rate = summary.publicationRate;
 
   const elapsed = current.isJustStarted
@@ -42,19 +41,11 @@ export function HiatusStatistics({
         days: current.elapsedDays,
       });
 
-  const rank = formatMessage(
-    current.isJustStarted
-      ? messages.currentHiatus.rankJustStarted
-      : messages.currentHiatus.rank,
-    { rank: current.historicalRank, total: current.totalHistoricalHiatuses },
-  );
-
   return (
     <div className="stats-overview">
       <article className="stat-current">
         <div className="stat-current-head">
           <span className="stat-label">{messages.currentHiatus.title}</span>
-          <span className="stat-rank">{rank}</span>
         </div>
         <strong className="stat-current-value">{elapsed}</strong>
         <span className="stat-current-since">
@@ -97,11 +88,14 @@ export function HiatusStatistics({
         <Stat
           label={messages.publicationPace.title}
           value={formatMessage(messages.publicationPace.modernBatch, {
-            batch: runs.modernBatchSize,
+            batch: runs.recentBatchSize,
           })}
           sub={
             <>
-              {messages.publicationPace.modernBatchLabel}
+              {formatMessage(messages.publicationPace.modernBatchLabel, {
+                count: runs.recentRunsCount,
+                batch: runs.recentBatchSize,
+              })}
               <span className="stat-supporting">
                 {formatMessage(messages.publicationPace.recordRun, {
                   count: runs.longestRun.length,
@@ -124,31 +118,9 @@ export function HiatusStatistics({
                 published: rate.totalChaptersPublished,
                 total: rate.totalJumpIssues,
               })}
-              <span className="stat-supporting">
-                {formatMessage(messages.publicationRate.hiatusRate, {
-                  percent: rate.hiatusPercentage,
-                })}
-              </span>
             </>
           }
         />
-      </div>
-
-      <div className="stat-context">
-        <div>
-          <span className="stat-context-label">{messages.productionLeadTime.title}</span>
-          <strong>
-            {formatMessage(messages.productionLeadTime.medianDelay, {
-              days: Math.round(leadTime.medianLeadTimeDays),
-            })}
-          </strong>
-        </div>
-        <span>
-          {formatMessage(messages.productionLeadTime.currentDelivered, {
-            delivered: leadTime.currentDeliveredCount,
-            target: leadTime.currentDeliveredTarget,
-          })}
-        </span>
       </div>
 
       <p className="stat-methodology">{messages.methodology}</p>

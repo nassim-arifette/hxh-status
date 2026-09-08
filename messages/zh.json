@@ -123,9 +123,7 @@
       "title": "当前休刊状态",
       "justStarted": "休刊刚开始 · 经历0期Jump",
       "elapsed": "Jump {issues} 期（{days} 天）",
-      "since": "自第 {chapter} 话（{jumpIssue} 期）刊登后",
-      "rank": "历史休刊时长第 #{rank} 位（共 {total} 次）",
-      "rankJustStarted": "历史休刊时长并列第 #{rank} 位（共 {total} 次）"
+      "since": "自第 {chapter} 话（{jumpIssue} 期）刊登后"
     },
     "historicalHiatus": {
       "title": "历史休刊记录",
@@ -138,22 +136,14 @@
     "publicationPace": {
       "title": "连载节奏",
       "modernBatch": "每轮 {batch} 话",
-      "modernBatchLabel": "2017年以来100%连载均为10话成组（6卷单行本）",
+      "modernBatchLabel": "最近 {count} 轮连续刊载均为每轮 {batch} 话",
       "historicalMedian": "全部 {total} 次连载中位数为 {count} 话",
       "recordRun": "最长连续连载：{count} 话（{startYear}–{endYear}）"
-    },
-    "productionLeadTime": {
-      "title": "原稿交付到刊登",
-      "medianDelay": "约 {days} 天",
-      "medianDelayLabel": "原稿交付至Jump发售的中位间隔（N={count}组）",
-      "currentDelivered": "下一批次原稿已交付 {delivered}/{target} 话",
-      "footnote": "取自富坚义博确认原稿完成至Jump正式刊登的实测间隔"
     },
     "publicationRate": {
       "title": "连载率统计",
       "rate": "{percent}% 刊登率",
-      "rateLabel": "Jump 共 {total} 期中刊登 {published} 话",
-      "hiatusRate": "1998年以来休刊率 {percent}%"
+      "rateLabel": "Jump 共 {total} 期中刊登 {published} 话"
     }
   },
   "chapter": {
