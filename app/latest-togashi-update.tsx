@@ -2,11 +2,13 @@ import Image from "next/image";
 import { ChevronDown, ExternalLink } from "lucide-react";
 
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
+import { localePath, updatePath } from "@/lib/routes";
 import feedData from "./data/togashi-posts.json";
 import { formatDate } from "./status-presentation";
 import styles from "./latest-togashi-update.module.css";
 
 type TogashiPost = {
+  id: string;
   author: { name: string; screenName: string };
   createdAt: string;
   url: string;
@@ -56,9 +58,11 @@ function PostText({ text, compactLinks = false }: { text: string; compactLinks?:
 export default function LatestTogashiUpdate({
   locale,
   messages,
+  permalinkLabel,
 }: {
   locale: Locale;
   messages: Messages["latestUpdate"];
+  permalinkLabel: string;
 }) {
   // The validated public feed is newest first, including posts that do not
   // change a chapter's production status. Use its cached translations.
@@ -88,10 +92,21 @@ export default function LatestTogashiUpdate({
           {messages.eyebrow}
         </h2>
         {post ? (
-          <a className={`source-link ${styles.source}`} href={post.url} target="_blank" rel="noreferrer">
-            {messages.viewPost}
-            <ExternalLink size={14} aria-hidden="true" />
-          </a>
+          <span className={styles.sourceLinks}>
+            {/* The permalink is the crawlable copy of this post: it keeps the
+                translation and the transcribed submission sheet at a URL of
+                its own, which the panel above can only show for the newest. */}
+            <a
+              className={`source-link ${styles.source}`}
+              href={localePath(updatePath(post.id), locale)}
+            >
+              {permalinkLabel}
+            </a>
+            <a className={`source-link ${styles.source}`} href={post.url} target="_blank" rel="noreferrer">
+              {messages.viewPost}
+              <ExternalLink size={14} aria-hidden="true" />
+            </a>
+          </span>
         ) : null}
       </div>
 

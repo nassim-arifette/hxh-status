@@ -330,3 +330,10 @@
     min-height: 44px;
   }
 }
+
+.sourceLinks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+}

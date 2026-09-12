@@ -16,6 +16,29 @@ The tracker keeps these milestones separate:
 - character inking complete;
 - no confirmed production update.
 
+## Pages
+
+Every question the data answers has its own URL, in every published language
+(`/` for English, `/{locale}` for the rest):
+
+| Path | Answers |
+| --- | --- |
+| `/` | Is HUNTER×HUNTER on hiatus right now, and what is confirmed? |
+| `/chapter/{n}` | One page per chapter the tracker knows something about: stage, confirmation date, Jump issue, source, prev/next. |
+| `/hiatus` | The current break plus every hiatus of ten Jump issues or more since 1998. |
+| `/statistics` | Publication pace, presence rate and run lengths. |
+| `/updates` and `/updates/{postId}` | Yoshihiro Togashi's posts, translated, with the Jump submission sheets transcribed. |
+| `/arcs/succession-war` | How the Succession War compares with every other arc, by chapters and by years. |
+| `/where-to-read` | The official readers, by language. |
+| `/about` | What is tracked, from which sources, and how corrections work. |
+| `/api` | The public API, documented. |
+
+`app/_pages/` holds the body of each page; the route files under `app/` and
+`app/[locale]/` are thin wrappers so English and the six other languages render
+from one component. The pages carry no interactive component, so
+`scripts/strip-page-scripts.mjs` removes the framework runtime from them after
+the export: they ship HTML and CSS only.
+
 ## Run locally
 
 ```bash

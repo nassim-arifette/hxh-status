@@ -23,6 +23,9 @@ function localeForPage(relativePath) {
   }
   // out/<locale>.html, with out/index.html being English
   if (segments.length === 1 && file in locales) return file;
+  // out/<locale>/<page>.html and out/<locale>/chapter/<n>.html. English keeps
+  // the bare path, so a first segment that is not a locale is English.
+  if (segments.length > 1 && segments[0] in locales) return segments[0];
   return defaultLocale;
 }
 
