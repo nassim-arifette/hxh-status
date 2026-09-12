@@ -63,11 +63,11 @@ export function generateAtomFeed({
       messages?.statuses?.[chapter.status]?.description ??
       "";
 
-    const link =
-      chapter.source ??
-      (isEn
-        ? `${origin}/#chapter-${chapter.chapter}`
-        : `${origin}/${locale}#chapter-${chapter.chapter}`);
+    // The entry links to the chapter's own page rather than to the source
+    // post: a subscriber who follows it lands somewhere that explains the
+    // change, and the source is one click further down the page. The source
+    // itself is still named in the entry body below.
+    const link = `${origin}${localePath === "/" ? "" : localePath}/chapter/${chapter.chapter}`;
 
     const author =
       chapter.sourceType === "togashi-x"
@@ -83,7 +83,10 @@ export function generateAtomFeed({
     if (chapter.releaseAt) {
       htmlContent += `<p>Release: ${escapeXml(chapter.releaseAt)}</p>`;
     }
-    htmlContent += `<p><a href="${escapeXml(link)}">Source / Details</a></p>`;
+    if (chapter.source) {
+      htmlContent += `<p><a href="${escapeXml(chapter.source)}">${escapeXml(chapter.sourceLabel ?? "Source")}</a></p>`;
+    }
+    htmlContent += `<p><a href="${escapeXml(link)}">Chapter ${chapter.chapter} on HxH Status</a></p>`;
 
     entries.push({
       id,
@@ -129,7 +132,7 @@ export function generateAtomFeed({
     entries.push({
       id,
       title,
-      link: post.url,
+      link: `${origin}${localePath === "/" ? "" : localePath}/updates/${post.id}`,
       updated: date,
       published: date,
       author,

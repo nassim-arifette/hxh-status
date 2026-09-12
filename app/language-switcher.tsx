@@ -3,69 +3,76 @@
 import { ChevronDown, Languages } from "lucide-react";
 
 import {
-  getLocalePath,
+  getLocaleOptions,
   localeCookieName,
-  localeOptions,
   localePreferenceKey,
   type Locale,
 } from "@/lib/i18n";
 
+// Every language is a real <a href> inside a <details> menu: it opens, and it
+// can be followed, with no JavaScript at all. That matters twice over — a
+// crawler discovers the other six languages of the page it is on, and the
+// content pages ship no script yet still switch language.
+//
+// The click handler is an enhancement on top, not the mechanism: it remembers
+// the choice so the Worker can honour it the next time the bare domain is
+// requested. Without it the link still works, the preference is simply not
+// stored.
+function rememberLocale(locale: Locale) {
+  try {
+    window.localStorage.setItem(localePreferenceKey, locale);
+  } catch {
+    // Navigation still works when storage is disabled by the browser.
+  }
+
+  document.cookie =
+    `${localeCookieName}=${locale};path=/;max-age=31536000;samesite=lax`;
+}
+
 export default function LanguageSwitcher({
   label,
   locale,
+  path = "/",
 }: {
   label: string;
   locale: Locale;
+  path?: string;
 }) {
-  const isPublishedLocale = localeOptions.some(
-    (option) => option.locale === locale,
-  );
+  const options = getLocaleOptions(path);
+  const current = options.find((option) => option.locale === locale);
 
-  if (!isPublishedLocale) return null;
-
-  function changeLocale(nextLocale: Locale) {
-    if (nextLocale === locale) return;
-
-    try {
-      window.localStorage.setItem(localePreferenceKey, nextLocale);
-    } catch {
-      // Navigation still works when storage is disabled by the browser.
-    }
-
-    // The Worker negotiates "/" and cannot read localStorage, so the same
-    // choice is mirrored into a cookie it can see. Without this, returning to
-    // the bare domain would hand the reader their browser language again
-    // rather than the language they picked.
-    document.cookie =
-      `${localeCookieName}=${nextLocale};path=/;max-age=31536000;samesite=lax`;
-
-    document.documentElement.lang = nextLocale;
-    const nextUrl = new URL(getLocalePath(nextLocale), window.location.origin);
-    nextUrl.search = window.location.search;
-    nextUrl.hash = window.location.hash;
-    window.location.assign(nextUrl);
-  }
+  if (!current) return null;
 
   return (
-    <label className="language-picker">
-      <span className="sr-only">{label}</span>
-      <Languages className="language-picker-icon" size={15} aria-hidden="true" />
-      <select
-        aria-label={label}
-        value={locale}
-        onChange={(event) => changeLocale(event.currentTarget.value as Locale)}
-      >
-        {localeOptions.map((option) => (
-          <option key={option.locale} value={option.locale}>
-            {option.label}
-          </option>
+    <details className="language-picker">
+      <summary aria-label={label}>
+        <Languages
+          className="language-picker-icon"
+          size={15}
+          aria-hidden="true"
+        />
+        <span className="language-picker-current">{current.label}</span>
+        <ChevronDown
+          className="language-picker-chevron"
+          size={14}
+          aria-hidden="true"
+        />
+      </summary>
+      <ul className="language-picker-menu">
+        {options.map((option) => (
+          <li key={option.locale}>
+            <a
+              aria-current={option.locale === locale ? "true" : undefined}
+              hrefLang={option.locale}
+              href={option.path}
+              lang={option.locale}
+              onClick={() => rememberLocale(option.locale)}
+            >
+              {option.label}
+            </a>
+          </li>
         ))}
-      </select>
-      <ChevronDown
-        className="language-picker-chevron"
-        size={14}
-        aria-hidden="true"
-      />
-    </label>
+      </ul>
+    </details>
   );
 }

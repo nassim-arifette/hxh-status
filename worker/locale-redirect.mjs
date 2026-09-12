@@ -10,7 +10,7 @@ const DEFAULT_LOCALE = "en";
 
 // A reader who picked a language in the header carries it in a cookie, because
 // the Worker cannot read the localStorage copy the switcher also writes.
-function cookieLocale(request) {
+export function cookieLocale(request) {
   const header = request.headers.get("Cookie");
   if (!header) return null;
   for (const part of header.split(";")) {
@@ -22,41 +22,16 @@ function cookieLocale(request) {
   return null;
 }
 
-// Accept-Language, by descending q. "fr-CA" counts as French; a tag we do not
-// publish is skipped rather than ending the search, so "sv, fr;q=0.8" is French.
-export function parseAcceptLanguage(header) {
-  if (typeof header !== "string" || header === "") return [];
-  return header
-    .split(",")
-    .map((part) => {
-      const [tag, ...params] = part.trim().split(";");
-      const q = params
-        .map((param) => /^\s*q\s*=\s*([0-9.]+)\s*$/i.exec(param))
-        .find(Boolean);
-      const quality = q ? Number.parseFloat(q[1]) : 1;
-      return {
-        tag: tag.trim().toLowerCase(),
-        quality: Number.isFinite(quality) ? quality : 0,
-      };
-    })
-    .filter((entry) => entry.tag !== "" && entry.quality > 0)
-    .sort((a, b) => b.quality - a.quality)
-    .map((entry) => entry.tag);
-}
-
+// Only a choice the reader made themselves moves them off "/".
+//
+// Accept-Language used to decide this too, and it is the wrong signal for a
+// site whose pages are indexed: a crawler that sends a language header is
+// bounced to a translation of the page it asked for, and a reader who wants
+// the English URL cannot reach it by typing the domain. The language menu is
+// seven real links in the header, so choosing a language costs one click and
+// is then remembered here.
 export function negotiateLocale(request) {
-  const chosen = cookieLocale(request);
-  if (chosen) return chosen;
-
-  for (const tag of parseAcceptLanguage(request.headers.get("Accept-Language"))) {
-    if (tag === "*") return DEFAULT_LOCALE;
-    const base = tag.split("-")[0];
-    if (PUBLIC_LOCALES.includes(base)) return base;
-  }
-
-  // No header, or nothing we publish: English is what "/" already serves, and
-  // it is also what a crawler that sends no preference should be given.
-  return DEFAULT_LOCALE;
+  return cookieLocale(request) ?? DEFAULT_LOCALE;
 }
 
 // Only "/" is negotiated. Every other path either names its locale or is an
@@ -77,9 +52,9 @@ export function localeRedirect(request) {
     status: 302,
     headers: {
       Location: `${target.pathname}${target.search}`,
-      // The response depends on both, so an edge or browser cache must not
-      // hand one reader's language to the next.
-      Vary: "Accept-Language, Cookie",
+      // The response depends on the cookie, so an edge or browser cache must
+      // not hand one reader's language to the next.
+      Vary: "Cookie",
       "Cache-Control": "no-store",
     },
   });

@@ -3,22 +3,37 @@ import "server-only";
 import type { Metadata } from "next";
 
 import { statusDataRevision } from "@/app/data/status";
+import { buildHomeDescription, buildHomeTitle } from "@/app/data/summary";
 
 import {
-  getLocaleUrl,
+  getLanguageAlternates,
   getOpenGraphLocale,
   isPublicLocale,
-  languageAlternates,
   publicLocales,
   type Locale,
   type Messages,
 } from "./i18n";
+import { localeUrl } from "./routes";
 
-export function createLocaleMetadata(
-  locale: Locale,
-  messages: Messages,
-): Metadata {
-  const url = getLocaleUrl(locale);
+type PageMetadataOptions = {
+  locale: Locale;
+  messages: Messages;
+  // Locale-independent path, "/" for the home page and "/chapter/421" for a
+  // sub-page. Every language of one page shares it, which is what lets the
+  // hreflang cluster below be generated rather than hand-written.
+  path?: string;
+  title?: string;
+  description?: string;
+};
+
+export function createPageMetadata({
+  locale,
+  messages,
+  path = "/",
+  title,
+  description,
+}: PageMetadataOptions): Metadata {
+  const url = localeUrl(path, locale);
   const image = {
     url: `/opengraph-image?v=${statusDataRevision}`,
     width: 1200,
@@ -29,13 +44,15 @@ export function createLocaleMetadata(
     .filter((candidate) => candidate !== locale)
     .map(getOpenGraphLocale);
   const published = isPublicLocale(locale);
+  const pageTitle = title ?? messages.metadata.title;
+  const pageDescription = description ?? messages.metadata.description;
 
   return {
-    title: messages.metadata.title,
-    description: messages.metadata.description,
+    title: pageTitle,
+    description: pageDescription,
     alternates: {
       canonical: url,
-      languages: published ? languageAlternates : undefined,
+      languages: published ? getLanguageAlternates(path) : undefined,
       types: {
         "application/atom+xml": [
           {
@@ -46,8 +63,8 @@ export function createLocaleMetadata(
       },
     },
     openGraph: {
-      title: messages.metadata.title,
-      description: messages.metadata.description,
+      title: pageTitle,
+      description: pageDescription,
       url,
       siteName: messages.metadata.siteName,
       locale: getOpenGraphLocale(locale),
@@ -57,10 +74,24 @@ export function createLocaleMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      title: messages.metadata.title,
-      description: messages.metadata.description,
+      title: pageTitle,
+      description: pageDescription,
       images: [image],
     },
     robots: published ? undefined : { index: false, follow: false },
   };
+}
+
+// The home page leads with the question readers actually type, answered from
+// the tracker data, so the title and description move whenever the data does.
+export function createLocaleMetadata(
+  locale: Locale,
+  messages: Messages,
+): Metadata {
+  return createPageMetadata({
+    locale,
+    messages,
+    title: buildHomeTitle(locale, messages),
+    description: buildHomeDescription(locale, messages),
+  });
 }

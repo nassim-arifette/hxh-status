@@ -4,7 +4,18 @@ export type HiatusRecord = {
   endYear: number;
   endIssue: number;
   issues: number;
+  // The last chapter printed before the break and the first one after it. A
+  // break carries no dates of its own, so the chapters either side of it are
+  // the only way to say when it happened in terms a reader recognises.
+  precededByChapter?: number;
+  precededByDate?: string;
+  precededByArc?: string;
+  resumedWithChapter?: number;
+  resumedOnDate?: string;
+  resumedWithArc?: string;
 };
+
+export type MajorHiatusRecord = HiatusRecord & { approxYears: number };
 
 export type PublicationRunRecord = {
   startYear: number;
@@ -54,6 +65,9 @@ export type HiatusStatsSummary = {
     medianIssuesMajor: number;
     medianDaysMajorApprox: number;
     maxIssues: number;
+    // Every break of at least `majorThreshold` issues, longest first. The
+    // aggregate numbers above are summaries of exactly this list.
+    major: MajorHiatusRecord[];
     maxHiatus: {
       startYear: number;
       startIssue: number;
@@ -68,6 +82,7 @@ export type HiatusStatsSummary = {
     medianRunLength: number;
     recentBatchSize: number;
     recentRunsCount: number;
+    recent: PublicationRunRecord[];
     longestRun: {
       startYear: number;
       startIssue: number;
@@ -85,6 +100,15 @@ export type HiatusStatsSummary = {
   };
 };
 
+export function toChapterNumber(
+  chapter: number | string | undefined,
+): number | undefined {
+  if (chapter === undefined) return undefined;
+  const value =
+    typeof chapter === "number" ? chapter : Number.parseInt(chapter, 10);
+  return Number.isFinite(value) && value > 0 ? value : undefined;
+}
+
 export function calculateMedian(numbers: readonly number[]): number {
   if (numbers.length === 0) return 0;
   const sorted = [...numbers].sort((a, b) => a - b);
@@ -98,7 +122,9 @@ export function calculateMedian(numbers: readonly number[]): number {
 export function deriveHiatusStats(
   issues: readonly PublicationIssueInput[],
   statusData?: StatusDataInput,
-  currentDateStr = "2026-09-07",
+  // Measured against the tracker's own `lastUpdated`, never the clock, so a
+  // rebuild without new data renders byte-identical output.
+  currentDateStr = statusData?.lastUpdated ?? "2026-09-07",
 ): HiatusStatsSummary {
   // Chronological order (oldest first: 1998 #14 -> 2026 #41)
   const chronological = [...issues].sort((a, b) =>
@@ -110,6 +136,8 @@ export function deriveHiatusStats(
 
   const pastRuns: PublicationRunRecord[] = [];
   let curRun: PublicationRunRecord | null = null;
+
+  let lastReleased: PublicationIssueInput | undefined;
 
   for (const issue of chronological) {
     if (!issue.released) {
@@ -124,6 +152,9 @@ export function deriveHiatusStats(
           endYear: issue.year,
           endIssue: issue.number,
           issues: 1,
+          precededByChapter: toChapterNumber(lastReleased?.chapter),
+          precededByDate: lastReleased?.date,
+          precededByArc: lastReleased?.arc,
         };
       } else {
         curHiatus.endYear = issue.year;
@@ -132,9 +163,16 @@ export function deriveHiatusStats(
       }
     } else {
       if (curHiatus) {
+        // The 2013 special one-shot carries no chapter number, so the arc it
+        // belongs to is kept: "resumed with a one-shot" is the true answer,
+        // and it is not the same answer as "no record".
+        curHiatus.resumedWithChapter = toChapterNumber(issue.chapter);
+        curHiatus.resumedOnDate = issue.date;
+        curHiatus.resumedWithArc = issue.arc;
         pastHiatuses.push(curHiatus);
         curHiatus = null;
       }
+      lastReleased = issue;
       if (!curRun) {
         curRun = {
           startYear: issue.year,
@@ -256,6 +294,12 @@ export function deriveHiatusStats(
         calculateMedian(majorHiatusLengths) * 7,
       ),
       maxIssues: maxHiatusRecord.issues,
+      major: [...majorHiatuses]
+        .sort((a, b) => b.issues - a.issues)
+        .map((hiatus) => ({
+          ...hiatus,
+          approxYears: Number((hiatus.issues / 48).toFixed(1)),
+        })),
       maxHiatus: {
         startYear: maxHiatusRecord.startYear,
         startIssue: maxHiatusRecord.startIssue,
@@ -270,6 +314,7 @@ export function deriveHiatusStats(
       medianRunLength: calculateMedian(runLengths),
       recentBatchSize,
       recentRunsCount,
+      recent: pastRuns.slice(-8).reverse(),
       longestRun: {
         startYear: longestRunRecord.startYear,
         startIssue: longestRunRecord.startIssue,

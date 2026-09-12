@@ -8,14 +8,14 @@ import englishMessages from "@/messages/en.json";
 import ChapterTracker, { LocalDate } from "./chapter-tracker";
 import Faq from "./faq";
 import historyData from "./data/publication-history.json";
-import statusData from "./data/status-data.json";
 import LanguageSwitcher from "./language-switcher";
 import LatestTogashiUpdate from "./latest-togashi-update";
 import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
-import { ARCS, deriveArcStats } from "./data/arcs";
-import { deriveHiatusStats } from "./data/hiatus-stats";
+import { ARCS } from "./data/arcs";
+import { arcStats, buildStatusSentences, hiatusStats } from "./data/summary";
 import { HiatusStatistics } from "./hiatus-statistics";
+import { BaseRates } from "./base-rates";
 import { getChapterTitles, getChapterTitlesFor } from "./data/chapter-titles";
 import type { HistoryYear } from "./publication-history";
 import {
@@ -34,6 +34,23 @@ import {
   getStatusMeta,
   type StatusMeta,
 } from "./status-presentation";
+import {
+  comicSeriesLd,
+  datasetLd,
+  graph,
+  GITHUB_REPOSITORY,
+  JsonLd,
+  publisherLd,
+  webSiteLd,
+} from "./structured-data";
+import {
+  ARC_PAGES,
+  arcPath,
+  chapterPath,
+  contentPagePath,
+  CONTENT_PAGES,
+  localePath,
+} from "@/lib/routes";
 
 // Bump when capture-only styles change; data updates already bump lastUpdated.
 const shareImageRevision = "2";
@@ -95,8 +112,8 @@ const historyYears: HistoryYear[] = [
       ),
   ]);
 
-const arcSummary = deriveArcStats(issues);
-const hiatusStatsSummary = deriveHiatusStats(issues, statusData);
+const arcSummary = arcStats;
+const hiatusStatsSummary = hiatusStats;
 
 const currentYear = issues.reduce(
   (latest, issue) => Math.max(latest, issue.year),
@@ -274,6 +291,7 @@ export default function StatusDashboard({
   messages = englishMessages,
 }: StatusDashboardProps = {}) {
   const statusMeta = getStatusMeta(messages.statuses);
+  const summarySentences = buildStatusSentences(locale, messages);
   const publicationStatusLabel =
     publicationStatus === "publishing"
       ? messages.snapshot.publishing
@@ -322,9 +340,17 @@ export default function StatusDashboard({
 
         <section className="snapshot" aria-labelledby="publishing-status-title">
           <div className="publishing-status" data-state={publicationStatus}>
+            {/* The heading carries the question readers type and the answer
+                they came for, in that order, so the page states its subject in
+                words rather than leaving it to a coloured dot. */}
             <h1 id="publishing-status-title">
-              <span className="publishing-status-dot" aria-hidden="true" />
-              {publicationStatusLabel}
+              <span className="publishing-status-question">
+                {messages.snapshot.question}
+              </span>
+              <span className="publishing-status-answer">
+                <span className="publishing-status-dot" aria-hidden="true" />
+                {publicationStatusLabel}
+              </span>
             </h1>
             <p className="publishing-status-detail">
               {formatMessage(messages.snapshot.chaptersPublished, {
@@ -368,11 +394,28 @@ export default function StatusDashboard({
               <strong>{workConfirmed.chapter}</strong>
             </article>
           </div>
+
+          {/* The same three sentences feed the title, the description, the feed
+              and the structured data; they are shown here so what a crawler
+              quotes is what a reader sees. */}
+          <p className="status-summary" aria-label={messages.snapshot.summaryAria}>
+            {summarySentences.join(" ")}
+          </p>
         </section>
 
         <ProductionSection locale={locale} messages={messages} />
 
-        <LatestTogashiUpdate locale={locale} messages={messages.latestUpdate} />
+        <BaseRates
+          chapter={nextChapter.chapter}
+          locale={locale}
+          messages={messages}
+        />
+
+        <LatestTogashiUpdate
+          locale={locale}
+          messages={messages.latestUpdate}
+          permalinkLabel={messages.pages.updates.readMore}
+        />
 
         <PublicationHistorySection locale={locale} messages={messages} />
 
@@ -380,13 +423,42 @@ export default function StatusDashboard({
 
         <Faq locale={locale} messages={messages} />
 
+        {/* One page cannot rank for every question the data answers, so each
+            answer gets its own URL and the tracker links to all of them. */}
+        <nav aria-label={messages.nav.explore} className="page-links">
+          <p className="eyebrow">{messages.nav.explore}</p>
+          <ul>
+            {CONTENT_PAGES.map((page) => (
+              <li key={page}>
+                <a href={localePath(contentPagePath(page), locale)}>
+                  {contentPageNames(messages)[page]}
+                </a>
+              </li>
+            ))}
+            {ARC_PAGES.map((arc) => (
+              <li key={arc}>
+                <a href={localePath(arcPath(arc), locale)}>
+                  {messages.pages.arc.name}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a href={localePath(chapterPath(nextChapter.chapter), locale)}>
+                {formatMessage(messages.pages.chapter.h1, {
+                  chapter: nextChapter.chapter,
+                })}
+              </a>
+            </li>
+          </ul>
+        </nav>
+
         <footer className="site-footer">
           <p>{messages.footer.disclaimer}</p>
           <div className="footer-details">
             <p>{messages.footer.sources}</p>
             <a
               className="footer-github"
-              href="https://github.com/nassim-arifette/hxh-status"
+              href={GITHUB_REPOSITORY}
               rel="noreferrer"
               target="_blank"
             >
@@ -406,6 +478,43 @@ export default function StatusDashboard({
           </div>
         </footer>
       </div>
+
+      <JsonLd
+        data={graph(
+          publisherLd(messages.metadata.siteName),
+          webSiteLd({
+            siteName: messages.metadata.siteName,
+            description: messages.metadata.description,
+            locale,
+          }),
+          comicSeriesLd({
+            locale,
+            description: summarySentences.join(" "),
+            numberOfItems: latestPublished.chapter,
+            startDate: "1998-03-16",
+          }),
+          datasetLd({
+            name: messages.metadata.title,
+            description: messages.metadata.description,
+            locale,
+            modified: lastUpdated,
+            temporalCoverage: "1998-03/..",
+          }),
+        )}
+      />
     </main>
   );
+}
+
+// The label each cross-link carries. Kept beside the nav that uses it so a new
+// content page is one entry in two places rather than a search through the file.
+function contentPageNames(messages: Messages): Record<string, string> {
+  return {
+    hiatus: messages.pages.hiatus.name,
+    statistics: messages.pages.statistics.name,
+    updates: messages.pages.updates.name,
+    "where-to-read": messages.pages.whereToRead.name,
+    about: messages.pages.about.name,
+    api: messages.pages.api.name,
+  };
 }

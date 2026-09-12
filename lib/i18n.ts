@@ -1,5 +1,6 @@
 import type englishMessages from "@/messages/en.json";
 import localeConfig from "./locales.json";
+import { localePath, localeUrl, siteUrl } from "./routes";
 
 export type Locale = keyof typeof localeConfig.locales;
 export type Messages = typeof englishMessages;
@@ -32,14 +33,14 @@ export const localePreferenceKey = "hxhstatus.locale";
 // Mirrors localePreferenceKey for the Worker, which negotiates "/" and has no
 // access to localStorage. worker/locale-redirect.mjs reads this name.
 export const localeCookieName = "hxhstatus_locale";
-export const siteUrl = "https://hxhstatus.com";
+export { siteUrl };
 
 export function getLocalePath(locale: Locale) {
-  return locale === "en" ? "/" : `/${locale}`;
+  return localePath("/", locale);
 }
 
 export function getLocaleUrl(locale: Locale) {
-  return `${siteUrl}${getLocalePath(locale)}`;
+  return localeUrl("/", locale);
 }
 
 export function getLocaleDirection(locale: Locale) {
@@ -54,18 +55,37 @@ export function isPublicLocale(locale: Locale) {
   return localeSettings[locale].published;
 }
 
-export const languageAlternates: Record<string, string> = Object.fromEntries([
-  ["x-default", siteUrl] as const,
-  ...publicLocales.map(
-    (locale) => [locale, getLocaleUrl(locale)] as const,
-  ),
-]);
+// The endonym, so "Français" reads the same whichever language the page is in.
+export function getLocaleLabel(locale: Locale) {
+  return localeSettings[locale].label;
+}
 
-export const localeOptions = publicLocales.map((locale) => ({
-  label: localeSettings[locale].label,
-  locale,
-  path: getLocalePath(locale),
-}));
+// Every published language, plus the x-default that points at English. Google
+// only trusts an hreflang cluster when each member names every other member and
+// itself, so the same map is emitted on every locale of a given page.
+export function getLanguageAlternates(path = "/"): Record<string, string> {
+  return Object.fromEntries([
+    ["x-default", localeUrl(path, "en")] as const,
+    ...publicLocales.map(
+      (locale) => [locale, localeUrl(path, locale)] as const,
+    ),
+  ]);
+}
+
+export const languageAlternates = getLanguageAlternates();
+
+// The language menu links to the same page in each language, so a reader who
+// switches language on /chapter/421 lands on /fr/chapter/421 rather than the
+// home page. The links are real anchors, which is also what a crawler follows.
+export function getLocaleOptions(path = "/") {
+  return publicLocales.map((locale) => ({
+    label: localeSettings[locale].label,
+    locale,
+    path: localePath(path, locale),
+  }));
+}
+
+export const localeOptions = getLocaleOptions();
 
 export function isLocale(value: string): value is Locale {
   return Object.prototype.hasOwnProperty.call(localeConfig.locales, value);
