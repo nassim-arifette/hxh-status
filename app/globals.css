@@ -2612,3 +2612,21 @@ select {
 .table-scroll { max-width: 100%; overflow-x: auto; }
 .forecast caption { text-align: start; padding-block: 12px; }
 @media (max-width: 720px) { .forecast-grid { grid-template-columns: 1fr; } }
+
+.forecast h3 { margin-block: 28px 12px; font-size: 1.1rem; font-weight: 600; }
+.forecast-scenario { margin-block: 24px; padding: 20px; border: 1px solid var(--accent-green); border-radius: 12px; }
+.forecast-scenario h3 { margin-block-start: 0; }
+.forecast-probabilities { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-block: 20px 28px; }
+.forecast-probabilities dt { color: var(--text-secondary); font-size: .85rem; }
+.forecast-probabilities dd { margin: 8px 0 0; font-size: 1.6rem; font-weight: 600; }
+.forecast-chart { margin: 24px 0; }
+.forecast-chart svg { display: block; width: 100%; max-height: 360px; overflow: visible; }
+.forecast-chart text { fill: var(--text-secondary); font-size: 13px; }
+.forecast-chart-grid { stroke: var(--border); }
+.forecast-history-line { fill: none; stroke: var(--text-secondary); stroke-width: 2; stroke-dasharray: 6 5; }
+.forecast-production-line { fill: none; stroke: var(--accent-green); stroke-width: 3; }
+.forecast-legend { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: .85rem; color: var(--text-secondary); }
+.forecast-legend span:first-child { color: var(--accent-green); }
+.forecast-equations { max-width: 100%; overflow-x: auto; padding: 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-size: .8rem; line-height: 1.8; }
+.forecast-sources { display: flex; flex-wrap: wrap; gap: 12px 24px; padding-inline-start: 20px; font-size: .9rem; }
+@media (max-width: 480px) { .forecast-probabilities { grid-template-columns: repeat(2, 1fr); } .forecast-scenario { padding: 16px; } }

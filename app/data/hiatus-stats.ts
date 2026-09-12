@@ -58,6 +58,7 @@ export type HiatusStatsSummary = {
     isJustStarted: boolean;
   };
   historicalHiatuses: {
+    completed: HiatusRecord[];
     totalCount: number;
     medianIssuesAll: number;
     majorThreshold: number;
@@ -285,6 +286,7 @@ export function deriveHiatusStats(
       isJustStarted: elapsedIssues === 0,
     },
     historicalHiatuses: {
+      completed: pastHiatuses,
       totalCount: pastHiatuses.length,
       medianIssuesAll: calculateMedian(allHiatusLengths),
       majorThreshold,

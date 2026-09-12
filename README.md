@@ -211,14 +211,14 @@ Lucide icons are licensed under the ISC License.
 
 ## Statistical estimates and post archive
 
-The next unpublished chapter page includes an explicitly labelled historical
-hiatus estimate. Its model is in `app/data/release-forecast.ts`: equal weights
-for completed major breaks since 2014, conditional on elapsed time, with a median,
-10th–90th percentile window, period sensitivity and rolling historical errors.
-Dates use an approximate 48 Jump issues/year conversion. This is an exploratory
-baseline, not a calibrated probability, medical model or editorial announcement.
-It never writes `releaseAt`, the publication calendar or official status. An
-official schedule suppresses the estimate. `npm test` covers these boundaries.
+The next unpublished chapter page includes two explicitly labelled Bayesian
+models: a conjugate log-normal survival reference and a Gamma-Poisson production
+scenario informed by Togashi's sourced manuscript reports. Both integrate
+parameter uncertainty and expose assumptions, predictive intervals and sensitivity.
+The production scenario has only one observed editorial cycle; it is not validated.
+See [the mathematical specification](FORECAST-MODEL.md) for equations, priors,
+chronological backtests, numerical checks and limitations. Reproduce the report
+with `npm run forecast:report -- 2026-09-12`. Neither model writes official dates.
 
 To backfill Togashi's original posts without replaying notifications or changing
 tracker state, run `node scripts/import-togashi-archive.mjs --originals-only`.

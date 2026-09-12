@@ -6,6 +6,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
+    "forecast:report": "node scripts/report-release-forecast.mjs",
     "dev": "next dev",
     "build": "node scripts/generate-sw-copy.mjs && next build && node scripts/set-html-lang.mjs && node scripts/strip-page-scripts.mjs && node scripts/generate-status-json.mjs && node scripts/generate-public-api.mjs && node scripts/inject-csp-hashes.mjs",
     "sw:copy": "node scripts/generate-sw-copy.mjs",

@@ -1,0 +1,14 @@
+import history from '../app/data/publication-history.json' with { type: 'json' };
+import status from '../app/data/status-data.json' with { type: 'json' };
+import archive from '../app/data/togashi-posts.json' with { type: 'json' };
+import {deriveHiatusStats} from '../app/data/hiatus-stats.ts';
+import {deriveReleaseForecast,japanDate} from '../app/data/release-forecast.ts';
+import {deriveProductionForecast} from '../app/data/production-forecast.ts';
+const asOf=process.argv[2]??japanDate();
+if(!/^\d{4}-\d{2}-\d{2}$/.test(asOf)||!Number.isFinite(Date.parse(asOf)))throw new Error('Expected YYYY-MM-DD');
+const records=deriveHiatusStats(history,status,asOf).historicalHiatuses.completed;
+const latest=status.chapters.filter(c=>c.status==='published'&&c.releaseAt?.slice(0,10)<=asOf).at(-1);
+const next=status.chapters.find(c=>c.chapter===latest?.chapter+1);
+const historical=next?deriveReleaseForecast({records,chapter:next.chapter,nextChapter:next.chapter,chapterStatus:next.status,publicationStatus:status.hiatusAfterChapter===latest.chapter?'hiatus':'publishing',sinceDate:latest.releaseAt.slice(0,10),asOf}):null;
+const production=historical?deriveProductionForecast({records,posts:archive.posts,chapter:next.chapter,asOf}):null;
+console.log(JSON.stringify({asOf,note:'Build snapshot; chapter statuses are current, not a reconstructed historical state.',historical,production},null,2));
