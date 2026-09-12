@@ -188,8 +188,7 @@ export function validateTogashiFeed(value) {
 
   if (
     value.schemaVersion !== TOGASHI_FEED_SCHEMA_VERSION ||
-    !Array.isArray(value.posts) ||
-    value.posts.length > MAX_PUBLIC_TOGASHI_POSTS
+    !Array.isArray(value.posts)
   ) {
     throw new Error("Togashi feed has invalid top-level values.");
   }
@@ -276,9 +275,10 @@ export function mergeTogashiFeed(rawFeed, incomingPosts) {
     postsById.set(post.id, validateTogashiPost(post, `incomingPosts[${index}]`));
   }
 
+  // Permanent article URLs must survive new posts. The public polling API is
+  // capped separately; the repository archive is never silently truncated.
   const posts = [...postsById.values()]
-    .sort((left, right) => compareSnowflakeIds(right.id, left.id))
-    .slice(0, MAX_PUBLIC_TOGASHI_POSTS);
+    .sort((left, right) => compareSnowflakeIds(right.id, left.id));
 
   return validateTogashiFeed({
     schemaVersion: TOGASHI_FEED_SCHEMA_VERSION,

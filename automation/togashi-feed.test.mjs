@@ -89,3 +89,13 @@ test("a post can be archived safely when translation is unavailable", () => {
     texts: null,
   });
 });
+
+test("adding the 51st post preserves the oldest article URL", () => {
+  const posts = Array.from({ length: 51 }, (_, index) => createTogashiPost({
+    tweet: { id: String(2096000000000000000n + BigInt(index)), createdAt: "2026-09-03T03:00:01.000Z", fullText: "投稿テキスト", mediaUrls: [] },
+    translations: null, translationModel: null, translatedAt: "2026-09-03T03:00:01.000Z", audit: {decision:"ignore",changes:[]},
+  }));
+  const merged = mergeTogashiFeed({schemaVersion:1,posts:[]}, posts);
+  assert.equal(merged.posts.length, 51);
+  assert.equal(merged.posts.at(-1).id, posts[0].id);
+});

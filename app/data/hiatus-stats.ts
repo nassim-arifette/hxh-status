@@ -122,9 +122,9 @@ export function calculateMedian(numbers: readonly number[]): number {
 export function deriveHiatusStats(
   issues: readonly PublicationIssueInput[],
   statusData?: StatusDataInput,
-  // Measured against the tracker's own `lastUpdated`, never the clock, so a
-  // rebuild without new data renders byte-identical output.
-  currentDateStr = statusData?.lastUpdated ?? "2026-09-07",
+  // Calendar days age even without new tracker events. Recorded issue counts
+  // remain factual and do not invent a future Jump publication calendar.
+  currentDateStr = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10),
 ): HiatusStatsSummary {
   // Chronological order (oldest first: 1998 #14 -> 2026 #41)
   const chronological = [...issues].sort((a, b) =>

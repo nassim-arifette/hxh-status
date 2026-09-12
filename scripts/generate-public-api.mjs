@@ -4,8 +4,10 @@ import { dirname, join } from "node:path";
 import { PUBLIC_TRANSLATION_LOCALES } from "../automation/contracts.mjs";
 import { buildBadges } from "../automation/badges.mjs";
 import { buildFeedsAndCalendar } from "../automation/feeds.mjs";
-import { validateTogashiFeed } from "../automation/togashi-feed.mjs";
+import { validateTogashiFeed, MAX_PUBLIC_TOGASHI_POSTS } from "../automation/togashi-feed.mjs";
 import { deriveHiatusStats } from "../app/data/hiatus-stats.ts";
+import { buildChapterDetails, buildEvents, contentRevision } from "../automation/public-api.mjs";
+import { completeOpenApi } from "../automation/public-api-schema.mjs";
 
 const ORIGIN = "https://hxhstatus.com";
 const API_VERSION = 1;
@@ -302,7 +304,7 @@ try {
 const [feed, status, localeRegistry, statusData, historyData] = await Promise.all([
   readJson(join(root, "app", "data", "togashi-posts.json")).then(
     validateTogashiFeed,
-  ),
+  ).then(archive => ({ ...archive, posts: archive.posts.slice(0, MAX_PUBLIC_TOGASHI_POSTS) })),
   readJson(join(outDirectory, "status.json")),
   readJson(join(root, "lib", "locales.json")),
   readJson(join(root, "app", "data", "status-data.json")),
@@ -331,11 +333,19 @@ if (JSON.stringify(publishedLocales) !== JSON.stringify(expectedLocales)) {
 }
 
 const latestPost = feed.posts[0] ?? null;
+const titles = Object.fromEntries(await Promise.all(PUBLIC_TRANSLATION_LOCALES.map(async (locale) =>
+  [locale, await readJson(join(root, "app", "data", "chapter-titles", `${locale}.json`))])));
+const volumes = await readJson(join(root, "app", "data", "chapter-titles", "_volumes.json"));
+const chapterDetails = buildChapterDetails({ statusData, historyData, titles, volumes, posts: feed.posts });
+const events = buildEvents(statusData, feed.posts);
 const index = apiEnvelope("/api/v1/index.json", {
   documentation: `${ORIGIN}/api/v1/openapi.json`,
   endpoints: {
     status: `${ORIGIN}/api/v1/status.json`,
     stats: `${ORIGIN}/api/v1/stats.json`,
+    chapters: `${ORIGIN}/api/v1/chapters.json`,
+    chapterPattern: `${ORIGIN}/api/v1/chapters/{chapter}.json`,
+    events: `${ORIGIN}/api/v1/events.json`,
     latestTogashiPost: `${ORIGIN}/api/v1/togashi/latest.json`,
     togashiPosts: `${ORIGIN}/api/v1/togashi/posts.json`,
     localizedLatestPattern: `${ORIGIN}/api/v1/togashi/latest/{locale}.json`,
@@ -357,7 +367,17 @@ const index = apiEnvelope("/api/v1/index.json", {
 
 await Promise.all([
   writeJson(join(apiDirectory, "index.json"), index),
-  writeJson(join(apiDirectory, "openapi.json"), openApiDocument()),
+  writeJson(join(apiDirectory, "openapi.json"), completeOpenApi(openApiDocument())),
+  writeJson(join(apiDirectory, "chapters.json"), apiEnvelope("/api/v1/chapters.json", {
+    revision: contentRevision(chapterDetails), count: chapterDetails.length,
+    chapters: chapterDetails.map(({ chapter, status }) => ({ chapter, status, url: `${ORIGIN}/api/v1/chapters/${chapter}.json` })),
+  })),
+  ...chapterDetails.map((chapter) => writeJson(join(apiDirectory, "chapters", `${chapter.chapter}.json`),
+    apiEnvelope(`/api/v1/chapters/${chapter.chapter}.json`, { revision: contentRevision(chapter), chapter }))),
+  writeJson(join(apiDirectory, "events.json"), apiEnvelope("/api/v1/events.json", {
+    revision: contentRevision(events), coverage: "retained-posts-and-current-tracker", complete: false,
+    count: events.length, events,
+  })),
   writeJson(join(apiDirectory, "status.json"), status),
   writeJson(
     join(apiDirectory, "stats.json"),

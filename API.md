@@ -17,6 +17,9 @@ and every API representation.
 | `GET /api/v1/index.json` | Endpoint index, supported locales, and revisioned chart URLs |
 | `GET /api/v1/status.json` | Current tracker state, chapter rows, and chart URLs |
 | `GET /api/v1/stats.json` | Descriptive hiatus, publication pace, and lead-time statistics |
+| `GET /api/v1/chapters.json` | Tracked chapter index with individual JSON URLs |
+| `GET /api/v1/chapters/{chapter}.json` | Chapter metadata, localized titles, and related post IDs |
+| `GET /api/v1/events.json` | Available sourced transitions and current status observations |
 | `GET /share/{locale}/production.png` | Chart 1: production tracker, returned directly as a PNG |
 | `GET /share/{locale}/publication-history.png` | Chart 2: publication history, returned directly as a PNG |
 | `GET /api/v1/togashi/latest.json` | Latest post with every cached translation |
@@ -35,6 +38,52 @@ and every API representation.
 
 Supported locale values are `ar`, `en`, `es`, `fr`, `ja`, `pt`, and `zh`.
 The existing `/status.json` remains available for compatibility.
+
+## Chapter details and events
+
+`GET /api/v1/chapters.json` lists all chapters in the current tracker, including
+rows whose status is `unknown`. It is not a catalogue of every historical chapter.
+Follow an entry's `url`, for example `/api/v1/chapters/427.json`, to get its
+`chapter` object: status, titles keyed by locale, volume, arc, known dates,
+source URL, and `relatedPostIds` from the retained post archive.
+
+Missing titles, confirmed volumes, dates and source URLs are `null`. Volume
+numbers are never projected. `arcInferred: true` means the chapter is beyond
+the publication history and uses the latest known arc; it is not an official
+confirmation. Other optional tracker fields, such as `jumpIssue`, may be absent.
+Unknown chapter numbers return HTTP 404; the error body may not be JSON.
+
+`GET /api/v1/events.json` returns newest-first `events`, with stable `id`,
+`chapter`, `from`, `to`, `date`, `source` and `postId` fields. A `transition`
+comes from an applied post's recorded tracker changes. An `observation` comes
+from the current tracker and has `from: null`: the previous state is unknown.
+Review and ignored posts do not create transitions. Dates preserve their source
+precision (date-only or timestamp); a scheduled release date is not used as the
+date on which scheduling was announced.
+
+The event feed explicitly returns `complete: false` and
+`coverage: "retained-posts-and-current-tracker"`. It is not a durable audit log:
+older observations may disappear as the tracker advances, and post-derived
+events depend on the retained archive. Corrections can update an existing event
+without changing its ID. Consumers should persist IDs to avoid duplicate alerts
+and compare event content if they need correction notifications.
+
+Both chapter endpoints and the event feed expose a SHA-256 content `revision`.
+It changes with the relevant data, including corrections, without adding a
+build timestamp that would invalidate caches on every deployment. The chapter
+index revision covers the complete chapter details, not just its compact rows.
+Existing status and chart revision semantics are unchanged.
+
+```js
+const response = await fetch("https://hxhstatus.com/api/v1/chapters/427.json");
+if (!response.ok) throw new Error(`HxHStatus API: ${response.status}`);
+const { chapter, revision } = await response.json();
+console.log(chapter.titles.fr, chapter.status, revision);
+```
+
+The OpenAPI document defines reusable response schemas, required fields,
+nullable values, status enums, and conditional GET responses for all JSON data
+endpoints. Additive fields remain allowed under v1.
 
 ## Get the charts
 

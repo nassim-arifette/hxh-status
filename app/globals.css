@@ -2600,3 +2600,15 @@ select {
     font-size: 0.95rem;
   }
 }
+
+.forecast h2, #chapter-history-title, #next-chapter-title { margin-block: 0 16px; font-size: clamp(1.2rem, 2vw, 1.55rem); line-height: 1.35; font-weight: 600; }
+.forecast-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-block: 24px; }
+.forecast-grid > div { border-inline-start: 2px solid var(--accent-green); padding-inline-start: 16px; }
+.forecast-grid dt { color: var(--text-secondary); font-size: 0.85rem; }
+.forecast-grid dd { margin: 8px 0 0; font-size: clamp(1.15rem, 2vw, 1.6rem); font-weight: 600; }
+.forecast-method { margin-block-start: 24px; }
+.forecast-method summary { cursor: pointer; padding-block: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.forecast-method .prose { margin-block: 16px; }
+.table-scroll { max-width: 100%; overflow-x: auto; }
+.forecast caption { text-align: start; padding-block: 12px; }
+@media (max-width: 720px) { .forecast-grid { grid-template-columns: 1fr; } }

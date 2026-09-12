@@ -4,8 +4,9 @@ import {
   type Locale,
   type Messages,
 } from "@/lib/i18n";
-import { chapterPath, localePath, localeUrl } from "@/lib/routes";
-import { BaseRates } from "../base-rates";
+import { chapterPath, localePath, localeUrl, updatePath } from "@/lib/routes";
+import { ReleaseForecast } from "../release-forecast";
+import { getChapterPosts, postExcerpt } from "../data/updates";
 import { ContentShell } from "../content-shell";
 import { getArcName } from "../data/arcs";
 import { getVolumeLabel } from "../data/chapter-meta";
@@ -72,6 +73,7 @@ export function ChapterPage({
   const { previous, next } = getAdjacentChapters(number);
   const readers = getOfficialReaders(locale, number);
   const meta = chapterMetadata(chapter, locale, messages);
+  const history = getChapterPosts(number, chapter.source);
 
   const rows: { label: string; value: React.ReactNode }[] = [
     { label: copy.stage, value: statusMeta.label },
@@ -189,9 +191,19 @@ export function ChapterPage({
         </section>
       ) : null}
 
-      {published ? null : (
-        <BaseRates chapter={number} locale={locale} messages={messages} />
-      )}
+      <section className="content-section" aria-labelledby="chapter-history-title">
+        <h2 id="chapter-history-title">{formatMessage(copy.chronologyTitle, { chapter: number })}</h2>
+        <p className="prose">{copy.chronologyIntro}</p>
+        {history.length ? <ol className="update-list">
+          {history.map(post => <li className="update-card" key={post.id}>
+            <time dateTime={post.createdAt}>{formatDate(post.createdAt.slice(0, 10), undefined, locale)}</time>
+            <p className="update-excerpt">{postExcerpt(post, locale) || messages.pages.updates.imagePost}</p>
+            <a href={localePath(updatePath(post.id), locale)}>{messages.pages.updates.readMore}</a>
+          </li>)}
+        </ol> : <p className="prose">{copy.chronologyEmpty}</p>}
+        {!published ? <p className="section-note">{copy.chapterContext}</p> : null}
+      </section>
+      <ReleaseForecast chapter={chapter} locale={locale} messages={messages} />
 
       <nav aria-label={messages.nav.breadcrumb} className="chapter-pager">
         {previous ? (

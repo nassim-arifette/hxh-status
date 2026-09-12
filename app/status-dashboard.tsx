@@ -5,7 +5,7 @@ import {
   type Messages,
 } from "@/lib/i18n";
 import englishMessages from "@/messages/en.json";
-import ChapterTracker, { LocalDate } from "./chapter-tracker";
+import ChapterTracker from "./chapter-tracker";
 import Faq from "./faq";
 import historyData from "./data/publication-history.json";
 import LanguageSwitcher from "./language-switcher";
@@ -15,7 +15,6 @@ import SectionCaptureActions from "./section-capture-actions";
 import { ARCS } from "./data/arcs";
 import { arcStats, buildStatusSentences, hiatusStats } from "./data/summary";
 import { HiatusStatistics } from "./hiatus-statistics";
-import { BaseRates } from "./base-rates";
 import { getChapterTitles, getChapterTitlesFor } from "./data/chapter-titles";
 import type { HistoryYear } from "./publication-history";
 import {
@@ -178,7 +177,7 @@ export function ProductionSection({
         chapters={chapters}
         lastUpdated={lastUpdated}
         locale={locale}
-        messages={messages}
+        messages={{ chapter: messages.chapter, production: messages.production, statuses: messages.statuses }}
         titles={getChapterTitlesFor(
           locale,
           chapters.map((chapter) => chapter.chapter),
@@ -369,7 +368,9 @@ export default function StatusDashboard({
                 {latestPublished.releaseAt ? (
                   <>
                     {latestPublished.jumpIssue ? " • " : ""}
-                    <LocalDate dateTime={latestPublished.releaseAt} locale={locale} />
+                    <time dateTime={latestPublished.releaseAt.slice(0, 10)} title={messages.snapshot.japanDate}>
+                      {formatDate(latestPublished.releaseAt.slice(0, 10), { month: "short", day: "numeric", year: undefined }, locale)} JST
+                    </time>
                   </>
                 ) : null}
               </small>
@@ -379,7 +380,9 @@ export default function StatusDashboard({
               <strong>{nextChapter.chapter}</strong>
               <small>
                 {nextChapter.releaseAt ? (
-                  <LocalDate dateTime={nextChapter.releaseAt} locale={locale} showTime />
+                  <time dateTime={nextChapter.releaseAt.slice(0, 10)} title={messages.snapshot.japanDate}>
+                    {formatDate(nextChapter.releaseAt.slice(0, 10), { month: "short", day: "numeric", year: undefined }, locale)} JST
+                  </time>
                 ) : (
                   statusMeta[nextChapter.status].shortLabel
                 )}
@@ -405,11 +408,13 @@ export default function StatusDashboard({
 
         <ProductionSection locale={locale} messages={messages} />
 
-        <BaseRates
-          chapter={nextChapter.chapter}
-          locale={locale}
-          messages={messages}
-        />
+        <section className="content-section" aria-labelledby="next-chapter-title">
+          <h2 id="next-chapter-title">{formatMessage(messages.baseRates.eyebrow, { chapter: nextChapter.chapter })}</h2>
+          <p className="section-lede">{summarySentences[2]}</p>
+          <a href={localePath(chapterPath(nextChapter.chapter), locale)}>
+            {formatMessage(messages.baseRates.forecastLink, { chapter: nextChapter.chapter })}
+          </a>
+        </section>
 
         <LatestTogashiUpdate
           locale={locale}

@@ -54,6 +54,1108 @@
           }
         }
       ]
+    },
+    {
+      "id": "2093900520406855763",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-08-30T03:16:01.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2093900520406855763",
+      "originalText": "No.430、背景指定書作成完了。\n\nおやすみなさい。 https://t.co/wmLB8kPIXX",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HQ8Ha_xaUAE8uUF.jpg"
+      ],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\nmade in JAPAN\nE070 I-C INC.\n1\n17",
+          "translations": {
+            "ar": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\nصنع في اليابان\nE070 I-C INC.\n1\n17",
+            "en": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\nmade in JAPAN\nE070 I-C INC.\n1\n17",
+            "es": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\nfabricado en JAPÓN\nE070 I-C INC.\n1\n17",
+            "fr": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\nfabriqué au JAPON\nE070 I-C INC.\n1\n17",
+            "ja": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\nmade in JAPAN\nE070 I-C INC.\n1\n17",
+            "pt": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\nfabricado no JAPÃO\nE070 I-C INC.\n1\n17",
+            "zh": "I-C SCREEN\nPRINTED BY HOLBEIN\nA44\nS-3067\nJ-TONE\nJ-464\n日本制造\nE070 I-C INC.\n1\n17"
+          }
+        }
+      ],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-12T05:55:17.436Z",
+        "texts": {
+          "ar": "No.430، اكتملت تعليمات الخلفيات.\n\nتصبحون على خير. https://t.co/wmLB8kPIXX",
+          "en": "No.430, background specification sheet complete.\n\nGood night. https://t.co/wmLB8kPIXX",
+          "es": "No.430, indicaciones de fondos terminadas.\n\nBuenas noches. https://t.co/wmLB8kPIXX",
+          "fr": "No.430, consignes de décors terminées.\n\nBonne nuit. https://t.co/wmLB8kPIXX",
+          "ja": "No.430、背景指定書作成完了。\n\nおやすみなさい。 https://t.co/wmLB8kPIXX",
+          "pt": "No.430, indicações de cenários concluídas.\n\nBoa noite. https://t.co/wmLB8kPIXX",
+          "zh": "No.430、背景指定书制作完成。\n\n晚安。 https://t.co/wmLB8kPIXX"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2092902182790341023",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-08-27T09:08:59.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2092902182790341023",
+      "originalText": "https://t.co/bSYVu8HfKr",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HQt7cC2aQAA71Db.jpg"
+      ],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "No 429\n背景指定書\n完成",
+          "translations": {
+            "ar": "No 429\nتعليمات الخلفيات\nمكتملة",
+            "en": "No 429\nBackground specification sheet\ncomplete",
+            "es": "No 429\nIndicaciones de fondos\nterminadas",
+            "fr": "No 429\nConsignes de décors\nterminées",
+            "ja": "No 429\n背景指定書\n完成",
+            "pt": "No 429\nIndicações de cenários\nconcluídas",
+            "zh": "No 429\n背景指定书\n完成"
+          }
+        }
+      ],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-12T05:55:27.776Z",
+        "texts": {
+          "ar": "https://t.co/bSYVu8HfKr",
+          "en": "https://t.co/bSYVu8HfKr",
+          "es": "https://t.co/bSYVu8HfKr",
+          "fr": "https://t.co/bSYVu8HfKr",
+          "ja": "https://t.co/bSYVu8HfKr",
+          "pt": "https://t.co/bSYVu8HfKr",
+          "zh": "https://t.co/bSYVu8HfKr"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2092237758689628269",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-08-25T13:08:48.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2092237758689628269",
+      "originalText": "No.419ですが。\n台詞の数と人の数、\n間違ってるのは人の数です。\n\nいったん冷やし中華食べて\n落ち着きます。",
+      "mediaUrls": [],
+      "imageTexts": [],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-12T05:55:34.833Z",
+        "texts": {
+          "ar": "بخصوص No.419.\nبين عدد الحوارات وعدد الأشخاص،\nالخطأ هو في عدد الأشخاص.\n\nسآكل الهياشي تشوكا حاليًا\nوأهدأ قليلاً.",
+          "en": "Regarding No.419.\nBetween the number of lines and the number of people,\nthe one that's wrong is the number of people.\n\nFor now, I'll eat some hiyashi chuka\nand calm down.",
+          "es": "Respecto al No.419.\nEntre el número de diálogos y el número de personas,\nlo que está mal es el número de personas.\n\nPor ahora voy a comer hiyashi chuka\ny a calmarme.",
+          "fr": "Concernant le No.419.\nEntre le nombre de répliques et le nombre de personnages,\nce qui est faux, c'est le nombre de personnages.\n\nPour l'instant, je vais manger des hiyashi chuka\net me calmer.",
+          "ja": "No.419ですが。\n台詞の数と人の数、\n間違ってるのは人の数です。\n\nいったん冷やし中華食べて\n落ち着きます。",
+          "pt": "Sobre o No.419.\nEntre o número de falas e o número de pessoas,\no que está errado é o número de pessoas.\n\nPor enquanto, vou comer hiyashi chuka\ne me acalmar.",
+          "zh": "关于No.419。\n台词数量和人数之间，\n弄错的是人数。\n\n先吃碗冷面\n冷静一下。"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2092132894814998720",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-08-25T06:12:06.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2092132894814998720",
+      "originalText": "No.426、原稿完成。 https://t.co/Y1oh0oXc9D",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HQi_xjrbkAEnQN8.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2087170463839682713",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-08-11T13:33:10.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2087170463839682713",
+      "originalText": "No.425、原稿完成。 https://t.co/y7rWtHBek3",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HPceeICbUAASpM0.jpg"
+      ],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "週刊少年ジャンプ　号\n品名　HxH 425話\n総頁数　19 P\n\n入稿印　返却印\n編集担当\n製版①\n製版②\n活版\n営業\n\n入稿日　平成　年　月\n返却日　平成　年　月",
+          "translations": {
+            "ar": "مجلة شونين جمب الأسبوعية - العدد\nاسم العمل: HxH الفصل 425\nإجمالي الصفحات: 19 صفحة\n\nختم التسليم | ختم الإرجاع\nالمحرر المسؤول\nتحضير الطباعة 1\nتحضير الطباعة 2\nالطباعة البارزة\nالمبيعات\n\nتاريخ التسليم: هيسي / سنة / شهر\nتاريخ الإرجاع: هيسي / سنة / شهر",
+            "en": "Weekly Shonen Jump Issue\nTitle: HxH Chapter 425\nTotal Pages: 19 P\n\nSubmission Stamp | Return Stamp\nEditorial Staff\nPlatemaking ①\nPlatemaking ②\nLetterpress\nSales\n\nSubmission Date: Heisei  Year  Month\nReturn Date: Heisei  Year  Month",
+            "es": "Weekly Shonen Jump N.º\nObra: HxH Capítulo 425\nTotal de páginas: 19 P\n\nSello de entrega | Sello de devolución\nEditor a cargo\nFotomecánica ①\nFotomecánica ②\nTipografía\nVentas\n\nFecha de entrega: Heisei  Año  Mes\nFecha de devolución: Heisei  Año  Mes",
+            "fr": "Weekly Shonen Jump N°\nTitre : HxH Chapitre 425\nNombre total de pages : 19 P\n\nTampon de réception | Tampon de retour\nResponsable éditorial\nPhotogravure ①\nPhotogravure ②\nTypographie\nCommercial\n\nDate de remise : Heisei  Année  Mois\nDate de retour : Heisei  Année  Mois",
+            "ja": "週刊少年ジャンプ　号\n品名　HxH 425話\n総頁数　19 P\n\n入稿印　返却印\n編集担当\n製版①\n製版②\n活版\n営業\n\n入稿日　平成　年　月\n返却日　平成　年　月",
+            "pt": "Weekly Shonen Jump Edição\nTítulo: HxH Capítulo 425\nTotal de páginas: 19 P\n\nCarimbo de entrega | Carimbo de devolução\nEditor responsável\nClicheria ①\nClicheria ②\nTipografia\nVendas\n\nData de entrega: Heisei  Ano  Mês\nData de devolução: Heisei  Ano  Mês",
+            "zh": "周刊少年Jump 期\n作品名 HxH 第425话\n总页数 19 P\n\n入稿印 返还印\n责任编辑\n制版①\n制版②\n活版\n营业\n\n入稿日 平成 年 月\n返还日 平成 年 月"
+          }
+        }
+      ],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-12T05:56:01.279Z",
+        "texts": {
+          "ar": "No.425، اكتملت المخطوطة. https://t.co/y7rWtHBek3",
+          "en": "No.425, manuscript complete. https://t.co/y7rWtHBek3",
+          "es": "No.425, manuscrito terminado. https://t.co/y7rWtHBek3",
+          "fr": "No.425, manuscrit terminé. https://t.co/y7rWtHBek3",
+          "ja": "No.425、原稿完成。 https://t.co/y7rWtHBek3",
+          "pt": "No.425, manuscrito concluído. https://t.co/y7rWtHBek3",
+          "zh": "No.425，原稿完成。 https://t.co/y7rWtHBek3"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2086132321166794760",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-08-08T16:47:58.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2086132321166794760",
+      "originalText": "No.424、原稿完成。\n\n38巻、加筆修正完了。 https://t.co/9RIIYuaOMF",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HPNuSXybwAAXBdP.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2084155567363539307",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-08-03T05:53:03.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2084155567363539307",
+      "originalText": "https://t.co/meudxknH3O",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HOxocENa0AAY-Vu.jpg"
+      ],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "No433\n人物ペン入れ完了。",
+          "translations": {
+            "ar": "No433\nاكتمل تحبير الشخصيات.",
+            "en": "No433\ncharacter inking complete.",
+            "es": "No433\nentintado de personajes terminado.",
+            "fr": "No433\nencrage des personnages terminé.",
+            "ja": "No433\n人物ペン入れ完了。",
+            "pt": "No433\narte-final dos personagens concluída.",
+            "zh": "No433\n人物勾线完成。"
+          }
+        }
+      ],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-12T05:56:24.519Z",
+        "texts": {
+          "ar": "https://t.co/meudxknH3O",
+          "en": "https://t.co/meudxknH3O",
+          "es": "https://t.co/meudxknH3O",
+          "fr": "https://t.co/meudxknH3O",
+          "ja": "https://t.co/meudxknH3O",
+          "pt": "https://t.co/meudxknH3O",
+          "zh": "https://t.co/meudxknH3O"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2075732291931009110",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-07-11T00:01:58.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2075732291931009110",
+      "originalText": "No.432、人物ペン入れ完了。\n\nNo.433、人物ペン入れ開始。 https://t.co/1hxU4Ti6Ec",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HM57gxubkAAizb-.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2074538142506549407",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-07-07T16:56:50.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2074538142506549407",
+      "originalText": "No.423、原稿完成。\n\nポテチはこれで食べます。 https://t.co/8ZWrTQoNlY",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HMo9cIabwAAjwwQ.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2073109649608630730",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-07-03T18:20:31.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730",
+      "originalText": "No.428、背景指定書作成完了。\n\nコメント〜…コメント〜……",
+      "mediaUrls": [],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2072287279197126773",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-07-01T11:52:43.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2072287279197126773",
+      "originalText": "No.422、原稿完成。\n\n机の上が収拾つかなくなってきました。 https://t.co/yOzr9BH1HX",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HMI-S4JbcAABkNm.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2067241380007821348",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-06-17T13:42:07.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2067241380007821348",
+      "originalText": "依頼イラスト×2完了。 https://t.co/nNsYkKdDQj",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HLBRE6gbgAAgk6i.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2066167513214505229",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-06-14T14:34:57.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2066167513214505229",
+      "originalText": "No.431、人物ペン入れ完了。 https://t.co/7VSiI6WvKE",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HKyAZnvbIAAyNU5.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2059299316800569524",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-05-26T15:43:11.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2059299316800569524",
+      "originalText": "No.421、原稿完成。\n\n仮歯割れました。 https://t.co/39DCiOTBuf",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HJQZz02a4AAuXBE.jpg"
+      ],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "共同印刷 様\n週刊少年ジャンプ 号\n品名 H×H 421話\n総頁数 19 P\n入稿印 返却印\n編集担当\n製版①\n製版②\n活版\n営業\n入稿日 年 月\n返却日 年 月",
+          "translations": {
+            "ar": "إلى: كيوودو للطباعة\nويكلي شونن جمب، العدد \nاسم العمل: H×H الفصل 421\nإجمالي الصفحات: 19 صفحة\nختم التسليم | ختم الإرجاع\nالمحرر المسؤول\nتحضير الطباعة 1\nتحضير الطباعة 2\nطباعة الحروف\nالمبيعات\nتاريخ التسليم: سنة  شهر\nتاريخ الإرجاع: سنة  شهر",
+            "en": "To Kyodo Printing Co., Ltd.\nWeekly Shonen Jump Issue \nItem: H×H Chapter 421\nTotal Pages: 19 P\nSubmission Stamp | Return Stamp\nEditor in Charge\nPlatemaking 1\nPlatemaking 2\nLetterpress\nSales\nSubmission Date: Year  Month\nReturn Date: Year  Month",
+            "es": "Para Kyodo Printing Co., Ltd.\nWeekly Shonen Jump N.º \nProducto: H×H Capítulo 421\nTotal de páginas: 19 P\nSello de entrega | Sello de devolución\nEditor a cargo\nFotomecánica 1\nFotomecánica 2\nTipografía\nVentas\nFecha de entrega: Año  Mes\nFecha de devolución: Año  Mes",
+            "fr": "À l'attention de Kyodo Printing Co., Ltd.\nWeekly Shonen Jump N° \nTitre: H×H Chapitre 421\nNombre total de pages: 19 P\nTampon de dépôt | Tampon de retour\nÉditeur responsable\nPhotogravure 1\nPhotogravure 2\nTypographie\nCommercial\nDate de dépôt : Année  Mois\nDate de retour : Année  Mois",
+            "ja": "共同印刷 様\n週刊少年ジャンプ 号\n品名 H×H 421話\n総頁数 19 P\n入稿印 返却印\n編集担当\n製版①\n製版②\n活版\n営業\n入稿日 年 月\n返却日 年 月",
+            "pt": "Para Kyodo Printing Co., Ltd.\nWeekly Shonen Jump N.º \nItem: H×H Capítulo 421\nTotal de páginas: 19 P\nCarimbo de entrega | Carimbo de devolução\nEditor responsável\nFotolito 1\nFotolito 2\nTipografia\nVendas\nData de entrega: Ano  Mês\nData de devolução: Ano  Mês",
+            "zh": "共同印刷 阁下\n周刊少年Jump 期\n品名 H×H 421话\n总页数 19 P\n投稿印 返还印\n责任编辑\n制版①\n制版②\n活版\n营业\n投稿日 年 月\n返还日 年 月"
+          }
+        }
+      ],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-12T05:57:12.852Z",
+        "texts": {
+          "ar": "رقم 421، اكتملت المخطوطة.\n\nانكسر سني المؤقت. https://t.co/39DCiOTBuf",
+          "en": "No.421, manuscript complete.\n\nMy temporary tooth cracked. https://t.co/39DCiOTBuf",
+          "es": "No.421, manuscrito terminado.\n\nSe me rompió el diente provisional. https://t.co/39DCiOTBuf",
+          "fr": "No.421, manuscrit terminé.\n\nMa dent provisoire s'est cassée. https://t.co/39DCiOTBuf",
+          "ja": "No.421、原稿完成。\n\n仮歯割れました。 https://t.co/39DCiOTBuf",
+          "pt": "No.421, manuscrito concluído.\n\nMeu dente provisório quebrou. https://t.co/39DCiOTBuf",
+          "zh": "No.421，原稿完成。\n\n临时牙冠碎了。 https://t.co/39DCiOTBuf"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2041777731969675643",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-04-08T07:18:40.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2041777731969675643",
+      "originalText": "No.430、人物ペン入れ完了。\n420話〜の掲載時期はジャンプ編集部の\n発表をお待ちください。\n\n妻から頑張る力をもらいまくって\nおります。\n#アルテミス2\n#シャイニングシアター https://t.co/00DXl3iSV4",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HFXaBYIbwAA0Siq.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2039256995023479227",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-04-01T08:22:09.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2039256995023479227",
+      "originalText": "カラー依頼の色紙完了。 https://t.co/RxWYCDrw94",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HEzlbKKa8AAIr5Q.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2033764977727967457",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-03-17T04:38:50.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2033764977727967457",
+      "originalText": "https://t.co/hCjIDd3u2G",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HDlidqYaEAAaSxE.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2033276639208153570",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-03-15T20:18:21.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2033276639208153570",
+      "originalText": "https://t.co/uwQm8HzQUo",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HDemUqGbAAAtrzc.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2032455377959424439",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-03-13T13:54:57.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2032455377959424439",
+      "originalText": "No.426、背景指定書作成完了。 https://t.co/3mPVBGSog0",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HDS7ZBza8AA4bVj.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2032117895745192356",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-03-12T15:33:55.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2032117895745192356",
+      "originalText": "https://t.co/zvrlIUrGap",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HDOIc3dawAA4IxT.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2031510303587053986",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-03-10T23:19:34.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2031510303587053986",
+      "originalText": "No.424、背景指定書作成完了。 https://t.co/Ar5FDtAQUa",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HDFf2WVaAAAz4DV.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2030043233129226406",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-03-06T22:09:57.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2030043233129226406",
+      "originalText": "https://t.co/qO6vHOWSrN",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HCwpi7XaUAQg1ge.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2029207167656706336",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-03-04T14:47:44.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2029207167656706336",
+      "originalText": "https://t.co/UVJirlSW0C",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HCkxJxLaYAALBe3.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2026231563562983740",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-02-24T09:43:44.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2026231563562983740",
+      "originalText": "No.420、原稿完成。\n\n#絵は残像です https://t.co/m40209g9GY",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HB6e3Oja8AAEC7X.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2023776049042198535",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-02-17T15:06:24.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2023776049042198535",
+      "originalText": "No.419原稿完成。 https://t.co/cCh9weo2AF",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HBXlli9agAAFRGA.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2023496133910425796",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-02-16T20:34:07.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2023496133910425796",
+      "originalText": "https://t.co/l3Umhi1AXN",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HBTnAZYa4AAFpno.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2021125854991089993",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-02-10T07:35:29.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2021125854991089993",
+      "originalText": "No.418話、原稿完成。 https://t.co/Tt67MALJ5V",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HAx7PmjbUAA3A2m.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2019278910136193215",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-02-05T05:16:23.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2019278910136193215",
+      "originalText": "https://t.co/GuhpcZfiRs",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HAXrde7acAIy5ft.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2016302995970076779",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-28T00:11:09.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2016302995970076779",
+      "originalText": "https://t.co/87mNQWvuia",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G_tY4buW4AA7u9v.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2015898522009403793",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-26T21:23:55.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2015898522009403793",
+      "originalText": "https://t.co/9P6cnLxgHk",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G_npBHgaUAAlgny.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2014789100658950178",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-23T19:55:29.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2014789100658950178",
+      "originalText": "https://t.co/tlBoZggZOD",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G_X4AQDbsAAX_xY.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2014782311775236214",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-23T19:28:30.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2014782311775236214",
+      "originalText": "https://t.co/vnNe7RD4t3",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G_Xx09BbcAAS2jh.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2013553432829813035",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-20T10:05:23.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2013553432829813035",
+      "originalText": "https://t.co/8X72NjWmuw",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G_GUKteX0AAagbS.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2011305545647735170",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-14T05:13:04.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2011305545647735170",
+      "originalText": "https://t.co/OXGXEVjcWC",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G-mXujRbQAIeC_N.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2011145608611213813",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-13T18:37:33.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2011145608611213813",
+      "originalText": "消えました。 https://t.co/LFqR7A7k2j",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G-kGRA2bQAE-G70.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2011145474154381687",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-13T18:37:00.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2011145474154381687",
+      "originalText": "https://t.co/zPrP4SPaWX",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G-kGJIgaEAAwbNB.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2011144099903189192",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-13T18:31:33.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2011144099903189192",
+      "originalText": "赤消えない笑 https://t.co/rFlGItwU7i",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G-kE5eGbQAE-_s-.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
+      "id": "2011143493742387642",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-01-13T18:29:08.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2011143493742387642",
+      "originalText": "https://t.co/xTgFsJ90EO",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/G-kEV9hbAAATCIp.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "unavailable",
+        "provider": null,
+        "model": null,
+        "generatedAt": null,
+        "texts": null
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
     }
   ]
 }

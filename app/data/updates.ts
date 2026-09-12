@@ -43,6 +43,12 @@ export function getPost(id: string) {
   return togashiPosts.find((post) => post.id === id);
 }
 
+export function getChapterPosts(chapter: number, source?: string) {
+  const mention = new RegExp(`(?:No\\.\\s*|第)${chapter}(?!\\d)`, "iu");
+  return togashiPosts.filter(post => post.url === source || mention.test(post.originalText))
+    .slice().reverse();
+}
+
 // The translation is used when one exists and the reader is not reading the
 // original; otherwise the Japanese stands on its own rather than being hidden.
 export function postText(post: TogashiPost, locale: Locale) {

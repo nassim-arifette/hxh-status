@@ -75,7 +75,8 @@
     "estimatedPreRelease": "Estimated pre-release",
     "preReleaseSuffix": "pre-release",
     "question": "Is HUNTER×HUNTER on hiatus?",
-    "summaryAria": "Current status in plain language"
+    "summaryAria": "Current status in plain language",
+    "japanDate": "Japan date (JST)"
   },
   "production": {
     "eyebrow": "Kakin Succession War",
@@ -126,7 +127,7 @@
     "currentHiatus": {
       "title": "Current hiatus",
       "justStarted": "Just started · 0 Jump issues elapsed",
-      "elapsed": "{issues} Jump issues ({days} days)",
+      "elapsed": "{days} days elapsed · {issues} recorded Jump issues",
       "since": "Since chapter {chapter} (WSJ {jumpIssue})"
     },
     "historicalHiatus": {
@@ -267,7 +268,8 @@
     "presenceLabel": "Presence in Weekly Shonen Jump",
     "presenceValue": "{percent}%",
     "presenceNote": "{published} chapters across {total} issues published since 1998.",
-    "more": "See every hiatus since 1998"
+    "more": "See every hiatus since 1998",
+    "forecastLink": "Chapter {chapter}: sources and statistical return estimate"
   },
   "nav": {
     "breadcrumb": "Breadcrumb",
@@ -279,7 +281,7 @@
   "pages": {
     "hiatus": {
       "name": "Hiatus tracker",
-      "metaTitle": "Is HUNTER×HUNTER on hiatus? Current break and every hiatus since 1998",
+      "metaTitle": "Hunter x Hunter hiatus history: every major break since 1998",
       "metaDescription": "Live count of the current HUNTER×HUNTER hiatus and the full record of {count} breaks of {threshold} Jump issues or more since 1998, measured from Weekly Shonen Jump's own issue numbering.",
       "h1": "HUNTER×HUNTER hiatus tracker",
       "lede": "Every break HUNTER×HUNTER has taken since it began in Weekly Shonen Jump issue 1998 #14, counted in Jump issues rather than in weeks, because Jump itself skips issues.",
@@ -318,12 +320,13 @@
     "updates": {
       "name": "Togashi updates",
       "metaTitle": "Yoshihiro Togashi's updates on HUNTER×HUNTER, translated",
-      "metaDescription": "Every post Yoshihiro Togashi has made about HUNTER×HUNTER production, translated into {count} languages, with the Weekly Shonen Jump submission sheets in his photographs transcribed.",
+      "metaDescription": "A sourced archive of {posts} Togashi posts, with original Japanese, available translations in {count} languages and image transcriptions.",
       "h1": "Togashi updates",
       "lede": "Yoshihiro Togashi posts his own production progress. Each post here keeps the original Japanese, a translation, and a transcription of the Jump submission sheet whenever one is photographed.",
       "empty": "No Togashi post has been archived yet.",
       "readMore": "Read this update",
-      "archiveNote": "The archive keeps the {count} most recent posts."
+      "archiveNote": "{count} posts retained, from {start} to {end}. This is a partial archive; imported article URLs are preserved.",
+      "imagePost": "Image post — view the original and any available transcription."
     },
     "update": {
       "metaTitle": "Togashi update, {date}: chapter {chapter} {status}",
@@ -374,7 +377,11 @@
       "previous": "Previous",
       "next": "Next",
       "readTitle": "Read chapter {chapter} officially",
-      "trackerTitle": "Where this sits in production"
+      "trackerTitle": "Where this sits in production",
+      "chronologyTitle": "Chapter {chapter}: sourced production history",
+      "chronologyIntro": "Posts that explicitly mention this chapter, oldest first. Starting work is not the same as completing it; a completed manuscript is not a release announcement.",
+      "chronologyEmpty": "The tracker’s current source is listed above. No additional post about this chapter has been imported yet.",
+      "chapterContext": "A production milestone describes work on the manuscript. Only an announcement from Shueisha or Weekly Shonen Jump establishes a publication date."
     },
     "whereToRead": {
       "name": "Where to read",
@@ -390,12 +397,12 @@
     "about": {
       "name": "About",
       "metaTitle": "About HxH Status: what it tracks, where the data comes from, and who runs it",
-      "metaDescription": "HxH Status is an open-source, unofficial HUNTER×HUNTER tracker. It records only what Yoshihiro Togashi or Weekly Shonen Jump have stated publicly, never a prediction, and its data and corrections are public.",
+      "metaDescription": "An unofficial, open-source Hunter x Hunter tracker: sourced production status, publication history and a clearly labelled statistical return estimate.",
       "h1": "About HxH Status",
-      "lede": "An unofficial, open-source tracker for HUNTER×HUNTER. It answers two questions — what has been published, and what Togashi has confirmed he has finished — and refuses to answer anything it would have to guess at.",
+      "lede": "An unofficial, open-source Hunter x Hunter tracker: sourced production status, publication history and a clearly labelled statistical return estimate.",
       "rulesTitle": "The rules this site follows",
       "rule1": "Nothing is recorded without a public source: a post by Yoshihiro Togashi, or an announcement by Weekly Shonen Jump or Shueisha.",
-      "rule2": "No release date is ever predicted. When there is no announced date, the site says so and shows the historical distribution instead.",
+      "rule2": "Official dates and statistical estimates are kept separate. The next-chapter page may show an explicitly labelled historical estimate, with its method, uncertainty and past errors.",
       "rule3": "Every number on the site is derived at build time from the data in the repository, so the page and the public API can never disagree.",
       "rule4": "A correction is a commit. The full history of every change is public.",
       "sourcesTitle": "Sources",
@@ -442,5 +449,26 @@
         "chart": "The production tracker and publication history as PNG images."
       }
     }
+  },
+  "forecast": {
+    "badge": "Statistical estimate · not an announcement",
+    "title": "When could chapter {chapter} return?",
+    "intro": "No official release date has been announced. This historical model estimates a possible return window if the current break behaves like past major hiatuses.",
+    "median": "Model median",
+    "range": "Historical 10th–90th percentile window",
+    "asOf": "Calculated on {date} · {count} of {total} comparable breaks remain after conditioning on elapsed time.",
+    "caution": "This is an exploratory estimate, not an 80% guarantee. The sample is small and a release can occur outside this window.",
+    "methodTitle": "Method, historical checks and limitations",
+    "method": "Equal-weight empirical model of completed breaks of at least 10 Jump issues starting in 2014 or later, between consecutive numbered chapters. Special one-shots and the ongoing break are excluded. Durations are converted with (missing issues + 1 return issue) × 365.2425 / 48 days, assuming 48 Jump issues per year; dates are therefore approximate months.",
+    "conditioning": "Only historical durations longer than the time already elapsed are retained. The central estimate is their median; the window uses linearly interpolated 10th and 90th percentiles. The estimate is recalculated at each build and is withheld if fewer than 3 examples remain.",
+    "limits": "This model assumes another major hiatus. It does not model manuscript stock, Togashi’s health or Shueisha’s scheduling decisions: there are too few comparable observations to estimate their effects reliably. An official schedule takes precedence and removes the forecast.",
+    "sensitivity": "Using eligible breaks since 1998 instead gives a median of {date}. The choice of historical period materially changes the result.",
+    "backtest": "Rolling historical check on {count} returns: mean absolute error ≈ {days} days; {covered}/{count} fell inside the window. Each estimate used only earlier completed breaks. These errors use the same approximate conversion from issues to days.",
+    "sampleTitle": "Completed breaks used by the model",
+    "returnChapter": "Return chapter",
+    "period": "Missing Jump issues",
+    "issues": "Issue count",
+    "historyLink": "Sources and complete hiatus history",
+    "unavailable": "There are too few comparable historical durations left to produce an estimate. No date is extrapolated beyond the available sample."
   }
 }

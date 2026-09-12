@@ -75,7 +75,8 @@
     "estimatedPreRelease": "Data estimada dos spoilers",
     "preReleaseSuffix": "spoilers",
     "question": "HUNTER×HUNTER está em hiato?",
-    "summaryAria": "Situação atual em palavras"
+    "summaryAria": "Situação atual em palavras",
+    "japanDate": "Data japonesa (JST)"
   },
   "production": {
     "eyebrow": "Guerra de Sucessão de Kakin",
@@ -126,7 +127,7 @@
     "currentHiatus": {
       "title": "Pausa atual",
       "justStarted": "Recém-iniciada · 0 edições da Jump decorridas",
-      "elapsed": "{issues} edições da Jump ({days} dias)",
+      "elapsed": "{days} dias decorridos · {issues} edições da Jump registradas",
       "since": "Desde o capítulo {chapter} (WSJ {jumpIssue})"
     },
     "historicalHiatus": {
@@ -267,7 +268,8 @@
     "presenceLabel": "Presença na Weekly Shonen Jump",
     "presenceValue": "{percent}%",
     "presenceNote": "{published} capítulos em {total} edições publicadas desde 1998.",
-    "more": "Ver todos os hiatos desde 1998"
+    "more": "Ver todos os hiatos desde 1998",
+    "forecastLink": "Capítulo {chapter}: fontes e estimativa estatística"
   },
   "nav": {
     "breadcrumb": "Trilha de navegação",
@@ -279,7 +281,7 @@
   "pages": {
     "hiatus": {
       "name": "Acompanhamento de hiatos",
-      "metaTitle": "HUNTER×HUNTER está em hiato? O hiato atual e todos desde 1998",
+      "metaTitle": "Pausas de Hunter x Hunter: histórico desde 1998",
       "metaDescription": "Contagem do hiato atual de HUNTER×HUNTER e o registro completo de {count} hiatos de {threshold} edições da Jump ou mais desde 1998, medidos pela própria numeração da Weekly Shonen Jump.",
       "h1": "Acompanhamento de hiatos de HUNTER×HUNTER",
       "lede": "Todos os hiatos que HUNTER×HUNTER teve desde a estreia na edição 1998 #14 da Weekly Shonen Jump, contados em edições da Jump e não em semanas, porque a própria Jump pula edições.",
@@ -318,12 +320,13 @@
     "updates": {
       "name": "Novidades do Togashi",
       "metaTitle": "As publicações de Yoshihiro Togashi sobre HUNTER×HUNTER, traduzidas",
-      "metaDescription": "Todas as publicações de Yoshihiro Togashi sobre a produção de HUNTER×HUNTER, traduzidas para {count} idiomas, com a transcrição das fichas de entrega à Weekly Shonen Jump que ele fotografa.",
+      "metaDescription": "Arquivo com fontes de {posts} posts de Togashi, texto japonês, traduções disponíveis em {count} idiomas e transcrições.",
       "h1": "Novidades do Togashi",
       "lede": "Yoshihiro Togashi publica o próprio andamento. Cada post é guardado aqui em japonês, traduzido, e com a transcrição da ficha de entrega à Jump sempre que ela aparece fotografada.",
       "empty": "Nenhuma publicação do Togashi foi arquivada ainda.",
       "readMore": "Ler esta novidade",
-      "archiveNote": "O arquivo guarda as {count} publicações mais recentes."
+      "archiveNote": "{count} posts preservados, de {start} a {end}. Arquivo parcial; as URLs importadas são preservadas.",
+      "imagePost": "Post com imagem: veja o original e a transcrição disponível."
     },
     "update": {
       "metaTitle": "Novidade do Togashi, {date}: capítulo {chapter} {status}",
@@ -374,7 +377,11 @@
       "previous": "Anterior",
       "next": "Próximo",
       "readTitle": "Ler o capítulo {chapter} oficialmente",
-      "trackerTitle": "Onde isso fica na produção"
+      "trackerTitle": "Onde isso fica na produção",
+      "chronologyTitle": "Capítulo {chapter}: histórico de produção com fontes",
+      "chronologyIntro": "Posts que mencionam explicitamente o capítulo, do mais antigo ao mais recente. Começar uma etapa não significa concluí-la; um manuscrito pronto não anuncia a publicação.",
+      "chronologyEmpty": "A fonte atual está acima. Nenhum outro post sobre este capítulo foi importado ainda.",
+      "chapterContext": "Um marco descreve o trabalho no manuscrito. Somente Shueisha ou Weekly Shonen Jump podem anunciar a data de publicação."
     },
     "whereToRead": {
       "name": "Onde ler",
@@ -390,12 +397,12 @@
     "about": {
       "name": "Sobre",
       "metaTitle": "Sobre o HxH Status: o que acompanha, de onde vêm os dados e quem mantém",
-      "metaDescription": "O HxH Status é um acompanhamento não oficial e de código aberto de HUNTER×HUNTER. Só registra o que Yoshihiro Togashi ou a Weekly Shonen Jump declararam em público, nunca uma previsão, e seus dados e correções são públicos.",
+      "metaDescription": "Acompanhamento não oficial e de código aberto de Hunter x Hunter: progresso com fontes, histórico e estimativa estatística identificada.",
       "h1": "Sobre o HxH Status",
-      "lede": "Um acompanhamento não oficial e de código aberto de HUNTER×HUNTER. Responde a duas perguntas — o que já foi publicado e o que Togashi confirmou ter terminado — e se recusa a responder qualquer coisa que exigisse adivinhação.",
+      "lede": "Acompanhamento não oficial e de código aberto de Hunter x Hunter: progresso com fontes, histórico e estimativa estatística identificada.",
       "rulesTitle": "As regras que este site segue",
       "rule1": "Nada é registrado sem fonte pública: uma publicação de Yoshihiro Togashi ou um anúncio da Weekly Shonen Jump ou da Shueisha.",
-      "rule2": "Nenhuma data de lançamento é prevista. Quando não há data anunciada, o site diz isso e mostra a distribuição histórica no lugar.",
+      "rule2": "Datas oficiais e estimativas estatísticas ficam separadas. A página do próximo capítulo pode apresentar uma estimativa histórica identificada, com método, incerteza e erros anteriores.",
       "rule3": "Todo número do site é derivado na compilação a partir dos dados do repositório, então a página e a API pública não podem se contradizer.",
       "rule4": "Uma correção é um commit. O histórico completo de cada mudança é público.",
       "sourcesTitle": "Fontes",
@@ -442,5 +449,26 @@
         "chart": "O acompanhamento de produção e o histórico de publicação como imagens PNG."
       }
     }
+  },
+  "forecast": {
+    "badge": "Estimativa estatística · não é um anúncio",
+    "title": "Quando o capítulo {chapter} poderia sair?",
+    "intro": "Nenhuma data oficial foi anunciada. Este modelo estima uma janela de retorno caso a pausa atual se pareça com os hiatos longos anteriores.",
+    "median": "Mediana do modelo",
+    "range": "Janela histórica: percentis 10–90",
+    "asOf": "Calculado em {date} · restam {count} de {total} pausas comparáveis após considerar o tempo decorrido.",
+    "caution": "Esta estimativa exploratória não garante uma probabilidade de 80%. A amostra é pequena e o retorno pode ocorrer fora da janela.",
+    "methodTitle": "Método, testes históricos e limites",
+    "method": "Modelo empírico com pesos iguais para pausas concluídas de pelo menos 10 edições da Jump, iniciadas desde 2014, entre capítulos numerados consecutivos. Especiais e a pausa atual são excluídos. Conversão: (edições sem capítulo + 1 edição de retorno) × 365,2425 / 48 dias, supondo 48 edições por ano. As datas são meses aproximados.",
+    "conditioning": "Somente durações maiores que o tempo já decorrido são mantidas. A estimativa central é a mediana; a janela usa os percentis 10 e 90 interpolados linearmente. O cálculo é atualizado a cada geração do site e ocultado com menos de 3 exemplos.",
+    "limits": "O modelo pressupõe outro hiato longo. Não modela o estoque de manuscritos, a saúde de Togashi ou as decisões da Shueisha: faltam observações comparáveis. Uma data oficial substitui a previsão.",
+    "sensitivity": "Com pausas elegíveis desde 1998, a mediana seria {date}. A escolha do período altera bastante o resultado.",
+    "backtest": "Teste cronológico em {count} retornos: erro absoluto médio ≈ {days} dias; {covered}/{count} dentro da janela. Cada cálculo usa apenas pausas concluídas antes e a mesma conversão aproximada em dias.",
+    "sampleTitle": "Pausas concluídas utilizadas",
+    "returnChapter": "Capítulo de retorno",
+    "period": "Edições da Jump sem capítulo",
+    "issues": "Quantidade",
+    "historyLink": "Fontes e histórico completo",
+    "unavailable": "Restam poucas durações comparáveis para estimar uma data. Não extrapolamos além da amostra."
   }
 }

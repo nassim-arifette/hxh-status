@@ -42,6 +42,7 @@ import {
 } from "./local-date";
 
 type StatusMap = Record<ChapterRecord["status"], StatusMeta>;
+type TrackerMessages = Pick<Messages, "chapter" | "production" | "statuses">;
 
 export function LocalDate({
   dateTime,
@@ -83,7 +84,7 @@ function ChapterGrid({
 }: {
   chapters: readonly ChapterRecord[];
   locale?: Locale;
-  messages: Messages;
+  messages: TrackerMessages;
   selectedChapter: number | null;
   statusMeta: StatusMap;
   titles: ChapterTitles;
@@ -183,7 +184,7 @@ function ChapterDetails({
   chapter: ChapterRecord | null;
   lastUpdated: string;
   locale: Locale;
-  messages: Messages;
+  messages: TrackerMessages;
   openerRef: RefObject<HTMLButtonElement | null>;
   statusMeta: StatusMap;
   titles: ChapterTitles;
@@ -363,7 +364,7 @@ export default function ChapterTracker({
   chapters: readonly ChapterRecord[];
   lastUpdated: string;
   locale: Locale;
-  messages: Messages;
+  messages: TrackerMessages;
   titles: ChapterTitles;
 }) {
   const [selectedChapter, setSelectedChapter] = useState<ChapterRecord | null>(

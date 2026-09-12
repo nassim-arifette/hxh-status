@@ -1,7 +1,7 @@
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
 import { localeUrl, updatePath } from "@/lib/routes";
 import { ContentShell } from "../content-shell";
-import { postText, type TogashiPost } from "../data/updates";
+import { postExcerpt, postText, type TogashiPost } from "../data/updates";
 import { formatDate } from "../status-presentation";
 import { newsArticleLd } from "../structured-data";
 import { UPDATES_PATH } from "./updates";
@@ -28,7 +28,7 @@ export function updateMetadata(
           status: changeStatus(messages, change.to),
         })
       : formatMessage(copy.metaTitleGeneric, { date }),
-    description: formatMessage(copy.metaDescription, { date }),
+    description: postExcerpt(post, locale) || formatMessage(copy.metaDescription, { date }),
   };
 }
 
@@ -89,6 +89,12 @@ export function UpdatePage({
           <a href={post.url} rel="noreferrer" target="_blank">
             {messages.latestUpdate.viewPost}
           </a>
+        </p>
+
+        <p className="section-note">
+          {translated
+            ? post.translation.provider === "gemini" ? messages.latestUpdate.translatedByGemini : messages.latestUpdate.translated
+            : locale === "ja" ? messages.latestUpdate.originalText : messages.latestUpdate.translationUnavailable}
         </p>
 
         {translated ? (

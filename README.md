@@ -208,3 +208,26 @@ The application code is available under the MIT License.
 
 Geist is copyright Vercel and licensed under the SIL Open Font License 1.1.
 Lucide icons are licensed under the ISC License.
+
+## Statistical estimates and post archive
+
+The next unpublished chapter page includes an explicitly labelled historical
+hiatus estimate. Its model is in `app/data/release-forecast.ts`: equal weights
+for completed major breaks since 2014, conditional on elapsed time, with a median,
+10th–90th percentile window, period sensitivity and rolling historical errors.
+Dates use an approximate 48 Jump issues/year conversion. This is an exploratory
+baseline, not a calibrated probability, medical model or editorial announcement.
+It never writes `releaseAt`, the publication calendar or official status. An
+official schedule suppresses the estimate. `npm test` covers these boundaries.
+
+To backfill Togashi's original posts without replaying notifications or changing
+tracker state, run `node scripts/import-togashi-archive.mjs --originals-only`.
+Omit `--originals-only` to reuse the existing Gemini translation and image-text
+pipeline (requires `GEMINI_API_KEY`; respects a minimum 13-second request spacing).
+The X endpoint requires `X_BEARER_TOKEN`. Optional `--since YYYY-MM-DD`,
+`--limit 1..100`, and `--input path-to-saved-x-response.json` bound the import.
+The default import covers up to 50 posts from 2026 onwards in the most recent API
+page, excluding replies/reposts, and does not claim exhaustive coverage.
+Re-running skips translated posts and resumes missing translations.
+The repository archive preserves old article URLs; the public polling API keeps
+its 50-post limit. Missing translations are explicitly labelled in the UI.

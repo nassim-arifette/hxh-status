@@ -77,7 +77,9 @@ async function* htmlFiles(directory) {
   }
 }
 
-const original = await readFile(headersPath, "utf8");
+// Always regenerate from the source template. Reading the already generated
+// output duplicates rules on a retry and eventually exceeds Cloudflare's cap.
+const original = await readFile(join(root, "public", "_headers"), "utf8");
 
 const cspLine = original
   .split("\n")

@@ -11,6 +11,7 @@ export function updatesMetadata(messages: Messages) {
     title: messages.pages.updates.metaTitle,
     description: formatMessage(messages.pages.updates.metaDescription, {
       count: publicLocales.length,
+      posts: togashiPosts.length,
     }),
   };
 }
@@ -31,7 +32,7 @@ export function UpdatesPage({
       path={UPDATES_PATH}
       eyebrow={messages.latestUpdate.eyebrow}
       title={copy.h1}
-      lede={copy.lede}
+      lede={formatMessage(copy.metaDescription, { posts: togashiPosts.length, count: publicLocales.length })}
     >
       <section aria-labelledby="updates-list-title" className="content-section">
         <h2 className="sr-only" id="updates-list-title">
@@ -50,7 +51,7 @@ export function UpdatesPage({
                     {formatDate(post.createdAt.slice(0, 10), undefined, locale)}
                   </time>
                   <p className="update-excerpt">
-                    {postExcerpt(post, locale)}
+                    {postExcerpt(post, locale) || copy.imagePost}
                   </p>
                   {change ? (
                     <p className="update-change">
@@ -75,7 +76,11 @@ export function UpdatesPage({
         )}
 
         <p className="section-note">
-          {formatMessage(copy.archiveNote, { count: 50 })}
+          {togashiPosts.length > 0 ? formatMessage(copy.archiveNote, {
+            count: togashiPosts.length,
+            start: formatDate(togashiPosts.at(-1)!.createdAt.slice(0, 10), undefined, locale),
+            end: formatDate(togashiPosts[0].createdAt.slice(0, 10), undefined, locale),
+          }) : null}
         </p>
       </section>
     </ContentShell>

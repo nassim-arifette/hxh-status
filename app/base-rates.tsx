@@ -1,11 +1,9 @@
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
-import { localePath } from "@/lib/routes";
+import { chapterPath, localePath } from "@/lib/routes";
 import { hiatusStats } from "./data/summary";
 
-// The honest answer to "when is the next chapter" is that nobody outside
-// Shueisha knows. Saying only that is useless, so the question is answered with
-// the base rates the site already computes: what the record has done before,
-// labelled as observation. No arithmetic here turns into a date.
+// This section reports observations. The separate chapter page labels its
+// statistical estimate explicitly and keeps it out of official release data.
 
 export function BaseRates({
   chapter,
@@ -94,7 +92,13 @@ export function BaseRates({
             <dt>{row.label}</dt>
             <dd>
               <strong>{row.value}</strong>
-              <span>{row.note}</span>
+              <span
+                {...(row.id === "elapsed" ? {
+                  "data-elapsed-since": current.sinceDate,
+                  "data-days-template": formatMessage(copy.elapsedNote, { days: "{days}", chapter: current.sinceChapter, jumpIssue: current.sinceJumpIssue }),
+                  suppressHydrationWarning: true,
+                } : {})}
+              >{row.note}</span>
             </dd>
           </div>
         ))}
@@ -102,6 +106,8 @@ export function BaseRates({
 
       <p className="base-rates-more">
         <a href={localePath("/hiatus", locale)}>{copy.more}</a>
+        {" · "}
+        <a href={localePath(chapterPath(chapter), locale)}>{formatMessage(copy.forecastLink, { chapter })}</a>
       </p>
     </section>
   );

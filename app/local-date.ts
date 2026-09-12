@@ -42,4 +42,10 @@ export const LOCAL_DATE_SCRIPT =
   `for(var i=0;i<n.length;i++){var e=n[i],v=new Date(e.getAttribute("data-local-date"));` +
   `if(isNaN(v))continue;var p=[];` +
   `if(e.hasAttribute("data-show-time"))p.push(new Intl.DateTimeFormat(l,t).format(v));` +
-  `p.push(new Intl.DateTimeFormat(l,f).format(v));e.textContent=p.join(j)}})();`;
+  `p.push(new Intl.DateTimeFormat(l,f).format(v));e.textContent=p.join(j)}` +
+  `function elapsed(){var today=new Date(Date.now()+32400000).toISOString().slice(0,10);` +
+  `var nodes=document.querySelectorAll("[data-elapsed-since]");` +
+  `for(var k=0;k<nodes.length;k++){var el=nodes[k],start=Date.parse(el.getAttribute("data-elapsed-since"));` +
+  `if(!isFinite(start))continue;var days=Math.max(0,Math.floor((Date.parse(today)-start)/86400000));` +
+  `el.textContent=el.getAttribute("data-days-template").replace(/\\{days\\}/g,String(days))}}` +
+  `elapsed();setInterval(elapsed,60000)})();`;

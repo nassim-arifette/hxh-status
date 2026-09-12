@@ -75,7 +75,8 @@
     "estimatedPreRelease": "Fecha estimada de spoilers",
     "preReleaseSuffix": "spoilers",
     "question": "¿HUNTER×HUNTER está en pausa?",
-    "summaryAria": "Situación actual explicada en palabras"
+    "summaryAria": "Situación actual explicada en palabras",
+    "japanDate": "Fecha japonesa (JST)"
   },
   "production": {
     "eyebrow": "Guerra de Sucesión de Kakin",
@@ -126,7 +127,7 @@
     "currentHiatus": {
       "title": "Pausa actual",
       "justStarted": "Recién comenzada · 0 números de Jump transcurridos",
-      "elapsed": "{issues} números de Jump ({days} días)",
+      "elapsed": "{days} días transcurridos · {issues} números de Jump registrados",
       "since": "Desde el capítulo {chapter} (WSJ {jumpIssue})"
     },
     "historicalHiatus": {
@@ -267,7 +268,8 @@
     "presenceLabel": "Presencia en Weekly Shonen Jump",
     "presenceValue": "{percent}%",
     "presenceNote": "{published} capítulos en {total} números publicados desde 1998.",
-    "more": "Ver todas las pausas desde 1998"
+    "more": "Ver todas las pausas desde 1998",
+    "forecastLink": "Capítulo {chapter}: fuentes y estimación estadística"
   },
   "nav": {
     "breadcrumb": "Ruta de navegación",
@@ -279,7 +281,7 @@
   "pages": {
     "hiatus": {
       "name": "Seguimiento de pausas",
-      "metaTitle": "¿HUNTER×HUNTER está en pausa? La pausa actual y todas desde 1998",
+      "metaTitle": "Pausas de Hunter x Hunter: historial desde 1998",
       "metaDescription": "Recuento de la pausa actual de HUNTER×HUNTER y el registro completo de {count} pausas de {threshold} números de Jump o más desde 1998, medidas con la numeración del propio Weekly Shonen Jump.",
       "h1": "Seguimiento de pausas de HUNTER×HUNTER",
       "lede": "Todas las pausas que HUNTER×HUNTER ha tomado desde su inicio en el número 1998 #14 de Weekly Shonen Jump, contadas en números de Jump y no en semanas, porque el propio Jump se salta números.",
@@ -318,12 +320,13 @@
     "updates": {
       "name": "Novedades de Togashi",
       "metaTitle": "Las publicaciones de Yoshihiro Togashi sobre HUNTER×HUNTER, traducidas",
-      "metaDescription": "Todas las publicaciones de Yoshihiro Togashi sobre la producción de HUNTER×HUNTER, traducidas a {count} idiomas, con la transcripción de las hojas de entrega a Weekly Shonen Jump que fotografía.",
+      "metaDescription": "Archivo con fuentes de {posts} posts de Togashi, texto japonés, traducciones disponibles en {count} idiomas y transcripciones.",
       "h1": "Novedades de Togashi",
       "lede": "Yoshihiro Togashi publica él mismo su avance. Cada mensaje se conserva aquí en japonés, traducido y con la transcripción de la hoja de entrega a Jump siempre que aparece fotografiada.",
       "empty": "Todavía no se ha archivado ninguna publicación de Togashi.",
       "readMore": "Leer esta novedad",
-      "archiveNote": "El archivo conserva las {count} publicaciones más recientes."
+      "archiveNote": "{count} posts conservados, del {start} al {end}. Archivo parcial; las URL importadas se conservan.",
+      "imagePost": "Post con imagen: consulta el original y la transcripción disponible."
     },
     "update": {
       "metaTitle": "Novedad de Togashi, {date}: capítulo {chapter} {status}",
@@ -374,7 +377,11 @@
       "previous": "Anterior",
       "next": "Siguiente",
       "readTitle": "Leer el capítulo {chapter} oficialmente",
-      "trackerTitle": "Dónde encaja en la producción"
+      "trackerTitle": "Dónde encaja en la producción",
+      "chronologyTitle": "Capítulo {chapter}: historial de producción con fuentes",
+      "chronologyIntro": "Posts que mencionan explícitamente este capítulo, del más antiguo al más reciente. Empezar una etapa no equivale a completarla; un manuscrito terminado no anuncia la publicación.",
+      "chronologyEmpty": "La fuente actual aparece arriba. Aún no se han importado más posts sobre este capítulo.",
+      "chapterContext": "Un hito describe el trabajo del manuscrito. Solo Shueisha o Weekly Shonen Jump pueden anunciar la fecha de publicación."
     },
     "whereToRead": {
       "name": "Dónde leer",
@@ -390,12 +397,12 @@
     "about": {
       "name": "Acerca de",
       "metaTitle": "Acerca de HxH Status: qué sigue, de dónde vienen los datos y quién lo mantiene",
-      "metaDescription": "HxH Status es un seguimiento no oficial y de código abierto de HUNTER×HUNTER. Solo registra lo que Yoshihiro Togashi o Weekly Shonen Jump han declarado en público, nunca una predicción, y sus datos y correcciones son públicos.",
+      "metaDescription": "Seguimiento no oficial y de código abierto de Hunter x Hunter: progreso con fuentes, historial y estimación estadística identificada.",
       "h1": "Acerca de HxH Status",
-      "lede": "Un seguimiento no oficial y de código abierto de HUNTER×HUNTER. Responde a dos preguntas — qué se ha publicado y qué ha confirmado Togashi que ha terminado — y se niega a responder cualquier cosa que tuviera que adivinar.",
+      "lede": "Seguimiento no oficial y de código abierto de Hunter x Hunter: progreso con fuentes, historial y estimación estadística identificada.",
       "rulesTitle": "Las reglas que sigue este sitio",
       "rule1": "Nada se registra sin una fuente pública: una publicación de Yoshihiro Togashi, o un anuncio de Weekly Shonen Jump o Shueisha.",
-      "rule2": "Nunca se predice una fecha de salida. Cuando no hay fecha anunciada, el sitio lo dice y muestra la distribución histórica en su lugar.",
+      "rule2": "Las fechas oficiales se separan de las estimaciones estadísticas. La página del próximo capítulo puede mostrar una estimación histórica identificada, con método, incertidumbre y errores anteriores.",
       "rule3": "Cada cifra del sitio se deriva durante la compilación de los datos del repositorio, así que la página y la API pública no pueden contradecirse.",
       "rule4": "Una corrección es un commit. El historial completo de cada cambio es público.",
       "sourcesTitle": "Fuentes",
@@ -442,5 +449,26 @@
         "chart": "El seguimiento de producción y el historial de publicación como imágenes PNG."
       }
     }
+  },
+  "forecast": {
+    "badge": "Estimación estadística · no es un anuncio",
+    "title": "¿Cuándo podría publicarse el capítulo {chapter}?",
+    "intro": "No hay una fecha oficial anunciada. Este modelo estima una ventana de regreso si la pausa actual se parece a las pausas largas anteriores.",
+    "median": "Mediana del modelo",
+    "range": "Ventana histórica: percentiles 10–90",
+    "asOf": "Calculado el {date} · quedan {count} de {total} pausas comparables tras considerar el tiempo transcurrido.",
+    "caution": "Es una estimación exploratoria, no una garantía del 80 %. La muestra es pequeña y el regreso puede quedar fuera de esta ventana.",
+    "methodTitle": "Método, pruebas históricas y límites",
+    "method": "Modelo empírico con igual peso para pausas terminadas de al menos 10 números de Jump, iniciadas desde 2014, entre capítulos numerados consecutivos. Se excluyen especiales y la pausa actual. Conversión: (números sin capítulo + 1 número de regreso) × 365,2425 / 48 días, suponiendo 48 números al año. Las fechas se expresan en meses aproximados.",
+    "conditioning": "Solo se conservan duraciones mayores que el tiempo ya transcurrido. La estimación central es la mediana; la ventana usa los percentiles 10 y 90 interpolados linealmente. Se recalcula al generar el sitio y se oculta si quedan menos de 3 ejemplos.",
+    "limits": "El modelo supone otra pausa larga. No modela manuscritos acumulados, la salud de Togashi ni las decisiones de Shueisha: faltan observaciones comparables. Una fecha oficial sustituye la previsión.",
+    "sensitivity": "Con las pausas admisibles desde 1998, la mediana sería {date}. El periodo elegido cambia considerablemente el resultado.",
+    "backtest": "Prueba cronológica de {count} regresos: error absoluto medio ≈ {days} días; {covered}/{count} dentro de la ventana. Cada cálculo usa solo pausas terminadas anteriormente y la misma conversión aproximada a días.",
+    "sampleTitle": "Pausas terminadas utilizadas",
+    "returnChapter": "Capítulo de regreso",
+    "period": "Números de Jump sin capítulo",
+    "issues": "Cantidad",
+    "historyLink": "Fuentes e historial completo",
+    "unavailable": "Quedan muy pocas duraciones comparables para estimar una fecha. No se extrapola fuera de la muestra."
   }
 }

@@ -43,6 +43,16 @@ function EndpointTable({
 
 export const API_PATH = "/api";
 
+const chapterApiCopy: Record<Locale, [string, string, string]> = {
+  en: ["Tracked chapter index.", "Chapter details, titles and sources.", "Available transitions and status observations; incomplete history."],
+  fr: ["Index des chapitres suivis.", "Détails, titres et sources d’un chapitre.", "Transitions et états documentés ; historique incomplet."],
+  es: ["Índice de capítulos seguidos.", "Detalles, títulos y fuentes de un capítulo.", "Transiciones y estados documentados; historial incompleto."],
+  pt: ["Índice dos capítulos acompanhados.", "Detalhes, títulos e fontes de um capítulo.", "Transições e estados documentados; histórico incompleto."],
+  ja: ["追跡中の話の一覧。", "各話の詳細、タイトル、出典。", "記録された状態と遷移。完全な履歴ではありません。"],
+  zh: ["跟踪章节索引。", "章节详情、标题和来源。", "已记录的状态及变化；并非完整历史。"],
+  ar: ["فهرس الفصول المتابَعة.", "تفاصيل الفصل وعناوينه ومصادره.", "التغييرات والحالات الموثقة؛ سجل غير مكتمل."],
+};
+
 export function apiMetadata(messages: Messages) {
   return {
     title: messages.pages.api.metaTitle,
@@ -65,6 +75,9 @@ export function ApiPage({
     ["/api/v1/index.json", copy.endpoints.index],
     ["/api/v1/status.json", copy.endpoints.status],
     ["/api/v1/stats.json", copy.endpoints.stats],
+    ["/api/v1/chapters.json", chapterApiCopy[locale][0]],
+    ["/api/v1/chapters/{chapter}.json", chapterApiCopy[locale][1]],
+    ["/api/v1/events.json", chapterApiCopy[locale][2]],
     ["/api/v1/togashi/latest.json", copy.endpoints.latest],
     ["/api/v1/togashi/posts.json", copy.endpoints.posts],
     ["/api/v1/togashi/latest/{locale}.json", copy.endpoints.localized],
