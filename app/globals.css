@@ -567,6 +567,14 @@ select {
   letter-spacing: 0.01em;
 }
 
+.metric-prediction {
+  display: block;
+  margin-top: 6px;
+  color: var(--accent-green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .metric-primary {
   background: rgba(23, 43, 24, 0.45);
 }

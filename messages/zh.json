@@ -483,6 +483,7 @@
     "priorBody": "历史先验中心为log(365.2425天)，κ₀ = 0.25、α₀ = 2、β₀ = 1。改为180或730天，中位数为{early}和{late}。",
     "scores": "不含参数不确定性的对数正态基准：误差{baseline}天。平均对数评分：贝叶斯{bayes}，基准{score}（越高越好）。案例太少，无法证明优越性。",
     "lagEvidence": "参考周期：第{chapter}话，整批完成于{completed}，复刊于{released}，相隔{days}天。",
-    "lagSensitivity": "编辑等待期先验中心由90天改为30或180天，情景中位数变为{early}或{late}。"
+    "lagSensitivity": "编辑等待期先验中心由90天改为30或180天，情景中位数变为{early}或{late}。",
+    "homePrediction": "预测：{date}"
   }
 }

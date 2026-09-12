@@ -483,6 +483,7 @@
     "priorBody": "L’a priori historique centre log(T) sur log(365,2425 jours), avec κ₀ = 0,25, α₀ = 2 et β₀ = 1. En centrant plutôt sur 180 ou 730 jours, les médianes deviennent {early} et {late}.",
     "scores": "Comparaison à une log-normale ajustée sans incertitude paramétrique : erreur {baseline} jours. Score logarithmique moyen : Bayes {bayes}, référence {score} (plus élevé = meilleur). Si peu de reprises ne permettent pas de conclure à une supériorité.",
     "lagEvidence": "Cycle de référence : chapitre {chapter}, lot terminé le {completed}, reprise le {released} — {days} jours.",
-    "lagSensitivity": "En centrant l’a priori du délai éditorial sur 30 ou 180 jours plutôt que 90, la médiane du scénario devient {early} ou {late}."
+    "lagSensitivity": "En centrant l’a priori du délai éditorial sur 30 ou 180 jours plutôt que 90, la médiane du scénario devient {early} ou {late}.",
+    "homePrediction": "Estimation : {date}"
   }
 }

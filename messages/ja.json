@@ -483,6 +483,7 @@
     "priorBody": "過去モデルの事前中心はlog(365.2425日)、κ₀ = 0.25、α₀ = 2、β₀ = 1。中心を180日または730日にすると中央値は{early}と{late}です。",
     "scores": "パラメータ不確実性を無視した対数正規モデル：誤差{baseline}日。平均対数スコア：ベイズ{bayes}、基準{score}（高い方が良い）。少数例では優位性を証明できません。",
     "lagEvidence": "基準サイクル：第{chapter}話、原稿一式完成{completed}、再開{released}、{days}日。",
-    "lagSensitivity": "編集待ち時間の事前中心を90日から30日・180日に変えると中央値は{early}・{late}です。"
+    "lagSensitivity": "編集待ち時間の事前中心を90日から30日・180日に変えると中央値は{early}・{late}です。",
+    "homePrediction": "予測：{date}"
   }
 }

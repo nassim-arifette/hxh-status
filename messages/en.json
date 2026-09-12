@@ -483,6 +483,7 @@
     "priorBody": "The historical prior centers log(T) on log(365.2425 days), with κ₀ = 0.25, α₀ = 2 and β₀ = 1. Centering on 180 or 730 days instead gives medians of {early} and {late}.",
     "scores": "Comparison with a fitted log-normal without parameter uncertainty: error {baseline} days. Mean log score: Bayes {bayes}, reference {score} (higher is better). So few returns cannot establish superiority.",
     "lagEvidence": "Reference cycle: chapter {chapter}, batch completed {completed}, return {released} — {days} days.",
-    "lagSensitivity": "Centering the editorial-delay prior on 30 or 180 days instead of 90 moves the scenario median to {early} or {late}."
+    "lagSensitivity": "Centering the editorial-delay prior on 30 or 180 days instead of 90 moves the scenario median to {early} or {late}.",
+    "homePrediction": "Predicted {date}"
   }
 }

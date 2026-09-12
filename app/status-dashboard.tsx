@@ -8,6 +8,9 @@ import englishMessages from "@/messages/en.json";
 import ChapterTracker from "./chapter-tracker";
 import Faq from "./faq";
 import historyData from "./data/publication-history.json";
+import togashiArchive from "./data/togashi-posts.json";
+import { deriveProductionForecast } from "./data/production-forecast";
+import { japanDate } from "./data/release-forecast";
 import LanguageSwitcher from "./language-switcher";
 import LatestTogashiUpdate from "./latest-togashi-update";
 import PushNotificationControl from "./push-notification-control";
@@ -290,6 +293,9 @@ export default function StatusDashboard({
   messages = englishMessages,
 }: StatusDashboardProps = {}) {
   const statusMeta = getStatusMeta(messages.statuses);
+  const prediction = publicationStatus === "hiatus" && !nextChapter.releaseAt && !["scheduled", "published"].includes(nextChapter.status)
+    ? deriveProductionForecast({ records: hiatusStats.historicalHiatuses.completed, posts: togashiArchive.posts, chapter: nextChapter.chapter, asOf: japanDate() })
+    : null;
   const summarySentences = buildStatusSentences(locale, messages);
   const publicationStatusLabel =
     publicationStatus === "publishing"
@@ -386,6 +392,9 @@ export default function StatusDashboard({
                 ) : (
                   statusMeta[nextChapter.status].shortLabel
                 )}
+                {prediction && <a className="metric-prediction" href={`${localePath(chapterPath(nextChapter.chapter), locale)}#forecast-title`} title={messages.forecast.caution}>
+                  {formatMessage(messages.forecast.homePrediction, { date: new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(prediction.medianDate)) })}
+                </a>}
               </small>
             </article>
             <article className="metric">
