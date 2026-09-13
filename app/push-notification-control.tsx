@@ -140,7 +140,7 @@ export default function PushNotificationControl({
     return () => {
       cancelled = true;
     };
-  }, [locale]);
+  }, [locale, messages.iosPrompt]);
 
   const busy =
     state === "checking" ||

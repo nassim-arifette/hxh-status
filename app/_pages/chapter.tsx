@@ -191,6 +191,8 @@ export function ChapterPage({
         </section>
       ) : null}
 
+      <ReleaseForecast chapter={chapter} locale={locale} messages={messages} />
+
       <section className="content-section" aria-labelledby="chapter-history-title">
         <h2 id="chapter-history-title">{formatMessage(copy.chronologyTitle, { chapter: number })}</h2>
         <p className="prose">{copy.chronologyIntro}</p>
@@ -203,7 +205,7 @@ export function ChapterPage({
         </ol> : <p className="prose">{copy.chronologyEmpty}</p>}
         {!published ? <p className="section-note">{copy.chapterContext}</p> : null}
       </section>
-      <ReleaseForecast chapter={chapter} locale={locale} messages={messages} />
+
 
       <nav aria-label={messages.nav.breadcrumb} className="chapter-pager">
         {previous ? (

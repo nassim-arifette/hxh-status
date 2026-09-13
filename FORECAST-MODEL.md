@@ -157,3 +157,17 @@ Method references:
 
 These references justify mathematical constructions, not the accuracy of a
 HUNTER×HUNTER release prediction.
+
+
+## Reader-facing monthly probabilities
+
+The central day is the existing rounded-up median, not a claim that publication
+will occur on that day. Calendar-month probabilities are differences of the
+active model CDF at successive month ends, using the same Japan-calendar day
+rounding as the displayed quantiles. The current month includes only remaining
+time. The top five are ranked by probability; enumeration stops only when the
+entire remaining tail is smaller than the fifth-ranked probability, so a later
+month cannot displace it. Other months includes every unlisted month and the
+unbounded tail. Largest-remainder rounding to tenths of a percent makes the six
+displayed values sum to 100%. Production remains the active scenario when
+available, with the historical reference shown inside the method disclosure.

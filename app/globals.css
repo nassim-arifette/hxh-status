@@ -390,7 +390,8 @@ select {
   position: relative;
   display: grid;
   grid-template-columns: minmax(220px, 0.72fr) minmax(600px, 1.7fr);
-  gap: 48px;
+  column-gap: 48px;
+  row-gap: 24px;
   align-items: end;
   padding: 58px 0 52px;
 }
@@ -567,12 +568,13 @@ select {
   letter-spacing: 0.01em;
 }
 
-.metric-prediction {
+.metric-official-date {
   display: block;
   margin-top: 6px;
-  color: var(--accent-green);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: var(--text-secondary);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.7rem;
+  line-height: 1.35;
 }
 
 .metric-primary {
@@ -590,6 +592,49 @@ select {
   border-radius: 18px;
   background: var(--card);
   box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.45);
+}
+
+.home-forecast {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(230px, 0.65fr);
+  align-items: center;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.home-forecast h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  font-weight: 570;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.home-forecast .section-lede {
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+}
+
+.home-forecast-detail {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  padding-inline-start: 28px;
+  border-inline-start: 1px solid var(--border);
+}
+
+.home-forecast-estimate {
+  margin: 0;
+  color: var(--foreground);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.home-forecast .source-link {
+  font-size: 0.83rem;
+  line-height: 1.5;
 }
 
 .section-heading {
@@ -1522,6 +1567,17 @@ select {
   .content-section {
     padding: 24px 18px;
     border-radius: 14px;
+  }
+
+  .home-forecast {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .home-forecast-detail {
+    padding: 18px 0 0;
+    border-inline-start: 0;
+    border-top: 1px solid var(--border);
   }
 
   .section-heading {
@@ -2638,3 +2694,247 @@ select {
 .forecast-equations { max-width: 100%; overflow-x: auto; padding: 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-size: .8rem; line-height: 1.8; }
 .forecast-sources { display: flex; flex-wrap: wrap; gap: 12px 24px; padding-inline-start: 20px; font-size: .9rem; }
 @media (max-width: 480px) { .forecast-probabilities { grid-template-columns: repeat(2, 1fr); } .forecast-scenario { padding: 16px; } }
+
+/* Shared navigation and a shorter, reader-first dashboard. */
+.primary-navigation { display:flex; flex-wrap:wrap; gap:4px 24px; padding:0 0 18px; margin:0 0 28px; border-bottom:1px solid var(--border); }
+.primary-navigation a { padding:10px 0; color:var(--text-secondary); font-size:.9rem; text-decoration:none; }
+.primary-navigation a[aria-current="page"] { color:var(--accent-green); box-shadow:0 2px 0 var(--accent-green); }
+.primary-navigation a:hover { color:var(--foreground); }
+.primary-navigation a:focus-visible, summary:focus-visible { outline:2px solid var(--accent-green); outline-offset:5px; }
+.hiatus-inline { display:inline-block; margin:16px 0 0; color:var(--text-secondary); font-size:.9rem; }
+.metric > span small { display:block; font-size:.75rem; text-transform:none; letter-spacing:normal; margin-top:4px; }
+.home-explore { display:grid; grid-template-columns:1fr 1fr; gap:24px; padding:28px 0; border-bottom:1px solid var(--border); }
+.home-explore a { display:flex; flex-direction:column; gap:10px; padding:12px 0; }
+.home-explore span { color:var(--text-secondary); font-size:.9rem; line-height:1.6; }
+.pause-answer { font-size:clamp(1.5rem,4vw,2.4rem); color:var(--accent-green); margin:20px 0; }
+.arc-verdicts { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+.arc-verdicts strong { display:block; margin:12px 0; font-size:1.7rem; }
+.arc-verdicts > div > span { color:var(--text-secondary); }
+.update-sheet > summary { cursor:pointer; padding:16px 0; color:var(--accent-green); }
+.forecast-answer { margin:24px 0 32px; padding:24px 0; border-block:1px solid var(--border); }
+.forecast-answer-label { margin:0; color:var(--text-secondary); }
+.forecast-answer-date { font-size:clamp(1.8rem,5vw,3rem); line-height:1.2; color:var(--accent-green); margin:12px 0 18px; font-weight:600; letter-spacing:-.035em; }
+.forecast-window { font-size:1.15rem; line-height:1.65; max-width:65ch; margin:24px 0 12px; }
+.forecast-months { list-style:none; padding:0; max-width:680px; margin:20px 0 32px; }
+.forecast-months li { padding:12px 0; }
+.forecast-months li > div:first-child { display:flex; justify-content:space-between; gap:20px; margin-bottom:10px; }
+.forecast-months strong { font-variant-numeric:tabular-nums; }
+.probability-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.probability-track span { display:block; height:100%; background:var(--accent-green); }
+.forecast-months li:last-child { color:var(--text-secondary); }
+.forecast-months li:last-child .probability-track span { background:var(--text-muted); }
+.reader-options { display:grid; gap:20px; }
+.reader-option { padding:18px 0; border-bottom:1px solid var(--border); }
+.reader-option h3 { margin:0 0 10px; }
+.reader-option p { color:var(--text-secondary); line-height:1.6; margin:8px 0; max-width:70ch; }
+@media(max-width:600px) {
+ .primary-navigation { gap:2px 18px; margin-bottom:20px; }
+ .primary-navigation a { font-size:.85rem; }
+ .home-explore,.arc-verdicts { grid-template-columns:1fr; gap:12px; }
+ .forecast-window { font-size:1rem; }
+}
+
+.update-excerpt { white-space:pre-wrap; overflow-wrap:anywhere; }
+.update-media img { width:auto; height:auto; max-width:min(220px,100%); }
+.game-home-link { grid-column:1/-1; display:flex; justify-content:space-between; gap:1rem; padding:1rem 0 0; border-top:1px solid var(--border); color:var(--text-secondary,#b9c9bd); font-size:.9rem; text-decoration:none; }
+.game-home-link strong { color:#b9f65d; white-space:nowrap; }
+.game-home-link:focus-visible { outline:2px solid var(--ring); outline-offset:4px; }
+.prediction-game { display:grid; gap:1.5rem; margin-block:2rem; }
+.game-entry,.game-panel { padding:clamp(1.25rem,4vw,2.5rem); border:1px solid #344033; border-radius:18px; background:#111914; }
+.game-entry { background:radial-gradient(ellipse at 100% 0%,#26321c 0%,#111914 65%); }
+.game-kicker { display:flex; justify-content:space-between; gap:1rem; text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; color:#b9f65d; margin-bottom:1.5rem; }
+.game-kicker span { color:#899b8f; }
+.prediction-game h2 { margin:0 0 1.2rem; font-size:clamp(1.4rem,3vw,2rem); line-height:1.2; }
+.prediction-game h3 { margin:1.75rem 0 1rem; }
+.prediction-game p { line-height:1.65; }
+.game-date { display:block; font-size:clamp(2rem,5vw,3.5rem); font-weight:750; letter-spacing:-.035em; color:#b9f65d; }
+.game-fields { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-block:1.5rem; }
+.prediction-game label { display:grid; gap:.65rem; font-size:.9rem; }
+.prediction-game input:not([type=checkbox]) { width:100%; min-width:0; padding:.85rem; color:#f1f6ed; background:#0c130f; border:1px solid #596852; border-radius:8px; font:inherit; color-scheme:dark; }
+.prediction-game input:focus-visible,.prediction-game button:focus-visible,.game-recovery summary:focus-visible { outline:2px solid #b9f65d; outline-offset:4px; }
+.prediction-game .game-confirm { display:flex; align-items:flex-start; gap:.75rem; margin:1.4rem 0; line-height:1.5; }
+.game-confirm input { width:20px; height:20px; flex-shrink:0; accent-color:#b9f65d; }
+.prediction-game button { padding:.85rem 1.1rem; min-height:44px; border:1px solid transparent; border-radius:8px; background:#b9f65d; color:#10180d; font:inherit; font-weight:650; cursor:pointer; }
+.prediction-game button:disabled { opacity:.45; cursor:default; }
+.prediction-game .game-secondary { background:transparent; border-color:#52604c; color:#e0e8dc; }
+.game-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin:1.5rem 0; }
+.prediction-game .game-hint { color:#a0b09f; font-size:.85rem; margin-top:1rem; }
+.game-recovery { margin-top:1.5rem; border-top:1px solid #344033; padding-top:1.2rem; }
+.game-recovery summary { cursor:pointer; color:#b7c6ad; }
+.game-link { display:flex; gap:.75rem; align-items:end; margin-top:1rem; }
+.game-link label { flex:1; min-width:0; }
+.game-link button { flex-shrink:0; }
+.game-section-heading { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+.game-section-heading>span { color:#b9f65d; font-variant-numeric:tabular-nums; }
+.game-metrics { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-block:1.5rem; }
+.game-metrics article { display:grid; gap:.65rem; padding:1.2rem; background:#1a241b; border-radius:10px; }
+.game-metrics span { color:#b2c2a8; font-size:.85rem; }
+.game-metrics strong { font-size:clamp(1.2rem,2.8vw,1.7rem); }
+.game-table-wrap { overflow:auto; margin-block:1rem; }
+.prediction-game table { width:100%; border-collapse:collapse; font-size:.9rem; }
+.prediction-game th,.prediction-game td { padding:.8rem; text-align:start; border-bottom:1px solid #344033; }
+.prediction-game th { color:#a9baa1; font-weight:500; }
+.game-me { color:#b9f65d; background:#1c2917; }
+.game-feedback { padding:1rem 1.25rem; border:1px solid #829d6e; border-radius:10px; }
+.game-error { color:#ffceb9; border-color:#a56c55; }
+.game-settled { border-top:1px solid #344033; padding-top:1.5rem; }
+@media(max-width:600px) {
+ .game-home-link,.game-link { flex-direction:column; align-items:stretch; }
+ .game-fields,.game-metrics { grid-template-columns:1fr; }
+ .game-kicker span { display:none; }
+ .game-actions button { flex:1 1 100%; }
+}
+
+.game-email-form { display:flex; gap:1rem; align-items:end; margin-top:1.25rem; flex-wrap:wrap; }
+.game-email-form label { flex:1 1 220px; }
+
+.game-date-field { min-width:0; margin-block:24px; }
+.game-calendar-head { display:flex; align-items:end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:22px; }
+.prediction-game .game-calendar-head h3 { margin:0; font-size:1.1rem; font-weight:600; line-height:1.4; }
+.game-calendar-toolbar { display:flex; align-items:center; gap:4px; }
+.prediction-game .game-calendar-toolbar button { display:grid; place-items:center; padding:0; min-width:44px; min-height:44px; border-color:#344033; background:#151916; color:#dce9d5; }
+.game-calendar-selects { display:flex; justify-content:center; gap:4px; min-width:0; }
+.game-calendar-selects select { min-width:0; min-height:44px; max-width:145px; color:#eef6e8; background:#151916; border:1px solid #344033; border-radius:8px; padding:8px; font:inherit; font-size:.85rem; font-weight:600; text-transform:capitalize; color-scheme:dark; cursor:pointer; }
+.game-calendar-week,.game-calendar-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:9px; text-align:center; }
+.game-calendar-week { margin-bottom:9px; color:var(--text-muted); font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:.68rem; font-weight:600; text-transform:uppercase; }
+.game-calendar-week span { overflow:hidden; }
+.game-calendar-days { list-style:none; margin:0; padding:0; }
+.game-calendar-days li { min-width:0; }
+.prediction-game .game-calendar-days .game-day { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; width:100%; min-width:0; min-height:44px; aspect-ratio:1.22; padding:0; border:1px solid #353b37; border-radius:10px; background:#171b18; color:#f1f6ed; box-shadow:inset 0 1px 0 rgba(255,255,255,.05); font-variant-numeric:tabular-nums; }
+.prediction-game .game-calendar-days button.game-day:not(:disabled):hover { border-color:var(--accent-green); background:#1b2b1c; }
+.prediction-game .game-calendar-days button.game-day:disabled { opacity:.28; }
+.game-day-number { font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:1rem; font-weight:650; line-height:1.1; }
+.game-day-count { font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:.62rem; line-height:1.1; color:#b2c2a8; }
+.prediction-game .game-calendar-days .game-day[data-heat="1"],.game-heat-scale i[data-heat="1"] { background:rgba(120,201,99,.10); border-color:rgba(120,201,99,.22); }
+.prediction-game .game-calendar-days .game-day[data-heat="2"],.game-heat-scale i[data-heat="2"] { background:rgba(120,201,99,.22); border-color:rgba(120,201,99,.38); }
+.prediction-game .game-calendar-days .game-day[data-heat="3"],.game-heat-scale i[data-heat="3"] { background:rgba(120,201,99,.38); border-color:rgba(120,201,99,.55); }
+.prediction-game .game-calendar-days .game-day[data-heat="4"],.game-heat-scale i[data-heat="4"] { background:rgba(120,201,99,.58); border-color:var(--accent-green); }
+.prediction-game .game-calendar-days .game-day[data-heat="4"],.prediction-game .game-calendar-days .game-day[data-heat="4"] .game-day-count { color:#0b1409; }
+.prediction-game .game-calendar-days .game-day[data-picked] { border-color:#d6aa4d; background:rgba(214,170,77,.18); color:#f1c576; }
+.prediction-game .game-calendar-days .game-day[data-picked] .game-day-count { color:#f1c576; }
+.game-calendar-empty { visibility:hidden; }
+.game-calendar-legend { display:flex; flex-wrap:wrap; gap:12px 24px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); color:var(--text-secondary); font-size:.78rem; }
+.game-calendar-legend > span { display:flex; align-items:center; gap:9px; }
+.game-heat-scale { display:flex; gap:4px; }
+.game-heat-scale i { width:16px; height:12px; border:1px solid #353b37; border-radius:3px; background:#171b18; }
+.game-pick-swatch { width:12px; height:12px; border:1px solid #d6aa4d; border-radius:3px; background:rgba(214,170,77,.18); }
+.game-calendar-selects select:focus-visible { outline:2px solid #b9f65d; outline-offset:3px; }
+
+/* Prediction flow: saved date, immediate actions, then community comparison. */
+.predictions-page .breadcrumb { display:none; }
+.predictions-page .primary-navigation { margin-bottom:12px; }
+.predictions-page .content-page { padding-top:12px; }
+.predictions-page .page-lede { margin-top:12px; }
+.predictions-page .prediction-game { margin-top:24px; }
+@media(min-width:1040px) {
+ .predictions-page .content-page { position:relative; }
+ .predictions-page .content-page-head { max-width:100%; }
+}
+.predictions-page .game-entry { background:var(--card); }
+.predictions-page .game-entry-saved { border-color:color-mix(in srgb,#d6aa4d 30%,transparent); background:linear-gradient(110deg,color-mix(in srgb,#d6aa4d 8%,transparent),transparent 60%),var(--card); }
+.prediction-game .game-entry h2 { margin-bottom:12px; }
+.prediction-game .game-entry-saved h2 { margin-bottom:10px; }
+.prediction-game .game-entry-saved .game-date { color:#d6aa4d; }
+.prediction-game .game-verdict-confirmed { margin:12px 0 0; color:var(--text-secondary); font-size:.72rem; }
+.prediction-game .game-scope { margin:0 0 20px; max-width:70ch; color:#b2c2a8; font-size:.9rem; line-height:1.6; }
+.prediction-game .game-fields { grid-template-columns:repeat(2,minmax(0,1fr)); margin-block:20px; }
+.prediction-game .game-fields .game-hint { margin:0; font-size:.8rem; }
+.prediction-game .game-pick-readout { display:flex; align-items:center; min-height:52px; margin:0; color:#f1c576; font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:1.1rem; font-weight:650; line-height:1.35; }
+.game-recovery-note { margin-top:24px; padding-top:20px; border-top:1px solid #344033; color:#b2c2a8; }
+.game-recovery-note > p { margin:0; max-width:65ch; font-size:.9rem; }
+.game-recovery-note .game-recovery { margin:8px 0 0; padding:0; border:0; }
+.game-recovery summary, .game-stat-details summary { min-height:44px; padding-block:12px; cursor:pointer; color:#dce9d5; font-size:.9rem; }
+.game-community-summary { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center; gap:24px; margin-block:24px; padding-block:24px; border-block:1px solid #344033; }
+.game-community-summary span { color:#b2c2a8; font-size:.85rem; }
+.game-community-summary strong { display:block; margin-top:8px; font-size:clamp(1.5rem,3vw,2rem); font-weight:650; line-height:1.25; letter-spacing:-.025em; }
+.game-community-summary p { margin:0; color:#dce9d5; }
+.game-stat-details { margin:20px 0; }
+.game-stat-details p { max-width:65ch; font-size:.9rem; color:#b2c2a8; }
+.game-next-steps { padding:8px 0; }
+.game-next-steps > h2 { margin-bottom:12px; }
+.game-option { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.45fr); gap:24px; padding:24px 0; border-top:1px solid #344033; }
+.game-option-intro h3 { margin:0 0 8px; font-size:1.1rem; line-height:1.4; }
+.game-option-intro p { max-width:40ch; margin:0; color:#b2c2a8; font-size:.9rem; }
+.game-option-body { min-width:0; }
+.game-option-body > p { margin:0; color:#b2c2a8; }
+.game-option-body .game-section-heading h3 { margin:0; }
+.game-option .game-actions { margin:0; }
+.game-option .game-email-form { margin-top:0; }
+.game-stat-details summary:focus-visible { outline:2px solid #b9f65d; outline-offset:3px; }
+.game-stat-details > summary:hover { color:#b9f65d; }
+.game-link > input { flex:1; min-width:0; }
+.prediction-game input, .prediction-game select { caret-color:#b9f65d; }
+.prediction-game ::selection { background:#b9f65d; color:#10180d; }
+@media(max-width:900px) {
+ .prediction-game .game-fields { grid-template-columns:1fr; }
+}
+@media(max-width:600px) {
+ .predictions-page .site-header { flex-wrap:nowrap; }
+ .predictions-page .header-meta { width:auto; }
+ .predictions-page .updated-label { display:none; }
+ .predictions-page .content-page { padding-top:8px; }
+ .predictions-page .prediction-game { margin-top:20px; }
+  .prediction-game .game-entry,.prediction-game .game-panel { padding:20px 16px; }
+ .prediction-game .game-fields { gap:16px; margin-block:16px; }
+ .prediction-game input:not([type=checkbox]) { font-size:1rem; }
+ .prediction-game .game-community-summary { grid-template-columns:1fr; gap:16px; }
+ .game-calendar-head { align-items:start; }
+ .game-calendar-week,.game-calendar-days { gap:4px; }
+ .game-day-number { font-size:.85rem; }
+ .game-day-count { font-size:.55rem; }
+ .prediction-game .game-pick-readout { min-height:44px; }
+ .game-option { grid-template-columns:1fr; gap:12px; padding:20px 0; }
+ .game-option-intro h3 { font-size:1rem; }
+ .game-email-form button { width:100%; }
+}
+
+/* A single choice, then the community reveal. */
+.predictions-page .content-page { max-width:720px; margin-inline:auto; }
+.predictions-page .content-page-head { min-height:0; }
+.predictions-page .page-lede { max-width:48ch; }
+.prediction-game .game-participation { margin:0; font-size:.85rem; color:var(--text-secondary); }
+.game-participation strong { color:var(--text-primary,#f3f6f3); }
+.prediction-game .game-entry,.prediction-game .game-panel { border-radius:16px; }
+.prediction-game .game-date-field { margin-block:0 16px; }
+.prediction-game .game-fields { display:flex; flex-direction:column; gap:8px; }
+.game-nickname summary,.game-extras > summary { min-height:44px; padding-block:12px; cursor:pointer; color:var(--text-secondary); }
+.game-nickname[open] label { margin-block:8px; }
+.game-nickname summary:focus-visible,.game-extras > summary:focus-visible { outline:2px solid #b9f65d; outline-offset:4px; }
+.prediction-game .game-vote { width:100%; margin-top:4px; }
+.prediction-game #game-final { font-size:.8rem; margin-block:12px; }
+.prediction-game #game-unlock { font-size:.75rem; text-align:center; }
+.prediction-game .game-entry-saved { background:var(--card); }
+.game-community .game-community-summary { margin-top:0; border-top:0; padding-top:8px; }
+.game-month-overview { display:grid; gap:14px; margin-block:24px; }
+.game-month-row { display:grid; grid-template-columns:100px minmax(0,1fr) 44px; align-items:center; gap:12px; font-size:.8rem; font-variant-numeric:tabular-nums; }
+.game-month-row strong { text-align:end; }
+.game-month-row meter { width:100%; height:10px; border:0; background:#252c27; border-radius:4px; }
+.game-month-row meter::-webkit-meter-bar { background:#252c27; border:0; }
+.game-month-row meter::-webkit-meter-optimum-value { background:#78c963; }
+.game-month-row meter::-moz-meter-bar { background:#78c963; }
+.game-next-steps > .game-option { display:block; border:0; padding-top:0; }
+.game-extras { border-top:1px solid var(--border); }
+.game-next-steps .game-actions button { background:transparent; color:#e0e8dc; border-color:#52604c; }
+@media(max-width:600px) {
+ .prediction-game .game-calendar-head { gap:12px; margin-bottom:16px; }
+ .prediction-game .game-calendar-toolbar { width:100%; justify-content:space-between; }
+ .prediction-game .game-calendar-days .game-day { aspect-ratio:auto; min-height:44px; }
+ .game-month-row { grid-template-columns:88px minmax(0,1fr) 38px; gap:8px; }
+}
+
+.predictions-page .page-links { display:none; }
+
+/* Keep access to a saved prediction in plain sight. */
+.game-entry .game-recovery-note { margin-top:20px; padding-top:16px; }
+.prediction-game .game-recovery-note h3 { margin:0 0 12px; font-size:1rem; }
+.prediction-game .game-recovery-button { width:100%; }
+.game-recovery-note .game-link { margin-top:8px; }
+.game-recovery-note .game-link label { flex:1; min-width:0; }
+.game-email-inline { margin-bottom:24px; }
+.game-email-inline .game-email-form { margin-top:0; }
+.game-email-inline .game-email-form label { gap:8px; }
+.game-email-inline .game-email-form button { white-space:nowrap; }
+
+.game-preview-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:.8rem; color:var(--text-secondary); }
+
+.game-friend-actions > .game-option { display:block; border:0; padding-top:0; }

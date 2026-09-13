@@ -1,7 +1,7 @@
 import { formatMessage, publicLocales, type Locale, type Messages } from "@/lib/i18n";
 import { localePath, updatePath } from "@/lib/routes";
 import { ContentShell } from "../content-shell";
-import { postExcerpt, togashiPosts } from "../data/updates";
+import { postText, togashiPosts } from "../data/updates";
 import { formatDate } from "../status-presentation";
 
 export const UPDATES_PATH = "/updates";
@@ -44,15 +44,21 @@ export function UpdatesPage({
         ) : (
           <ol className="update-list">
             {togashiPosts.map((post) => {
+              const { text, translated } = postText(post, locale);
               const change = post.tracker?.changes?.[0];
               return (
                 <li className="update-card" key={post.id}>
                   <time dateTime={post.createdAt}>
                     {formatDate(post.createdAt.slice(0, 10), undefined, locale)}
                   </time>
-                  <p className="update-excerpt">
-                    {postExcerpt(post, locale) || copy.imagePost}
+                  <p className="update-excerpt" lang={translated ? locale : "ja"}>
+                    {text || copy.imagePost}
                   </p>
+                  <p className="section-note">{translated ? messages.latestUpdate.translated : locale === "ja" ? messages.latestUpdate.originalText : messages.latestUpdate.translationUnavailable}</p>
+                  {post.mediaUrls.length > 0 && <ul className="update-media">{post.mediaUrls.map((url, index) => <li key={url}><a href={url} target="_blank" rel="noreferrer">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt={formatMessage(messages.latestUpdate.imageAlt, { index: index + 1 })} loading="lazy" />
+                  </a></li>)}</ul>}
                   {change ? (
                     <p className="update-change">
                       {formatMessage(messages.pages.update.changeRow, {
@@ -68,7 +74,7 @@ export function UpdatesPage({
                   ) : null}
                   <a href={localePath(updatePath(post.id), locale)}>
                     {copy.readMore}
-                  </a>
+                  </a>{" · "}<a href={post.url} target="_blank" rel="noreferrer">{messages.latestUpdate.viewPost}</a>
                 </li>
               );
             })}

@@ -18,7 +18,7 @@ export function ReleaseForecast({ chapter, locale, messages }: { chapter: Chapte
   const lagSensitivity = production ? [30, 180].map(lagPriorDays => deriveProductionForecast({ ...productionInput, lagPriorDays })!) : [];
   const month = (date: string) => new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(date));
   const number = (value: number, digits = 0) => new Intl.NumberFormat(locale, { maximumFractionDigits: digits }).format(value);
-  const percent = (p: number) => new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 0 }).format(p);
+  const percent = (p: number) => new Intl.NumberFormat(locale, { style: "percent", maximumFractionDigits: 1 }).format(p);
   const range = (model: { lowerDate: string; medianDate: string; upperDate: string }) => <dl className="forecast-grid">
     <div><dt>{copy.median}</dt><dd>{month(model.medianDate)}</dd></div>
     <div><dt>{copy.range}</dt><dd>{month(model.lowerDate)} – {month(model.upperDate)}</dd></div>
@@ -28,19 +28,33 @@ export function ReleaseForecast({ chapter, locale, messages }: { chapter: Chapte
   return <section className="content-section forecast" aria-labelledby="forecast-title">
     <p className="eyebrow">{copy.badge}</p>
     <h2 id="forecast-title">{formatMessage(copy.title, { chapter: chapter.chapter })}</h2>
-    <p className="section-lede">{copy.intro}</p>
-    {production && <div className="forecast-scenario">
-      <h3>{copy.productionTitle}</h3>
-      <p className="prose">{formatMessage(copy.productionBody, { count: production.batch.length, remaining: production.remaining })}</p>
-      {range(production)}
-    </div>}
-    <h3>{copy.historyTitle}</h3>
-    {range(estimate)}
-    <p className="section-note">{formatMessage(copy.asOf, { date: formatDate(estimate.asOf, undefined, locale), count: estimate.exactDateCount, total: estimate.sampleCount })}</p>
-    <p className="prose">{copy.caution}</p>
-    <h3>{copy.probabilityTitle}</h3>
-    <p className="section-note">{production ? copy.productionTitle : copy.historyTitle}</p>
-    <dl className="forecast-probabilities">{active.horizons.map(h => <div key={h.days}><dt>{formatMessage(copy.horizon, { days: h.days })}</dt><dd>{percent(h.probability)}</dd></div>)}</dl>
+    <div className="forecast-answer">
+      <p className="forecast-answer-label">{copy.centralDate}</p>
+      <p className="forecast-answer-date"><time dateTime={active.medianDate}>{formatDate(active.medianDate, { month: "long" }, locale)}</time></p>
+      <p className="prose">{copy.centralExplanation}</p>
+      <p className="forecast-window">{formatMessage(copy.clearRange, { percent: percent(.8), start: formatDate(active.lowerDate, { month: "long" }, locale), end: formatDate(active.upperDate, { month: "long" }, locale) })}</p>
+      <p className="section-note">{copy.simpleCaution}</p>
+    </div>
+    <h3>{copy.monthsTitle}</h3>
+    <p className="section-note">{copy.monthsExplanation}</p>
+    <ol className="forecast-months">
+      {active.months.map(bucket => <li key={bucket.month}>
+        <div><span>{bucket.month === "other" ? copy.otherMonths : month(bucket.month)}</span><strong>{percent(bucket.displayProbability)}</strong></div>
+        <div className="probability-track" aria-hidden="true"><span style={{ width: `${bucket.displayProbability * 100}%` }} /></div>
+      </li>)}
+    </ol>
+    <h3>{copy.whyTitle}</h3>
+    <p className="prose">{production ? formatMessage(copy.simpleProduction, { count: production.batch.length, remaining: production.remaining }) : copy.simpleHistory}</p>
+    <p className="section-note">{formatMessage(copy.calculatedOn, { date: formatDate(active.asOf, undefined, locale) })}</p>
+    <details className="forecast-method">
+      <summary>{copy.methodTitle}</summary>
+      <p className="prose">{copy.intro}</p>
+      {production && <><h3>{copy.productionTitle}</h3>{range(production)}</>}
+      <h3>{copy.historyTitle}</h3>{range(estimate)}
+      <p className="section-note">{formatMessage(copy.asOf, { date: formatDate(estimate.asOf, undefined, locale), count: estimate.exactDateCount, total: estimate.sampleCount })}</p>
+      <p className="prose">{copy.caution}</p>
+      <h3>{copy.probabilityTitle}</h3>
+      <dl className="forecast-probabilities">{active.horizons.map(h => <div key={h.days}><dt>{formatMessage(copy.horizon, { days: h.days })}</dt><dd>{percent(h.probability)}</dd></div>)}</dl>
     <figure className="forecast-chart">
       <figcaption>{copy.curveTitle}</figcaption>
       <svg viewBox="0 0 600 270" role="img" aria-label={copy.curveTitle}>
@@ -52,8 +66,6 @@ export function ReleaseForecast({ chapter, locale, messages }: { chapter: Chapte
       </svg>
       <div className="forecast-legend"><span>{production ? `━ ${copy.productionTitle}` : ""}</span><span>┄ {copy.historyTitle}</span></div>
     </figure>
-    <details className="forecast-method">
-      <summary>{copy.methodTitle}</summary>
       {production && <>
         <h3>{copy.productionTitle}</h3>
         <p className="prose">{formatMessage(copy.productionMethod, { count: production.lagSamples.length })}</p>
@@ -74,7 +86,7 @@ export function ReleaseForecast({ chapter, locale, messages }: { chapter: Chapte
         <p className="prose">{formatMessage(copy.backtest, { count: estimate.backtest.count, days: number(estimate.backtest.meanAbsoluteErrorDays!), covered: estimate.backtest.covered })}</p>
         <p className="prose">{formatMessage(copy.scores, { baseline: number(estimate.backtest.baselineErrorDays!), bayes: number(estimate.backtest.logScore!, 2), score: number(estimate.backtest.baselineLogScore!, 2) })}</p>
       </>}
-      <div className="table-scroll"><table className="hiatus-table">
+      <div className="table-scroll"><table className="data-table">
         <caption>{copy.sampleTitle}</caption><thead><tr><th scope="col">{copy.returnChapter}</th><th scope="col">{copy.period}</th><th scope="col">{copy.issues}</th></tr></thead>
         <tbody>{estimate.samples.map(s => <tr key={s.resumedWithChapter}><th scope="row">{s.resumedWithChapter}</th><td>{s.startYear} #{s.startIssue} – {s.endYear} #{s.endIssue}</td><td>{s.issues}</td></tr>)}</tbody>
       </table></div>

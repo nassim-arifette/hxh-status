@@ -1,3 +1,4 @@
+import { forecastMonths } from "./forecast-months.ts";
 import type { HiatusRecord } from "./hiatus-stats";
 
 export const FORECAST_VERSION = "bayesian-lognormal-nig-v2";
@@ -145,6 +146,7 @@ export function deriveReleaseForecast({ records, chapter, nextChapter, chapterSt
     lowerDate, medianDate, upperDate,
     allHistoryMedianDate: toDate(predictiveQuantile(.5, elapsedDays, fitPosterior(forecastSamples(available, 1998).map(durationDays)))),
     priorSensitivity: [180, 730].map(center => ({ center, date: toDate(predictiveQuantile(.5, elapsedDays, fitPosterior(days, { ...FORECAST_PRIOR, mu: Math.log(center) }))) })),
+    months: forecastMonths(asOf, days => conditionalProbability(elapsedDays + days, elapsedDays, posterior)),
     horizons: [90, 180, 365, 730].map(horizon => ({ days: horizon, probability: conditionalProbability(elapsedDays + horizon, elapsedDays, posterior) })),
     curve: Array.from({ length: 25 }, (_, i) => ({ days: i * 365.2425 / 12, probability: conditionalProbability(elapsedDays + i * 365.2425 / 12, elapsedDays, posterior) })),
     backtest: backtestForecast(available),

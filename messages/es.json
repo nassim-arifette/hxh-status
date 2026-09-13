@@ -69,6 +69,7 @@
     "chaptersPublished": "{count} capítulos publicados en {year}.",
     "latestPublished": "Último capítulo publicado",
     "nextChapter": "Próximo capítulo",
+    "noOfficialDate": "Sin fecha oficial anunciada",
     "manuscriptsComplete": "Manuscritos terminados",
     "workConfirmed": "Avance confirmado",
     "throughChapter": "hasta el capítulo",
@@ -76,7 +77,8 @@
     "preReleaseSuffix": "spoilers",
     "question": "¿HUNTER×HUNTER está en pausa?",
     "summaryAria": "Situación actual explicada en palabras",
-    "japanDate": "Fecha japonesa (JST)"
+    "japanDate": "Fecha japonesa (JST)",
+    "pauseDays": "En pausa desde hace {days} días"
   },
   "production": {
     "eyebrow": "Guerra de Sucesión de Kakin",
@@ -95,7 +97,7 @@
     "eyebrow": "Última actualización de Togashi",
     "sentence": "Capítulo {chapter}: {status}.",
     "viewPost": "Ver publicación",
-    "imageText": "Texto de la imagen {index}",
+    "imageText": "Ver el texto de la imagen {index}",
     "imageTextByGemini": "Transcrito y traducido por Gemini"
   },
   "history": {
@@ -117,13 +119,14 @@
     "rankDuration": "{rank}º por duración en calendario · {duration}",
     "durationYears": "{years} años",
     "durationMonths": "{months} meses",
-    "arcChaptersCount": "{count} cap."
+    "arcChaptersCount": "{count} cap.",
+    "intro": "Explora las publicaciones desde 1998 y compara los arcos por capítulos y duración."
   },
   "stats": {
     "eyebrow": "1998-2026",
     "title": "Estadísticas de pausas y publicación",
     "subtitle": "Ritmo de publicación observado a lo largo de 28 años",
-    "methodology": "Calculado al compilar a partir de datos del Weekly Shōnen Jump. Observaciones estrictamente descriptivas, sin especulaciones.",
+    "methodology": "Basado en los números de Jump desde 1998; un número doble cuenta una vez. Describe el pasado, no la próxima publicación.",
     "currentHiatus": {
       "title": "Pausa actual",
       "justStarted": "Recién comenzada · 0 números de Jump transcurridos",
@@ -133,7 +136,7 @@
     "historicalHiatus": {
       "title": "Pausas anteriores",
       "majorMedian": "{issues} números (~{years} años)",
-      "majorMedianLabel": "Mediana de pausas mayores (≥10 números, N={count})",
+      "majorMedianLabel": "De {count} pausas largas, la mitad duró menos y la otra mitad más. Una pausa larga abarca al menos 10 números sin capítulo.",
       "record": "{issues} números (~{years} años)",
       "recordLabel": "Pausa récord ({startYear} #{startIssue} – {endYear} #{endIssue})",
       "allMedian": "Mediana de {issues} número(s) en las {count} pausas registradas"
@@ -148,7 +151,7 @@
     "publicationRate": {
       "title": "Tasa de publicación",
       "rate": "{percent} % de presencia",
-      "rateLabel": "{published} capítulos en {total} números de Jump"
+      "rateLabel": "{published} capítulos en {total} números de Jump: proporción con capítulo, incluidos especiales."
     }
   },
   "chapter": {
@@ -254,7 +257,7 @@
   "baseRates": {
     "eyebrow": "¿Cuándo sale el capítulo {chapter}?",
     "title": "Se desconoce. Aquí está el historial.",
-    "answer": "Ni Shueisha ni Weekly Shonen Jump han anunciado una fecha para el capítulo {chapter}, así que HxH Status no propone ninguna. Las cifras siguientes describen 28 años de publicación observada; no son un pronóstico.",
+    "answer": "No se ha anunciado una fecha oficial para el capítulo {chapter}. Estas cifras describen pausas anteriores; la estimación está en la página del capítulo.",
     "badge": "Distribución observada, no una predicción",
     "elapsedLabel": "Transcurrido hasta ahora",
     "elapsedValue": "{issues} números de Jump",
@@ -276,7 +279,11 @@
     "home": "Seguimiento",
     "backToTracker": "Volver al seguimiento",
     "explore": "Más de HxH Status",
-    "onThisPage": "Secciones"
+    "onThisPage": "Secciones",
+    "primary": "Navegación principal",
+    "updates": "Novedades",
+    "history": "Historial",
+    "predictions": "Pronósticos"
   },
   "pages": {
     "hiatus": {
@@ -284,7 +291,7 @@
       "metaTitle": "Pausas de Hunter x Hunter: historial desde 1998",
       "metaDescription": "Recuento de la pausa actual de HUNTER×HUNTER y el registro completo de {count} pausas de {threshold} números de Jump o más desde 1998, medidas con la numeración del propio Weekly Shonen Jump.",
       "h1": "Seguimiento de pausas de HUNTER×HUNTER",
-      "lede": "Todas las pausas que HUNTER×HUNTER ha tomado desde su inicio en el número 1998 #14 de Weekly Shonen Jump, contadas en números de Jump y no en semanas, porque el propio Jump se salta números.",
+      "lede": "Consulta la pausa actual y las anteriores de al menos diez números. Las fechas indican el tiempo; los números cuentan revistas publicadas sin capítulo.",
       "currentTitle": "La pausa actual",
       "historyTitle": "Todas las pausas de {threshold} números o más",
       "historyIntro": "El conjunto de datos registra {count} pausas de al menos {threshold} números de Jump. La más larga duró {max} números.",
@@ -305,7 +312,7 @@
       "metaTitle": "Estadísticas de publicación de HUNTER×HUNTER: {published} capítulos en {total} números de Jump",
       "metaDescription": "Estadísticas descriptivas de HUNTER×HUNTER de 1998 a hoy: {percent}% de presencia en Weekly Shonen Jump, una pausa larga mediana de {median} números y la duración de cada tanda de publicación.",
       "h1": "Estadísticas de publicación de HUNTER×HUNTER",
-      "lede": "Calculadas durante la compilación a partir de cada número de Weekly Shonen Jump publicado desde 1998. Solo descriptivas: HxH Status registra lo que ocurrió y nunca proyecta lo que ocurrirá.",
+      "lede": "¿Con qué frecuencia se publica, cuánto duran las pausas y cuántos capítulos salen entre ellas? Estas cifras describen el pasado.",
       "runsTitle": "Las últimas tandas de publicación",
       "runsIntro": "Una tanda es una racha ininterrumpida de capítulos semanales entre dos pausas.",
       "columnRun": "Tanda",
@@ -354,7 +361,8 @@
       "durationLeads": "Por tiempo transcurrido es el arco más largo de la serie: {years} años desde {startYear}, por delante de {runnerUpName} con {runnerUpYears}.",
       "durationTrails": "Por tiempo transcurrido ocupa el puesto n.º {rank}: {years} años desde {startYear}, por detrás de {leaderName} con {leaderYears}.",
       "chaptersLeads": "Por número de capítulos también es el más largo: {count} capítulos, por delante de {runnerUpName} con {runnerUpCount}.",
-      "chaptersTrails": "Por número de capítulos ocupa el puesto n.º {rank}: {count} capítulos frente a {leaderCount} de {leaderName}, que sigue siendo el arco más largo publicado."
+      "chaptersTrails": "Por número de capítulos ocupa el puesto n.º {rank}: {count} capítulos frente a {leaderCount} de {leaderName}, que sigue siendo el arco más largo publicado.",
+      "elapsedLabel": "Tiempo transcurrido, incluidas las pausas"
     },
     "chapter": {
       "metaTitlePublished": "HUNTER×HUNTER capítulo {chapter}, publicado el {date} en Weekly Shonen Jump n.º {issue}",
@@ -388,11 +396,19 @@
       "metaTitle": "Dónde leer HUNTER×HUNTER de forma oficial, por idioma",
       "metaDescription": "Las formas oficiales y legales de leer HUNTER×HUNTER: VIZ Shonen Jump, MANGA Plus, Shonen Jump+, MANGA MILLION y las ediciones impresas con licencia, ordenadas por idioma.",
       "h1": "Dónde leer HUNTER×HUNTER",
-      "lede": "Solo se enumeran fuentes oficiales. Todas tienen licencia de Shueisha y remuneran a quienes hacen la serie.",
+      "lede": "Elige el idioma de lectura. Los enlaces son oficiales; los capítulos y las condiciones dependen del servicio y de tu país.",
       "yourLanguage": "En {language}",
       "allLanguages": "En otros idiomas",
-      "noneForLanguage": "Todavía ninguna editorial ha licenciado una edición digital en este idioma. Los lectores japonés e inglés de abajo están disponibles en todo el mundo.",
-      "latestNote": "El último capítulo es el {chapter}."
+      "noneForLanguage": "Todavía no hay una opción verificada para este idioma. Consulta los otros idiomas.",
+      "latestNote": "El último capítulo es el {chapter}.",
+      "offers": {
+        "conditions": "Acceso y disponibilidad",
+        "viz": "Capítulos digitales en inglés. Los últimos son gratuitos; el archivo requiere suscripción. Países: {countries}.",
+        "plus": "Página de capítulos en inglés. Una selección inicial y reciente es gratuita en la web; consulta la lista disponible. Hay restricciones según el país.",
+        "print": "Tomos de pago. El catálogo indica ediciones, precios y tiendas; el envío depende del vendedor y del destino.",
+        "jump": "Tomos digitales y suscripción a la revista en japonés. Acceso de pago; consulta los números disponibles. Las compras web requieren tarjeta emitida en Japón.",
+        "catalog": "Catálogo digital oficial. Comprueba capítulos, pagos y disponibilidad en tu país; este enlace no garantiza el último capítulo."
+      }
     },
     "about": {
       "name": "Acerca de",
@@ -403,17 +419,18 @@
       "rulesTitle": "Las reglas que sigue este sitio",
       "rule1": "Nada se registra sin una fuente pública: una publicación de Yoshihiro Togashi, o un anuncio de Weekly Shonen Jump o Shueisha.",
       "rule2": "Las fechas oficiales se separan de las estimaciones estadísticas. La página del próximo capítulo puede mostrar una estimación histórica identificada, con método, incertidumbre y errores anteriores.",
-      "rule3": "Cada cifra del sitio se deriva durante la compilación de los datos del repositorio, así que la página y la API pública no pueden contradecirse.",
-      "rule4": "Una corrección es un commit. El historial completo de cada cambio es público.",
+      "rule3": "El sitio y la API pública usan los mismos datos.",
+      "rule4": "Los cambios son públicos: cualquiera puede consultar las correcciones.",
       "sourcesTitle": "Fuentes",
       "sourcesBody": "Las propias publicaciones de Yoshihiro Togashi, Weekly Shonen Jump, los lectores oficiales de Shueisha y el índice de números de Weekly Shonen Jump desde 1998 hasta hoy.",
       "correctionsTitle": "Correcciones",
-      "correctionsBody": "Los datos del seguimiento viven en un solo archivo. Cada edición es un commit público con su mensaje, así que el registro de correcciones es el propio historial.",
+      "correctionsBody": "¿Una fecha incorrecta o una fuente ausente? Comunícala en GitHub con un enlace a la fuente. Los cambios anteriores siguen disponibles.",
       "correctionsLink": "Ver el historial de cambios",
       "whoTitle": "Quién lo mantiene",
-      "whoBody": "HxH Status lo construye y mantiene en abierto una sola persona, con traducciones de lectores. El código, los datos y el gestor de incidencias están en GitHub, y allí se agradecen las correcciones.",
+      "whoBody": "Una persona mantiene HxH Status, con traducciones de lectores. El código y los datos son públicos en GitHub.",
       "creditsTitle": "Créditos",
-      "creditsBody": "El historial de publicación de este seguimiento procede del HUNTER×HUNTER Hiatus Chart de hiatus-hiatus y sus colaboradores, utilizado bajo licencia MIT."
+      "creditsBody": "El historial de publicación de este seguimiento procede del HUNTER×HUNTER Hiatus Chart de hiatus-hiatus y sus colaboradores, utilizado bajo licencia MIT.",
+      "reportError": "Informar de un error"
     },
     "api": {
       "name": "API",
@@ -451,7 +468,7 @@
     }
   },
   "forecast": {
-    "badge": "Modelos bayesianos · sin anuncio oficial",
+    "badge": "Estimación del modelo · no oficial",
     "title": "¿Cuándo podría publicarse el capítulo {chapter}?",
     "intro": "Dos modelos exploratorios: interrupciones históricas y un escenario basado en los anuncios de manuscritos de Togashi. Las probabilidades dependen de sus hipótesis.",
     "median": "Mediana del modelo",
@@ -484,6 +501,17 @@
     "scores": "Log-normal ajustada sin incertidumbre paramétrica: error {baseline} días. Puntuación logarítmica media: Bayes {bayes}, referencia {score} (mayor es mejor). Tan pocos casos no demuestran superioridad.",
     "lagEvidence": "Ciclo de referencia: capítulo {chapter}, lote terminado el {completed}, reanudación el {released} — {days} días.",
     "lagSensitivity": "Al centrar la previa editorial en 30 o 180 días en vez de 90, la mediana pasa a {early} o {late}.",
-    "homePrediction": "Estimación: {date}"
+    "homePrediction": "Estimación no oficial: {date}",
+    "centralDate": "Fecha estimada de publicación",
+    "centralExplanation": "Es el punto central del cálculo: la mitad de la probabilidad queda antes y la mitad después. No predice ese día exacto.",
+    "clearRange": "Según el modelo, hay un {percent} de probabilidad de publicación entre el {start} y el {end}.",
+    "simpleCaution": "Estas probabilidades dependen de supuestos inciertos. Solo la editorial puede confirmar una fecha; terminar el manuscrito no fija su publicación.",
+    "monthsTitle": "Los cinco meses más probables",
+    "monthsExplanation": "Probabilidad de publicación durante cada mes, de mayor a menor. Los demás meses incluyen todas las fechas restantes; el total redondeado es 100 %.",
+    "otherMonths": "Otros meses",
+    "whyTitle": "En qué se basa la estimación",
+    "simpleProduction": "Togashi ha anunciado {count} manuscritos terminados; faltan {remaining} por confirmar. El escenario supone un lote de diez y una espera editorial. No es una regla oficial, y esa espera se basa en un solo ciclo pasado.",
+    "simpleHistory": "Usa las pausas anteriores y el tiempo transcurrido sin regreso. No conoce las decisiones editoriales no anunciadas.",
+    "calculatedOn": "Calculado el {date} (fecha japonesa)."
   }
 }

@@ -69,6 +69,7 @@
     "chaptersPublished": "{year}年に{count}話掲載。",
     "latestPublished": "最新掲載話",
     "nextChapter": "次回",
+    "noOfficialDate": "公式掲載日は未発表",
     "manuscriptsComplete": "原稿完成",
     "workConfirmed": "進捗確認済み",
     "throughChapter": "話まで",
@@ -76,7 +77,8 @@
     "preReleaseSuffix": "早バレ",
     "question": "HUNTER×HUNTERは休載中ですか？",
     "summaryAria": "現在の状況を文章で",
-    "japanDate": "日本での日付（JST）"
+    "japanDate": "日本での日付（JST）",
+    "pauseDays": "休載から{days}日"
   },
   "production": {
     "eyebrow": "カキン王位継承戦",
@@ -95,7 +97,7 @@
     "eyebrow": "冨樫先生の最新進捗",
     "sentence": "No.{chapter}：{status}。",
     "viewPost": "投稿を見る",
-    "imageText": "画像{index}内のテキスト",
+    "imageText": "画像{index}の文字を見る",
     "imageTextByGemini": "Geminiによる文字起こし"
   },
   "history": {
@@ -117,13 +119,14 @@
     "rankDuration": "連載期間第{rank}位 · {duration}",
     "durationYears": "{years}年",
     "durationMonths": "{months}ヶ月",
-    "arcChaptersCount": "{count}話"
+    "arcChaptersCount": "{count}話",
+    "intro": "1998年以降の掲載履歴と、話数・経過期間による各編の比較。"
   },
   "stats": {
     "eyebrow": "1998-2026",
     "title": "休載・掲載データ統計",
     "subtitle": "28年間の週刊少年ジャンプ掲載履歴から算出した実績",
-    "methodology": "ジャンプ掲載履歴から自動集計した確定実績です。予測や再開日の推測は含みません。",
+    "methodology": "1998年以降の掲載記録に基づき、合併号は1冊と数えます。次回掲載の予測ではありません。",
     "currentHiatus": {
       "title": "現在の休載状況",
       "justStarted": "休載開始直後 · 経過号数 0号",
@@ -133,7 +136,7 @@
     "historicalHiatus": {
       "title": "過去の休載期間",
       "majorMedian": "{issues}号分（約{years}年）",
-      "majorMedianLabel": "長期休載の中央値（10号以上、N={count}）",
+      "majorMedianLabel": "長期休載{count}回のうち、半数はこれより短く、半数は長い期間でした。長期休載は10号以上掲載がない期間です。",
       "record": "{issues}号分（約{years}年）",
       "recordLabel": "歴代最長休載（{startYear}年{startIssue}号〜{endYear}年{endIssue}号）",
       "allMedian": "全休載（{count}回）の中央値は{issues}号分"
@@ -148,7 +151,7 @@
     "publicationRate": {
       "title": "通算掲載率",
       "rate": "掲載率 {percent}%",
-      "rateLabel": "ジャンプ通算{total}号中 {published}話掲載"
+      "rateLabel": "ジャンプ{total}号中{published}話。特別編を含む掲載号の割合です。"
     }
   },
   "chapter": {
@@ -254,7 +257,7 @@
   "baseRates": {
     "eyebrow": "第{chapter}話はいつ？",
     "title": "未定です。代わりに記録を示します。",
-    "answer": "第{chapter}話の掲載日は集英社からも週刊少年ジャンプからも発表されていないため、HxH Statusは日付を挙げません。以下の数値は28年間の刊行実績を観測したものであり、予測ではありません。",
+    "answer": "第{chapter}話の公式掲載日は未発表です。以下は過去の休載記録です。推定は話数ページで別に示します。",
     "badge": "観測された分布であり、予測ではありません",
     "elapsedLabel": "経過",
     "elapsedValue": "ジャンプ{issues}号分",
@@ -276,7 +279,11 @@
     "home": "トラッカー",
     "backToTracker": "トラッカーに戻る",
     "explore": "HxH Statusの他のページ",
-    "onThisPage": "セクション"
+    "onThisPage": "セクション",
+    "primary": "メインナビゲーション",
+    "updates": "投稿",
+    "history": "掲載履歴",
+    "predictions": "予想ゲーム"
   },
   "pages": {
     "hiatus": {
@@ -284,7 +291,7 @@
       "metaTitle": "HUNTER×HUNTERの休載履歴：1998年からの長期休載",
       "metaDescription": "HUNTER×HUNTERの現在の休載の経過と、1998年以降にジャンプ{threshold}号以上続いた休載{count}件の全記録。週刊少年ジャンプの号数で計測しています。",
       "h1": "HUNTER×HUNTER休載トラッカー",
-      "lede": "1998年14号の連載開始以降、HUNTER×HUNTERが取ったすべての休載。ジャンプ自体が号を飛ばすため、週ではなくジャンプの号数で数えています。",
+      "lede": "現在の休載と、過去の10号以上の休載を確認できます。日付は経過期間、号数は掲載のなかった雑誌の冊数を示します。",
       "currentTitle": "現在の休載",
       "historyTitle": "{threshold}号以上のすべての休載",
       "historyIntro": "データには{threshold}号以上の休載が{count}件記録されています。最長は{max}号でした。",
@@ -305,7 +312,7 @@
       "metaTitle": "HUNTER×HUNTER刊行統計：ジャンプ{total}号中{published}話",
       "metaDescription": "1998年から現在までのHUNTER×HUNTERの記述統計。週刊少年ジャンプ掲載率{percent}%、長期休載の中央値{median}号、そして各連載期間の長さ。",
       "h1": "HUNTER×HUNTER刊行統計",
-      "lede": "1998年以降に発行されたすべての週刊少年ジャンプからビルド時に算出しています。あくまで記述的であり、HxH Statusは起きたことを記録し、これから起きることは予測しません。",
+      "lede": "掲載頻度、休載の長さ、休載間の話数をまとめました。過去の掲載記録を示す数字です。",
       "runsTitle": "近年の連載期間",
       "runsIntro": "連載期間とは、休載と休載のあいだの途切れない毎週掲載の連なりです。",
       "columnRun": "期間",
@@ -354,7 +361,8 @@
       "durationLeads": "年月で見れば、シリーズで最も長い編です。{startYear}年から{years}年が経過し、{runnerUpYears}の{runnerUpName}を上回ります。",
       "durationTrails": "年月では第{rank}位です。{startYear}年から{years}年で、{leaderYears}の{leaderName}に次ぎます。",
       "chaptersLeads": "話数でも最長です。{count}話で、{runnerUpCount}話の{runnerUpName}を上回ります。",
-      "chaptersTrails": "話数では第{rank}位です。{count}話で、{leaderCount}話の{leaderName}にはまだ及びません。"
+      "chaptersTrails": "話数では第{rank}位です。{count}話で、{leaderCount}話の{leaderName}にはまだ及びません。",
+      "elapsedLabel": "経過期間（休載を含む）"
     },
     "chapter": {
       "metaTitlePublished": "HUNTER×HUNTER第{chapter}話 {date}／週刊少年ジャンプ{issue}号掲載",
@@ -388,11 +396,19 @@
       "metaTitle": "HUNTER×HUNTERを公式に読む方法（言語別）",
       "metaDescription": "HUNTER×HUNTERを公式かつ合法に読む方法：VIZ Shonen Jump、MANGA Plus、少年ジャンプ＋、MANGA MILLION、そして正規のライセンス版を言語別に掲載。",
       "h1": "HUNTER×HUNTERを読む",
-      "lede": "掲載しているのは公式サービスだけです。いずれも集英社のライセンスを受けており、作品を支える人々に還元されます。",
+      "lede": "読む言語を選んでください。リンク先は公式サービスです。読める話数や条件はサービスと国によって異なります。",
       "yourLanguage": "{language}で読む",
       "allLanguages": "他の言語で読む",
-      "noneForLanguage": "この言語ではまだ電子版のライセンスを持つ出版社がありません。下記の日本語版と英語版は世界中で利用できます。",
-      "latestNote": "最新話は第{chapter}話です。"
+      "noneForLanguage": "この言語で確認済みの読書サービスはまだ掲載していません。他の言語をご覧ください。",
+      "latestNote": "最新話は第{chapter}話です。",
+      "offers": {
+        "conditions": "利用条件",
+        "viz": "英語の電子版。最新話は無料、過去話は会員登録が必要です。対象国：{countries}。",
+        "plus": "英語の作品ページ。一部の冒頭話と最新話をウェブで無料公開。読める話数は作品ページを確認してください。国別の権利制限があります。",
+        "print": "単行本の購入先。版・価格・販売店は出版社の一覧を、配送条件は販売店で確認してください。",
+        "jump": "日本語の電子単行本と雑誌定期購読。有料です。対象号はサービスで確認してください。ブラウザ購入には日本発行のクレジットカードが必要です。",
+        "catalog": "公式電子カタログ。公開話数・料金・国別の利用可否はサービスで確認してください。最新話が読めるとは限りません。"
+      }
     },
     "about": {
       "name": "このサイトについて",
@@ -403,17 +419,18 @@
       "rulesTitle": "このサイトが守る原則",
       "rule1": "公開された出典がないものは記録しません。冨樫義博氏の投稿、または週刊少年ジャンプ・集英社の発表に限ります。",
       "rule2": "公式日程と統計的推定は区別します。次話のページでは、方法・不確実性・過去の誤差を明記した歴史的データによる推定を示す場合があります。",
-      "rule3": "サイト上のすべての数値はリポジトリのデータからビルド時に算出されるため、ページと公開APIが食い違うことはありません。",
-      "rule4": "訂正はコミットです。すべての変更履歴が公開されています。",
+      "rule3": "サイトと公開APIは同じ記録を使います。",
+      "rule4": "変更は公開され、誰でも修正履歴を確認できます。",
       "sourcesTitle": "出典",
       "sourcesBody": "冨樫義博氏本人の投稿、週刊少年ジャンプ、集英社の公式配信サービス、および1998年から現在までの週刊少年ジャンプ号数索引。",
       "correctionsTitle": "訂正",
-      "correctionsBody": "トラッカーのデータは1つのファイルにまとまっています。その編集はすべてメッセージ付きの公開コミットであり、コミット履歴そのものが訂正記録です。",
+      "correctionsBody": "日付の誤りや出典の不足を見つけたら、根拠のリンクを添えてGitHubで報告してください。過去の変更も公開されています。",
       "correctionsLink": "変更履歴を見る",
       "whoTitle": "運営",
-      "whoBody": "HxH Statusは一人の制作者が公開の場で開発・運用し、翻訳は読者の協力を得ています。コード、データ、課題管理はGitHubにあり、訂正の提案を歓迎します。",
+      "whoBody": "1人の制作者が管理し、読者が翻訳に協力しています。コードとデータはGitHubで公開しています。",
       "creditsTitle": "クレジット",
-      "creditsBody": "本トラッカーの刊行履歴は、hiatus-hiatus と貢献者による HUNTER×HUNTER Hiatus Chart をMITライセンスのもとで利用し、そこから作成しています。"
+      "creditsBody": "本トラッカーの刊行履歴は、hiatus-hiatus と貢献者による HUNTER×HUNTER Hiatus Chart をMITライセンスのもとで利用し、そこから作成しています。",
+      "reportError": "誤りを報告"
     },
     "api": {
       "name": "API",
@@ -451,7 +468,7 @@
     }
   },
   "forecast": {
-    "badge": "ベイズモデル・公式発表ではありません",
+    "badge": "モデルによる推定・公式発表ではありません",
     "title": "第{chapter}話はいつ掲載される可能性がある？",
     "intro": "過去の休載と、冨樫先生の原稿完成報告に基づくシナリオの2つを試算します。確率は各モデルの仮定に依存します。",
     "median": "モデルの中央値",
@@ -484,6 +501,17 @@
     "scores": "パラメータ不確実性を無視した対数正規モデル：誤差{baseline}日。平均対数スコア：ベイズ{bayes}、基準{score}（高い方が良い）。少数例では優位性を証明できません。",
     "lagEvidence": "基準サイクル：第{chapter}話、原稿一式完成{completed}、再開{released}、{days}日。",
     "lagSensitivity": "編集待ち時間の事前中心を90日から30日・180日に変えると中央値は{early}・{late}です。",
-    "homePrediction": "予測：{date}"
+    "homePrediction": "非公式の推定：{date}",
+    "centralDate": "推定掲載日",
+    "centralExplanation": "確率を前後で半分に分ける日です。この日に掲載されると予測しているわけではありません。",
+    "clearRange": "モデルでは、{start}から{end}までに掲載される確率は{percent}です。",
+    "simpleCaution": "これらの確率は不確かな仮定に基づきます。掲載日を確定できるのは出版社だけで、原稿完成は掲載日の決定を意味しません。",
+    "monthsTitle": "確率が高い5か月",
+    "monthsExplanation": "各月中に掲載される確率を高い順に示します。「その他の月」は残りの全期間を含み、丸めた値の合計は100%です。",
+    "otherMonths": "その他の月",
+    "whyTitle": "推定の根拠",
+    "simpleProduction": "次のまとまりでは{count}話の原稿完成が確認され、{remaining}話は未確認です。10話完成後に編集上の待ち時間があると仮定していますが、公式ルールではありません。待ち時間の根拠は過去1例のみです。",
+    "simpleHistory": "過去の休載と現在までの経過日数に基づきます。未発表の編集方針は反映できません。",
+    "calculatedOn": "計算日：{date}（日本時間）。"
   }
 }

@@ -64,3 +64,9 @@ next-env.d.ts
 /SECURITY.md
 
 
+
+# Local agent configuration and review artifacts
+/.codex/
+/.impeccable/
+/.github/hooks/impeccable.json
+/scripts/game-cloud.env

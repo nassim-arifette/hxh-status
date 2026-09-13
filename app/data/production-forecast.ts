@@ -1,3 +1,4 @@
+import { forecastMonths } from "./forecast-months.ts";
 // Production scenario: reported completion events, then editorial waiting time.
 // This scenario assumes a ten-chapter batch; it is NOT an editorial requirement.
 import type { HiatusRecord } from "./hiatus-stats";
@@ -58,6 +59,7 @@ export function deriveProductionForecast({ posts, records, chapter, asOf, integr
   const cdf = (days: number) => days <= 0 ? 0 : waits.reduce((sum, wait) => sum + (days <= wait ? 0 : 1 - predictiveSurvival(elapsedLag + days - wait, lag) / predictiveSurvival(elapsedLag, lag)), 0) / waits.length;
   const date = (p: number) => new Date(Date.parse(asOf) + Math.ceil(invert(cdf, p)) * DAY).toISOString().slice(0, 10);
   return { asOf, batch, remaining, exposure, shape, rate, lag, lagSamples, lowerDate: date(.1), medianDate: date(.5), upperDate: date(.9),
+    months: forecastMonths(asOf, cdf),
     horizons: [90, 180, 365, 730].map(days => ({ days, probability: cdf(days) })),
     curve: Array.from({ length: 25 }, (_, i) => ({ days: i * 365.2425 / 12, probability: cdf(i * 365.2425 / 12) })),
   };

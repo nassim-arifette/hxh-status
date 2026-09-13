@@ -1,7 +1,6 @@
 import {
   formatMessage,
   getLocaleLabel,
-  getOfficialReaders,
   publicLocales,
   type Locale,
   type Messages,
@@ -18,19 +17,35 @@ export function whereToReadMetadata(messages: Messages) {
   };
 }
 
-function ReaderList({ locale }: { locale: Locale }) {
-  const readers = getOfficialReaders(locale);
-  return (
-    <ul className="reader-list">
-      {readers.map((reader) => (
-        <li key={`${locale}-${reader.href}`}>
-          <a href={reader.href} rel="noreferrer" target="_blank">
-            {reader.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
+// Reviewed against the linked publisher pages on 2026-09-12.
+// Language refers to the linked edition, not the visitor's UI language.
+const readingOptions: Record<Locale, { label: string; href: string; kind: "viz" | "plus" | "print" | "jump" | "catalog"; source?: string }[]> = {
+  en: [
+    { label: "VIZ Shonen Jump", href: "https://www.viz.com/shonenjump/chapters/hunter-x-hunter", kind: "viz", source: "https://www.viz.com/company-faq" },
+    { label: "MANGA Plus", href: "https://mangaplus.shueisha.co.jp/titles/100015", kind: "plus", source: "https://mangaplus.shueisha.co.jp/faq/eng/" },
+  ],
+  fr: [{ label: "Kana", href: "https://www.kana.fr/series/hunter-x-hunter/", kind: "print" }],
+  ja: [
+    { label: "少年ジャンプ＋", href: "https://shonenjumpplus.com/search?q=HUNTER%C3%97HUNTER", kind: "jump", source: "https://shonenjumpplus.com/article/help" },
+    { label: "ゼブラック", href: "https://zebrack-comic.shueisha.co.jp/main/manga", kind: "catalog" },
+  ],
+  pt: [
+    { label: "MANGA MILLION", href: "https://mangamillion.shueisha.co.jp/pt-BR/title/121", kind: "catalog" },
+    { label: "Editora JBC", href: "https://editorajbc.com.br/mangas/colecao/hunter-x-hunter/", kind: "print" },
+  ],
+  zh: [{ label: "MANGA MILLION", href: "https://mangamillion.shueisha.co.jp/zh-CN/title/121", kind: "catalog" }],
+  es: [], ar: [],
+};
+
+function ReaderList({ language, locale, messages }: { language: Locale; locale: Locale; messages: Messages }) {
+  const regions = new Intl.DisplayNames([locale], { type: "region" });
+  const countries = new Intl.ListFormat(locale).format(["US", "CA", "GB", "IE", "NZ", "AU", "ZA", "PH", "SG", "IN"].map(code => regions.of(code)!));
+  const copy = messages.pages.whereToRead.offers;
+  return <div className="reader-options">{readingOptions[language].map(reader => <article className="reader-option" key={reader.href}>
+    <h3><a href={reader.href} rel="noreferrer" target="_blank">{reader.label} ↗</a></h3>
+    <p>{formatMessage(copy[reader.kind], { countries })}</p>
+    {reader.source && <a href={reader.source} rel="noreferrer" target="_blank">{copy.conditions} ↗</a>}
+  </article>)}</div>;
 }
 
 export function WhereToReadPage({
@@ -41,7 +56,7 @@ export function WhereToReadPage({
   messages: Messages;
 }) {
   const copy = messages.pages.whereToRead;
-  const own = getOfficialReaders(locale);
+  const own = readingOptions[locale];
   const others = publicLocales.filter((candidate) => candidate !== locale);
 
   return (
@@ -65,7 +80,7 @@ export function WhereToReadPage({
         {own.length === 0 ? (
           <p className="prose">{copy.noneForLanguage}</p>
         ) : (
-          <ReaderList locale={locale} />
+          <ReaderList language={locale} locale={locale} messages={messages} />
         )}
         <p className="section-note">
           {formatMessage(copy.latestNote, { chapter: latestPublished.chapter })}
@@ -83,10 +98,10 @@ export function WhereToReadPage({
             <div key={candidate}>
               <dt lang={candidate}>{getLocaleLabel(candidate)}</dt>
               <dd>
-                {getOfficialReaders(candidate).length === 0 ? (
+                {readingOptions[candidate].length === 0 ? (
                   copy.noneForLanguage
                 ) : (
-                  <ReaderList locale={candidate} />
+                  <ReaderList language={candidate} locale={locale} messages={messages} />
                 )}
               </dd>
             </div>

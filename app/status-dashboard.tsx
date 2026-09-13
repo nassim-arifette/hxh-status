@@ -1,3 +1,5 @@
+import { gameCopy } from "./game-copy";
+import { SiteNavigation } from "./site-navigation";
 import {
   formatMessage,
   getLocaleDirection,
@@ -296,6 +298,9 @@ export default function StatusDashboard({
   const prediction = publicationStatus === "hiatus" && !nextChapter.releaseAt && !["scheduled", "published"].includes(nextChapter.status)
     ? deriveProductionForecast({ records: hiatusStats.historicalHiatuses.completed, posts: togashiArchive.posts, chapter: nextChapter.chapter, asOf: japanDate() })
     : null;
+  const predictionMonth = prediction
+    ? new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(prediction.medianDate))
+    : null;
   const summarySentences = buildStatusSentences(locale, messages);
   const publicationStatusLabel =
     publicationStatus === "publishing"
@@ -342,6 +347,7 @@ export default function StatusDashboard({
             />
           </div>
         </header>
+        <SiteNavigation locale={locale} messages={messages} />
 
         <section className="snapshot" aria-labelledby="publishing-status-title">
           <div className="publishing-status" data-state={publicationStatus}>
@@ -363,6 +369,7 @@ export default function StatusDashboard({
                 year: currentYear,
               })}
             </p>
+          {publicationStatus === "hiatus" && <a className="hiatus-inline" href={localePath("/hiatus", locale)}><span suppressHydrationWarning data-elapsed-since={hiatusStats.currentHiatus.sinceDate} data-days-template={messages.snapshot.pauseDays}>{formatMessage(messages.snapshot.pauseDays, { days: hiatusStats.currentHiatus.elapsedDays })}</span> →</a>}
           </div>
 
           <div className="metric-grid">
@@ -390,19 +397,19 @@ export default function StatusDashboard({
                     {formatDate(nextChapter.releaseAt.slice(0, 10), { month: "short", day: "numeric", year: undefined }, locale)} JST
                   </time>
                 ) : (
-                  statusMeta[nextChapter.status].shortLabel
+                  <>
+                    {statusMeta[nextChapter.status].shortLabel}
+                    <span className="metric-official-date">{messages.snapshot.noOfficialDate}</span>
+                  </>
                 )}
-                {prediction && <a className="metric-prediction" href={`${localePath(chapterPath(nextChapter.chapter), locale)}#forecast-title`} title={messages.forecast.caution}>
-                  {formatMessage(messages.forecast.homePrediction, { date: new Intl.DateTimeFormat(locale, { month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(prediction.medianDate)) })}
-                </a>}
               </small>
             </article>
             <article className="metric">
-              <span>{messages.snapshot.manuscriptsComplete}</span>
+              <span>{messages.snapshot.manuscriptsComplete}<small>{messages.snapshot.throughChapter}</small></span>
               <strong>{manuscriptsComplete.chapter}</strong>
             </article>
             <article className="metric">
-              <span>{messages.snapshot.workConfirmed}</span>
+              <span>{messages.snapshot.workConfirmed}<small>{messages.snapshot.throughChapter}</small></span>
               <strong>{workConfirmed.chapter}</strong>
             </article>
           </div>
@@ -413,16 +420,29 @@ export default function StatusDashboard({
           <p className="status-summary" aria-label={messages.snapshot.summaryAria}>
             {summarySentences.join(" ")}
           </p>
+
+          <a className="game-home-link" href={localePath("/predictions", locale)}><span>{gameCopy(locale).home}</span><strong>{gameCopy(locale).cta}</strong></a>
         </section>
 
         <ProductionSection locale={locale} messages={messages} />
 
-        <section className="content-section" aria-labelledby="next-chapter-title">
-          <h2 id="next-chapter-title">{formatMessage(messages.baseRates.eyebrow, { chapter: nextChapter.chapter })}</h2>
-          <p className="section-lede">{summarySentences[2]}</p>
-          <a href={localePath(chapterPath(nextChapter.chapter), locale)}>
-            {formatMessage(messages.baseRates.forecastLink, { chapter: nextChapter.chapter })}
-          </a>
+        <section className="content-section home-forecast" aria-labelledby="next-chapter-title">
+          <div>
+            <h2 id="next-chapter-title">
+              {formatMessage(prediction ? messages.forecast.title : messages.baseRates.eyebrow, { chapter: nextChapter.chapter })}
+            </h2>
+            <p className="section-lede">{prediction ? messages.forecast.simpleCaution : summarySentences[2]}</p>
+          </div>
+          <div className="home-forecast-detail">
+            {predictionMonth && (
+              <p className="home-forecast-estimate">
+                {formatMessage(messages.forecast.homePrediction, { date: predictionMonth })}
+              </p>
+            )}
+            <a className="source-link" href={localePath(chapterPath(nextChapter.chapter), locale)}>
+              {formatMessage(messages.baseRates.forecastLink, { chapter: nextChapter.chapter })}
+            </a>
+          </div>
         </section>
 
         <LatestTogashiUpdate
@@ -431,9 +451,10 @@ export default function StatusDashboard({
           permalinkLabel={messages.pages.updates.readMore}
         />
 
-        <PublicationHistorySection locale={locale} messages={messages} />
-
-        <HiatusStatisticsSection messages={messages} />
+        <section className="home-explore" aria-label={messages.nav.explore}>
+          <a href={localePath("/history", locale)}><strong>{messages.history.title} →</strong><span>{messages.history.intro}</span></a>
+          <a href={localePath("/statistics", locale)}><strong>{messages.pages.statistics.name} →</strong><span>{messages.pages.statistics.lede}</span></a>
+        </section>
 
         <Faq locale={locale} messages={messages} />
 
@@ -524,6 +545,8 @@ export default function StatusDashboard({
 // content page is one entry in two places rather than a search through the file.
 function contentPageNames(messages: Messages): Record<string, string> {
   return {
+    history: messages.nav.history,
+    predictions: messages.nav.predictions,
     hiatus: messages.pages.hiatus.name,
     statistics: messages.pages.statistics.name,
     updates: messages.pages.updates.name,

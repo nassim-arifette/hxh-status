@@ -1,3 +1,4 @@
+import { SiteNavigation } from "./site-navigation";
 import type { ReactNode } from "react";
 
 import {
@@ -35,6 +36,8 @@ export type Crumb = { name: string; path: string };
 
 function pageName(messages: Messages, page: string) {
   const names: Record<string, string> = {
+    history: messages.nav.history,
+    predictions: messages.nav.predictions,
     hiatus: messages.pages.hiatus.name,
     statistics: messages.pages.statistics.name,
     updates: messages.pages.updates.name,
@@ -74,6 +77,7 @@ export function ContentShell({
   crumbs = [],
   jsonLd,
   children,
+  className = "",
 }: {
   locale: Locale;
   messages: Messages;
@@ -84,13 +88,14 @@ export function ContentShell({
   crumbs?: readonly Crumb[];
   jsonLd?: Record<string, unknown>[];
   children: ReactNode;
+  className?: string;
 }) {
   const home = { name: messages.nav.home, path: "/" };
   const trail = [home, ...crumbs, { name: title, path }];
 
   return (
     <main
-      className="site-shell content-shell"
+      className={`site-shell content-shell ${className}`}
       dir={getLocaleDirection(locale)}
       id="top"
       lang={locale}
@@ -125,6 +130,7 @@ export function ContentShell({
             />
           </div>
         </header>
+        <SiteNavigation locale={locale} messages={messages} path={path} />
 
         <nav aria-label={messages.nav.breadcrumb} className="breadcrumb">
           <ol>

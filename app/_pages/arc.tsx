@@ -116,8 +116,10 @@ export function ArcPage({
             <h2 id="arc-answer-title">{copy.answerTitle}</h2>
           </div>
         </div>
-        <p className="prose">{durationSentence}</p>
-        <p className="prose">{chapterSentence}</p>
+        <div className="arc-verdicts">
+          <div><span>{copy.columnChapters}</span><strong>#{current.chapterRank} · {current.chapterCount}</strong><p className="prose">{chapterSentence}</p></div>
+          <div><span>{copy.elapsedLabel}</span><strong>#{current.durationRank} · {formatArcDuration(current, messages.history)}</strong><p className="prose">{durationSentence}</p></div>
+        </div>
       </section>
 
       <section aria-labelledby="arc-table-title" className="content-section">

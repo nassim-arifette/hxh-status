@@ -9,8 +9,11 @@
       "id": "3851985703a94cffa6a925d1dbbf5eb2"
     }
   ],
+  "d1_databases": [{"binding":"GAME_DB","database_name":"hxh-predictions","database_id":"85d4e669-1f36-4f2e-a517-63135f8aa0f0","migrations_dir":"migrations"}],
   "main": "./worker/index.mjs",
   "ratelimits": [
+    {"name":"GAME_WRITE_LIMITER","namespace_id":"4212026091","simple":{"limit":20,"period":60}},
+    {"name":"GAME_READ_LIMITER","namespace_id":"4212026092","simple":{"limit":120,"period":60}},
     {
       "name": "PUSH_RATE_LIMITER",
       "namespace_id": "4202026093",
@@ -32,9 +35,14 @@
     }
   ],
   "triggers": {
-    "crons": []
+    "crons": ["*/5 * * * *"]
   },
   "vars": {
+    "GAME_ENABLED": "false",
+    "GAME_TURNSTILE_SITE_KEY": "0x4AAAAAAExZydRLNp7VcCZS",
+    "GAME_EMAIL_ENABLED": "false",
+    "GAME_PUBLIC_ORIGIN": "https://hxhstatus.com",
+    "GAME_EMAIL_FROM": "HxH Status <pronostics@hxhstatus.com>",
     "PUSH_NOTIFICATIONS_ENABLED": "true",
     "VAPID_PUBLIC_KEY": "BDDiMqC-8OtxjviwRNsKba57GJWACZJXDfL1Snw6uLCeJZxs-fTQEF6-NrKe0vuhfSU3E72Jgtd1at7NpWmGZKc",
     "VAPID_SUBJECT": "mailto:contact@hxhstatus.com",
@@ -47,7 +55,7 @@
     "directory": "./out",
     // The Worker negotiates the root locale and owns the push API. Static
     // pages/assets still bypass it, which keeps the fast asset path intact.
-    "run_worker_first": ["/", "/api/push/*"],
+    "run_worker_first": ["/", "/api/push/*", "/api/game/*"],
     "binding": "ASSETS",
     "not_found_handling": "404-page"
   }

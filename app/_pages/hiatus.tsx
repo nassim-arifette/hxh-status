@@ -1,9 +1,9 @@
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
-import { BaseRates } from "../base-rates";
+import { formatDate } from "../status-presentation";
 import { getArcName } from "../data/arcs";
 import { ContentShell } from "../content-shell";
 import { hiatusStats } from "../data/summary";
-import { nextChapter } from "../data/status";
+import { publicationStatus } from "../data/status";
 
 export const HIATUS_PATH = "/hiatus";
 
@@ -49,11 +49,11 @@ export function HiatusPage({
       title={copy.h1}
       lede={copy.lede}
     >
-      <BaseRates
-        chapter={nextChapter.chapter}
-        locale={locale}
-        messages={messages}
-      />
+      <section className="content-section" aria-labelledby="current-pause-title">
+        <h2 id="current-pause-title">{copy.currentTitle}</h2>
+        <p className="pause-answer">{publicationStatus === "hiatus" ? <span suppressHydrationWarning data-elapsed-since={hiatusStats.currentHiatus.sinceDate} data-days-template={messages.snapshot.pauseDays}>{formatMessage(messages.snapshot.pauseDays, { days: hiatusStats.currentHiatus.elapsedDays })}</span> : messages.snapshot.publishing}</p>
+        {publicationStatus === "hiatus" && <p className="prose">{formatMessage(messages.stats.currentHiatus.since, { chapter: hiatusStats.currentHiatus.sinceChapter, jumpIssue: hiatusStats.currentHiatus.sinceJumpIssue })} · {formatDate(hiatusStats.currentHiatus.sinceDate, undefined, locale)} JST</p>}
+      </section>
 
       <section
         aria-labelledby="hiatus-history-title"
@@ -61,7 +61,6 @@ export function HiatusPage({
       >
         <div className="section-heading">
           <div>
-            <p className="eyebrow">{copy.currentTitle}</p>
             <h2 id="hiatus-history-title">
               {formatMessage(copy.historyTitle, {
                 threshold: historical.majorThreshold,

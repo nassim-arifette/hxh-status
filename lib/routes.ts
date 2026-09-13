@@ -10,6 +10,8 @@ export const defaultLocale = "en";
 // repository. Every one of them is served in every published language, and the
 // English copy sits at the root while the others take a locale prefix.
 export const CONTENT_PAGES = [
+  "history",
+  "predictions",
   "hiatus",
   "statistics",
   "updates",
@@ -68,7 +70,7 @@ export function isContentRoute(route: string, locales: readonly string[]) {
       : route;
 
   return (
-    CONTENT_PAGES.some((page) => path === `/${page}`) ||
+    CONTENT_PAGES.some((page) => page !== "history" && page !== "predictions" && path === `/${page}`) ||
     CONTENT_SECTIONS.some((section) => path.startsWith(`/${section}/`))
   );
 }

@@ -100,6 +100,7 @@ export function AboutPage({
           >
             {copy.correctionsLink}
           </a>
+          {" · "}<a href={`${GITHUB_REPOSITORY}/issues/new`} rel="noreferrer" target="_blank">{copy.reportError}</a>
         </p>
       </section>
 

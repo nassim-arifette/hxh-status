@@ -25,6 +25,8 @@ Every question the data answers has its own URL, in every published language
 | --- | --- |
 | `/` | Is HUNTER×HUNTER on hiatus right now, and what is confirmed? |
 | `/chapter/{n}` | One page per chapter the tracker knows something about: stage, confirmation date, Jump issue, source, prev/next. |
+| `/predictions` | Pick Chapter 421’s publication date and compare guesses with other fans. |
+| `/history` | The complete publication chart since 1998 and interactive arc comparisons. |
 | `/hiatus` | The current break plus every hiatus of ten Jump issues or more since 1998. |
 | `/statistics` | Publication pace, presence rate and run lengths. |
 | `/updates` and `/updates/{postId}` | Yoshihiro Togashi's posts, translated, with the Jump submission sheets transcribed. |
@@ -35,7 +37,8 @@ Every question the data answers has its own URL, in every published language
 
 `app/_pages/` holds the body of each page; the route files under `app/` and
 `app/[locale]/` are thin wrappers so English and the six other languages render
-from one component. The pages carry no interactive component, so
+from one component. The history and predictions pages keep their interactive components and framework runtime. The other content
+pages carry no interactive component, so
 `scripts/strip-page-scripts.mjs` removes the framework runtime from them after
 the export: they ship HTML and CSS only.
 
@@ -231,3 +234,15 @@ page, excluding replies/reposts, and does not claim exhaustive coverage.
 Re-running skips translated posts and resumes missing translations.
 The repository archive preserves old article URLs; the public polling API keeps
 its 50-post limit. Missing translations are explicitly labelled in the UI.
+
+The home page now keeps publication status, production progress and the newest
+Togashi post in focus. Shared navigation leads to the tweet archive, publication
+history and official reading options. The next-chapter forecast starts with a
+clearly unofficial central date, an 80% model interval and the five most probable
+calendar months. Detailed models, assumptions and validation remain expandable.
+Reading-service descriptions cite publisher pages; unverified availability is
+labelled rather than inferred from the interface language.
+
+Le jeu communautaire sans compte (D1, liens privés de récupération et défis entre amis) est documenté dans [PREDICTION-GAME.md](PREDICTION-GAME.md). Pour suivre les changements en direct avec la D1 Cloudflare `hxh-predictions`, lancer `npm run dev`, `npm run game:dev` et `npm run game:live`, puis ouvrir uniquement `http://localhost:3001/predictions`. Les votes de cet aperçu sont enregistrés dans Cloudflare D1. Turnstile utilise un widget propre à l’aperçu ; l’email reste indisponible jusqu’à la configuration de Resend.
+
+For disposable local votes and friend challenges, run `npm run dev` and `npm run game:preview`, then open `http://localhost:3002/predictions`. This preview stores data only in memory and never calls the production game API.

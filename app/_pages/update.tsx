@@ -159,7 +159,8 @@ export function UpdatePage({
             </div>
           </div>
           {post.imageTexts.map((image) => (
-            <div className="update-sheet" key={image.imageIndex}>
+            <details className="update-sheet" key={image.imageIndex}>
+              <summary>{formatMessage(messages.latestUpdate.imageText, { index: image.imageIndex })}</summary>
               <p className="section-note">
                 {formatMessage(messages.latestUpdate.imageText, {
                   index: image.imageIndex,
@@ -178,7 +179,7 @@ export function UpdatePage({
                   </pre>
                 </details>
               ) : null}
-            </div>
+            </details>
           ))}
         </section>
       ) : null}

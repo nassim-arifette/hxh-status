@@ -8,6 +8,7 @@
   "scripts": {
     "forecast:report": "node scripts/report-release-forecast.mjs",
     "dev": "next dev",
+    "game:live": "node scripts/live-game-preview.mjs",
     "build": "node scripts/generate-sw-copy.mjs && next build && node scripts/set-html-lang.mjs && node scripts/strip-page-scripts.mjs && node scripts/generate-status-json.mjs && node scripts/generate-public-api.mjs && node scripts/inject-csp-hashes.mjs",
     "sw:copy": "node scripts/generate-sw-copy.mjs",
     "share:build": "npm run build && playwright install --only-shell chromium && node scripts/generate-share-images.mjs",
@@ -23,7 +24,11 @@
     "cf:dev:cron": "npm run build && wrangler dev --test-scheduled",
     "cf:check": "npm run build && wrangler deploy --dry-run",
     "cf:deployments": "wrangler deployments list",
-    "cf:logs": "wrangler tail"
+    "cf:logs": "wrangler tail",
+    "game:dev": "node scripts/start-game-cloud.mjs",
+    "game:migrate": "wrangler d1 migrations apply GAME_DB --remote --config wrangler.jsonc",
+    "game:round": "node scripts/manage-game-round.mjs",
+    "game:preview": "node scripts/preview-prediction-game.mjs"
   },
   "dependencies": {
     "clsx": "2.1.1",

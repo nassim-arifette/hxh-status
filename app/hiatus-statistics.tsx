@@ -29,31 +29,12 @@ export function HiatusStatistics({
   summary: HiatusStatsSummary;
   messages: Messages["stats"];
 }) {
-  const current = summary.currentHiatus;
   const historical = summary.historicalHiatuses;
   const runs = summary.publicationRuns;
   const rate = summary.publicationRate;
 
-  const elapsed = formatMessage(messages.currentHiatus.elapsed, {
-        issues: current.elapsedIssues,
-        days: current.elapsedDays,
-      });
-
   return (
     <div className="stats-overview">
-      <article className="stat-current">
-        <div className="stat-current-head">
-          <span className="stat-label">{messages.currentHiatus.title}</span>
-        </div>
-        <strong className="stat-current-value" suppressHydrationWarning data-elapsed-since={current.sinceDate} data-days-template={formatMessage(messages.currentHiatus.elapsed, { days: "{days}", issues: current.elapsedIssues })}>{elapsed}</strong>
-        <span className="stat-current-since">
-          {formatMessage(messages.currentHiatus.since, {
-            chapter: current.sinceChapter,
-            jumpIssue: current.sinceJumpIssue,
-          })}
-        </span>
-      </article>
-
       <div className="stat-grid">
         <Stat
           label={messages.historicalHiatus.title}

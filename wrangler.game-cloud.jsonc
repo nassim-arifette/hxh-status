@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hxh-game-preview",
+  "main": "./worker/index.mjs",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "secrets": {"required": ["GAME_TURNSTILE_SECRET"]},
+  "vars": {
+    "GAME_ENABLED": "true",
+    "GAME_TURNSTILE_SITE_KEY": "0x4AAAAAAEx0vY9YtON8BHah",
+    "GAME_EMAIL_ENABLED": "false",
+    "GAME_PUBLIC_ORIGIN": "http://localhost:3001"
+  },
+  "ratelimits": [
+    {"name": "GAME_WRITE_LIMITER", "namespace_id": "4212026091", "simple": {"limit": 20, "period": 60}},
+    {"name": "GAME_READ_LIMITER", "namespace_id": "4212026092", "simple": {"limit": 120, "period": 60}}
+  ],
+  "d1_databases": [
+    {"binding": "GAME_DB", "database_name": "hxh-predictions", "database_id": "85d4e669-1f36-4f2e-a517-63135f8aa0f0", "migrations_dir": "migrations", "remote": true}
+  ],
+  "assets": {"directory": "./public", "binding": "ASSETS", "run_worker_first": ["/", "/api/game/*"], "not_found_handling": "404-page"}
+}

@@ -69,6 +69,7 @@
     "chaptersPublished": "{year} 年已刊载 {count} 话。",
     "latestPublished": "最新刊载",
     "nextChapter": "下一话",
+    "noOfficialDate": "尚无官方公布的刊载日期",
     "manuscriptsComplete": "原稿完成",
     "workConfirmed": "已确认进度",
     "throughChapter": "话",
@@ -76,7 +77,8 @@
     "preReleaseSuffix": "情报",
     "question": "《全职猎人》休刊了吗？",
     "summaryAria": "当前状态的文字说明",
-    "japanDate": "日本日期（JST）"
+    "japanDate": "日本日期（JST）",
+    "pauseDays": "已休刊{days}天"
   },
   "production": {
     "eyebrow": "卡金王位继承战",
@@ -95,7 +97,7 @@
     "eyebrow": "富坚最新进度",
     "sentence": "第 {chapter} 话：{status}。",
     "viewPost": "查看动态",
-    "imageText": "图片 {index} 中的文字",
+    "imageText": "查看图片{index}的文字",
     "imageTextByGemini": "由 Gemini 识别并翻译"
   },
   "history": {
@@ -117,13 +119,14 @@
     "rankDuration": "历时第 {rank} 位 · {duration}",
     "durationYears": "{years} 年",
     "durationMonths": "{months} 个月",
-    "arcChaptersCount": "{count} 话"
+    "arcChaptersCount": "{count} 话",
+    "intro": "查看1998年以来的连载记录，按话数和时间比较各篇章。"
   },
   "stats": {
     "eyebrow": "1998-2026",
     "title": "休刊与连载数据统计",
     "subtitle": "基于28年《周刊少年Jump》连载历史的客观数据",
-    "methodology": "于构建时从《周刊少年Jump》刊登数据自动计算。仅包含客观记录，无任何推测或预测。",
+    "methodology": "依据1998年以来的Jump期刊记录，合刊计为一期。描述过去，并非下次刊载预测。",
     "currentHiatus": {
       "title": "当前休刊状态",
       "justStarted": "休刊刚开始 · 经历0期Jump",
@@ -133,7 +136,7 @@
     "historicalHiatus": {
       "title": "历史休刊记录",
       "majorMedian": "{issues} 期（约 {years} 年）",
-      "majorMedianLabel": "长期休刊中位数（≥10期，N={count}）",
+      "majorMedianLabel": "{count}次长休刊中，一半比此更短，一半更长。长休刊指至少10期没有新话。",
       "record": "{issues} 期（约 {years} 年）",
       "recordLabel": "历史最长休刊（{startYear}年第{startIssue}期 – {endYear}年第{endIssue}期）",
       "allMedian": "全部 {count} 次休刊中位数为 {issues} 期"
@@ -148,7 +151,7 @@
     "publicationRate": {
       "title": "连载率统计",
       "rate": "{percent}% 刊登率",
-      "rateLabel": "Jump 共 {total} 期中刊登 {published} 话"
+      "rateLabel": "{total}期Jump中有{published}话：含特别篇的刊载期数比例。"
     }
   },
   "chapter": {
@@ -254,7 +257,7 @@
   "baseRates": {
     "eyebrow": "第{chapter}话什么时候出？",
     "title": "未知。以下是历史记录。",
-    "answer": "集英社与《周刊少年Jump》均未公布第{chapter}话的刊登日期，因此 HxH Status 不会给出任何日期。下列数字是对28年刊载情况的观测，并非预测。",
+    "answer": "第{chapter}话尚无官方日期。以下数字描述历史休刊，估计在章节页面单独展示。",
     "badge": "观测分布，并非预测",
     "elapsedLabel": "已经过",
     "elapsedValue": "{issues}期Jump",
@@ -276,7 +279,11 @@
     "home": "追踪",
     "backToTracker": "返回追踪页",
     "explore": "HxH Status 的更多页面",
-    "onThisPage": "章节"
+    "onThisPage": "章节",
+    "primary": "主导航",
+    "updates": "动态",
+    "history": "连载历史",
+    "predictions": "日期预测"
   },
   "pages": {
     "hiatus": {
@@ -284,7 +291,7 @@
       "metaTitle": "猎人休刊历史：1998年以来的长期休刊",
       "metaDescription": "《全职猎人》当前休刊的持续时长，以及1998年以来{count}次、每次至少{threshold}期Jump的休刊完整记录，均按《周刊少年Jump》自身的期号计算。",
       "h1": "《全职猎人》休刊追踪",
-      "lede": "自1998年第14期在《周刊少年Jump》连载以来的每一次休刊。由于Jump本身会跳过部分期号，这里以Jump期数而非周数计算。",
+      "lede": "查看当前休刊及过去至少十期的休刊。日期表示经过时间，期数表示没有新话的已出版杂志数量。",
       "currentTitle": "当前休刊",
       "historyTitle": "所有不少于{threshold}期的休刊",
       "historyIntro": "数据集中记录了{count}次至少{threshold}期Jump的休刊，最长的一次为{max}期。",
@@ -305,7 +312,7 @@
       "metaTitle": "《全职猎人》刊载统计：{total}期Jump中刊登{published}话",
       "metaDescription": "1998年至今《全职猎人》的描述性统计：在《周刊少年Jump》的刊载率为{percent}%，长期休刊中位数为{median}期，以及每个连载周期的长度。",
       "h1": "《全职猎人》刊载统计",
-      "lede": "在构建时根据1998年以来发行的每一期《周刊少年Jump》计算得出。仅作描述：HxH Status 记录已发生的事，从不预测将要发生的事。",
+      "lede": "连载频率如何、休刊多久、两次休刊之间刊载多少话？这些数据描述过去的连载。",
       "runsTitle": "近期连载周期",
       "runsIntro": "连载周期指两次休刊之间不间断的每周刊载。",
       "columnRun": "周期",
@@ -354,7 +361,8 @@
       "durationLeads": "按跨越时间，它是全系列最长的篇章：自{startYear}年起已{years}年，超过{runnerUpYears}的{runnerUpName}。",
       "durationTrails": "按跨越时间，它排第{rank}位：自{startYear}年起{years}年，次于{leaderYears}的{leaderName}。",
       "chaptersLeads": "按话数它同样最长：共{count}话，超过{runnerUpCount}话的{runnerUpName}。",
-      "chaptersTrails": "按话数它排第{rank}位：共{count}话，少于{leaderName}的{leaderCount}话，后者仍是刊载话数最多的篇章。"
+      "chaptersTrails": "按话数它排第{rank}位：共{count}话，少于{leaderName}的{leaderCount}话，后者仍是刊载话数最多的篇章。",
+      "elapsedLabel": "经过时间（含休刊）"
     },
     "chapter": {
       "metaTitlePublished": "《全职猎人》第{chapter}话于{date}刊登在《周刊少年Jump》第{issue}期",
@@ -388,11 +396,19 @@
       "metaTitle": "如何通过官方渠道阅读《全职猎人》（按语言）",
       "metaDescription": "阅读《全职猎人》的官方合法渠道：VIZ Shonen Jump、MANGA Plus、少年Jump+、MANGA MILLION 以及获授权的纸质版，按语言列出。",
       "h1": "在哪里阅读《全职猎人》",
-      "lede": "此处只列出官方渠道。它们均获集英社授权，收益会回到创作这部作品的人手中。",
+      "lede": "请选择阅读语言。链接均为官方服务，可读话数和条件因服务及所在国家而异。",
       "yourLanguage": "{language}版",
       "allLanguages": "其他语言",
-      "noneForLanguage": "目前还没有出版社取得该语言的数字版授权。下方的日文版与英文版在全球均可阅读。",
-      "latestNote": "最新一话是第{chapter}话。"
+      "noneForLanguage": "本站暂未收录此语言的已核实阅读服务，请查看其他语言。",
+      "latestNote": "最新一话是第{chapter}话。",
+      "offers": {
+        "conditions": "访问与可用性",
+        "viz": "英语电子版。最新话免费，历史章节需要订阅。支持国家：{countries}。",
+        "plus": "英语章节页。网站免费提供部分开头和最新话，具体列表见作品页。各国版权限制不同。",
+        "print": "单行本购买。版本、价格和销售点见出版社目录；配送取决于卖家及目的地。",
+        "jump": "日语电子单行本及杂志订阅，付费阅读。可用期数见服务说明，网页购买需要日本发行的信用卡。",
+        "catalog": "官方电子目录。请核对提供的话数、付费要求和所在国家的可用性；链接不保证包含最新话。"
+      }
     },
     "about": {
       "name": "关于",
@@ -403,17 +419,18 @@
       "rulesTitle": "本站遵循的规则",
       "rule1": "没有公开来源就不记录：来源限于富坚义博的发文，或《周刊少年Jump》、集英社的公告。",
       "rule2": "官方日期与统计估计分开展示。下一话页面可能提供明确标注的历史估计，并说明方法、不确定性及过去误差。",
-      "rule3": "站内每个数字都在构建时由仓库数据算出，因此页面与公开API不可能互相矛盾。",
-      "rule4": "一次更正就是一次提交。每项变更的完整历史都是公开的。",
+      "rule3": "网站和公开API使用相同记录。",
+      "rule4": "修改公开，任何人都可查看修正记录。",
       "sourcesTitle": "来源",
       "sourcesBody": "富坚义博本人的发文、《周刊少年Jump》、集英社的官方阅读平台，以及1998年至今的《周刊少年Jump》期号索引。",
       "correctionsTitle": "更正",
-      "correctionsBody": "追踪数据只存放在一个文件里。对它的每次修改都是带说明的公开提交，因此提交历史本身就是更正记录。",
+      "correctionsBody": "发现日期有误或缺少来源？请在GitHub提供依据链接。历史修改仍可公开查看。",
       "correctionsLink": "查看变更历史",
       "whoTitle": "由谁维护",
-      "whoBody": "HxH Status 由一位贡献者公开构建与维护，翻译来自读者。代码、数据与问题追踪都在 GitHub 上，欢迎在那里提交更正。",
+      "whoBody": "HxH Status由一人维护，读者协助翻译。代码和数据公开在GitHub。",
       "creditsTitle": "致谢",
-      "creditsBody": "本追踪站的刊载历史源自 hiatus-hiatus 及其贡献者制作的 HUNTER×HUNTER Hiatus Chart，依 MIT 许可证使用。"
+      "creditsBody": "本追踪站的刊载历史源自 hiatus-hiatus 及其贡献者制作的 HUNTER×HUNTER Hiatus Chart，依 MIT 许可证使用。",
+      "reportError": "报告错误"
     },
     "api": {
       "name": "API",
@@ -451,7 +468,7 @@
     }
   },
   "forecast": {
-    "badge": "贝叶斯模型 · 非官方公告",
+    "badge": "模型估计 · 非官方日期",
     "title": "第{chapter}话可能何时刊登？",
     "intro": "两个探索性模型：历史休刊与基于富坚原稿完成动态的情景。概率取决于各自的假设。",
     "median": "模型中位数",
@@ -484,6 +501,17 @@
     "scores": "不含参数不确定性的对数正态基准：误差{baseline}天。平均对数评分：贝叶斯{bayes}，基准{score}（越高越好）。案例太少，无法证明优越性。",
     "lagEvidence": "参考周期：第{chapter}话，整批完成于{completed}，复刊于{released}，相隔{days}天。",
     "lagSensitivity": "编辑等待期先验中心由90天改为30或180天，情景中位数变为{early}或{late}。",
-    "homePrediction": "预测：{date}"
+    "homePrediction": "非官方估计：{date}",
+    "centralDate": "预计刊载日期",
+    "centralExplanation": "这是模型概率分布的中点：之前和之后各占一半，并不表示会在当天刊载。",
+    "clearRange": "根据模型，在{start}至{end}之间刊载的概率为{percent}。",
+    "simpleCaution": "这些概率依赖尚不可靠的假设。只有出版社能确认日期；原稿完成不等于确定刊载时间。",
+    "monthsTitle": "概率最高的五个月",
+    "monthsExplanation": "按概率从高到低排列，表示在该月内刊载的概率。“其他月份”包含所有剩余日期；四舍五入后合计100%。",
+    "otherMonths": "其他月份",
+    "whyTitle": "估计依据",
+    "simpleProduction": "下一批已有{count}话确认原稿完成，{remaining}话尚未确认。模型假设完成十话后还需等待编辑排期。这并非官方规则，排期等待时间仅参考一个历史周期。",
+    "simpleHistory": "估计基于历史休刊和本次已等待时间，无法得知未公布的编辑决策。",
+    "calculatedOn": "计算于{date}（日本日期）。"
   }
 }

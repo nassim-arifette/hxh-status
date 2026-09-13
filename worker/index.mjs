@@ -11,6 +11,8 @@ import {
 } from "./github.mjs";
 import { fetchTimelineTweets, selectUnseenTweets } from "./x-timeline.mjs";
 import { handlePushApi, runPushNotifications } from "./push-notifications.mjs";
+import { runGameMail } from "./game-mail.mjs";
+import { handleGameApi, syncRound } from "./prediction-game.mjs";
 import { localeRedirect } from "./locale-redirect.mjs";
 
 export { PushSubscriptionRegistry } from "./push-subscription-registry.mjs";
@@ -151,7 +153,7 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
 }
 
 const worker = {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     // Negotiating "/" here is what lets the page ship without a redirect
     // script: a non-English reader is sent to their locale before any HTML
     // is downloaded, instead of rendering English and navigating away from
@@ -160,11 +162,21 @@ const worker = {
     const redirect = localeRedirect(request);
     if (redirect) return redirect;
 
+    const gameResponse = await handleGameApi(request, env, ctx);
+    if (gameResponse) return gameResponse;
     const pushResponse = await handlePushApi(request, env);
     return pushResponse ?? env.ASSETS.fetch(request);
   },
 
   async scheduled(_controller, env) {
+    if (_controller.cron === "*/5 * * * *") {
+      if(env.GAME_ENABLED === 'true' && env.GAME_DB) {
+        const rounds=await env.GAME_DB.prepare("SELECT * FROM game_rounds WHERE state!='settled'").all();
+        for(const round of rounds.results) await syncRound(env.GAME_DB,round);
+        await runGameMail(env);
+      }
+      return;
+    }
     // This is deliberately a fallback. Real-time X Activity events are handled
     // by the dedicated togashi-events Worker; syndication repairs missed events.
     let timelinePromise;
