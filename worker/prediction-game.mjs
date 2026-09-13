@@ -1,4 +1,4 @@
-import { normalizeEmail, registerEmail, emailState, emailAvailable, confirmEmail, unsubscribeEmail, emailRecovery, runGameMail } from "./game-mail.mjs";
+import { normalizeEmail, registerEmail, emailState, emailCollectionAvailable, confirmEmail, unsubscribeEmail, emailRecovery, runGameMail } from "./game-mail.mjs";
 import status from '../app/data/status-data.json' with { type: 'json' };
 import { japanDay, validDate, summarizeVotes } from './game-stats.mjs';
 
@@ -153,7 +153,7 @@ export async function handleGameApi(request,env,ctx) {
       const pick=await myPick(db,round.chapter,person);
       const ownGroup=person?await db.prepare('SELECT id FROM game_groups WHERE chapter=? AND owner_id=?').bind(round.chapter,person.player_id).first():null;
       const guesses=await db.prepare('SELECT COALESCE(SUM(votes),0) AS count FROM game_days WHERE chapter=?').bind(round.chapter).first();
-      return json({round,pick,guessesSoFar:guesses.count,ownGroup:ownGroup?.id??null,today:japanDay(),turnstileSiteKey:env.GAME_TURNSTILE_SITE_KEY??null,emailAvailable:emailAvailable(env),emailStatus:await emailState(env,pick?.id)},200,headers);
+      return json({round,pick,guessesSoFar:guesses.count,ownGroup:ownGroup?.id??null,today:japanDay(),turnstileSiteKey:env.GAME_TURNSTILE_SITE_KEY??null,emailAvailable:emailCollectionAvailable(env),emailStatus:await emailState(env,pick?.id)},200,headers);
     }
     if(route==='stats') {
       // Only public aggregates enter the cache. Credentials and private state
@@ -173,7 +173,7 @@ export async function handleGameApi(request,env,ctx) {
       if(round.state!=='open') throw new GameError('closed',409);
       if(!validDate(data.date) || data.date<=japanDay() || data.date>round.max_date) throw new GameError('invalid_date');
       if(typeof data.nickname!=='string' || !data.nickname.trim() || [...data.nickname.trim()].length>24 || /[\p{Cc}\p{Cf}]/u.test(data.nickname)) throw new GameError('invalid_nickname');
-      if(emailAvailable(env) && data.email && !normalizeEmail(data.email)) throw new GameError('invalid_email');
+      if(emailCollectionAvailable(env) && data.email && !normalizeEmail(data.email)) throw new GameError('invalid_email');
       const saveEmail=async pick=>{
         try {
           const result=await registerEmail(env,pick,round.chapter,data.email,data.locale);

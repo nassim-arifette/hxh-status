@@ -28,16 +28,11 @@ Cloudflare est reconnecté via OAuth. L’ancien jeton prioritaire a été désa
 - Widget Turnstile « HxH Status predictions », pour `hxhstatus.com` et `www.hxhstatus.com`, et widget distinct « HxH Status preview » pour l’aperçu.
 - Secrets Worker `GAME_TURNSTILE_SECRET` et `GAME_EMAIL_KEY`, sans copie dans les sources.
 
-Le texte de l’interface invite à recevoir l’annonce officielle ; ce déclenchement reste à implémenter. Le backend email actuel envoie la confirmation et les résultats après publication. Garder l’email désactivé tant que ce comportement n’est pas aligné et que le prestataire n’est pas configuré. `GAME_ENABLED` et `GAME_EMAIL_ENABLED` restent à `false` en production tant que la configuration d’envoi n’est pas terminée.
+### Configuration de lancement : collecte sans envoi
 
-Pour terminer avec Resend gratuit :
+Le jeu est activé avec `GAME_ENABLED=true`. Les emails facultatifs sont enregistrés dans `game_contacts`, avec le pronostic, la langue et la date de collecte, via `GAME_EMAIL_COLLECT_ENABLED=true`. Ils restent privés et ne figurent jamais dans les statistiques ni les défis publics. Une adresse peut être enregistrée à nouveau pour mettre à jour celle du pronostic reconnu. Aucun email n’est envoyé et aucune confirmation ni notification n’est promise dans le formulaire.
 
-1. Créer le compte gratuit sur https://resend.com/signup.
-2. Ajouter le domaine d’envoi `hxhstatus.com` dans Resend et poser **uniquement les enregistrements DNS fournis pour l’envoi**. Ne pas remplacer les MX de réception existants. Désactiver le suivi des clics pour préserver les liens privés et leurs fragments.
-3. Créer une clé API **Sending access**, limitée au domaine vérifié. Dans le terminal du projet, lancer `npx wrangler secret put RESEND_API_KEY` puis coller la clé dans l’invite masquée. Ne pas l’envoyer dans le chat.
-4. Vérifier l’expéditeur `HxH Status <pronostics@hxhstatus.com>` dans `GAME_EMAIL_FROM`.
-5. Passer `GAME_ENABLED` et `GAME_EMAIL_ENABLED` à `"true"`, construire et vérifier avec `npx wrangler deploy --dry-run`, puis déployer via le flux habituel du projet.
-6. Vérifier sur le domaine public un vrai vote Turnstile, la réception et la confirmation du mail, avec une adresse de test explicitement autorisée.
+`GAME_EMAIL_ENABLED=false` reste désactivé. Le mode collecte bloque également le traitement de la file d’envoi, même si ce drapeau est activé par erreur. Aucune clé Resend n’est nécessaire pour ce lancement. La migration `0003_prediction_contacts.sql` ajoute la table sans modifier les votes existants. Les adresses collectées ne constituent pas des abonnements confirmés et ne sont pas intégrées automatiquement à une future campagne.
 
 Les pages statiques restent servies par Assets ; seul `/api/game/*` passe par le Worker. L’API indisponible affiche un message lisible, sans prétendre qu’un vote a été enregistré.
 
@@ -72,7 +67,9 @@ En secours, le Worker ferme aussi la manche lorsqu’une version déployée de `
 
 `npm test` inclut des tests sur SQLite réel en mémoire : unicité face aux requêtes concurrentes, dates, fermeture, récupération, statistiques pondérées, groupes et classement ex æquo. La validation navigateur lit ensuite le Worker connecté à Cloudflare D1 ; elle ne crée pas de vote de test dans les données de production.
 
-## Emails de participation
+## Fonctionnalités d’envoi désactivées au lancement
+
+Le reste de cette section décrit le mode d’envoi optionnel, inactif en production. Il utilise `game_emails`, séparément des adresses de `game_contacts`.
 
 Le pseudo est obligatoire. L’email est facultatif, même lorsque le service email est activé. Seule une adresse renseignée est validée ; un vote sans email ne crée aucun mail. Les choix de la communauté et des amis sont affichés dans l’interface uniquement après participation ; les API publiques restent consultables. Le vote est enregistré avant la préparation du mail. Une panne du prestataire ne supprime pas la participation. Un joueur ayant déjà voté peut ajouter son adresse depuis sa participation reconnue. Une adresse reçoit au plus un mail de confirmation par manche ; les retries de vote n’en créent pas d’autres. La version actuelle ne permet pas de remplacer une adresse déjà enregistrée ni de renvoyer un lien expiré depuis l’interface.
 

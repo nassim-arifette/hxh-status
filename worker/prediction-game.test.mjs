@@ -20,6 +20,7 @@ function fixture() {
   sql.exec(readFileSync(new URL('../migrations/0001_prediction_game.sql', import.meta.url), 'utf8'));
   sql.exec(readFileSync(new URL('../migrations/0002_prediction_emails.sql', import.meta.url), 'utf8'));
 
+  sql.exec(readFileSync(new URL('../migrations/0003_prediction_contacts.sql', import.meta.url), 'utf8'));
   const prepare = query => {
     let values=[];
     const statement = {
@@ -302,4 +303,22 @@ test('emails preserve all seven locales through confirmation and results',async(
     const result=await decryptMail(env,sql.prepare("SELECT payload FROM game_mail_jobs WHERE kind='results'").get().payload);
     assert.ok(result.html.includes(`lang="${locale}"`));assert.doesNotMatch(result.text,/undefined|\{(?:rank|count|distance)\}/);
   }
+});
+
+test('collection stores private emails without provider, confirmation or mail jobs', async()=>{
+  const {env,client,sql}=fixture();env.GAME_EMAIL_COLLECT_ENABLED='true';
+  const c=client();assert.equal((await c('state')).body.emailAvailable,true);
+  assert.equal((await c('email',{chapter:421,email:'gon@example.test'})).status,401);
+  const saved=await c('vote',vote());assert.equal(saved.status,201);
+  assert.equal((await c('email',{chapter:421,email:'invalid'})).body.email,'invalid_email');
+  assert.equal((await c('email',{chapter:421,email:'Gon@example.test',locale:'fr'})).body.email,'saved');
+  assert.equal((await c('state')).body.emailStatus,'saved');
+  assert.equal(sql.prepare('SELECT email FROM game_contacts').get().email,'gon@example.test');
+  await c('email',{chapter:421,email:'new@example.test',locale:'fr'});
+  assert.equal(sql.prepare('SELECT count(*) n FROM game_contacts').get().n,1);
+  assert.equal(sql.prepare('SELECT email FROM game_contacts').get().email,'new@example.test');
+  enableMail(env);let sends=0;await runGameMail(env,null,()=>{sends++;throw Error('must not send');});
+  assert.equal(sends,0);assert.equal(sql.prepare('SELECT count(*) n FROM game_mail_jobs').get().n,0);
+  assert.equal(sql.prepare('SELECT count(*) n FROM game_emails').get().n,0);
+  assert.doesNotMatch(JSON.stringify((await c('stats')).body),/example|email/);
 });

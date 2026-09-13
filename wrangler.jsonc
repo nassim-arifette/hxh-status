@@ -38,9 +38,10 @@
     "crons": ["*/5 * * * *"]
   },
   "vars": {
-    "GAME_ENABLED": "false",
+    "GAME_ENABLED": "true",
     "GAME_TURNSTILE_SITE_KEY": "0x4AAAAAAExZydRLNp7VcCZS",
     "GAME_EMAIL_ENABLED": "false",
+    "GAME_EMAIL_COLLECT_ENABLED": "true",
     "GAME_PUBLIC_ORIGIN": "https://hxhstatus.com",
     "GAME_EMAIL_FROM": "HxH Status <pronostics@hxhstatus.com>",
     "PUSH_NOTIFICATIONS_ENABLED": "true",

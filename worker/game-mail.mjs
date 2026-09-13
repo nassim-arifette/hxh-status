@@ -9,6 +9,7 @@ const nowISO = () => new Date().toISOString();
 export function emailAvailable(env) {
   return env.GAME_EMAIL_ENABLED==='true' && typeof env.GAME_EMAIL_KEY==='string' && env.GAME_EMAIL_KEY.length>=32 && (env.GAME_EMAIL_PREVIEW==='true' || Boolean(env.RESEND_API_KEY && env.GAME_EMAIL_FROM));
 }
+export const emailCollectionAvailable = env => env.GAME_EMAIL_COLLECT_ENABLED==='true' || emailAvailable(env);
 function origin(env) {
   const url = new URL(env.GAME_PUBLIC_ORIGIN ?? 'https://hxhstatus.com');
   if(url.protocol!=='https:' && !(env.GAME_EMAIL_PREVIEW==='true' && ['localhost','127.0.0.1'].includes(url.hostname))) throw Error('invalid_mail_origin');
@@ -40,6 +41,12 @@ function layout(title, paragraphs, buttons, locale='en') {
 }
 export async function registerEmail(env,pick,chapter,value,locale='en') {
   if(!value) return {status:'none'};
+  if(env.GAME_EMAIL_COLLECT_ENABLED==='true') {
+    const email=normalizeEmail(value); if(!email) return {status:'invalid_email'};
+    await env.GAME_DB.prepare('INSERT INTO game_contacts(pick_id,chapter,email,locale,created_at) VALUES(?,?,?,?,?) ON CONFLICT(pick_id) DO UPDATE SET email=excluded.email,locale=excluded.locale')
+      .bind(pick.id,chapter,email,mailLocale(locale),nowISO()).run();
+    return {status:'saved'};
+  }
   if(!emailAvailable(env)) return {status:'unavailable'};
   const email=normalizeEmail(value); if(!email) return {status:'invalid_email'};
   const db=env.GAME_DB;
@@ -63,6 +70,7 @@ export async function registerEmail(env,pick,chapter,value,locale='en') {
 }
 export async function emailState(env,pickId) {
   if(!pickId) return null;
+  if(env.GAME_EMAIL_COLLECT_ENABLED==='true') return await env.GAME_DB.prepare('SELECT 1 FROM game_contacts WHERE pick_id=?').bind(pickId).first() ? 'saved' : null;
   const row=await env.GAME_DB.prepare('SELECT confirmed_at,unsubscribed_at FROM game_emails WHERE pick_id=?').bind(pickId).first();
   return row ? row.unsubscribed_at?'unsubscribed':row.confirmed_at?'confirmed':'pending' : null;
 }
@@ -107,7 +115,7 @@ async function queueResults(env) {
 }
 
 export async function runGameMail(env,onlyJob=null,fetchImpl=fetch) {
-  if(env.GAME_ENABLED!=='true' || !env.GAME_DB || !emailAvailable(env)) return;
+  if(env.GAME_EMAIL_COLLECT_ENABLED==='true' || env.GAME_ENABLED!=='true' || !env.GAME_DB || !emailAvailable(env)) return;
   const db=env.GAME_DB;
   if(!onlyJob) await queueResults(env);
   const jobs=await db.prepare(`SELECT id FROM game_mail_jobs WHERE status IN ('pending','sending') AND available_at<=? AND (lease_until IS NULL OR lease_until<?) ${onlyJob?'AND id=?':''} ORDER BY available_at LIMIT 5`).bind(nowISO(),nowISO(),...(onlyJob?[onlyJob]:[])).all();

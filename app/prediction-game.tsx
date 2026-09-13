@@ -195,7 +195,7 @@ export default function PredictionGame({ locale }: { locale: Locale }) {
           try {
             const result = await api<{ pick: Pick; email: string; alreadyVoted?: boolean }>("vote", { chapter: state.round.chapter, date, nickname, locale, turnstile: token });
             justSaved.current = true;
-            setState({ ...state, pick: result.pick, guessesSoFar: state.guessesSoFar + (result.alreadyVoted ? 0 : 1), emailStatus: ["pending","confirmed"].includes(result.email) ? result.email : null });
+            setState({ ...state, pick: result.pick, guessesSoFar: state.guessesSoFar + (result.alreadyVoted ? 0 : 1), emailStatus: ["saved","pending","confirmed"].includes(result.email) ? result.email : null });
             await loadStats(state.round.chapter, true);
           } finally { setToken(""); if (widgetId.current) window.turnstile?.reset(widgetId.current); }
         }); }}>
@@ -254,10 +254,10 @@ export default function PredictionGame({ locale }: { locale: Locale }) {
         <h2 id="game-next-title" className="sr-only">{t.share}</h2>
         <div className="game-email-inline">
           <div className="game-option-body">
-          {state.emailStatus ? <p role="status">{state.emailStatus === "confirmed" ? t.emailConfirmed : state.emailStatus === "unsubscribed" ? t.emailUnsubscribed : t.emailPending}</p> : state.emailAvailable ? <>
+          {state.emailStatus ? <p role="status">{state.emailStatus === "saved" ? t.emailSaved : state.emailStatus === "confirmed" ? t.emailConfirmed : state.emailStatus === "unsubscribed" ? t.emailUnsubscribed : t.emailPending}</p> : state.emailAvailable ? <>
             <form className="game-email-form" onSubmit={e => {e.preventDefault(); void action(async () => {
               const result = await api<{email:string}>("email", {chapter:state.round.chapter,email,locale});
-              if (["pending","confirmed"].includes(result.email)) setState({...state,emailStatus:result.email});
+              if (["saved","pending","confirmed"].includes(result.email)) setState({...state,emailStatus:result.email});
               else setError(result.email === "invalid_email" ? t.invalid_email : t.emailFailed);
             });}}><label>{t.email}<input type="email" dir="ltr" required maxLength={254} autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} /><span className="game-hint">{t.emailAnnouncement}</span></label><button disabled={busy}>{t.emailAdd}</button></form>
           </> : <label>{t.email}<input type="email" dir="ltr" disabled placeholder="name@example.com" /><span className="game-hint">{t.emailAnnouncement}</span></label>}
