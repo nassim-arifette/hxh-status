@@ -2,6 +2,80 @@
   "schemaVersion": 1,
   "posts": [
     {
+      "id": "2099837550617903464",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-09-15T12:27:39.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2099837550617903464",
+      "originalText": "No.428、原稿完成。 https://t.co/UZ81Z8Weex",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HSQfHKXagAATBbe.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "available",
+        "provider": "manual",
+        "model": null,
+        "generatedAt": "2026-09-15T14:20:02.071Z",
+        "texts": {
+          "ar": "رقم 428، اكتملت المخطوطة. https://t.co/UZ81Z8Weex",
+          "en": "No.428, manuscript complete. https://t.co/UZ81Z8Weex",
+          "es": "No.428, manuscrito terminado. https://t.co/UZ81Z8Weex",
+          "fr": "No.428, manuscrit terminé. https://t.co/UZ81Z8Weex",
+          "ja": "No.428、原稿完成。 https://t.co/UZ81Z8Weex",
+          "pt": "No.428, manuscrito concluído. https://t.co/UZ81Z8Weex",
+          "zh": "No.428，原稿完成。 https://t.co/UZ81Z8Weex"
+        }
+      },
+      "tracker": {
+        "decision": "apply",
+        "changes": [
+          {
+            "chapter": 428,
+            "from": "background",
+            "to": "delivered"
+          }
+        ]
+      }
+    },
+    {
+      "id": "2099793931164913882",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-09-15T09:34:20.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2099793931164913882",
+      "originalText": "依頼イラスト完成。 https://t.co/JLpyLBEPaC",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HSP3cipbIAA_2JV.jpg"
+      ],
+      "imageTexts": [],
+      "translation": {
+        "status": "available",
+        "provider": "manual",
+        "model": null,
+        "generatedAt": "2026-09-15T14:20:02.074Z",
+        "texts": {
+          "ar": "اكتمل الرسم المكلّف به. https://t.co/JLpyLBEPaC",
+          "en": "Commissioned illustration complete. https://t.co/JLpyLBEPaC",
+          "es": "Ilustración por encargo terminada. https://t.co/JLpyLBEPaC",
+          "fr": "Illustration commandée terminée. https://t.co/JLpyLBEPaC",
+          "ja": "依頼イラスト完成。 https://t.co/JLpyLBEPaC",
+          "pt": "Ilustração encomendada concluída. https://t.co/JLpyLBEPaC",
+          "zh": "委托插画完成。 https://t.co/JLpyLBEPaC"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
       "id": "2094673907626414299",
       "author": {
         "id": "1528978792617611264",

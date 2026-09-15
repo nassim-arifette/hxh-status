@@ -3,7 +3,7 @@
   <id>https://hxhstatus.com/ja/feed.xml</id>
   <title type="text">HxH Status - HUNTER×HUNTER 最新話・制作進捗トラッカー</title>
   <subtitle type="text">HUNTER×HUNTERの掲載状況と、冨樫義博先生が公表した今後の話数の制作進捗を、出典付きで追跡する非公式サイトです。</subtitle>
-  <updated>2026-09-07T00:00:00.000Z</updated>
+  <updated>2026-09-15T12:27:39.000Z</updated>
   <link rel="self" href="https://hxhstatus.com/ja/feed.xml" type="application/atom+xml" />
   <link rel="alternate" href="https://hxhstatus.com/ja" type="text/html" />
   <author>
@@ -12,6 +12,44 @@
   </author>
   <icon>https://hxhstatus.com/favicon.svg</icon>
   <logo>https://hxhstatus.com/icon-192.png</logo>
+  <entry>
+    <id>tag:hxhstatus.com,2026:post-2099837550617903464</id>
+    <title type="text">冨樫先生の新しい投稿: No.428、原稿完成。</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja/updates/2099837550617903464" />
+    <updated>2026-09-15T12:27:39.000Z</updated>
+    <published>2026-09-15T12:27:39.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+      <uri>https://x.com/Un4v5s8bgsVk9Xp</uri>
+    </author>
+    <summary type="text">No.428、原稿完成。</summary>
+    <content type="html">&lt;p&gt;No.428、原稿完成。 https://t.co/UZ81Z8Weex&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;https://pbs.twimg.com/media/HSQfHKXagAATBbe.jpg&quot; alt=&quot;Yoshihiro Togashi post image&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2099837550617903464&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:post-2099793931164913882</id>
+    <title type="text">冨樫先生の新しい投稿: 依頼イラスト完成。</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja/updates/2099793931164913882" />
+    <updated>2026-09-15T09:34:20.000Z</updated>
+    <published>2026-09-15T09:34:20.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+      <uri>https://x.com/Un4v5s8bgsVk9Xp</uri>
+    </author>
+    <summary type="text">依頼イラスト完成。</summary>
+    <content type="html">&lt;p&gt;依頼イラスト完成。 https://t.co/JLpyLBEPaC&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;https://pbs.twimg.com/media/HSP3cipbIAA_2JV.jpg&quot; alt=&quot;Yoshihiro Togashi post image&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2099793931164913882&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-428-delivered</id>
+    <title type="text">第428話：原稿完成</title>
+    <link rel="alternate" href="https://hxhstatus.com/ja/chapter/428" />
+    <updated>2026-09-15T00:00:00.000Z</updated>
+    <published>2026-09-15T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">完成原稿はジャンプ編集部に渡っています。</summary>
+    <content type="html">&lt;p&gt;完成原稿はジャンプ編集部に渡っています。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2099837550617903464&quot;&gt;Yoshihiro Togashi on X&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja/chapter/428&quot;&gt;Chapter 428 on HxH Status&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
   <entry>
     <id>tag:hxhstatus.com,2026:chapter-420-published</id>
     <title type="text">第420話：掲載開始</title>
@@ -415,18 +453,6 @@ No.433、人物ペン入れ開始。 https://t.co/1hxU4Ti6Ec&lt;/p&gt;&lt;p&gt;&
     <content type="html">&lt;p&gt;No.428、背景指定書作成完了。
 
 コメント〜…コメント〜……&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <id>tag:hxhstatus.com,2026:chapter-428-background</id>
-    <title type="text">第428話：背景指定書作成完了</title>
-    <link rel="alternate" href="https://hxhstatus.com/ja/chapter/428" />
-    <updated>2026-07-03T00:00:00.000Z</updated>
-    <published>2026-07-03T00:00:00.000Z</published>
-    <author>
-      <name>Yoshihiro Togashi</name>
-    </author>
-    <summary type="text">背景指定書の作成が完了しました。</summary>
-    <content type="html">&lt;p&gt;背景指定書の作成が完了しました。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730&quot;&gt;Yoshihiro Togashi on X&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/ja/chapter/428&quot;&gt;Chapter 428 on HxH Status&lt;/a&gt;&lt;/p&gt;</content>
   </entry>
   <entry>
     <id>tag:hxhstatus.com,2026:post-2072287279197126773</id>

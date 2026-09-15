@@ -29,7 +29,36 @@ test("the committed Togashi archive satisfies the public feed contract", async (
   );
 
   assert.equal(validateTogashiFeed(raw), raw);
-  assert.equal(raw.posts[0].translation.texts.fr.includes("427"), true);
+  assert.ok(raw.posts.length > 0);
+  for (const { translation } of raw.posts) {
+    if (translation.status !== "available") continue;
+    if (translation.provider === "manual") {
+      assert.equal(translation.model, null);
+    } else {
+      assert.equal(translation.provider, "gemini");
+      assert.equal(typeof translation.model, "string");
+      assert.ok(translation.model.trim().length > 0);
+    }
+  }
+});
+
+test("manual translations satisfy the feed contract without claiming an AI model", () => {
+  const post = createTogashiPost({
+    tweet: {
+      id: "2096000000000000001", createdAt: "2026-09-03T03:00:00.000Z",
+      fullText: source, mediaUrls: [],
+    },
+    translations: translations(), translationModel: "gemini-test",
+    translatedAt: "2026-09-03T03:01:00.000Z",
+    audit: { decision: "ignore", changes: [] },
+  });
+  post.translation.provider = "manual";
+  post.translation.model = null;
+  const feed = { schemaVersion: 1, posts: [post] };
+
+  assert.equal(validateTogashiFeed(feed), feed);
+  post.translation.model = "gemini-test";
+  assert.throws(() => validateTogashiFeed(feed), /model must be null for a manual translation/);
 });
 
 test("new posts are localized once, deduplicated, and sorted newest first", () => {

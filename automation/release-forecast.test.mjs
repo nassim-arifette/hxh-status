@@ -8,7 +8,8 @@ import {fitPosterior,studentSurvival,predictiveQuantile,predictiveSurvival,condi
 import {completionEvents,productionCdf,deriveProductionForecast} from '../app/data/production-forecast.ts';
 const records=deriveHiatusStats(history,status,'2026-09-12').historicalHiatuses.completed;
 const input={records,chapter:421,nextChapter:421,chapterStatus:'delivered',publicationStatus:'hiatus',sinceDate:'2026-09-07',asOf:'2026-09-12'};
-const news={records,posts:posts.posts,chapter:421,asOf:'2026-09-12'};
+// Advancing the observation date models silence in the same known archive.
+const news={records,posts:posts.posts.filter(post=>japanDate(new Date(post.createdAt))<='2026-09-12'),chapter:421,asOf:'2026-09-12'};
 const close=(a,b,tolerance=1e-10)=>assert.ok(Math.abs(a-b)<tolerance,`${a} ≠ ${b}`);
 
 test('Student-t tails agree with independent Cauchy and df=2 closed forms',()=>{

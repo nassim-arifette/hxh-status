@@ -16,6 +16,15 @@ const MAX_REQUEST_BYTES = 18_000_000;
 const GEMINI_TIMEOUT_MS = 90_000;
 const MEDIA_TIMEOUT_MS = 20_000;
 const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
+const MAX_FALLBACK_MODELS = 2;
+
+class GeminiHttpError extends Error {
+  constructor(status, detail, model) {
+    super(`Gemini request failed (${status}) for ${model}: ${detail}`);
+    this.name = "GeminiHttpError";
+    this.status = status;
+  }
+}
 
 const inkingExample =
   "\u4EBA\u7269\u30DA\u30F3\u5165\u308C\u5B8C\u4E86";
@@ -147,7 +156,9 @@ async function geminiFetch(serializedBody, apiKey, fetchImpl) {
         signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
       });
 
-      if (!RETRYABLE_STATUSES.has(response.status) || attempt === 2) {
+      // A depleted model quota will not recover within this request's backoff.
+      // Let the caller try its configured fallback or a later scheduled run.
+      if (response.status === 429 || !RETRYABLE_STATUSES.has(response.status) || attempt === 2) {
         return response;
       }
 
@@ -238,7 +249,7 @@ async function requestStructuredOutput({
 
   if (!response.ok) {
     const detail = safeDetail(await response.text());
-    throw new Error(`Gemini request failed (${response.status}): ${detail}`);
+    throw new GeminiHttpError(response.status, detail, model);
   }
 
   const responseBody = await response.json();
@@ -389,36 +400,58 @@ export async function analyzeTweet({
   currentChapters,
   apiKey,
   model,
+  fallbackModels = [],
   fetchImpl = fetch,
 }) {
+  if (
+    !Array.isArray(fallbackModels) ||
+    fallbackModels.length > MAX_FALLBACK_MODELS ||
+    fallbackModels.some((candidate) => typeof candidate !== "string" || candidate.trim().length === 0 || candidate.length > 100)
+  ) {
+    throw new Error(`GEMINI_FALLBACK_MODELS must contain at most ${MAX_FALLBACK_MODELS} non-empty model names.`);
+  }
+
   const { images, errors: mediaErrors, imageIndexes } = await downloadImages(
     tweet.mediaUrls,
     fetchImpl,
   );
   const hasDeterministicText = deterministicTextMatches(tweet.fullText).length > 0;
 
-  const processed = validateTweetProcessing(
-    await requestStructuredOutput({
-      apiKey,
-      model,
-      input: [
-        {
-          type: "text",
-          text: processingPrompt(tweet, currentChapters, mediaErrors),
-        },
-        ...images.flatMap((image, index) => [
-          { type: "text", text: `IMAGE_INDEX: ${imageIndexes[index]}` },
-          image,
-        ]),
-      ],
-      schema: tweetProcessingSchema,
-      fetchImpl,
-    }),
-    tweet.fullText,
-    imageIndexes,
-  );
+  const input = [
+    { type: "text", text: processingPrompt(tweet, currentChapters, mediaErrors) },
+    ...images.flatMap((image, index) => [
+      { type: "text", text: `IMAGE_INDEX: ${imageIndexes[index]}` },
+      image,
+    ]),
+  ];
+  const models = [...new Set([model, ...fallbackModels])];
+  let processed;
+  let processedModel;
+
+  for (const [index, candidateModel] of models.entries()) {
+    try {
+      processed = validateTweetProcessing(
+        await requestStructuredOutput({
+          apiKey, model: candidateModel, input,
+          schema: tweetProcessingSchema, fetchImpl,
+        }),
+        tweet.fullText,
+        imageIndexes,
+      );
+      processedModel = candidateModel;
+      break;
+    } catch (error) {
+      // Model availability can vary; schema, evidence and credential failures
+      // must still stop processing rather than being retried with another model.
+      if (!(error instanceof GeminiHttpError) || !RETRYABLE_STATUSES.has(error.status) || index === models.length - 1) {
+        throw error;
+      }
+      console.warn(`Gemini ${candidateModel} unavailable (${error.status}); trying ${models[index + 1]}.`);
+    }
+  }
 
   return {
+    model: processedModel,
     analysis:
       mediaErrors.length > 0 && !hasDeterministicText
         ? mediaFailureAnalysis()

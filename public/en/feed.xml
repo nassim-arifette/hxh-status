@@ -3,7 +3,7 @@
   <id>https://hxhstatus.com/feed.xml</id>
   <title type="text">HxH Status - HUNTER×HUNTER Chapter &amp; Production Tracker</title>
   <subtitle type="text">A sourced, unofficial tracker for HUNTER×HUNTER chapter releases and Yoshihiro Togashi&apos;s confirmed progress on upcoming chapters.</subtitle>
-  <updated>2026-09-07T00:00:00.000Z</updated>
+  <updated>2026-09-15T12:27:39.000Z</updated>
   <link rel="self" href="https://hxhstatus.com/feed.xml" type="application/atom+xml" />
   <link rel="alternate" href="https://hxhstatus.com/" type="text/html" />
   <author>
@@ -12,6 +12,44 @@
   </author>
   <icon>https://hxhstatus.com/favicon.svg</icon>
   <logo>https://hxhstatus.com/icon-192.png</logo>
+  <entry>
+    <id>tag:hxhstatus.com,2026:post-2099837550617903464</id>
+    <title type="text">New Togashi post: No.428, manuscript complete.</title>
+    <link rel="alternate" href="https://hxhstatus.com/updates/2099837550617903464" />
+    <updated>2026-09-15T12:27:39.000Z</updated>
+    <published>2026-09-15T12:27:39.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+      <uri>https://x.com/Un4v5s8bgsVk9Xp</uri>
+    </author>
+    <summary type="text">No.428, manuscript complete.</summary>
+    <content type="html">&lt;p&gt;No.428, manuscript complete. https://t.co/UZ81Z8Weex&lt;/p&gt;&lt;p&gt;&lt;em&gt;Original Japanese:&lt;/em&gt; No.428、原稿完成。 https://t.co/UZ81Z8Weex&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;https://pbs.twimg.com/media/HSQfHKXagAATBbe.jpg&quot; alt=&quot;Yoshihiro Togashi post image&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2099837550617903464&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:post-2099793931164913882</id>
+    <title type="text">New Togashi post: Commissioned illustration complete.</title>
+    <link rel="alternate" href="https://hxhstatus.com/updates/2099793931164913882" />
+    <updated>2026-09-15T09:34:20.000Z</updated>
+    <published>2026-09-15T09:34:20.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+      <uri>https://x.com/Un4v5s8bgsVk9Xp</uri>
+    </author>
+    <summary type="text">Commissioned illustration complete.</summary>
+    <content type="html">&lt;p&gt;Commissioned illustration complete. https://t.co/JLpyLBEPaC&lt;/p&gt;&lt;p&gt;&lt;em&gt;Original Japanese:&lt;/em&gt; 依頼イラスト完成。 https://t.co/JLpyLBEPaC&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;https://pbs.twimg.com/media/HSP3cipbIAA_2JV.jpg&quot; alt=&quot;Yoshihiro Togashi post image&quot; /&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2099793931164913882&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:hxhstatus.com,2026:chapter-428-delivered</id>
+    <title type="text">Ch. 428: manuscript sent to Jump</title>
+    <link rel="alternate" href="https://hxhstatus.com/chapter/428" />
+    <updated>2026-09-15T00:00:00.000Z</updated>
+    <published>2026-09-15T00:00:00.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+    </author>
+    <summary type="text">The finished manuscript has been delivered to Jump.</summary>
+    <content type="html">&lt;p&gt;The finished manuscript has been delivered to Jump.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2099837550617903464&quot;&gt;Yoshihiro Togashi on X&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/chapter/428&quot;&gt;Chapter 428 on HxH Status&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
   <entry>
     <id>tag:hxhstatus.com,2026:chapter-420-published</id>
     <title type="text">Ch. 420: out now</title>
@@ -419,18 +457,6 @@ No.433、人物ペン入れ開始。 https://t.co/1hxU4Ti6Ec&lt;/p&gt;&lt;p&gt;&
     <content type="html">&lt;p&gt;No.428、背景指定書作成完了。
 
 コメント〜…コメント〜……&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <id>tag:hxhstatus.com,2026:chapter-428-background</id>
-    <title type="text">Ch. 428: background specs complete</title>
-    <link rel="alternate" href="https://hxhstatus.com/chapter/428" />
-    <updated>2026-07-03T00:00:00.000Z</updated>
-    <published>2026-07-03T00:00:00.000Z</published>
-    <author>
-      <name>Yoshihiro Togashi</name>
-    </author>
-    <summary type="text">The background specification sheet is complete.</summary>
-    <content type="html">&lt;p&gt;The background specification sheet is complete.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2073109649608630730&quot;&gt;Yoshihiro Togashi on X&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://hxhstatus.com/chapter/428&quot;&gt;Chapter 428 on HxH Status&lt;/a&gt;&lt;/p&gt;</content>
   </entry>
   <entry>
     <id>tag:hxhstatus.com,2026:post-2072287279197126773</id>

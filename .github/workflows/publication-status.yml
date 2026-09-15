@@ -45,10 +45,25 @@ jobs:
         if: steps.publication.outputs.status_changed == 'true'
         shell: bash
         run: |
-          git add app/data/status-data.json public/share
+          git add app/data/status-data.json public/share public/feed.xml public/releases.ics
+          for locale in ar en es fr ja pt zh; do
+            git add "public/$locale/feed.xml"
+          done
+          for badge in status latest progress next; do
+            git add "public/badge/$badge.svg"
+            for locale in ar en es fr ja pt zh; do
+              git add "public/badge/$locale/$badge.svg"
+            done
+          done
           while IFS= read -r path; do
             case "$path" in
               app/data/status-data.json|public/share/*) ;;
+              public/feed.xml|public/*/feed.xml|public/releases.ics|public/badge/*)
+                if ! [[ "$path" =~ ^public/(((ar|en|es|fr|ja|pt|zh)/)?feed\.xml|releases\.ics|badge/((ar|en|es|fr|ja|pt|zh)/)?(status|latest|progress|next)\.svg)$ ]]; then
+                  echo "Unexpected publication export artifact: $path" >&2
+                  exit 1
+                fi
+                ;;
               *) echo "Unexpected publication artifact: $path" >&2; exit 1 ;;
             esac
           done < <(git diff --cached --name-only)

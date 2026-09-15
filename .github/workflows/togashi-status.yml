@@ -106,8 +106,22 @@ jobs:
             git add app/data/togashi-posts.json
           fi
 
+          # The public API build also refreshes the tracked Atom feed copies.
+          if [ "$FEED_CHANGED" = "true" ] || [ "$STATUS_CHANGED" = "true" ]; then
+            git add public/feed.xml
+            for locale in ar en es fr ja pt zh; do
+              git add "public/$locale/feed.xml"
+            done
+          fi
+
           if [ "$STATUS_CHANGED" = "true" ]; then
-            git add app/data/status-data.json public/share
+            git add app/data/status-data.json public/share public/releases.ics
+            for badge in status latest progress next; do
+              git add "public/badge/$badge.svg"
+              for locale in ar en es fr ja pt zh; do
+                git add "public/badge/$locale/$badge.svg"
+              done
+            done
           fi
 
           while IFS= read -r path; do
@@ -123,6 +137,20 @@ jobs:
               app/data/status-data.json|public/share/*)
                 if [ "$STATUS_CHANGED" != "true" ]; then
                   echo "Unexpected status artifact: $path" >&2
+                  exit 1
+                fi
+                ;;
+              public/feed.xml|public/*/feed.xml)
+                if ! [[ "$path" =~ ^public/((ar|en|es|fr|ja|pt|zh)/)?feed\.xml$ ]] ||
+                   { [ "$FEED_CHANGED" != "true" ] && [ "$STATUS_CHANGED" != "true" ]; }; then
+                  echo "Unexpected feed artifact: $path" >&2
+                  exit 1
+                fi
+                ;;
+              public/releases.ics|public/badge/*)
+                if [ "$STATUS_CHANGED" != "true" ] ||
+                   ! [[ "$path" =~ ^public/(releases\.ics|badge/((ar|en|es|fr|ja|pt|zh)/)?(status|latest|progress|next)\.svg)$ ]]; then
+                  echo "Unexpected status export artifact: $path" >&2
                   exit 1
                 fi
                 ;;

@@ -131,6 +131,11 @@ if (state.pendingVerdict && freshTweets.length > 0) {
 const analyzedEvents = [];
 const processingByTweetId = new Map();
 const geminiModel = process.env.GEMINI_MODEL || "gemini-3.7-flash";
+// Explicit model selections stay exclusive unless fallbacks are also configured.
+// An empty override disables fallback; the default uses one independent quota.
+const geminiFallbackModels = process.env.GEMINI_FALLBACK_MODELS === undefined
+  ? (process.env.GEMINI_MODEL ? [] : ["gemini-3.5-flash"])
+  : process.env.GEMINI_FALLBACK_MODELS.split(",").map(model => model.trim()).filter(Boolean);
 
 for (const tweet of freshTweets) {
   const result = await analyzeTweet({
@@ -138,6 +143,7 @@ for (const tweet of freshTweets) {
     currentChapters: statusData.chapters,
     apiKey: process.env.GEMINI_API_KEY,
     model: geminiModel,
+    fallbackModels: geminiFallbackModels,
   });
 
   processingByTweetId.set(tweet.id, result);
@@ -174,7 +180,7 @@ const incomingPosts = freshTweets.map((tweet) => {
     tweet,
     translations: processing.translations ?? null,
     imageTexts: processing.imageTexts ?? [],
-    translationModel: geminiModel,
+    translationModel: processing.model,
     translatedAt: payload.requestedAt,
     audit,
   });

@@ -30,11 +30,11 @@ X Activity post.create webhook on a secret callback path
   -> withhold the post alert until the Action reports a verdict
   -> serialized GitHub Action
   -> verify signature and freshness before Gemini or repository writes
-  -> one Gemini call for extraction plus all seven post-text variants
+  -> one successful Gemini call for extraction plus all seven post-text variants
   -> independent deterministic validation of the tracker decision and translations
   -> report the verdict to the Worker before the slow build steps
   -> Worker announces tracker milestones, or releases the held post alert with its cached translation
-  -> cache translations by post ID and update data/state/share PNGs atomically
+  -> cache translations by post ID and commit data, state, and generated public assets together
   -> Cloudflare deploy from the resulting repository update
 
 Retry Cron (every five minutes)
@@ -111,6 +111,25 @@ with the deterministic Japanese milestone grammar. All target languages are
 produced in the same model call, validated for complete locale coverage and
 preserved URLs, handles, hashtags, and numbers, then reused without another
 Gemini request.
+
+The default model is `gemini-3.7-flash`. If it returns a rate-limit or server
+error, processing can fall back to `gemini-3.5-flash` through the same extraction,
+translation, and validation rules. A rate-limit response is not immediately
+retried against the exhausted model. The feed records the model that actually
+produced each translation. Authentication errors and invalid model output still
+stop processing; they cannot trigger fallback or advance the cursor.
+
+An explicit `GEMINI_MODEL` override disables the implicit fallback. Set
+`GEMINI_FALLBACK_MODELS` to a comma-separated list to configure fallbacks for an
+override, or to an empty string to disable all model fallback. The GitHub Action
+uses the defaults unless its processing environment supplies these variables.
+
+If every configured model is unavailable, the Action leaves the tracker, feed,
+and cursor unchanged for a later retry. A maintainer can restore verified source
+posts during the outage with manual translations (`provider: "manual"`,
+`model: null`) and a directly sourced tracker correction. Keep the automation
+cursor unchanged so normal processing can resume after the provider recovers.
+Manual recovery does not confirm delivery of the Worker's held notifications.
 
 The public API is generated from this committed cache during `npm run build`.
 Cloudflare serves `/api/v1/*` as static assets, so bot polling performs no X,
