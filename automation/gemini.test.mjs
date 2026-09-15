@@ -388,7 +388,7 @@ async function runnerFixture(t, fallbackAvailable) {
   };
   for (const key of ["GEMINI_MODEL", "GEMINI_FALLBACK_MODELS", "GITHUB_OUTPUT", "AUTOMATION_VERDICT_FILE", "AUTOMATION_REVIEW_FILE"]) delete env[key];
   const run = () => promisify(execFile)(process.execPath, ["--import", pathToFileURL(preloadPath).href, fileURLToPath(new URL("../scripts/process-togashi-events.mjs", import.meta.url))], { cwd: directory, env });
-  return { run, paths, originals, illustration, milestone };
+  return { run, paths, originals, illustration, milestone, preloadPath, env, directory };
 }
 
 test("the event runner gets past an older illustration and commits the later fallback milestone", async (t) => {
@@ -405,9 +405,185 @@ test("the event runner gets past an older illustration and commits the later fal
   assert.equal(feed.posts[1].tracker.decision, "ignore");
 });
 
-test("both models unavailable leave the event runner cursor, feed and tracker unchanged", async (t) => {
+test("both models unavailable publish original posts and queue enrichment without changing tracker", async (t) => {
   const fixture = await runnerFixture(t, false);
-  await assert.rejects(fixture.run(), /Gemini request failed \(429\)/);
-  const contents = await Promise.all(fixture.paths.map(path => readFile(path, "utf8")));
-  assert.deepEqual(contents, fixture.originals);
+  fixture.env.AUTOMATION_VERDICT_FILE = join(fixture.directory, "verdict.json");
+  await fixture.run();
+  const [status, state, feed] = await Promise.all(fixture.paths.map(async path => JSON.parse(await readFile(path, "utf8"))));
+  assert.deepEqual(status, JSON.parse(fixture.originals[0]));
+  assert.equal(state.lastProcessedTweetId, fixture.milestone.id);
+  assert.deepEqual(state.pendingAnalysis.map(post => post.id), [fixture.illustration.id, fixture.milestone.id]);
+  assert.equal(state.pendingReviews.length, 0);
+  assert.equal(feed.posts.length, 2);
+  for (const post of feed.posts) {
+    const source = [fixture.illustration, fixture.milestone].find(tweet => tweet.id === post.id);
+    assert.equal(post.originalText, source.fullText);
+    assert.deepEqual(post.mediaUrls, source.mediaUrls);
+    assert.equal(post.translation.status, "unavailable");
+    assert.equal(post.translation.texts, null);
+    assert.deepEqual(post.tracker.changes, []);
+  }
+  const verdict = JSON.parse(await readFile(fixture.env.AUTOMATION_VERDICT_FILE, "utf8"));
+  assert.ok(verdict.posts.every(post => post.notification === "raw" && post.translations === null));
+  assert.deepEqual(verdict.milestones.chapters, []);
+});
+
+test("queued original posts gain validated translations and milestones after the provider recovers", async (t) => {
+  const fixture = await runnerFixture(t, false);
+  await fixture.run();
+  const recovered = await runnerFixture(t, true);
+  await writeFile(fixture.preloadPath, await readFile(recovered.preloadPath, "utf8"));
+  await fixture.run();
+  const [status, state, feed] = await Promise.all(fixture.paths.map(async path => JSON.parse(await readFile(path, "utf8"))));
+  assert.equal(status.chapters[0].status, "inking");
+  assert.equal(state.lastProcessedTweetId, fixture.milestone.id);
+  assert.deepEqual(state.pendingAnalysis, []);
+  assert.equal(feed.posts.length, 2);
+  assert.ok(feed.posts.every(post => post.translation.status === "available"));
+  assert.equal(feed.posts[0].tracker.decision, "apply");
+});
+
+test("media outages retain enrichment retries, safe translations and earlier milestone history", async (t) => {
+  const fixture = await runnerFixture(t, true);
+  const payload = JSON.parse(fixture.env.AUTOMATION_PAYLOAD);
+  payload.tweets = payload.tweets.map(post => ({ ...post, mediaUrls: ["https://pbs.twimg.com/media/test.jpg"] }));
+  fixture.env.AUTOMATION_PAYLOAD = JSON.stringify(payload);
+  fixture.env.AUTOMATION_PAYLOAD_SIGNATURE = await signAutomationPayload(fixture.env.AUTOMATION_PAYLOAD, fixture.env.AUTOMATION_PAYLOAD_SECRET);
+  const providerSource = await readFile(fixture.preloadPath, "utf8");
+  const failingMediaSource = providerSource.replace("const request = JSON.parse(options.body);",
+    'if (_url.startsWith("https://pbs.twimg.com/")) return new Response("media unavailable", { status: 503 }); const request = JSON.parse(options.body);');
+  await writeFile(fixture.preloadPath, failingMediaSource);
+  const before = JSON.parse(await readFile(fixture.paths[0], "utf8"));
+  Object.assign(before.chapters[0], { releaseAt: "2026-10-01T00:00:00+09:00", preReleaseAt: "2026-09-30", jumpIssue: "44" });
+  await writeFile(fixture.paths[0], JSON.stringify(before));
+
+  await fixture.run();
+  const [status, state, feed] = await Promise.all(fixture.paths.map(async path => JSON.parse(await readFile(path, "utf8"))));
+  assert.equal(status.chapters[0].status, "inking");
+  for (const field of ["releaseAt", "preReleaseAt", "jumpIssue"]) assert.equal(status.chapters[0][field], before.chapters[0][field]);
+  assert.deepEqual(state.pendingAnalysis.map(post => post.id), payload.tweets.map(post => post.id));
+  assert.deepEqual(state.pendingReviews, []);
+  assert.ok(feed.posts.every(post => post.translation.status === "available"));
+  const applied = feed.posts.find(post => post.id === fixture.milestone.id).tracker;
+  assert.deepEqual(applied.changes, [{ chapter: 434, from: "unknown", to: "inking" }]);
+
+  await fixture.run();
+  const retryState = JSON.parse(await readFile(fixture.paths[1], "utf8"));
+  const retryFeed = JSON.parse(await readFile(fixture.paths[2], "utf8"));
+  assert.equal(retryState.pendingAnalysis.length, 2);
+  assert.deepEqual(retryState.pendingReviews, []);
+  assert.deepEqual(retryFeed.posts.find(post => post.id === fixture.milestone.id).tracker, applied);
+
+  await writeFile(fixture.preloadPath, providerSource.replace("const request = JSON.parse(options.body);",
+    'if (_url.startsWith("https://pbs.twimg.com/")) return new Response(new Uint8Array([1, 2, 3]), { headers: { "content-type": "image/jpeg" } }); const request = JSON.parse(options.body);'));
+  await fixture.run();
+  const recoveredState = JSON.parse(await readFile(fixture.paths[1], "utf8"));
+  const recoveredFeed = JSON.parse(await readFile(fixture.paths[2], "utf8"));
+  assert.deepEqual(recoveredState.pendingAnalysis, []);
+  assert.deepEqual(recoveredState.pendingReviews, []);
+  assert.equal(recoveredFeed.posts.find(post => post.id === fixture.illustration.id).tracker.decision, "ignore");
+  assert.deepEqual(recoveredFeed.posts.find(post => post.id === fixture.milestone.id).tracker, applied);
+});
+
+test("invalid structured output still publishes originals while later valid posts are processed", async (t) => {
+  const fixture = await runnerFixture(t, true);
+  const source = await readFile(fixture.preloadPath, "utf8");
+  await writeFile(fixture.preloadPath, source.replace('const request = JSON.parse(options.body);', 'const request = JSON.parse(options.body); if (request.input[0].content[0].text.includes("https://t.co/illustration")) return Response.json({ status: "completed", steps: [] });'));
+  await fixture.run();
+  const [status, state, feed] = await Promise.all(fixture.paths.map(async path => JSON.parse(await readFile(path, "utf8"))));
+  assert.equal(status.chapters[0].status, "inking");
+  assert.deepEqual(state.pendingAnalysis.map(post => post.id), [fixture.illustration.id]);
+  assert.equal(feed.posts[1].translation.status, "unavailable");
+  assert.equal(feed.posts[0].translation.status, "available");
+});
+
+test("missing Gemini configuration still publishes original tweets", async (t) => {
+  const fixture = await runnerFixture(t, true);
+  delete fixture.env.GEMINI_API_KEY;
+  await fixture.run();
+  const feed = JSON.parse(await readFile(fixture.paths[2], "utf8"));
+  assert.equal(feed.posts.length, 2);
+  assert.ok(feed.posts.every(post => post.translation.status === "unavailable"));
+});
+
+test("a failed retry preserves an existing manual translation", async (t) => {
+  const fixture = await runnerFixture(t, true);
+  await fixture.run();
+  const feed = JSON.parse(await readFile(fixture.paths[2], "utf8"));
+  for (const post of feed.posts) Object.assign(post.translation, { provider: "manual", model: null });
+  await writeFile(fixture.paths[2], JSON.stringify(feed));
+  const state = JSON.parse(await readFile(fixture.paths[1], "utf8"));
+  state.pendingAnalysis = [fixture.illustration, fixture.milestone];
+  await writeFile(fixture.paths[1], JSON.stringify(state));
+  const failed = await runnerFixture(t, false);
+  await writeFile(fixture.preloadPath, await readFile(failed.preloadPath, "utf8"));
+  await fixture.run();
+  assert.deepEqual(JSON.parse(await readFile(fixture.paths[2], "utf8")), feed);
+});
+
+test("a raw verdict replay preserves its queued originals without calling Gemini", async (t) => {
+  const fixture = await runnerFixture(t, false);
+  fixture.env.AUTOMATION_VERDICT_FILE = join(fixture.directory, "verdict.json");
+  await fixture.run();
+  const originals = await Promise.all(fixture.paths.map(path => readFile(path, "utf8")));
+  const verdict = await readFile(fixture.env.AUTOMATION_VERDICT_FILE, "utf8");
+  await writeFile(fixture.preloadPath, 'globalThis.fetch = async () => { throw new Error("Gemini must not run while a verdict is pending"); };');
+  const result = await fixture.run();
+  assert.match(result.stdout, /"analyzed":0/);
+  assert.deepEqual(await Promise.all(fixture.paths.map(path => readFile(path, "utf8"))), originals);
+  assert.equal(await readFile(fixture.env.AUTOMATION_VERDICT_FILE, "utf8"), verdict);
+});
+
+test("fresh originals publish while an older notification verdict is pending", async (t) => {
+  const fixture = await runnerFixture(t, false);
+  fixture.env.AUTOMATION_VERDICT_FILE = join(fixture.directory, "verdict.json");
+  await fixture.run();
+  const stateBefore = JSON.parse(await readFile(fixture.paths[1], "utf8"));
+  const next = { ...fixture.milestone, id: "2096000000000000003", url: canonicalTweetUrl("2096000000000000003") };
+  const payload = JSON.parse(fixture.env.AUTOMATION_PAYLOAD);
+  payload.tweets = [next];
+  fixture.env.AUTOMATION_PAYLOAD = JSON.stringify(payload);
+  fixture.env.AUTOMATION_PAYLOAD_SIGNATURE = await signAutomationPayload(fixture.env.AUTOMATION_PAYLOAD, fixture.env.AUTOMATION_PAYLOAD_SECRET);
+  await writeFile(fixture.preloadPath, 'globalThis.fetch = async () => { throw new Error("Gemini must not run while a verdict is pending"); };');
+  await fixture.run();
+  const [status, state, feed] = await Promise.all(fixture.paths.map(async path => JSON.parse(await readFile(path, "utf8"))));
+  assert.deepEqual(status, JSON.parse(fixture.originals[0]));
+  assert.equal(state.lastProcessedTweetId, next.id);
+  assert.deepEqual(state.pendingVerdict, stateBefore.pendingVerdict);
+  assert.equal(state.pendingAnalysis.length, 3);
+  assert.equal(feed.posts.length, 3);
+  assert.equal(feed.posts[0].originalText, next.fullText);
+  assert.equal(feed.posts[0].translation.status, "unavailable");
+});
+
+test("an invalid dispatch signature cannot publish source posts", async (t) => {
+  const fixture = await runnerFixture(t, false);
+  fixture.env.AUTOMATION_PAYLOAD_SIGNATURE = "invalid-signature";
+  await assert.rejects(fixture.run(), /Automation payload signature is invalid/);
+  assert.deepEqual(await Promise.all(fixture.paths.map(path => readFile(path, "utf8"))), fixture.originals);
+});
+
+test("retry backlog is bounded by actual state file bytes while new originals remain archived", async (t) => {
+  const fixture = await runnerFixture(t, false);
+  const state = JSON.parse(fixture.originals[1]);
+  state.pendingAnalysis = Array.from({ length: 50 }, (_, i) => {
+    const id = (2095000000000000000n + BigInt(i)).toString();
+    return { ...fixture.illustration, id, url: canonicalTweetUrl(id), fullText: "source ".repeat(180) };
+  });
+  await writeFile(fixture.paths[1], JSON.stringify(state, null, 2));
+  assert.ok(Buffer.byteLength(await readFile(fixture.paths[1], "utf8")) < 100_000);
+  const payload = JSON.parse(fixture.env.AUTOMATION_PAYLOAD);
+  payload.tweets = payload.tweets.map(post => ({ ...post, fullText: "原文".repeat(1500) }));
+  fixture.env.AUTOMATION_PAYLOAD = JSON.stringify(payload);
+  fixture.env.AUTOMATION_PAYLOAD_SIGNATURE = await signAutomationPayload(fixture.env.AUTOMATION_PAYLOAD, fixture.env.AUTOMATION_PAYLOAD_SECRET);
+  fixture.env.AUTOMATION_VERDICT_FILE = join(fixture.directory, "verdict.json");
+  await fixture.run();
+  const bytes = await readFile(fixture.paths[1]);
+  assert.ok(bytes.length <= 100_000);
+  const nextState = JSON.parse(bytes);
+  assert.ok(nextState.pendingAnalysis.length <= 50);
+  assert.ok(nextState.pendingAnalysis.some(post => post.id === fixture.milestone.id));
+  const feed = JSON.parse(await readFile(fixture.paths[2], "utf8"));
+  assert.equal(feed.posts.length, 2);
+  assert.equal(feed.posts[0].originalText, payload.tweets[1].fullText);
 });

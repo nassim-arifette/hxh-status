@@ -1,4 +1,5 @@
 import statusData from "./status-data.json";
+import { createTrackerRevision } from "../../lib/tracker-revision";
 
 export type ChapterStatus =
   | "published"
@@ -250,4 +251,7 @@ export const publicationStatus: "publishing" | "hiatus" =
     ? "publishing"
     : "hiatus";
 
-export const statusDataRevision = `${sourcePostId(latestUpdate) ?? lastUpdated}-p${latestPublished.chapter}-${publicationStatus === "hiatus" ? "h" : "r"}`;
+export const statusDataRevision = createTrackerRevision(
+  currentStatusData,
+  sourcePostId(latestUpdate) ?? lastUpdated,
+);

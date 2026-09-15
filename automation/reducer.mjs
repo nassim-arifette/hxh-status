@@ -57,6 +57,18 @@ function validateState(value, listId) {
   }
 
   compareSnowflakeIds(value.lastProcessedTweetId, value.lastProcessedTweetId);
+  if (value.pendingAnalysis !== undefined) {
+    if (!Array.isArray(value.pendingAnalysis) || value.pendingAnalysis.length > 50) {
+      throw new Error("Invalid pending analysis queue.");
+    }
+    const ids = new Set();
+    for (const tweet of value.pendingAnalysis) {
+      validateAutomationPayload({ schemaVersion: AUTOMATION_SCHEMA_VERSION,
+        listId, authorId: "1528978792617611264", requestedAt: new Date().toISOString(), tweets: [tweet] });
+      if (ids.has(tweet.id)) throw new Error("Duplicate pending analysis post.");
+      ids.add(tweet.id);
+    }
+  }
   return value;
 }
 
@@ -118,7 +130,9 @@ export function applyAnalyzedEvents({
   let stateChanged = false;
 
   for (const tweet of tweets) {
-    if (compareSnowflakeIds(tweet.id, state.lastProcessedTweetId) <= 0) {
+    const isFresh = compareSnowflakeIds(tweet.id, state.lastProcessedTweetId) > 0;
+    const isRetry = state.pendingAnalysis?.some(post => post.id === tweet.id);
+    if (!isFresh && !isRetry) {
       continue;
     }
 
@@ -127,8 +141,18 @@ export function applyAnalyzedEvents({
       throw new Error(`Missing Gemini analysis for tweet ${tweet.id}.`);
     }
 
-    let evaluation = evaluateAnalysis(tweet, analyzed.analysis);
+    const deferred = analyzed.deferred === true;
+    const retryEnrichment = analyzed.retryEnrichment === true;
+    let evaluation = deferred
+      ? { decision: "review", reason: "Original post published; processing deferred for retry.", updates: [] }
+      : evaluateAnalysis(tweet, analyzed.analysis);
     const changes = [];
+
+    if (deferred || retryEnrichment || isRetry) {
+      state.pendingAnalysis = (state.pendingAnalysis ?? []).filter(post => post.id !== tweet.id);
+      if (deferred || retryEnrichment) state.pendingAnalysis.push(clone(tweet));
+      state.pendingAnalysis = state.pendingAnalysis.slice(-50);
+    }
 
     if (evaluation.decision === "apply") {
       const plannedChanges = [];
@@ -193,7 +217,7 @@ export function applyAnalyzedEvents({
       }
     }
 
-    if (evaluation.decision === "review") {
+    if (evaluation.decision === "review" && !deferred && !retryEnrichment) {
       const item = reviewEntry(
         tweet,
         evaluation.reason,
@@ -211,12 +235,15 @@ export function applyAnalyzedEvents({
       }
     }
 
+    state.recentEvents = state.recentEvents.filter(event => event.tweetId !== tweet.id);
     state.recentEvents.push(
       auditEntry(tweet, evaluation.decision, evaluation.reason, changes),
     );
     state.recentEvents = state.recentEvents.slice(-50);
-    state.lastProcessedTweetId = tweet.id;
-    state.lastProcessedAt = tweet.createdAt;
+    if (isFresh) {
+      state.lastProcessedTweetId = tweet.id;
+      state.lastProcessedAt = tweet.createdAt;
+    }
     state.lastRunAt = payload.requestedAt;
     stateChanged = true;
   }

@@ -37,18 +37,26 @@ async function bashPath() {
   throw new Error("Workflow artifact checks require Git Bash on Windows.");
 }
 
-async function workflowGuard(workflow, step) {
+async function workflowStep(workflow, step) {
   const source = await readFile(new URL(`../.github/workflows/${workflow}`, import.meta.url), "utf8");
   const start = source.indexOf(`      - name: ${step}`);
   assert.ok(start >= 0, `Missing ${step} workflow step.`);
-  const runStart = source.indexOf("        run: |", start);
-  const lines = source.slice(runStart).split(/\r?\n/).slice(1);
+  const nextStep = source.indexOf("\n      - name:", start);
+  const stepSource = source.slice(start, nextStep < 0 ? undefined : nextStep);
+  const runStart = stepSource.indexOf("        run: |");
+  if (runStart < 0) return { source: stepSource, script: null };
+  const lines = stepSource.slice(runStart).split(/\r?\n/).slice(1);
   const scriptLines = [];
   for (const line of lines) {
     if (line.trim() && !line.startsWith("          ")) break;
     scriptLines.push(line.slice(10));
   }
-  const script = scriptLines.join("\n");
+  return { source: stepSource, script: scriptLines.join("\n") };
+}
+
+async function workflowGuard(workflow, step) {
+  const { script } = await workflowStep(workflow, step);
+  assert.ok(script, "Missing workflow shell script.");
   const end = script.indexOf(workflow === "togashi-status.yml"
     ? "if git diff --cached --quiet; then" : "git config user.name");
   assert.ok(end > 0, "Missing boundary after artifact validation.");
@@ -106,6 +114,58 @@ test("a translated post stages every generated Atom feed without status artifact
     assert.ok(staged.includes("public/feed.xml"));
     for (const locale of locales) assert.ok(staged.includes(`public/${locale}/feed.xml`));
     assert.equal(staged.some((path) => path.startsWith("public/badge/") || path.endsWith(".ics")), false);
+  });
+});
+
+test("optional captures and review issues cannot block committing Togashi posts", async () => {
+  const workflow = "togashi-status.yml";
+  const build = await workflowStep(workflow, "Verify the status export");
+  assert.match(build.source, /run: npm run build/);
+  assert.doesNotMatch(build.source, /continue-on-error: true/);
+  const capture = await workflowStep(workflow, "Regenerate share images after a status change");
+  assert.match(capture.source, /continue-on-error: true/);
+  assert.doesNotMatch(capture.script, /npm run build/);
+  const review = await workflowStep(workflow, "Open a review issue for ambiguous evidence");
+  assert.match(review.source, /continue-on-error: true/);
+  const source = await readFile(new URL(`../.github/workflows/${workflow}`, import.meta.url), "utf8");
+  assert.ok(source.indexOf("name: Open a review issue for ambiguous evidence")
+    > source.indexOf("name: Acknowledge the delivered tracker verdict"));
+});
+
+async function failCaptureAfterPartialWrite(directory) {
+  const { script } = await workflowStep("togashi-status.yml", "Regenerate share images after a status change");
+  const simulatedTools = [
+    "npx() { return 0; }",
+    "node() { printf 'partial chart' > public/share/en/production.png; return 1; }",
+  ].join("\n");
+  await assert.rejects(run(await bashPath(), ["-e", "-o", "pipefail", "-c", `${simulatedTools}\n${script}`], {
+    cwd: directory,
+  }), (error) => error.code === 1);
+  assert.equal(await readFile(join(directory, "public/share/en/production.png"), "utf8"), "old chart");
+}
+
+test("a failed partial share capture restores charts and still stages originals and status", async () => {
+  await fixture(async ({ directory, check }) => {
+    const status = structuredClone(initialStatus);
+    status.chapters[2].status = "delivered";
+    await writeFile(join(directory, "app/data/status-data.json"), JSON.stringify(status));
+    await writeFile(join(directory, "app/data/togashi-posts.json"), JSON.stringify([newPost]));
+    await generate(directory, status, [newPost]);
+    await failCaptureAfterPartialWrite(directory);
+    const staged = await check({ feed: true, status: true });
+    assert.ok(staged.includes("app/data/togashi-posts.json"));
+    assert.ok(staged.includes("app/data/status-data.json"));
+    assert.equal(staged.some((path) => path.startsWith("public/share/")), false);
+    for (const locale of locales) assert.ok(staged.includes(`public/${locale}/feed.xml`));
+  });
+});
+
+test("share capture recovery preserves unrelated tracked changes for the artifact guard", async () => {
+  await fixture(async ({ directory, check }) => {
+    await writeFile(join(directory, "public/sw.js"), "unexpected service worker change");
+    await failCaptureAfterPartialWrite(directory);
+    assert.equal(await readFile(join(directory, "public/sw.js"), "utf8"), "unexpected service worker change");
+    await assert.rejects(check({ feed: true, status: true }));
   });
 });
 

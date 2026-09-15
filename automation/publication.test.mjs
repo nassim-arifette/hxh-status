@@ -9,6 +9,7 @@ import { applyScheduledPublications, duePublications } from "./publication.mjs";
 import { trackerRevision, trackerSummary, publicationState } from "./milestones.mjs";
 import { deploymentContainsVerdict } from "./deployment-verification.mjs";
 import { seedFromMilestones, seedNotificationState, selectUnnotified, hasAnnouncements } from "./milestone-dedupe.mjs";
+import { createTrackerRevision } from "../lib/tracker-revision.ts";
 
 const before = structuredClone(data);
 Object.assign(before.chapters.find((row) => row.chapter === 420), { status: "scheduled" });
@@ -21,6 +22,7 @@ test("the frontend and public API agree before and after publication", () => {
   for (const status of [before, applyScheduledPublications(before, schedule, [], at).statusData]) {
     const exports = {};
     vm.runInNewContext(compiled, { exports, require: (path) => {
+      if (path === "../../lib/tracker-revision") return { createTrackerRevision };
       assert.equal(path, "./status-data.json");
       return status;
     } });

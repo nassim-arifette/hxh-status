@@ -118,15 +118,13 @@ const [statusData, state, feed] = await Promise.all([
   readJson(feedPath).then(validateTogashiFeed),
 ]);
 
+const queuedIds = new Set((state.pendingAnalysis ?? []).map(tweet => tweet.id));
 const freshTweets = [...payload.tweets]
   .filter(
-    (tweet) => compareSnowflakeIds(tweet.id, state.lastProcessedTweetId) > 0,
+    (tweet) => compareSnowflakeIds(tweet.id, state.lastProcessedTweetId) > 0 ||
+      (!state.pendingVerdict && queuedIds.has(tweet.id)),
   )
   .sort((left, right) => compareSnowflakeIds(left.id, right.id));
-
-if (state.pendingVerdict && freshTweets.length > 0) {
-  throw new Error("Deliver the committed pending verdict before processing another batch.");
-}
 
 const analyzedEvents = [];
 const processingByTweetId = new Map();
@@ -137,14 +135,26 @@ const geminiFallbackModels = process.env.GEMINI_FALLBACK_MODELS === undefined
   ? (process.env.GEMINI_MODEL ? [] : ["gemini-3.5-flash"])
   : process.env.GEMINI_FALLBACK_MODELS.split(",").map(model => model.trim()).filter(Boolean);
 
+let providerUnavailable = Boolean(state.pendingVerdict);
 for (const tweet of freshTweets) {
-  const result = await analyzeTweet({
-    tweet,
-    currentChapters: statusData.chapters,
-    apiKey: process.env.GEMINI_API_KEY,
-    model: geminiModel,
-    fallbackModels: geminiFallbackModels,
-  });
+  let result;
+  try {
+    if (providerUnavailable) throw new Error("Post processing is deferred.");
+    result = await analyzeTweet({
+      tweet,
+      currentChapters: statusData.chapters,
+      apiKey: process.env.GEMINI_API_KEY,
+      model: geminiModel,
+      fallbackModels: geminiFallbackModels,
+    });
+  } catch (error) {
+    // Source admission is authenticated above. Enrichment failures must never
+    // prevent that original text, media and link from appearing in the feed.
+    providerUnavailable ||= [429, 500, 502, 503, 504].includes(error?.status) ||
+      !process.env.GEMINI_API_KEY;
+    console.warn(`Post ${tweet.id} published as original; processing queued for retry.`);
+    result = { deferred: true, translations: null, imageTexts: [], mediaErrors: [] };
+  }
 
   processingByTweetId.set(tweet.id, result);
 
@@ -152,6 +162,8 @@ for (const tweet of freshTweets) {
     tweetId: tweet.id,
     analysis: result.analysis,
     verification: result.verification,
+    deferred: result.deferred === true,
+    retryEnrichment: result.mediaErrors.length > 0,
   });
 
   for (const mediaError of result.mediaErrors) {
@@ -162,7 +174,7 @@ for (const tweet of freshTweets) {
 const result = applyAnalyzedEvents({
   statusData,
   state,
-  payload,
+  payload: { ...payload, tweets: freshTweets },
   analyzedEvents,
 });
 
@@ -176,7 +188,11 @@ const incomingPosts = freshTweets.map((tweet) => {
     throw new Error(`Missing public feed data for tweet ${tweet.id}.`);
   }
 
-  return createTogashiPost({
+  // A retry cannot erase translations or tracker history already published.
+  const existing = feed.posts.find(post => post.id === tweet.id);
+  if (processing.deferred && existing) return existing;
+
+  const post = createTogashiPost({
     tweet,
     translations: processing.translations ?? null,
     imageTexts: processing.imageTexts ?? [],
@@ -184,6 +200,15 @@ const incomingPosts = freshTweets.map((tweet) => {
     translatedAt: payload.requestedAt,
     audit,
   });
+  if (existing && post.tracker.changes.length === 0 && existing.tracker.changes.length > 0) {
+    post.tracker = structuredClone(existing.tracker);
+  }
+  if (existing && processing.mediaErrors.length > 0) {
+    const imageTexts = new Map((existing.imageTexts ?? []).map(image => [image.imageIndex, image]));
+    for (const image of post.imageTexts) imageTexts.set(image.imageIndex, image);
+    post.imageTexts = [...imageTexts.values()].sort((left, right) => left.imageIndex - right.imageIndex);
+  }
+  return post;
 });
 const nextFeed = mergeTogashiFeed(feed, incomingPosts);
 const feedChanged = JSON.stringify(nextFeed) !== JSON.stringify(feed);
@@ -207,7 +232,7 @@ if (result.reviewItems.length > 0 && process.env.AUTOMATION_REVIEW_FILE) {
 // The Worker is holding every post alert from this batch until it hears what
 // the reducer decided. Write that verdict — including "nothing moved", which is
 // what releases the post alert straight away instead of letting it time out.
-if (process.env.AUTOMATION_VERDICT_FILE && freshTweets.length > 0) {
+if (process.env.AUTOMATION_VERDICT_FILE && freshTweets.length > 0 && !state.pendingVerdict) {
   const posts = freshTweets.map((tweet) => {
     const processing = processingByTweetId.get(tweet.id);
     const audit = auditByTweetId.get(tweet.id);
@@ -249,7 +274,19 @@ if (result.state.pendingVerdict && process.env.AUTOMATION_VERDICT_FILE) {
 }
 
 if (result.stateChanged) {
-  if (Buffer.byteLength(JSON.stringify(result.state), "utf8") > 100_000) {
+  const stateBytes = () => Buffer.byteLength(`${JSON.stringify(result.state, null, 2)}\n`, "utf8");
+  // Keep originals in the archive even when a long outage fills the retry queue.
+  // Budget the actual file bytes, including the pending notification verdict.
+  while (stateBytes() > 100_000 && result.state.pendingAnalysis?.length) {
+    result.state.pendingAnalysis.shift();
+  }
+  while (stateBytes() > 100_000 && result.state.recentEvents.length > 1) {
+    result.state.recentEvents.shift();
+  }
+  while (stateBytes() > 100_000 && result.state.pendingReviews.length > 1) {
+    result.state.pendingReviews.shift();
+  }
+  if (stateBytes() > 100_000) {
     throw new Error("Automation state exceeds the GitHub reader safety limit.");
   }
   await writeJsonAtomically(statePath, result.state);

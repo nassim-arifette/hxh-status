@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { runAutomation } from "./index.mjs";
+import siteWorker, { runAutomation } from "./index.mjs";
 
 const env = {
   AUTOMATION_ENABLED: "true",
@@ -54,7 +54,7 @@ function state(lastProcessedTweetId = "2094673907626414299") {
   };
 }
 
-function fetchRouter({ active = false, cursor, timelineStatus = 200 } = {}) {
+function fetchRouter({ active = false, cursor, timelineStatus = 200, repositoryState } = {}) {
   const calls = [];
 
   return {
@@ -76,7 +76,7 @@ function fetchRouter({ active = false, cursor, timelineStatus = 200 } = {}) {
       }
 
       if (url.includes("/contents/automation/state.json")) {
-        return new Response(JSON.stringify(state(cursor)), { status: 200 });
+        return new Response(JSON.stringify(repositoryState ?? state(cursor)), { status: 200 });
       }
 
       if (url.endsWith("/dispatches")) {
@@ -102,7 +102,7 @@ test("disabled automation performs no network calls", async () => {
   assert.equal(calls, 0);
 });
 
-test("an acknowledged tweet with a pending verdict is retried without loading X", async () => {
+test("an acknowledged tweet with a pending verdict is retried when X is unavailable", async () => {
   const router = fetchRouter();
   await runAutomation(env, router.fetch);
   const original = router.calls.find((call) => call.url.endsWith("/dispatches"));
@@ -114,7 +114,7 @@ test("an acknowledged tweet with a pending verdict is retried without loading X"
     calls.push({ url, options });
     if (url.includes("/contents/")) return Response.json(pendingState);
     return router.fetch(url, options);
-  }, () => assert.fail("A verdict retry must not query X"));
+  }, () => { throw new Error("X unavailable during verdict retry"); });
   assert.equal(result.pendingVerdict, true);
   const retry = JSON.parse(JSON.parse(calls.find((call) => call.url.endsWith("/dispatches")).options.body).inputs.payload);
   assert.deepEqual(retry.tweets, payload.tweets);
@@ -185,4 +185,180 @@ test("timeline HTTP failures fail closed", async () => {
     router.calls.some(({ url }) => url.endsWith("/dispatches")),
     false,
   );
+});
+
+function retryTweet(id = "2096000000000000001") {
+  return {
+    id,
+    authorId: env.TOGASHI_USER_ID,
+    screenName: "Un4v5s8bgsVk9Xp",
+    createdAt: "2026-09-02T12:00:00.000Z",
+    url: `https://x.com/Un4v5s8bgsVk9Xp/status/${id}`,
+    fullText: "No.434、人物ペン入れ完了。",
+    mediaUrls: [],
+  };
+}
+
+function dispatchedTweets(router) {
+  const dispatch = router.calls.find(({ url }) => url.endsWith("/dispatches"));
+  return dispatch
+    ? JSON.parse(JSON.parse(dispatch.options.body).inputs.payload).tweets
+    : [];
+}
+
+test("scheduled fallback retries cursor-covered analysis without any new timeline post", async () => {
+  const pending = retryTweet();
+  const repositoryState = { ...state(pending.id), pendingAnalysis: [pending] };
+  const router = fetchRouter({ repositoryState });
+  const previousFetch = globalThis.fetch;
+  globalThis.fetch = router.fetch;
+  try {
+    await siteWorker.scheduled({ cron: "fallback" }, {
+      ...env, PUSH_NOTIFICATIONS_ENABLED: "false",
+    });
+  } finally {
+    globalThis.fetch = previousFetch;
+  }
+  assert.deepEqual(dispatchedTweets(router), [pending]);
+  assert.equal(router.calls.filter(({ url }) => url.includes("/contents/")).length, 1);
+});
+
+test("only recorded pending analysis is retried below the cursor", async () => {
+  const pending = retryTweet("2096000000000000001");
+  const completed = retryTweet("2096000000000000002");
+  const repositoryState = { ...state(completed.id), pendingAnalysis: [pending] };
+  const router = fetchRouter({ repositoryState });
+  const result = await runAutomation(env, router.fetch, async () => [pending, completed]);
+  assert.deepEqual(result, { dispatched: true, count: 1 });
+  assert.deepEqual(dispatchedTweets(router), [pending]);
+});
+
+test("pending verdict delivery precedes deferred analysis", async () => {
+  const pending = retryTweet("2096000000000000001");
+  const verdictTweet = retryTweet("2096000000000000002");
+  const payload = {
+    schemaVersion: 1,
+    listId: env.TOGASHI_LIST_ID,
+    authorId: env.TOGASHI_USER_ID,
+    requestedAt: "2026-09-02T12:00:00.000Z",
+    tweets: [verdictTweet],
+  };
+  const repositoryState = {
+    ...state(verdictTweet.id),
+    pendingAnalysis: [pending],
+    pendingVerdict: { payload, verdict: { revision: "pending" } },
+  };
+  const router = fetchRouter({ repositoryState });
+  const result = await runAutomation(env, router.fetch, async () => [verdictTweet]);
+  assert.deepEqual(result, { dispatched: true, count: 0, pendingVerdict: true });
+  assert.deepEqual(dispatchedTweets(router), [verdictTweet]);
+});
+
+test("a pending verdict dispatch also admits new originals without retrying old analysis", async () => {
+  const pending = retryTweet("2096000000000000001");
+  const verdictTweet = retryTweet("2096000000000000002");
+  const fresh = retryTweet("2096000000000000003");
+  const repositoryState = {
+    ...state(verdictTweet.id),
+    pendingAnalysis: [pending],
+    pendingVerdict: {
+      payload: {
+        schemaVersion: 1,
+        listId: env.TOGASHI_LIST_ID,
+        authorId: env.TOGASHI_USER_ID,
+        requestedAt: "2026-09-02T12:00:00.000Z",
+        tweets: [verdictTweet],
+      },
+      verdict: { revision: "pending" },
+    },
+  };
+  const router = fetchRouter({ repositoryState });
+  const result = await runAutomation(env, router.fetch, async () => [pending, verdictTweet, fresh]);
+  assert.deepEqual(result, { dispatched: true, count: 1, pendingVerdict: true });
+  assert.deepEqual(dispatchedTweets(router), [verdictTweet, fresh]);
+});
+
+test("a full pending verdict batch reserves space for a new original", async () => {
+  for (const large of [false, true]) {
+    const retained = Array.from({ length: 5 }, (_, index) => ({
+      ...retryTweet(`209600000000000000${index + 1}`),
+      ...(large ? { fullText: "x".repeat(8_000) } : {}),
+    }));
+    const fresh = {
+      ...retryTweet("2096000000000000006"),
+      ...(large ? { fullText: "完".repeat(10_000) } : {}),
+    };
+    const repositoryState = {
+      ...state(retained.at(-1).id),
+      pendingVerdict: {
+        payload: {
+          schemaVersion: 1,
+          listId: env.TOGASHI_LIST_ID,
+          authorId: env.TOGASHI_USER_ID,
+          requestedAt: "2026-09-02T12:00:00.000Z",
+          tweets: retained,
+        },
+        verdict: { revision: "pending" },
+      },
+    };
+    const router = fetchRouter({ repositoryState });
+    const result = await runAutomation(env, router.fetch, async () => [...retained, fresh]);
+    assert.deepEqual(result, { dispatched: true, count: 1, pendingVerdict: true });
+    assert.deepEqual(dispatchedTweets(router), [...retained.slice(0, large ? 2 : 4), fresh]);
+    const dispatch = router.calls.find(({ url }) => url.endsWith("/dispatches"));
+    assert.ok(Buffer.byteLength(JSON.parse(dispatch.options.body).inputs.payload) <= 50_000);
+  }
+});
+
+test("deferred analysis retries survive an unavailable timeline", async () => {
+  const pending = retryTweet();
+  const router = fetchRouter({
+    timelineStatus: 429,
+    repositoryState: { ...state(pending.id), pendingAnalysis: [pending] },
+  });
+  assert.deepEqual(await runAutomation(env, router.fetch), { dispatched: true, count: 1 });
+  assert.deepEqual(dispatchedTweets(router), [pending]);
+});
+
+test("fresh posts take batch space before deferred analysis and IDs are deduplicated", async () => {
+  const pending = retryTweet("2096000000000000001");
+  const fresh = Array.from({ length: 5 }, (_, index) =>
+    retryTweet(`209600000000000000${index + 2}`));
+  const router = fetchRouter({
+    repositoryState: { ...state(pending.id), pendingAnalysis: [pending, fresh[0]] },
+  });
+  const result = await runAutomation(env, router.fetch, async () => fresh);
+  assert.deepEqual(result, { dispatched: true, count: 5 });
+  assert.deepEqual(dispatchedTweets(router), fresh);
+});
+
+test("a pending post also present above the cursor is dispatched once", async () => {
+  const pending = retryTweet();
+  const router = fetchRouter({
+    repositoryState: { ...state(), pendingAnalysis: [pending] },
+  });
+  assert.deepEqual(await runAutomation(env, router.fetch, async () => [pending]), {
+    dispatched: true, count: 1,
+  });
+  assert.deepEqual(dispatchedTweets(router), [pending]);
+});
+
+test("removing completed pending analysis stops later redispatches", async () => {
+  const completed = retryTweet();
+  const router = fetchRouter({
+    repositoryState: { ...state(completed.id), pendingAnalysis: [] },
+  });
+  assert.deepEqual(await runAutomation(env, router.fetch, async () => [completed]), {
+    dispatched: false, count: 0,
+  });
+  assert.deepEqual(dispatchedTweets(router), []);
+});
+
+test("an empty timeline still retries stored analysis", async () => {
+  const pending = retryTweet();
+  const router = fetchRouter({
+    repositoryState: { ...state(pending.id), pendingAnalysis: [pending] },
+  });
+  assert.deepEqual(await runAutomation(env, router.fetch, async () => []), { dispatched: true, count: 1 });
+  assert.deepEqual(dispatchedTweets(router), [pending]);
 });

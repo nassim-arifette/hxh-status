@@ -30,12 +30,13 @@ X Activity post.create webhook on a secret callback path
   -> withhold the post alert until the Action reports a verdict
   -> serialized GitHub Action
   -> verify signature and freshness before Gemini or repository writes
-  -> one successful Gemini call for extraction plus all seven post-text variants
-  -> independent deterministic validation of the tracker decision and translations
-  -> report the verdict to the Worker before the slow build steps
-  -> Worker announces tracker milestones, or releases the held post alert with its cached translation
+  -> attempt Gemini extraction plus all seven post-text variants
+  -> validate successful analysis and translations independently
+  -> on enrichment failure, publish original text, media, and source and queue analysis for retry
   -> cache translations by post ID and commit data, state, and generated public assets together
   -> Cloudflare deploy from the resulting repository update
+  -> verify the deployed revision and report the retained verdict to the Worker
+  -> Worker announces tracker milestones, or releases the held post alert
 
 Retry Cron (every five minutes)
   -> resume incomplete webhook jobs from KV through the same serialized runner
@@ -44,13 +45,16 @@ Retry Cron (every five minutes)
 Fallback Cron (every 15 minutes)
   -> fetch the legacy syndication list
   -> recover any post missing from GitHub state or the push cursor
+  -> retry stored posts whose analysis failed, even after the ingestion cursor advanced
 ```
 
-`automation/state.json` is the canonical cursor. It advances only in the same
-repository update that records the result. A failed Action therefore leaves the
-post available for a later retry. The event Worker persists incomplete jobs and
-the fallback checks the same cursor. Both paths check for a queued or running
-Action before dispatching, which avoids paying for duplicate Gemini runs.
+`automation/state.json` is the canonical ingestion cursor. It advances in the
+same repository update that records the original post or enriched result.
+Enrichment failures also retain the original payload in `pendingAnalysis`, so
+retrying does not depend on the cursor or the post remaining in X's timeline.
+A failure before committing leaves the post available for ingestion again.
+Both entry paths check for a queued or running Action before dispatching,
+which avoids paying for duplicate Gemini runs.
 
 Both entry paths are serialized inside the event Worker. The primary queue is
 always drained before syndication runs. If two Worker isolates still receive the
@@ -116,20 +120,29 @@ The default model is `gemini-3.7-flash`. If it returns a rate-limit or server
 error, processing can fall back to `gemini-3.5-flash` through the same extraction,
 translation, and validation rules. A rate-limit response is not immediately
 retried against the exhausted model. The feed records the model that actually
-produced each translation. Authentication errors and invalid model output still
-stop processing; they cannot trigger fallback or advance the cursor.
+produced each translation. Provider authentication errors and invalid model
+output do not trigger another model; they publish the original post and queue
+processing for retry.
 
 An explicit `GEMINI_MODEL` override disables the implicit fallback. Set
 `GEMINI_FALLBACK_MODELS` to a comma-separated list to configure fallbacks for an
 override, or to an empty string to disable all model fallback. The GitHub Action
 uses the defaults unless its processing environment supplies these variables.
 
-If every configured model is unavailable, the Action leaves the tracker, feed,
-and cursor unchanged for a later retry. A maintainer can restore verified source
-posts during the outage with manual translations (`provider: "manual"`,
-`model: null`) and a directly sourced tracker correction. Keep the automation
-cursor unchanged so normal processing can resume after the provider recovers.
-Manual recovery does not confirm delivery of the Worker's held notifications.
+Any enrichment failure, including missing Gemini credentials, unavailable
+models, invalid output, or failed media downloads, keeps the verified Japanese
+text, images, and X source publishable automatically. Failed analysis records
+translations as unavailable and does not infer tracker milestones. A partial
+media failure can retain validated text translations and deterministic text
+milestones while queuing the missing image analysis. Existing
+cached translations remain intact if a retry fails. Successful retries replace
+the original-only entry with validated translations and tracker analysis,
+without adding duplicate posts or moving the ingestion cursor backward.
+
+The fallback dispatch prioritizes new posts, then retries the stored queue in
+bounded batches. Failed retries rotate to the end. The queue holds at most 50
+posts; older queue entries may be dropped to keep the actual state file within
+the 100 KB reader limit. Their original feed entries remain published.
 
 The public API is generated from this committed cache during `npm run build`.
 Cloudflare serves `/api/v1/*` as static assets, so bot polling performs no X,
@@ -181,8 +194,10 @@ configured and a dry run has succeeded. Then enable and deploy both configs.
 
 The normal Cloudflare build command is only `npm run build`. It does not install
 Chromium or regenerate Share PNGs. The GitHub Action does that heavier work only
-when a validated post actually changes a chapter status; ignored and ambiguous
-posts only advance `automation/state.json`.
+when a validated post actually changes a chapter status. Other posts update the
+feed and automation state. Failed share-image captures restore the previous
+images and do not block committing posts; creating a review Issue is also
+non-blocking. The static export must still build successfully before committing.
 
 To prevent a state-only automation commit, documentation change, or workflow
 change from triggering any Cloudflare deployment, configure **Build watch
@@ -271,8 +286,11 @@ lists, so waiting costs no extra KV listing.
 `automation/state.json` retains one `pendingVerdict` with its original validated
 payload and cached translations until the Action verifies deployment, delivers
 the verdict and commits its acknowledgement. Pending delivery takes priority
-over new analysis. The fallback retries that committed payload without calling
-X for analysis or Gemini again, including after the tweet cursor has advanced.
+over new analysis, while fresh posts can still be admitted as originals and
+queued for enrichment. The fallback retries the retained verdict unchanged
+without calling Gemini again, including after the tweet cursor has advanced.
+It also checks the timeline for fresh originals; a timeline outage does not
+prevent replaying the stored verdict.
 If a push arrives too late for the ten-minute hold, the Japanese fallback may
 already have been sent; the later tracker milestone remains a distinct update.
 
@@ -447,10 +465,14 @@ Then call Wrangler's local scheduled-handler URL. A disabled run should log
 
 ## Failure behavior
 
-The integration fails closed on an unexpected author, reply, repost, malformed
-timeline, stale feed, oversized response, invalid timestamp, invalid Gemini
-schema, non-completed Gemini response, unsafe media host, or protected status.
+Source admission rejects invalid signatures, unexpected authors, replies,
+reposts, malformed timelines, stale dispatches, oversized responses, invalid
+timestamps, and unsafe media hosts before any repository writes. Failed source
+validation cannot publish an unverified post.
 
-Network calls use timeouts. Temporary Gemini errors are retried with bounded
-backoff. A missing image with no sufficient tweet text becomes a review item
-instead of being silently ignored.
+Enrichment errors, including invalid Gemini schemas and non-completed
+responses, publish originals and queue processing for retry. Media download
+failures also retain the post for automatic retry. Network calls use
+timeouts and temporary Gemini errors have bounded backoff. A missing image with
+no sufficient tweet text becomes a review item if analysis completes. Tracker
+validation continues to reject protected states regardless of feed publication.

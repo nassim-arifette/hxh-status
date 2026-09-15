@@ -59,39 +59,26 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run automation:process
 
+      - name: Verify the status export
+        if: steps.process.outputs.status_changed == 'true'
+        run: npm run build
+
       - name: Regenerate share images after a status change
         if: steps.process.outputs.status_changed == 'true'
+        continue-on-error: true
+        shell: bash
         run: |
-          npm run build
-          npx playwright install --with-deps --only-shell chromium
-          node scripts/generate-share-images.mjs
+          if ! npx playwright install --with-deps --only-shell chromium ||
+             ! node scripts/generate-share-images.mjs; then
+            # Captures can fail after writing some images. Keep the previous
+            # complete set while publishing the posts and tracker update.
+            git restore --worktree -- public/share
+            exit 1
+          fi
 
       - name: Verify the translated feed export
         if: steps.process.outputs.feed_changed == 'true' && steps.process.outputs.status_changed != 'true'
         run: npm run build
-
-      - name: Open a review issue for ambiguous evidence
-        if: steps.process.outputs.review_needed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REVIEW_FILE: ${{ runner.temp }}/togashi-review.md
-          REVIEW_TWEET_ID: ${{ steps.process.outputs.review_tweet_id }}
-        shell: bash
-        run: |
-          review_title="review: Togashi post ${REVIEW_TWEET_ID}"
-          existing_titles="$(gh issue list \
-            --repo "$GITHUB_REPOSITORY" \
-            --state all \
-            --limit 1000 \
-            --json title \
-            --jq '.[].title')"
-
-          if ! grep -Fqx -- "$review_title" <<< "$existing_titles"; then
-            gh issue create \
-              --repo "$GITHUB_REPOSITORY" \
-              --title "$review_title" \
-              --body-file "$REVIEW_FILE"
-          fi
 
       - name: Commit the validated result
         if: steps.process.outputs.state_changed == 'true'
@@ -207,3 +194,27 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: acknowledge tracker notification delivery"
           git push origin HEAD:main
+
+      - name: Open a review issue for ambiguous evidence
+        if: steps.process.outputs.review_needed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_FILE: ${{ runner.temp }}/togashi-review.md
+          REVIEW_TWEET_ID: ${{ steps.process.outputs.review_tweet_id }}
+        shell: bash
+        run: |
+          review_title="review: Togashi post ${REVIEW_TWEET_ID}"
+          existing_titles="$(gh issue list \
+            --repo "$GITHUB_REPOSITORY" \
+            --state all \
+            --limit 1000 \
+            --json title \
+            --jq '.[].title')"
+
+          if ! grep -Fqx -- "$review_title" <<< "$existing_titles"; then
+            gh issue create \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$review_title" \
+              --body-file "$REVIEW_FILE"
+          fi

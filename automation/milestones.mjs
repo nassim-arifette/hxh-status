@@ -3,6 +3,7 @@ import {
   TOGASHI_SOURCE_LABEL,
   TRACKER_STATUSES,
 } from "./contracts.mjs";
+import { createTrackerRevision } from "../lib/tracker-revision.ts";
 
 // Weekly Jump skips issues routinely; a gap past roughly five weeks is a break
 // rather than the normal schedule. This mirrors `publicationStatus` in
@@ -171,10 +172,8 @@ export function trackerRevision(statusData) {
     return chapter.chapter > best.chapter ? chapter : best;
   }, undefined);
 
-  const published = completeThrough(orderedChapters(statusData), STATUS_RANK.published);
   const base = (latest && sourcePostId(latest)) || statusData.lastUpdated;
-  // Official publication changes need a new image/API revision even without a tweet.
-  return `${base}-p${published.chapter}-${publicationState(statusData) === "hiatus" ? "h" : "r"}`;
+  return createTrackerRevision(statusData, base);
 }
 
 // Everything a third party would otherwise have to re-derive from the raw

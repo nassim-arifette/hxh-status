@@ -2,6 +2,7 @@ import {
   AUTOMATION_SCHEMA_VERSION,
   TOGASHI_USER_ID,
   assertSnowflakeId,
+  compareSnowflakeIds,
   validateAutomationPayload,
 } from "../automation/contracts.mjs";
 import {
@@ -101,25 +102,66 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
   }
 
   if (state.pendingVerdict) {
-    const payload = validateAutomationPayload({
+    const retained = validateAutomationPayload({
       ...state.pendingVerdict.payload, requestedAt: new Date().toISOString(),
     });
-    if (env.AUTOMATION_DRY_RUN === "true") return { dispatched: false, count: 0, pendingVerdict: true };
+    let fresh = [];
+    try {
+      fresh = selectUnseenTweets(await loadTimeline(), state.lastProcessedTweetId, MAX_TWEETS_PER_RUN);
+    } catch {
+      console.warn("Togashi timeline unavailable; retrying the retained verdict.");
+    }
+    // The Action delivers its stored verdict unchanged and admits new IDs as
+    // raw posts while that delivery is pending. Prioritize those IDs so even a
+    // full retained payload cannot block publication of new originals.
+    const tweetsById = new Map();
+    for (const tweet of [...fresh, ...retained.tweets]) {
+      if (!tweetsById.has(tweet.id)) tweetsById.set(tweet.id, tweet);
+    }
+    const payload = fresh.length === 0 ? retained : buildPayload({
+      listId,
+      authorId: expectedUserId,
+      tweets: [...tweetsById.values()].slice(0, MAX_TWEETS_PER_RUN),
+    });
+    payload.tweets.sort((left, right) => compareSnowflakeIds(left.id, right.id));
+    const freshIds = new Set(fresh.map((tweet) => tweet.id));
+    const count = payload.tweets.filter((tweet) => freshIds.has(tweet.id)).length;
+    if (env.AUTOMATION_DRY_RUN === "true") return { dispatched: false, count, pendingVerdict: true };
     await dispatchAutomationWorkflow({
       ...githubConfig, payload, payloadSecret: requiredEnv(env, "AUTOMATION_PAYLOAD_SECRET"),
     }, fetchImpl);
-    return { dispatched: true, count: 0, pendingVerdict: true };
+    return { dispatched: true, count, pendingVerdict: true };
   }
 
-  const tweets = await loadTimeline();
+  const pending = state.pendingAnalysis ?? [];
+  if (!Array.isArray(pending)) {
+    throw new Error("Repository pending analysis must be an array.");
+  }
+  let unseen;
+  try {
+    unseen = selectUnseenTweets(
+      await loadTimeline(),
+      state.lastProcessedTweetId,
+      MAX_TWEETS_PER_RUN,
+    );
+  } catch (error) {
+    if (pending.length === 0) throw error;
+    // Stored posts carry the validated original text and media, so an X
+    // outage must not prevent the Action from retrying their processing.
+    console.warn("Togashi timeline unavailable; retrying stored analysis.");
+    unseen = [];
+  }
 
-  const unseen = selectUnseenTweets(
-    tweets,
-    state.lastProcessedTweetId,
-    MAX_TWEETS_PER_RUN,
-  );
+  // Give new posts the available dispatch space first, then retry only IDs
+  // explicitly retained by the Action. Completed posts below the ingestion
+  // cursor stay skipped; pending posts no longer depend on that cursor.
+  const tweetsById = new Map();
+  for (const tweet of [...unseen, ...pending]) {
+    if (!tweetsById.has(tweet.id)) tweetsById.set(tweet.id, tweet);
+  }
+  const selected = [...tweetsById.values()].slice(0, MAX_TWEETS_PER_RUN);
 
-  if (unseen.length === 0) {
+  if (selected.length === 0) {
     console.log("Togashi timeline checked: no new posts.");
     return { dispatched: false, count: 0 };
   }
@@ -127,8 +169,9 @@ export async function runAutomation(env, fetchImpl = fetch, timelineLoader) {
   const payload = buildPayload({
     listId,
     authorId: expectedUserId,
-    tweets: unseen,
+    tweets: selected,
   });
+  payload.tweets.sort((left, right) => compareSnowflakeIds(left.id, right.id));
 
   if (env.AUTOMATION_DRY_RUN === "true") {
     console.log(
