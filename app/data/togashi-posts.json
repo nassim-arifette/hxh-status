@@ -66,20 +66,34 @@
       "mediaUrls": [
         "https://pbs.twimg.com/media/HSQfHKXagAATBbe.jpg"
       ],
-      "imageTexts": [],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "共同印刷 様\n\n週刊少年ジャンプ　　号\n\n品名　　H x H　428話\n\n総頁数　19　P\n\n入稿印　返却印\n編集担当\n製版①\n製版②\n活版\n営業\n\n入稿日　平成　年　月　日\n\n返却日　平成　年　月　日",
+          "translations": {
+            "ar": "إلى: Kyodo Printing Co., Ltd.\n\nويكلي شونن جامب، العدد [ ]\n\nاسم المادة: H x H، الفصل 428\n\nإجمالي الصفحات: 19 صفحة\n\nختم الإرسال | ختم الإرجاع\nالمحرر المسؤول\nالفرز والتحضير الطباعي ①\nالفرز والتحضير الطباعي ②\nالطباعة البارزة\nالمبيعات\n\nتاريخ الإرسال: هيسي [ ] سنة [ ] شهر [ ] يوم\n\nتاريخ الإرجاع: هيسي [ ] سنة [ ] شهر [ ] يوم",
+            "en": "To: Kyodo Printing Co., Ltd.\n\nWeekly Shonen Jump Issue [ ]\n\nItem Name: H x H Chapter 428\n\nTotal Pages: 19 P\n\nSubmission Stamp | Return Stamp\nEditor in Charge\nPlatemaking ①\nPlatemaking ②\nLetterpress\nSales\n\nSubmission Date: Heisei [ ] Year [ ] Month [ ] Day\n\nReturn Date: Heisei [ ] Year [ ] Month [ ] Day",
+            "es": "Para: Kyodo Printing Co., Ltd.\n\nWeekly Shonen Jump N.º [ ]\n\nNombre del artículo: H x H Capítulo 428\n\nTotal de páginas: 19 P\n\nSello de entrega | Sello de devolución\nEditor a cargo\nFotomecánica ①\nFotomecánica ②\nTipografía\nVentas\n\nFecha de entrega: Heisei [ ] Año [ ] Mes [ ] Día\n\nFecha de devolución: Heisei [ ] Año [ ] Mes [ ] Día",
+            "fr": "À l'attention de : Kyodo Printing Co., Ltd.\n\nWeekly Shonen Jump N° [ ]\n\nTitre : H x H Chapitre 428\n\nNombre total de pages : 19 P\n\nTampon de dépôt | Tampon de retour\nResponsable éditorial\nPhotogravure ①\nPhotogravure ②\nTypographie\nCommercial\n\nDate de dépôt : Heisei [ ] Année [ ] Mois [ ] Jour\n\nDate de retour : Heisei [ ] Année [ ] Mois [ ] Jour",
+            "ja": "共同印刷 様\n\n週刊少年ジャンプ　　号\n\n品名　　H x H　428話\n\n総頁数　19　P\n\n入稿印　返却印\n編集担当\n製版①\n製版②\n活版\n営業\n\n入稿日　平成　年　月　日\n\n返却日　平成　年　月　日",
+            "pt": "Para: Kyodo Printing Co., Ltd.\n\nWeekly Shonen Jump Edição [ ]\n\nNome do item: H x H Capítulo 428\n\nTotal de páginas: 19 P\n\nCarimbo de entrega | Carimbo de devolução\nEditor responsável\nFotolito ①\nFotolito ②\nTipografia\nVendas\n\nData de entrega: Heisei [ ] Ano [ ] Mês [ ] Dia\n\nData de devolução: Heisei [ ] Ano [ ] Mês [ ] Dia",
+            "zh": "共同印刷 阁下\n\n周刊少年JUMP　　号\n\n品名　　H x H　428话\n\n总页数　19　P\n\n入稿印　返还印\n责任编辑\n制版①\n制版②\n活版\n营业\n\n入稿日　平成　年　月　日\n\n返还日　平成　年　月　日"
+          }
+        }
+      ],
       "translation": {
         "status": "available",
-        "provider": "manual",
-        "model": null,
-        "generatedAt": "2026-09-15T14:20:02.071Z",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-09-29T06:30:35.982Z",
         "texts": {
-          "ar": "رقم 428، اكتملت المخطوطة. https://t.co/UZ81Z8Weex",
+          "ar": "No.428، اكتملت المخطوطة. https://t.co/UZ81Z8Weex",
           "en": "No.428, manuscript complete. https://t.co/UZ81Z8Weex",
           "es": "No.428, manuscrito terminado. https://t.co/UZ81Z8Weex",
           "fr": "No.428, manuscrit terminé. https://t.co/UZ81Z8Weex",
           "ja": "No.428、原稿完成。 https://t.co/UZ81Z8Weex",
           "pt": "No.428, manuscrito concluído. https://t.co/UZ81Z8Weex",
-          "zh": "No.428，原稿完成。 https://t.co/UZ81Z8Weex"
+          "zh": "No.428、原稿完成。 https://t.co/UZ81Z8Weex"
         }
       },
       "tracker": {
