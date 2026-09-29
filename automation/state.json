@@ -39,49 +39,5 @@
     }
   ],
   "pendingReviews": [],
-  "pendingAnalysis": [],
-  "pendingVerdict": {
-    "payload": {
-      "schemaVersion": 1,
-      "listId": "2095219478636495163",
-      "authorId": "1528978792617611264",
-      "requestedAt": "2026-09-29T07:45:24.466Z",
-      "tweets": [
-        {
-          "id": "2103523865637134659",
-          "authorId": "1528978792617611264",
-          "screenName": "Un4v5s8bgsVk9Xp",
-          "createdAt": "2026-09-25T16:35:45.000Z",
-          "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2103523865637134659",
-          "fullText": "https://t.co/FmlKlUrQI9",
-          "mediaUrls": [
-            "https://pbs.twimg.com/media/HTE3zjpbsAAIfzX.jpg"
-          ]
-        }
-      ]
-    },
-    "verdict": {
-      "requestedAt": "2026-09-29T07:46:06.244Z",
-      "revision": "2099837550617903464-4f425be96d942e9d",
-      "posts": [
-        {
-          "id": "2103523865637134659",
-          "notification": "raw",
-          "translations": {
-            "ar": "https://t.co/FmlKlUrQI9",
-            "en": "https://t.co/FmlKlUrQI9",
-            "es": "https://t.co/FmlKlUrQI9",
-            "fr": "https://t.co/FmlKlUrQI9",
-            "ja": "https://t.co/FmlKlUrQI9",
-            "pt": "https://t.co/FmlKlUrQI9",
-            "zh": "https://t.co/FmlKlUrQI9"
-          }
-        }
-      ],
-      "milestones": {
-        "chapters": [],
-        "publication": null
-      }
-    }
-  }
+  "pendingAnalysis": []
 }
