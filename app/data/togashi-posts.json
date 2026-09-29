@@ -106,16 +106,30 @@
       "mediaUrls": [
         "https://pbs.twimg.com/media/HSP3cipbIAA_2JV.jpg"
       ],
-      "imageTexts": [],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "Yoshihiro\nTogashi",
+          "translations": {
+            "ar": "Yoshihiro\nTogashi",
+            "en": "Yoshihiro\nTogashi",
+            "es": "Yoshihiro\nTogashi",
+            "fr": "Yoshihiro\nTogashi",
+            "ja": "Yoshihiro\nTogashi",
+            "pt": "Yoshihiro\nTogashi",
+            "zh": "Yoshihiro\nTogashi"
+          }
+        }
+      ],
       "translation": {
         "status": "available",
-        "provider": "manual",
-        "model": null,
-        "generatedAt": "2026-09-15T14:20:02.074Z",
+        "provider": "gemini",
+        "model": "gemini-3.5-flash",
+        "generatedAt": "2026-09-29T04:30:33.000Z",
         "texts": {
-          "ar": "اكتمل الرسم المكلّف به. https://t.co/JLpyLBEPaC",
+          "ar": "اكتملت الرسمة المطلوبة. https://t.co/JLpyLBEPaC",
           "en": "Commissioned illustration complete. https://t.co/JLpyLBEPaC",
-          "es": "Ilustración por encargo terminada. https://t.co/JLpyLBEPaC",
+          "es": "Ilustración por encargo completada. https://t.co/JLpyLBEPaC",
           "fr": "Illustration commandée terminée. https://t.co/JLpyLBEPaC",
           "ja": "依頼イラスト完成。 https://t.co/JLpyLBEPaC",
           "pt": "Ilustração encomendada concluída. https://t.co/JLpyLBEPaC",
