@@ -42,14 +42,22 @@
       ],
       "imageTexts": [],
       "translation": {
-        "status": "unavailable",
-        "provider": null,
-        "model": null,
-        "generatedAt": null,
-        "texts": null
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.5-flash",
+        "generatedAt": "2026-09-29T07:30:24.684Z",
+        "texts": {
+          "ar": "اكتمل تلوين غلاف المجلد. https://t.co/6uk1kpADZf",
+          "en": "Volume cover color complete. https://t.co/6uk1kpADZf",
+          "es": "Color de la portada del tomo completado. https://t.co/6uk1kpADZf",
+          "fr": "Mise en couleur de la couverture du volume terminée. https://t.co/6uk1kpADZf",
+          "ja": "単行本表紙カラー完了。 https://t.co/6uk1kpADZf",
+          "pt": "Cores da capa do volume concluídas. https://t.co/6uk1kpADZf",
+          "zh": "单行本封面彩色完成。 https://t.co/6uk1kpADZf"
+        }
       },
       "tracker": {
-        "decision": "review",
+        "decision": "ignore",
         "changes": []
       }
     },
