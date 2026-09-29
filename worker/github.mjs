@@ -4,6 +4,9 @@ const GITHUB_API = "https://api.github.com";
 const GITHUB_API_VERSION = "2022-11-28";
 const GITHUB_TIMEOUT_MS = 15_000;
 const MAX_STATE_BYTES = 100_000;
+// Workflow runs embed repository and actor metadata in every entry. A normal
+// page exceeds the compact state-file budget even with only eight runs.
+const MAX_WORKFLOW_RUNS_BYTES = 1_000_000;
 const ACTIVE_RUN_STATUSES = new Set([
   "queued",
   "in_progress",
@@ -107,7 +110,7 @@ export async function hasActiveAutomationRun(
     );
   }
 
-  const body = JSON.parse(await responseText(response, MAX_STATE_BYTES));
+  const body = JSON.parse(await responseText(response, MAX_WORKFLOW_RUNS_BYTES));
   if (!Array.isArray(body.workflow_runs)) {
     throw new Error("GitHub runs response is missing workflow_runs.");
   }

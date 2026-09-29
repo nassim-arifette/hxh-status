@@ -35,6 +35,11 @@ const EVENT_PREFIX = "pipeline:event:";
 const PENDING_PREFIX = "pipeline:pending:";
 const PROCESSED_PREFIX = "pipeline:processed:";
 const FALLBACK_INTERVAL_MS = 15 * 60 * 1_000;
+const INITIAL_RETRY_DELAY_MS = 5 * 60 * 1_000;
+const MAX_RETRY_DELAY_MS = 60 * 60 * 1_000;
+const MAX_QUEUED_ATTEMPTS = 5;
+const MAX_QUEUED_SCAN = 50;
+const LEGACY_WORKFLOW_BUSY_ERROR = "The GitHub automation workflow is currently busy.";
 // How long a post alert waits for the Action to say whether it moved a chapter.
 // Long enough for Gemini to exhaust its three attempts, short enough that an
 // incident does not swallow the notification entirely.
@@ -483,6 +488,12 @@ export async function processPendingPost(
 
   const job = await parseQueuedJob(store, key, raw, postId);
 
+  // Older jobs counted waiting for the serialized workflow as a failure.
+  // Only actual failures need backoff; contention must not delay ingestion.
+  if (job.lastError !== LEGACY_WORKFLOW_BUSY_ERROR && Date.parse(job.nextAttemptAt) > Date.now()) {
+    return { complete: false, deferred: true, postId };
+  }
+
   try {
     // A withheld post is not waiting on more work, it is waiting on the
     // Action's verdict. Re-running the pipeline here would dispatch it twice.
@@ -514,9 +525,12 @@ export async function processPendingPost(
         async () => [tweet],
       );
       if (automation.busy) {
-        throw new Error("The GitHub automation workflow is currently busy.");
+        return { complete: false, busy: true, postId };
       }
       job.automationComplete = true;
+      job.attempts = 0;
+      delete job.nextAttemptAt;
+      delete job.lastError;
       await saveJob(store, key, job);
     }
 
@@ -542,25 +556,37 @@ export async function processPendingPost(
   } catch (error) {
     job.attempts += 1;
     job.lastAttemptAt = new Date().toISOString();
+    const delay = Math.min(
+      MAX_RETRY_DELAY_MS,
+      INITIAL_RETRY_DELAY_MS * 2 ** Math.min(job.attempts - 1, 4),
+    );
+    job.nextAttemptAt = new Date(Date.now() + delay).toISOString();
     job.lastError = safeError(error);
     await saveJob(store, key, job);
     throw error;
   }
 }
 
-async function processQueuedPosts(env) {
+export async function processQueuedPosts(env, options) {
   if (!env.X_EVENT_STATE) throw new Error("X_EVENT_STATE is not configured.");
   const page = await env.X_EVENT_STATE.list({
     prefix: PENDING_PREFIX,
-    limit: 5,
+    // Inspect beyond the first five keys so posts waiting for their retry
+    // deadline do not prevent fresh posts from reaching the workflow.
+    limit: MAX_QUEUED_SCAN,
   });
   const errors = [];
+  let attempted = 0;
 
   for (const { name } of page.keys) {
+    if (attempted >= MAX_QUEUED_ATTEMPTS) break;
     const postId = name.slice(PENDING_PREFIX.length);
     try {
-      await processPendingPost(postId, env);
+      const result = await processPendingPost(postId, env, options);
+      if (result.busy) break;
+      if (!result.deferred) attempted += 1;
     } catch (error) {
+      attempted += 1;
       console.error(
         JSON.stringify({
           message: "Queued Togashi post processing failed.",

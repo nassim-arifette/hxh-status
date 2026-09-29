@@ -84,3 +84,31 @@ test("dispatch sends one JSON payload and requires GitHub 204", async () => {
       !error.message.includes(config.token),
   );
 });
+
+test("workflow history larger than the state-file limit still permits ingestion", async () => {
+  // GitHub embeds repository metadata in every run. Eight real runs already
+  // exceeded the 100 KB state-file budget and stopped all future dispatches.
+  const runs = Array.from({ length: 20 }, (_, id) => ({
+    id,
+    status: "completed",
+    repository: { description: "r".repeat(6_000) },
+  }));
+  const response = () => Response.json({ workflow_runs: runs });
+  assert.equal(await hasActiveAutomationRun(config, response), false);
+  runs.at(-1).status = "in_progress";
+  assert.equal(await hasActiveAutomationRun(config, response), true);
+});
+
+test("repository state keeps its smaller size limit", async () => {
+  await assert.rejects(
+    fetchAutomationState(config, async () => Response.json({ data: "s".repeat(100_000) })),
+    /GitHub response exceeded the safety size limit/,
+  );
+});
+
+test("workflow history still has a bounded response size", async () => {
+  await assert.rejects(
+    hasActiveAutomationRun(config, async () => Response.json({ workflow_runs: [], data: "r".repeat(2_000_000) })),
+    /GitHub response exceeded the safety size limit/,
+  );
+});

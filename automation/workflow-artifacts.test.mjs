@@ -74,6 +74,10 @@ async function fixture(callback) {
   const directory = await mkdtemp(join(tmpdir(), "hxh-workflow-artifacts-"));
   const git = async (...args) => (await run("git", args, { cwd: directory })).stdout.trim();
   try {
+    // Match repository checkout rules, including calendar CRLF on Linux CI.
+    const attributes = await readFile(new URL("../.gitattributes", import.meta.url), "utf8")
+      .catch((error) => { if (error.code === "ENOENT") return null; throw error; });
+    if (attributes !== null) await writeFile(join(directory, ".gitattributes"), attributes);
     await mkdir(join(directory, "app/data"), { recursive: true });
     await mkdir(join(directory, "automation"));
     await mkdir(join(directory, "public/share/en"), { recursive: true });
@@ -114,6 +118,24 @@ test("a translated post stages every generated Atom feed without status artifact
     assert.ok(staged.includes("public/feed.xml"));
     for (const locale of locales) assert.ok(staged.includes(`public/${locale}/feed.xml`));
     assert.equal(staged.some((path) => path.startsWith("public/badge/") || path.endsWith(".ics")), false);
+  });
+});
+
+test("a clean Linux checkout can publish a feed without a spurious calendar change", async () => {
+  await fixture(async ({ directory, git, check }) => {
+    await git("config", "core.autocrlf", "false");
+    const calendar = join(directory, "public/releases.ics");
+    // The production repository stores LF after a Windows authoring commit.
+    await writeFile(calendar, (await readFile(calendar, "utf8")).replaceAll("\r\n", "\n"));
+    await git("add", "public/releases.ics");
+    await git("commit", "--allow-empty", "-m", "normalized calendar blob");
+    await rm(calendar);
+    await git("checkout-index", "--force", "--all");
+    await writeFile(join(directory, "app/data/togashi-posts.json"), JSON.stringify([newPost]));
+    await generate(directory, initialStatus, [newPost]);
+    const staged = await check({ feed: true });
+    assert.ok(staged.includes("app/data/togashi-posts.json"));
+    assert.equal(staged.includes("public/releases.ics"), false);
   });
 });
 

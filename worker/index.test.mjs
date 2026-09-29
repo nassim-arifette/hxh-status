@@ -161,6 +161,20 @@ test("idle automation dispatches one validated batch", async () => {
   );
 });
 
+test("scheduled ingestion still dispatches after workflow history exceeds 100 KB", async () => {
+  const router = fetchRouter();
+  const runs = Array.from({ length: 20 }, () => ({
+    status: "completed", repository: { description: "r".repeat(6_000) },
+  }));
+  const result = await runAutomation(env, (url, options) =>
+    url.includes("/runs?")
+      ? Promise.resolve(Response.json({ workflow_runs: runs }))
+      : router.fetch(url, options),
+  );
+  assert.equal(result.dispatched, true);
+  assert.equal(router.calls.filter(({ url }) => url.endsWith("/dispatches")).length, 1);
+});
+
 test("a post already recorded by either source is not dispatched again", async () => {
   const processedId = "2096000000000000001";
 

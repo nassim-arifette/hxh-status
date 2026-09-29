@@ -40,6 +40,7 @@ X Activity post.create webhook on a secret callback path
 
 Retry Cron (every five minutes)
   -> resume incomplete webhook jobs from KV through the same serialized runner
+  -> retry failed jobs after 5, 10, 20, 40, then 60 minutes (capped at one hour)
   -> release any post alert whose verdict never arrived
 
 Fallback Cron (every 15 minutes)
@@ -55,6 +56,11 @@ retrying does not depend on the cursor or the post remaining in X's timeline.
 A failure before committing leaves the post available for ingestion again.
 Both entry paths check for a queued or running Action before dispatching,
 which avoids paying for duplicate Gemini runs.
+
+GitHub's workflow-history response includes repository metadata for each run.
+It has its own 1 MB response budget; the much smaller repository state file
+keeps its 100 KB limit. Applying the state limit to workflow history previously
+stopped ingestion as soon as eight completed runs exceeded that budget.
 
 Both entry paths are serialized inside the event Worker. The primary queue is
 always drained before syndication runs. If two Worker isolates still receive the
@@ -199,6 +205,12 @@ feed and automation state. Failed share-image captures restore the previous
 images and do not block committing posts; creating a review Issue is also
 non-blocking. The static export must still build successfully before committing.
 
+The tracked calendar uses `text eol=crlf` in `.gitattributes`, matching the
+iCalendar generator on both Windows and Linux. Without that checkout rule,
+a tweet-only build changed an LF checkout to CRLF and the artifact guard
+correctly stopped publication. The guard still rejects actual calendar changes
+when a tweet has not changed the tracker.
+
 To prevent a state-only automation commit, documentation change, or workflow
 change from triggering any Cloudflare deployment, configure **Build watch
 paths** in the Cloudflare dashboard with these included paths:
@@ -230,6 +242,16 @@ The Free plan allows 100,000 KV reads a day but only **1,000 writes and 1,000
 scarce resource, so the rule is that nothing may spend it on a schedule.
 
 An idle Cron tick costs one `list` (the pipeline retry queue) and nothing else.
+Failed post jobs persist their next retry deadline and use exponential backoff,
+capped at one hour. A tick before that deadline only reads the job: it neither
+calls X/GitHub nor rewrites the error. Five continuously failing posts therefore
+use 135 retry writes per day in the regression test, rather than 1,440. The
+queue inspects up to 50 keys while attempting at most five due jobs, so delayed
+jobs at the front do not occupy all five attempt slots.
+An active GitHub workflow is ordinary contention: the queue stops for that tick
+without rewriting jobs or extending failure backoff, including for older jobs
+that recorded contention as an error.
+
 Two things used to make it cost more, and both are gone:
 
 - The legacy migration listed a prefix that is empty in production, every tick.

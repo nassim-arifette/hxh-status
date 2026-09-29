@@ -4,6 +4,7 @@ import {
   createCrcResponseToken,
   enqueueActivityEvent,
   processPendingPost,
+  processQueuedPosts,
   resolveWithheldPost,
   serializePipeline,
   shouldSuppressPostNotification,
@@ -692,4 +693,116 @@ test("the syndication fallback runs every fifteen minutes off the schedule", () 
     }
   }
   assert.equal(runs, 96);
+});
+
+test("a day of failed post retries leaves room in the daily KV write quota", async (t) => {
+  const start = Date.UTC(2026, 8, 29);
+  t.mock.timers.enable({ apis: ["Date"], now: start });
+  const store = new MemoryKv();
+  const env = { ...baseEnv, X_EVENT_STATE: store };
+  const ids = Array.from({ length: 5 }, (_, i) => String(BigInt(postId) + BigInt(i)));
+  for (const id of ids) {
+    await enqueueActivityEvent(activityData({
+      event_uuid: `event-${id}`,
+      payload: { ...activityData().payload, id },
+    }), env);
+  }
+  const writes = t.mock.method(store, "put");
+  let requests = 0;
+  for (let minute = 0; minute < 24 * 60; minute += 5) {
+    t.mock.timers.setTime(start + minute * 60_000);
+    for (const id of ids) {
+      try {
+        await processPendingPost(id, env, {
+          fetchImpl: async () => {
+            requests += 1;
+            return new Response("X unavailable", { status: 503 });
+          },
+        });
+      } catch (error) {
+        assert.match(error.message, /X post lookup failed/);
+      }
+    }
+  }
+  assert.ok(writes.mock.callCount() < 200,
+    `Failed retries used ${writes.mock.callCount()} KV writes in one day (daily quota: 1000)`);
+  assert.ok(requests < 200, `Failed retries made ${requests} X requests in one day`);
+  for (const id of ids) assert.ok(store.data.has(`pipeline:pending:${id}`));
+  t.diagnostic(`Five failing posts: ${writes.mock.callCount()} KV writes and ${requests} X requests per day.`);
+});
+
+test("a failed post waits without writes and resumes when its retry is due", async (t) => {
+  const start = Date.UTC(2026, 8, 29);
+  t.mock.timers.enable({ apis: ["Date"], now: start });
+  const store = new MemoryKv();
+  const env = { ...baseEnv, X_EVENT_STATE: store };
+  await enqueueActivityEvent(activityData(), env);
+  const writes = t.mock.method(store, "put");
+  await assert.rejects(processPendingPost(postId, env, {
+    fetchImpl: async () => new Response("unavailable", { status: 503 }),
+  }), /X post lookup failed/);
+
+  t.mock.timers.setTime(start + 4 * 60_000);
+  assert.equal((await processPendingPost(postId, env, {
+    fetchImpl: async () => assert.fail("Retry is not due"),
+  })).deferred, true);
+  assert.equal(writes.mock.callCount(), 1);
+
+  t.mock.timers.setTime(start + 5 * 60_000);
+  const result = await processPendingPost(postId, env, {
+    fetchImpl: async () => Response.json({ data: activityData().payload }),
+    automationRunner: async () => ({ dispatched: true, count: 1 }),
+  });
+  assert.equal(result.withheld, true);
+  const job = JSON.parse(store.data.get(`pipeline:pending:${postId}`));
+  assert.equal(job.automationComplete, true);
+  assert.equal(job.attempts, 0);
+  assert.equal(job.nextAttemptAt, undefined);
+});
+
+test("delayed posts do not block a fresh post after the first queue page", async (t) => {
+  t.mock.method(console, "error", () => {});
+  const store = new MemoryKv();
+  const env = { ...baseEnv, X_EVENT_STATE: store };
+  const freshId = String(BigInt(postId) + 5n);
+  for (let index = 0; index < 6; index += 1) {
+    const id = String(BigInt(postId) + BigInt(index));
+    store.data.set(`pipeline:pending:${id}`, JSON.stringify({
+      version: 1,
+      postId: id,
+      attempts: 1,
+      ...(index < 5 ? { nextAttemptAt: new Date(Date.now() + 60 * 60_000).toISOString() } : {}),
+    }));
+  }
+  const requests = [];
+  await assert.rejects(processQueuedPosts(env, {
+    fetchImpl: async (url) => {
+      requests.push(new URL(url).pathname);
+      return new Response("unavailable", { status: 503 });
+    },
+  }), /One or more Togashi events failed/);
+  assert.deepEqual(requests, [`/2/tweets/${freshId}`]);
+});
+
+test("waiting for an active workflow costs no retry writes or failure backoff", async (t) => {
+  const store = new MemoryKv();
+  const env = { ...baseEnv, X_EVENT_STATE: store };
+  // Records from the old runner may already have counted ordinary workflow
+  // contention as a failure. Those must not wait an hour after it finishes.
+  store.data.set(`pipeline:pending:${postId}`, JSON.stringify({
+    version: 1, postId, attempts: 100,
+    lastError: "The GitHub automation workflow is currently busy.",
+    nextAttemptAt: new Date(Date.now() + 60 * 60_000).toISOString(),
+  }));
+  const writes = t.mock.method(store, "put");
+  const fetchImpl = async () => Response.json({ data: activityData().payload });
+  const result = await processPendingPost(postId, env, {
+    fetchImpl, automationRunner: async () => ({ busy: true }),
+  });
+  assert.equal(result.busy, true);
+  assert.equal(writes.mock.callCount(), 0);
+  const resumed = await processPendingPost(postId, env, {
+    fetchImpl, automationRunner: async () => ({ dispatched: true, count: 1 }),
+  });
+  assert.equal(resumed.withheld, true);
 });
