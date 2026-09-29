@@ -244,3 +244,18 @@ test("a feed-only update cannot stage a calendar change", async () => {
     await assert.rejects(check({ feed: true }), /Unexpected status export artifact/);
   });
 });
+
+test("every automation commit is verified before publishing to protected main", async () => {
+  const steps = [
+    ["togashi-status.yml", "Commit the validated result"],
+    ["togashi-status.yml", "Acknowledge the delivered tracker verdict"],
+    ["publication-status.yml", "Commit and deploy the publication"],
+    ["publication-status.yml", "Record successful delivery"],
+  ];
+  for (const [workflow, step] of steps) {
+    const { source, script } = await workflowStep(workflow, step);
+    assert.match(source, /GH_TOKEN: \$\{\{ github.token \}\}/);
+    assert.match(script, /node scripts\/publish-verified-commit\.mjs/);
+    assert.doesNotMatch(script, /git push .*main/);
+  }
+});

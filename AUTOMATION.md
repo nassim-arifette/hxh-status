@@ -191,7 +191,16 @@ Contents read, and Actions read/write. The Worker does not need Contents write.
 The Action uses the selected fully automatic policy: `contents: write` lets it
 push validated status changes directly to `main`, while `issues: write` lets it
 open a review Issue for ambiguous evidence. Repository Actions settings and any
-branch protection on `main` must allow the built-in `GITHUB_TOKEN` to push.
+branch protection on `main` must allow the built-in `GITHUB_TOKEN` to push
+commits that pass the required `verify` check.
+
+Each generated commit is first pushed to a unique `automation/verify-*` branch.
+The publisher explicitly dispatches `ci.yml` there with `actions: write`, waits
+for that exact commit's successful CI run, then fast-forwards `main` and removes
+the temporary branch. This also applies to notification acknowledgements and
+scheduled publication. Normal `GITHUB_TOKEN` pushes do not start CI, hence the
+explicit dispatch. A failed or timed-out CI run leaves `main` unchanged;
+concurrent updates are never overwritten with a force push.
 
 Keep both Workers disabled until the workflow, KV bindings, and secrets are
 configured and a dry run has succeeded. Then enable and deploy both configs.

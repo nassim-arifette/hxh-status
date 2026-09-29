@@ -8,6 +8,7 @@ on:
     - cron: "*/15 * * * *"
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -43,6 +44,8 @@ jobs:
           node scripts/generate-share-images.mjs
       - name: Commit and deploy the publication
         if: steps.publication.outputs.status_changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           git add app/data/status-data.json public/share public/feed.xml public/releases.ics
@@ -72,7 +75,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: publish scheduled chapter and update hiatus status"
-          git push origin HEAD:main
+          node scripts/publish-verified-commit.mjs
       - name: Wait for the public tracker
         if: steps.publication.outputs.publication_due == 'true'
         env:
@@ -87,6 +90,8 @@ jobs:
         run: node scripts/notify-tracker-verdict.mjs
       - name: Record successful delivery
         if: steps.publication.outputs.publication_due == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           node scripts/process-publication.mjs --complete
@@ -95,4 +100,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: record completed publication notification"
-          git push origin HEAD:main
+          node scripts/publish-verified-commit.mjs

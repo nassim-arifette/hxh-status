@@ -13,6 +13,7 @@ on:
         type: string
 
 permissions:
+  actions: write
   contents: write
   issues: write
 
@@ -85,6 +86,7 @@ jobs:
         env:
           FEED_CHANGED: ${{ steps.process.outputs.feed_changed }}
           STATUS_CHANGED: ${{ steps.process.outputs.status_changed }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           git add automation/state.json
@@ -174,7 +176,7 @@ jobs:
             git commit -m "chore: record Togashi post"
           fi
 
-          git push origin HEAD:main
+          node scripts/publish-verified-commit.mjs
 
       - name: Deliver the committed tracker verdict
         if: steps.process.outputs.verdict_written == 'true'
@@ -186,6 +188,8 @@ jobs:
 
       - name: Acknowledge the delivered tracker verdict
         if: steps.process.outputs.verdict_written == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           git add automation/state.json
@@ -193,7 +197,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: acknowledge tracker notification delivery"
-          git push origin HEAD:main
+          node scripts/publish-verified-commit.mjs
 
       - name: Open a review issue for ambiguous evidence
         if: steps.process.outputs.review_needed == 'true'
