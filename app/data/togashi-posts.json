@@ -14,16 +14,38 @@
       "mediaUrls": [
         "https://pbs.twimg.com/media/HTE3zjpbsAAIfzX.jpg"
       ],
-      "imageTexts": [],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "No411 〜420 加筆修正\n完了。\n\n「なめんなよ」",
+          "translations": {
+            "ar": "رقم 411-420 التعديلات والتصحيحات\nاكتملت.\n\n\"لا تستهن بي\"",
+            "en": "No. 411–420 Retouching & corrections\nComplete.\n\n\"Don't underestimate me\"",
+            "es": "No. 411–420 Correcciones y retoques\nCompletado.\n\n\"No me subestimes\"",
+            "fr": "N° 411–420 Retouches et corrections\nTerminé.\n\n\"Ne me sous-estime pas\"",
+            "ja": "No411 〜420 加筆修正\n完了。\n\n「なめんなよ」",
+            "pt": "Nº 411–420 Retoques e correções\nConcluído.\n\n\"Não me subestime\"",
+            "zh": "No.411〜420 修改与润色\n完成。\n\n“别小瞧我”"
+          }
+        }
+      ],
       "translation": {
-        "status": "unavailable",
-        "provider": null,
-        "model": null,
-        "generatedAt": null,
-        "texts": null
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.5-flash",
+        "generatedAt": "2026-09-29T07:45:24.466Z",
+        "texts": {
+          "ar": "https://t.co/FmlKlUrQI9",
+          "en": "https://t.co/FmlKlUrQI9",
+          "es": "https://t.co/FmlKlUrQI9",
+          "fr": "https://t.co/FmlKlUrQI9",
+          "ja": "https://t.co/FmlKlUrQI9",
+          "pt": "https://t.co/FmlKlUrQI9",
+          "zh": "https://t.co/FmlKlUrQI9"
+        }
       },
       "tracker": {
-        "decision": "review",
+        "decision": "ignore",
         "changes": []
       }
     },
