@@ -711,10 +711,9 @@ function validateVerdict(body) {
         throw new TypeError("Verdict post notification is invalid.");
       }
       const translations = validateVerdictTranslations(post.translations);
-      if (
-        (post.notification === "milestone" && translations !== null) ||
-        (post.notification === "raw" && translations === null)
-      ) {
+      // Enrichment outages publish the authenticated original with no
+      // translations. resolveWithheldPost already supports that raw fallback.
+      if (post.notification === "milestone" && translations !== null) {
         throw new TypeError("Verdict post translations do not match its action.");
       }
       return { ...post, translations };

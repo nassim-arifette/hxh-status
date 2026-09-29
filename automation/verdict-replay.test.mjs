@@ -7,14 +7,15 @@ import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 import data from "../app/data/status-data.json" with { type: "json" };
 import feed from "../app/data/togashi-posts.json" with { type: "json" };
-import { signAutomationPayload } from "./payload-auth.mjs";
+import { signAutomationPayload, TRACKER_VERDICT_SIGNATURE_CONTEXT } from "./payload-auth.mjs";
+import activityWorker from "../worker/x-activity-webhook.mjs";
 
 test("replaying a committed payload retains its translated verdict without a Gemini key", async () => {
   const directory = await mkdtemp(join(tmpdir(), "hxh-verdict-replay-"));
   try {
     await mkdir(join(directory, "app/data"), { recursive: true });
     await mkdir(join(directory, "automation"));
-    const post = feed.posts[0];
+    const post = feed.posts.find((post) => post.translation.texts !== null);
     const payload = {
       schemaVersion: 1, listId: "2095219478636495163", authorId: post.author.id,
       requestedAt: new Date().toISOString(),
@@ -40,6 +41,47 @@ test("replaying a committed payload retains its translated verdict without a Gem
     assert.match(result.stdout, /"analyzed":0/);
     assert.deepEqual(JSON.parse(await readFile(output, "utf8")), verdict);
     assert.deepEqual(JSON.parse(await readFile(join(directory, "automation/state.json"), "utf8")).pendingVerdict, state.pendingVerdict);
+  } finally {
+    assert.ok(resolve(directory).startsWith(join(resolve(tmpdir()), "hxh-verdict-replay-")));
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("a post published without Gemini produces a verdict the Worker accepts", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "hxh-verdict-replay-"));
+  try {
+    await mkdir(join(directory, "app/data"), { recursive: true });
+    await mkdir(join(directory, "automation"));
+    const post = feed.posts[0];
+    const payload = {
+      schemaVersion: 1, listId: "2095219478636495163", authorId: post.author.id,
+      requestedAt: new Date().toISOString(),
+      tweets: [{ id: post.id, authorId: post.author.id, screenName: post.author.screenName,
+        createdAt: post.createdAt, url: post.url, fullText: post.originalText, mediaUrls: post.mediaUrls }],
+    };
+    const state = { schemaVersion: 1, listId: payload.listId,
+      lastProcessedTweetId: (BigInt(post.id) - 1n).toString(), recentEvents: [], pendingReviews: [] };
+    for (const [path, value] of [["app/data/status-data.json", data], ["app/data/togashi-posts.json", feed], ["automation/state.json", state]]) {
+      await writeFile(join(directory, path), JSON.stringify(value));
+    }
+    const body = JSON.stringify(payload);
+    const secret = "deferred-test-independent-hmac-secret-32chars";
+    const output = join(directory, "verdict.json");
+    await promisify(execFile)(process.execPath, [resolve("scripts/process-togashi-events.mjs")], {
+      cwd: directory, env: { ...process.env, GEMINI_API_KEY: "", AUTOMATION_PAYLOAD: body,
+        AUTOMATION_PAYLOAD_SECRET: secret, AUTOMATION_PAYLOAD_SIGNATURE: await signAutomationPayload(body, secret),
+        AUTOMATION_VERDICT_FILE: output, GITHUB_OUTPUT: join(directory, "outputs.txt") },
+    });
+    const verdict = JSON.parse(await readFile(output, "utf8"));
+    assert.deepEqual(verdict.posts, [{ id: post.id, notification: "raw", translations: null }]);
+    // Exercise the signed endpoint using the real producer's output. No push
+    // or external lookup is performed by this dry run.
+    const text = JSON.stringify({ ...verdict, dryRun: true });
+    const response = await activityWorker.fetch(new Request("https://events.example/tracker-verdict", {
+      method: "POST", body: text, headers: { "x-hxhstatus-signature":
+        await signAutomationPayload(text, secret, { context: TRACKER_VERDICT_SIGNATURE_CONTEXT }) },
+    }), { TRACKER_VERDICT_SECRET: secret, PUSH_NOTIFICATIONS_ENABLED: "false" });
+    assert.equal(response.status, 200, await response.text());
   } finally {
     assert.ok(resolve(directory).startsWith(join(resolve(tmpdir()), "hxh-verdict-replay-")));
     await rm(directory, { recursive: true, force: true });
