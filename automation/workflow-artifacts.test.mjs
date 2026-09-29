@@ -259,3 +259,14 @@ test("every automation commit is verified before publishing to protected main", 
     assert.doesNotMatch(script, /git push .*main/);
   }
 });
+
+test("a manual CI run reports a branch-compatible status only after verification succeeds", async () => {
+  const source = await readFile(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8");
+  const reportingJob = source.slice(source.indexOf("  report-automation-verification:"));
+  assert.match(reportingJob, /needs: verify/);
+  assert.match(reportingJob, /if: github.event_name == 'workflow_dispatch' && startsWith\(github.ref_name, 'automation\/verify-'\)/);
+  assert.doesNotMatch(reportingJob, /always\(\)|continue-on-error/);
+  assert.match(reportingJob, /statuses\/\$GITHUB_SHA/);
+  assert.match(reportingJob, /-f context=verify/);
+  assert.match(reportingJob, /actions\/runs\/\$GITHUB_RUN_ID/);
+});

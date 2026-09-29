@@ -202,6 +202,11 @@ scheduled publication. Normal `GITHUB_TOKEN` pushes do not start CI, hence the
 explicit dispatch. A failed or timed-out CI run leaves `main` unchanged;
 concurrent updates are never overwritten with a force push.
 
+GitHub excludes `workflow_dispatch` job checks from required branch checks.
+After `verify` succeeds, a dependent CI job reports that real result as the
+`verify` commit status, linked to its CI run. Only that reporting job receives
+`statuses: write`; failed or cancelled verification cannot report success.
+
 Keep both Workers disabled until the workflow, KV bindings, and secrets are
 configured and a dry run has succeeded. Then enable and deploy both configs.
 

@@ -42,3 +42,24 @@ jobs:
       - run: npm run translations:check
       - run: npm test
       - run: npm run build
+
+  report-automation-verification:
+    # GitHub does not count workflow_dispatch job checks toward branch
+    # protection. Report the actual successful verify result as a commit
+    # status; this job cannot run when verification fails or is cancelled.
+    needs: verify
+    if: github.event_name == 'workflow_dispatch' && startsWith(github.ref_name, 'automation/verify-')
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+    steps:
+      - name: Report the completed verification
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method POST --silent \
+            "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
+            -f state=success \
+            -f context=verify \
+            -f description="All CI tests and the production build passed" \
+            -f target_url="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
