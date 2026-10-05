@@ -47,47 +47,5 @@
     }
   ],
   "pendingReviews": [],
-  "pendingAnalysis": [],
-  "pendingVerdict": {
-    "payload": {
-      "schemaVersion": 1,
-      "listId": "2095219478636495163",
-      "authorId": "1528978792617611264",
-      "requestedAt": "2026-10-05T10:19:46.265Z",
-      "tweets": [
-        {
-          "id": "2107053094546866223",
-          "authorId": "1528978792617611264",
-          "screenName": "Un4v5s8bgsVk9Xp",
-          "createdAt": "2026-10-05T10:19:39.000Z",
-          "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2107053094546866223",
-          "fullText": "心身の不調が重なり、現在お受けしている依頼を最後に、今後は締切がある仕事の依頼を全てお断りして自身の原稿作成を優先する事にしました。\n原稿作成が再開しましたら又こちらで\n発表します。",
-          "mediaUrls": []
-        }
-      ]
-    },
-    "verdict": {
-      "requestedAt": "2026-10-05T10:20:38.196Z",
-      "revision": "2099837550617903464-4f425be96d942e9d",
-      "posts": [
-        {
-          "id": "2107053094546866223",
-          "notification": "raw",
-          "translations": {
-            "ar": "بسبب تراكم المشاكل الصحية الجسدية والنفسية، وبعد إنهاء الطلبات المقبولة حاليًا، قررت رفض جميع طلبات العمل ذات المواعيد النهائية من الآن فصاعدًا وإعطاء الأولوية لإنشاء مخطوطاتي ا…",
-            "en": "Due to a buildup of physical and mental health issues, after finishing the requests I currently have, I have decided to decline all future work requests with deadlines and prior…",
-            "es": "Debido a una acumulación de problemas de salud física y mental, tras finalizar los encargos que tengo actualmente, he decidido rechazar todas las solicitudes de trabajo con fech…",
-            "fr": "En raison d'un cumul de soucis de santé physique et mentale, après les demandes actuellement acceptées, j'ai décidé de refuser désormais toutes les commandes avec date limite af…",
-            "ja": "心身の不調が重なり、現在お受けしている依頼を最後に、今後は締切がある仕事の依頼を全てお断りして自身の原稿作成を優先する事にしました。 原稿作成が再開しましたら又こちらで 発表します。",
-            "pt": "Devido ao acúmulo de problemas de saúde física e mental, após finalizar os pedidos atualmente aceitos, decidi recusar todas as propostas de trabalho com prazos a partir de agora…",
-            "zh": "由于身心不适接连不断，在完成目前承接的委托后，今后我决定谢绝所有附带截止日期的工作委托，优先专注于自己的原稿创作。 等原稿创作重新开始时，会再次在此公布。"
-          }
-        }
-      ],
-      "milestones": {
-        "chapters": [],
-        "publication": null
-      }
-    }
-  }
+  "pendingAnalysis": []
 }
