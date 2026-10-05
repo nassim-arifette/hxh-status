@@ -2,6 +2,38 @@
   "schemaVersion": 1,
   "posts": [
     {
+      "id": "2107053094546866223",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-10-05T10:19:39.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2107053094546866223",
+      "originalText": "心身の不調が重なり、現在お受けしている依頼を最後に、今後は締切がある仕事の依頼を全てお断りして自身の原稿作成を優先する事にしました。\n原稿作成が再開しましたら又こちらで\n発表します。",
+      "mediaUrls": [],
+      "imageTexts": [],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-10-05T10:19:46.265Z",
+        "texts": {
+          "ar": "بسبب تراكم المشاكل الصحية الجسدية والنفسية، وبعد إنهاء الطلبات المقبولة حاليًا، قررت رفض جميع طلبات العمل ذات المواعيد النهائية من الآن فصاعدًا وإعطاء الأولوية لإنشاء مخطوطاتي الخاصة.\nعندما يُستأنف العمل على المخطوطات، سأعلن عن ذلك هنا مجددًا.",
+          "en": "Due to a buildup of physical and mental health issues, after finishing the requests I currently have, I have decided to decline all future work requests with deadlines and prioritize creating my own manuscripts.\nOnce manuscript creation resumes, I will announce it here again.",
+          "es": "Debido a una acumulación de problemas de salud física y mental, tras finalizar los encargos que tengo actualmente, he decidido rechazar todas las solicitudes de trabajo con fecha límite de aquí en adelante para priorizar la creación de mis propios manuscritos.\nCuando se reanude la creación de manuscritos, lo anunciaré de nuevo por aquí.",
+          "fr": "En raison d'un cumul de soucis de santé physique et mentale, après les demandes actuellement acceptées, j'ai décidé de refuser désormais toutes les commandes avec date limite afin de donner la priorité à la création de mes propres manuscrits.\nLorsque la création de manuscrits reprendra, je l'annoncerai à nouveau ici.",
+          "ja": "心身の不調が重なり、現在お受けしている依頼を最後に、今後は締切がある仕事の依頼を全てお断りして自身の原稿作成を優先する事にしました。\n原稿作成が再開しましたら又こちらで\n発表します。",
+          "pt": "Devido ao acúmulo de problemas de saúde física e mental, após finalizar os pedidos atualmente aceitos, decidi recusar todas as propostas de trabalho com prazos a partir de agora para priorizar a criação dos meus próprios manuscritos.\nQuando a criação de manuscritos for retomada, anunciarei aqui novamente.",
+          "zh": "由于身心不适接连不断，在完成目前承接的委托后，今后我决定谢绝所有附带截止日期的工作委托，优先专注于自己的原稿创作。\n等原稿创作重新开始时，会再次在此公布。"
+        }
+      },
+      "tracker": {
+        "decision": "ignore",
+        "changes": []
+      }
+    },
+    {
       "id": "2103523865637134659",
       "author": {
         "id": "1528978792617611264",

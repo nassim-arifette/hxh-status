@@ -3,7 +3,7 @@
   <id>https://hxhstatus.com/feed.xml</id>
   <title type="text">HxH Status - HUNTER×HUNTER Chapter &amp; Production Tracker</title>
   <subtitle type="text">A sourced, unofficial tracker for HUNTER×HUNTER chapter releases and Yoshihiro Togashi&apos;s confirmed progress on upcoming chapters.</subtitle>
-  <updated>2026-09-25T16:35:45.000Z</updated>
+  <updated>2026-10-05T10:19:39.000Z</updated>
   <link rel="self" href="https://hxhstatus.com/feed.xml" type="application/atom+xml" />
   <link rel="alternate" href="https://hxhstatus.com/" type="text/html" />
   <author>
@@ -12,6 +12,23 @@
   </author>
   <icon>https://hxhstatus.com/favicon.svg</icon>
   <logo>https://hxhstatus.com/icon-192.png</logo>
+  <entry>
+    <id>tag:hxhstatus.com,2026:post-2107053094546866223</id>
+    <title type="text">New Togashi post: Due to a buildup of physical and mental health issues, after finishing the re...</title>
+    <link rel="alternate" href="https://hxhstatus.com/updates/2107053094546866223" />
+    <updated>2026-10-05T10:19:39.000Z</updated>
+    <published>2026-10-05T10:19:39.000Z</published>
+    <author>
+      <name>Yoshihiro Togashi</name>
+      <uri>https://x.com/Un4v5s8bgsVk9Xp</uri>
+    </author>
+    <summary type="text">Due to a buildup of physical and mental health issues, after finishing the requests I currently have, I have decided to decline all future work requests with deadlines and prioritize creating my own manuscripts.
+Once manuscript creation resumes, I will announce it here again.</summary>
+    <content type="html">&lt;p&gt;Due to a buildup of physical and mental health issues, after finishing the requests I currently have, I have decided to decline all future work requests with deadlines and prioritize creating my own manuscripts.
+Once manuscript creation resumes, I will announce it here again.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Original Japanese:&lt;/em&gt; 心身の不調が重なり、現在お受けしている依頼を最後に、今後は締切がある仕事の依頼を全てお断りして自身の原稿作成を優先する事にしました。
+原稿作成が再開しましたら又こちらで
+発表します。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://x.com/Un4v5s8bgsVk9Xp/status/2107053094546866223&quot;&gt;View post on X&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
   <entry>
     <id>tag:hxhstatus.com,2026:post-2103523865637134659</id>
     <title type="text">New Togashi post</title>
