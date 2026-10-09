@@ -468,6 +468,10 @@
         "badge": "Embeddable SVG status badge, also available per language.",
         "chart": "The production tracker and publication history as PNG images."
       }
+    },
+    "history": {
+      "metaTitle": "Hunter x Hunter hiatus chart: every Jump issue since 1998",
+      "metaDescription": "The HUNTER×HUNTER hiatus chart: every Weekly Shonen Jump issue since 1998, with or without a chapter, coloured by arc, plus how long each arc ran."
     }
   },
   "forecast": {

@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "title": "HxH Status: مواعيد صدور Hunter x Hunter وفترات التوقف وتحديثات توغاشي",
+    "title": "HxH Status: مواعيد صدور هنتر اكس هنتر وفترات التوقف وتحديثات توغاشي",
     "description": "متتبع غير رسمي وموثق بالمصادر لفصول HUNTER×HUNTER وللتقدم الذي يؤكده يوشيهيرو توغاشي في الفصول القادمة.",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status لمتابعة فصول HUNTER×HUNTER وآخر تقدم مؤكد في العمل",
-    "homeTitleHiatus": "هل Hunter x Hunter متوقف؟ موعد صدور الفصل {next} ({month})",
-    "homeTitlePublishing": "Hunter x Hunter: موعد صدور الفصل {next} والجدول ({month})"
+    "homeTitleHiatus": "هل هنتر اكس هنتر متوقف؟ موعد صدور الفصل {next} ({month})",
+    "homeTitlePublishing": "هنتر اكس هنتر: موعد صدور الفصل {next} والجدول ({month})"
   },
   "header": {
     "updated": "آخر تغيير في الحالة: {date}",
@@ -368,8 +368,8 @@
       "elapsedLabel": "المدة المنقضية، بما فيها التوقفات"
     },
     "chapter": {
-      "metaTitlePublished": "Hunter x Hunter الفصل {chapter} صدر في {date} ضمن Weekly Shonen Jump رقم {issue}",
-      "metaTitlePending": "Hunter x Hunter الفصل {chapter}: موعد الصدور والحالة وتقدم توغاشي",
+      "metaTitlePublished": "هنتر اكس هنتر الفصل {chapter} صدر في {date} ضمن Weekly Shonen Jump رقم {issue}",
+      "metaTitlePending": "مانجا هنتر اكس هنتر الفصل {chapter}: موعد الصدور والحالة وتقدم توغاشي",
       "metaDescriptionPublished": "صدر الفصل {chapter} من HUNTER×HUNTER في {date} ضمن العدد {issue} من Weekly Shonen Jump. العنوان والمجلد والقوس ومنصات القراءة الرسمية التي تتيحه.",
       "metaDescriptionPending": "لا يوجد تاريخ صدور معلن للفصل {chapter} من HUNTER×HUNTER. مرحلة إنتاجه المؤكدة هي {status}، وآخر تحديث لها في {date}، مع المصدر الذي نشره توغاشي.",
       "h1": "HUNTER×HUNTER الفصل {chapter}",
@@ -468,6 +468,10 @@
         "badge": "شارة حالة SVG قابلة للتضمين، ومتاحة أيضًا لكل لغة.",
         "chart": "متتبع الإنتاج وتاريخ النشر بصيغة صور PNG."
       }
+    },
+    "history": {
+      "metaTitle": "مخطط توقفات هنتر اكس هنتر: كل عدد من Jump منذ 1998",
+      "metaDescription": "مخطط توقفات HUNTER×HUNTER: كل عدد من Weekly Shonen Jump منذ 1998، بفصل أو بدونه، ملوّن حسب الأرك، مع مدة كل أرك."
     }
   },
   "forecast": {

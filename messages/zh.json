@@ -4,8 +4,8 @@
     "description": "一个附有来源的非官方《HUNTER×HUNTER（全职猎人）》追踪站，汇总最新刊载章节以及富坚义博公开确认的后续章节制作进度。",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status：《全职猎人》最新刊载章节与已确认制作进度",
-    "homeTitleHiatus": "《全职猎人》休刊了吗？第{next}话什么时候更新（{month}）",
-    "homeTitlePublishing": "《全职猎人》第{next}话什么时候更新？连载时间表（{month}）"
+    "homeTitleHiatus": "全职猎人（全職獵人）休刊了吗？第{next}话什么时候更新（{month}）",
+    "homeTitlePublishing": "全职猎人（全職獵人）第{next}话什么时候更新？连载时间表（{month}）"
   },
   "header": {
     "updated": "状态最后变更于 {date}",
@@ -368,8 +368,8 @@
       "elapsedLabel": "经过时间（含休刊）"
     },
     "chapter": {
-      "metaTitlePublished": "《全职猎人》第{chapter}话于{date}刊登在《周刊少年Jump》第{issue}期",
-      "metaTitlePending": "《全职猎人》第{chapter}话什么时候更新？已确认状态与富坚的进度",
+      "metaTitlePublished": "全职猎人（全職獵人）第{chapter}话于{date}刊登在《周刊少年Jump》第{issue}期",
+      "metaTitlePending": "全职猎人（全職獵人）第{chapter}话什么时候更新？已确认状态与富坚的进度",
       "metaDescriptionPublished": "《全职猎人》第{chapter}话于{date}刊登在《周刊少年Jump》第{issue}期。含标题、单行本卷数、篇章以及可阅读的官方渠道。",
       "metaDescriptionPending": "《全职猎人》第{chapter}话尚未公布刊登日期。其已确认的制作阶段为{status}，更新于{date}，并附富坚公开的来源。",
       "h1": "《全职猎人》第{chapter}话",
@@ -468,6 +468,10 @@
         "badge": "可嵌入的 SVG 状态徽章，亦提供各语言版本。",
         "chart": "制作追踪图与刊载历史图的 PNG 图像。"
       }
+    },
+    "history": {
+      "metaTitle": "全职猎人（全職獵人）休刊图表：1998年以来的每一期Jump",
+      "metaDescription": "《全职猎人》休刊图表：1998年以来《周刊少年Jump》每一期是否刊载，按篇章着色，并比较各篇章的长度。"
     }
   },
   "forecast": {

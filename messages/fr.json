@@ -468,6 +468,10 @@
         "badge": "Badge de statut SVG intégrable, également disponible par langue.",
         "chart": "Le suivi de production et l'historique de publication en images PNG."
       }
+    },
+    "history": {
+      "metaTitle": "Hunter x Hunter : le graphique des pauses, numéro par numéro depuis 1998",
+      "metaDescription": "Le graphique des pauses de HUNTER×HUNTER : chaque numéro du Weekly Shonen Jump depuis 1998, avec ou sans chapitre, coloré par arc, et la durée de chaque arc."
     }
   },
   "forecast": {
