@@ -5,7 +5,6 @@ import englishMessages from "@/messages/en.json";
 import { LOCAL_DATE_SCRIPT } from "./local-date";
 import { THEME_SCRIPT } from "./theme";
 import "./globals.css";
-import "./site.css";
 
 // The site's one typeface. Its width axis gives the condensed headings and
 // numerals; body copy uses the same family at normal width.

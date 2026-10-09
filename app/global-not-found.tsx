@@ -8,7 +8,6 @@ import { SiteNavigation } from "./site-navigation";
 import { THEME_SCRIPT } from "./theme";
 import ThemeToggle from "./theme-toggle";
 import "./globals.css";
-import "./site.css";
 
 // Served for every unmatched path, in every language, so it stays in English
 // and points to the pages people most often arrive looking for.

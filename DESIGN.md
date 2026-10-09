@@ -70,7 +70,7 @@ layout:
 
 HxH Status is drawn like a page of the manga it tracks: ink black, paper white, heavy panel rules, and Hunter green for what is finished and printed. The first screen gives the answer readers came for, set very large, and a figure from the series waits beside it. Everything below is quiet and ruled rather than boxed.
 
-The system lives in `app/site.css`, loaded after `app/globals.css`. Its palette tokens are global, so the share-image capture routes use them too (always in dark). Everything else is scoped to `.site-shell`, which wraps the home page and every content page; light mode only applies inside it. `globals.css` still holds the base component styles, with its colours pointed at these tokens; `site.css` overrides their shape and type.
+The whole system lives in one stylesheet, `app/globals.css`: palette tokens first, then base elements and components. The dark tokens are global, so the share-image capture routes use them too (always dark); light mode only applies inside `.site-shell`, which wraps the home page and every content page. Share images keep a few `.share-capture-page` rules of their own (a framed card instead of ruled sections).
 
 **Key characteristics**
 
