@@ -118,7 +118,7 @@ Numbers use tabular figures throughout.
 ## Layout
 
 - **Frame:** 1120px max, 24px side gutters, 16px under 720px.
-- **Header:** a single bar with the wordmark, the section links, then the date the status last changed, the theme toggle and language. Under 1100px the links drop to a second row. Under 560px the date gets its own line and the links scroll sideways. The current page is marked by a 3px green underline sitting on the bar's bottom rule.
+- **Header:** a single bar with the wordmark, the section links, then the date the status last changed, the theme toggle and language. Under 1100px the links drop to a second row. Under 560px the date gets its own line and the section links wrap onto a second line, so none is hidden off-screen. The current page is marked by a 3px green underline sitting on the bar's bottom rule.
 - **Hero:** the question in tone, the answer at Answer size, then the day count above a 3px rule, linking to the hiatus page. Below it, one line on Togashi alerts with the alerts button (green outline, 44px): it is the hero's only action. While on hiatus, the cut-out figure sits on the right (above the answer on phones). While publishing, the hero becomes a solid hunter-green block with no art; the next chapter and its announced date (or its stage and "no official date") take the art's place, set large on the end side.
 - **Facts row:** four chapter numbers (latest released, next, manuscripts complete, confirmed progress) under a 3px rule, divided by hairlines, like a table of contents. Two columns under 980px.
 - **Jump links:** pill links to the production tracker, next chapter, latest Togashi post and FAQ, directly under the facts row. They scroll sideways on phones. Targets have `scroll-margin-top`.
@@ -148,7 +148,7 @@ Ten columns, so each row is one ten-chapter batch (five columns on phones). Squa
 | Scheduled for release | The finished sheet with a 3px inset hunter border. |
 | Published | Solid hunter fill. |
 
-Every tile keeps its status icon, and the legend repeats the same swatches with labels, so colour is never the only cue. Tiles lift 2px on hover; this is turned off under reduced motion.
+Every tile keeps its status icon, and the legend repeats the same swatches with labels, so colour is never the only cue. Below the legend, a quiet index lists every chapter that has its own page as plain links (the tiles open a sheet, which also links to the chapter page), so each chapter page is one step from the home page. Tiles lift 2px on hover; this is turned off under reduced motion.
 
 ### Theme toggle
 
@@ -170,6 +170,10 @@ Two columns: the model estimate ("Unofficial estimate: March 2027") with a link 
 ### Prediction game
 
 The game uses the same tokens: 4px panels, square-ish day cells on the page colour, a solid text-colour fill for the picked day (the "finished sheet"), and hunter fills for the primary button and the heat scale. Headings and big dates use the condensed display cut. The downloadable share card (`card()` in `app/prediction-game.tsx`) is drawn on a canvas in the same palette with the page's Archivo.
+
+### Answer sections on content pages
+
+Where readers type a question the page already answers (the arc's length, start, whether it is over), the page states it as a plain question heading and a one-or-two sentence answer built from the same data. These are text, not FAQPage markup.
 
 ### 404
 

@@ -87,7 +87,8 @@
     "title": "متابعة الإنتاج",
     "chapterStatusAria": "حالة إنتاج الفصول",
     "legendAria": "دليل الحالات",
-    "selectHint": "اختر فصلًا لعرض مصدره."
+    "selectHint": "اختر فصلًا لعرض مصدره.",
+    "chapterPages": "صفحات الفصول"
   },
   "latestUpdate": {
     "translatedByGemini": "مترجم من اليابانية بواسطة Gemini",
@@ -105,7 +106,7 @@
   },
   "history": {
     "eyebrow": "1998-2026",
-    "title": "سجل النشر",
+    "title": "مخطط التوقفات",
     "chartAria": "مخطط تاريخ نشر HUNTER×HUNTER",
     "publishedIssue": "WSJ {issue}: نُشر الفصل {chapter}",
     "emptyIssue": "WSJ {issue}: لا يوجد فصل",
@@ -171,7 +172,8 @@
     "weeklyShonenJump": "Weekly Shonen Jump",
     "issue": "العدد {issue}",
     "viewSource": "عرض المصدر",
-    "noSource": "لا يوجد مصدر خاص بهذا الفصل حتى الآن."
+    "noSource": "لا يوجد مصدر خاص بهذا الفصل حتى الآن.",
+    "pageLink": "صفحة الفصل {chapter}"
   },
   "statuses": {
     "published": {
@@ -285,7 +287,7 @@
     "onThisPage": "الأقسام",
     "primary": "التنقل الرئيسي",
     "updates": "المستجدات",
-    "history": "السجل",
+    "history": "مخطط التوقفات",
     "predictions": "التوقعات"
   },
   "pages": {
@@ -366,7 +368,16 @@
       "durationTrails": "من حيث الزمن المنقضي يحتل المرتبة {rank}: {years} سنة منذ {startYear}، خلف {leaderName} بـ {leaderYears}.",
       "chaptersLeads": "ومن حيث عدد الفصول هو الأطول أيضًا: {count} فصلًا، متقدمًا على {runnerUpName} بـ {runnerUpCount}.",
       "chaptersTrails": "ومن حيث عدد الفصول يحتل المرتبة {rank}: {count} فصلًا مقابل {leaderCount} لـ {leaderName}، الذي يبقى أطول قوس نُشر.",
-      "elapsedLabel": "المدة المنقضية، بما فيها التوقفات"
+      "elapsedLabel": "المدة المنقضية، بما فيها التوقفات",
+      "faqTitle": "أسئلة حول أرك {arc}",
+      "qLength": "كم يبلغ طول أرك {arc}؟",
+      "aLength": "{count} فصلًا حتى الآن، من الفصل {start} إلى الفصل {end}، على مدى {years} سنة منذ {startYear}. الأرك لم ينتهِ بعد.",
+      "qStart": "متى بدأ أرك {arc}؟",
+      "aStart": "مع الفصل {start}، المنشور في Weekly Shonen Jump {startYear} العدد {startIssue}.",
+      "qOver": "هل انتهى أرك {arc}؟",
+      "aOver": "لا. آخر فصل منشور هو {latest}، وأعلن توغاشي اكتمال المخطوطات حتى الفصل {manuscripts}.",
+      "qEnd": "كم سيكون طول أرك {arc}؟",
+      "aEnd": "لم يُعلن عن طوله. لم يذكر توغاشي ولا Weekly Shonen Jump عدد الفصول المتبقية؛ وتُحدَّث هذه الصفحة مع نشر كل فصل."
     },
     "chapter": {
       "metaTitlePublished": "هنتر اكس هنتر الفصل {chapter} صدر في {date} ضمن Weekly Shonen Jump رقم {issue}",
@@ -472,7 +483,8 @@
     },
     "history": {
       "metaTitle": "مخطط توقفات هنتر اكس هنتر: كل عدد من Jump منذ 1998",
-      "metaDescription": "مخطط توقفات HUNTER×HUNTER: كل عدد من Weekly Shonen Jump منذ 1998، بفصل أو بدونه، ملوّن حسب الأرك، مع مدة كل أرك."
+      "metaDescription": "مخطط توقفات HUNTER×HUNTER: كل عدد من Weekly Shonen Jump منذ 1998، بفصل أو بدونه، ملوّن حسب الأرك، مع مدة كل أرك.",
+      "h1": "مخطط توقفات HUNTER×HUNTER"
     }
   },
   "forecast": {

@@ -87,7 +87,8 @@
     "title": "Production tracker",
     "chapterStatusAria": "Chapter production status",
     "legendAria": "Status legend",
-    "selectHint": "Select a chapter to see its source."
+    "selectHint": "Select a chapter to see its source.",
+    "chapterPages": "Chapter pages"
   },
   "latestUpdate": {
     "translatedByGemini": "Translated from Japanese by Gemini",
@@ -105,7 +106,7 @@
   },
   "history": {
     "eyebrow": "1998-2026",
-    "title": "Publication history",
+    "title": "Hiatus chart",
     "chartAria": "HUNTER×HUNTER publication history chart",
     "publishedIssue": "WSJ {issue}: chapter {chapter} published",
     "emptyIssue": "WSJ {issue}: no chapter",
@@ -171,7 +172,8 @@
     "weeklyShonenJump": "Weekly Shonen Jump",
     "issue": "Issue {issue}",
     "viewSource": "View source",
-    "noSource": "No chapter-specific source yet."
+    "noSource": "No chapter-specific source yet.",
+    "pageLink": "Chapter {chapter} page"
   },
   "statuses": {
     "published": {
@@ -285,7 +287,7 @@
     "onThisPage": "Sections",
     "primary": "Main navigation",
     "updates": "Updates",
-    "history": "History",
+    "history": "Hiatus chart",
     "predictions": "Predictions"
   },
   "pages": {
@@ -366,7 +368,16 @@
       "durationTrails": "By calendar time it ranks #{rank}: {years} years since {startYear}, behind {leaderName} at {leaderYears}.",
       "chaptersLeads": "By chapter count it is the longest too: {count} chapters, ahead of {runnerUpName} at {runnerUpCount}.",
       "chaptersTrails": "By chapter count it ranks #{rank}: {count} chapters against {leaderCount} for {leaderName}, which remains the longest arc printed.",
-      "elapsedLabel": "Elapsed time, including pauses"
+      "elapsedLabel": "Elapsed time, including pauses",
+      "faqTitle": "Questions about the {arc} arc",
+      "qLength": "How long is the {arc} arc?",
+      "aLength": "{count} chapters so far, from chapter {start} to chapter {end}, over {years} years since {startYear}. The arc has not ended.",
+      "qStart": "When did the {arc} arc start?",
+      "aStart": "With chapter {start}, published in Weekly Shonen Jump {startYear} #{startIssue}.",
+      "qOver": "Is the {arc} arc over?",
+      "aOver": "No. The latest published chapter is {latest}, and Togashi has reported finished manuscripts through chapter {manuscripts}.",
+      "qEnd": "How long will the {arc} arc be?",
+      "aEnd": "There is no announced length. Neither Togashi nor Weekly Shonen Jump has said how many chapters remain; this page counts each chapter as it is published."
     },
     "chapter": {
       "metaTitlePublished": "Hunter x Hunter chapter {chapter}: released {date} in Weekly Shonen Jump #{issue}",
@@ -472,7 +483,8 @@
     },
     "history": {
       "metaTitle": "Hunter x Hunter hiatus chart: every Jump issue since 1998",
-      "metaDescription": "The HUNTER×HUNTER hiatus chart: every Weekly Shonen Jump issue since 1998, with or without a chapter, coloured by arc, plus how long each arc ran."
+      "metaDescription": "The HUNTER×HUNTER hiatus chart: every Weekly Shonen Jump issue since 1998, with or without a chapter, coloured by arc, plus how long each arc ran.",
+      "h1": "HUNTER×HUNTER hiatus chart"
     }
   },
   "forecast": {

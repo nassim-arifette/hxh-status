@@ -176,6 +176,7 @@ function ChapterDetails({
   locale,
   messages,
   openerRef,
+  pageHrefs,
   statusMeta,
   titles,
   onOpenChange,
@@ -185,6 +186,7 @@ function ChapterDetails({
   locale: Locale;
   messages: TrackerMessages;
   openerRef: RefObject<HTMLButtonElement | null>;
+  pageHrefs: Readonly<Record<number, string>>;
   statusMeta: StatusMap;
   titles: ChapterTitles;
   onOpenChange: (open: boolean) => void;
@@ -324,6 +326,12 @@ function ChapterDetails({
 
               {chapter.note ? <p className="sheet-note">{chapter.note}</p> : null}
 
+              {pageHrefs[chapter.chapter] ? (
+                <a className="sheet-page-link" href={pageHrefs[chapter.chapter]}>
+                  {formatMessage(messages.chapter.pageLink, { chapter: chapter.chapter })}
+                </a>
+              ) : null}
+
               {sources.length > 0 ? (
                 <div
                   className="source-links"
@@ -358,12 +366,16 @@ export default function ChapterTracker({
   lastUpdated,
   locale,
   messages,
+  pageHrefs = {},
   titles,
 }: {
   chapters: readonly ChapterRecord[];
   lastUpdated: string;
   locale: Locale;
   messages: TrackerMessages;
+  // Chapters that have their own page, by number. Computed on the server so
+  // the page registry stays out of the client bundle.
+  pageHrefs?: Readonly<Record<number, string>>;
   titles: ChapterTitles;
 }) {
   const [selectedChapter, setSelectedChapter] = useState<ChapterRecord | null>(
@@ -392,6 +404,7 @@ export default function ChapterTracker({
         locale={locale}
         messages={messages}
         openerRef={openerRef}
+        pageHrefs={pageHrefs}
         statusMeta={statusMeta}
         titles={titles}
         onOpenChange={(open) => {

@@ -87,7 +87,8 @@
     "title": "Acompanhamento da produção",
     "chapterStatusAria": "Status de produção dos capítulos",
     "legendAria": "Legenda dos status",
-    "selectHint": "Selecione um capítulo para ver a fonte."
+    "selectHint": "Selecione um capítulo para ver a fonte.",
+    "chapterPages": "Páginas dos capítulos"
   },
   "latestUpdate": {
     "translatedByGemini": "Traduzido do japonês pelo Gemini",
@@ -105,7 +106,7 @@
   },
   "history": {
     "eyebrow": "1998-2026",
-    "title": "Histórico de publicação",
+    "title": "Gráfico de hiatos",
     "chartAria": "Gráfico do histórico de publicação de HUNTER×HUNTER",
     "publishedIssue": "WSJ {issue}: capítulo {chapter} publicado",
     "emptyIssue": "WSJ {issue}: sem capítulo",
@@ -171,7 +172,8 @@
     "weeklyShonenJump": "Weekly Shonen Jump",
     "issue": "Edição {issue}",
     "viewSource": "Ver fonte",
-    "noSource": "Ainda não há uma fonte específica para este capítulo."
+    "noSource": "Ainda não há uma fonte específica para este capítulo.",
+    "pageLink": "Página do capítulo {chapter}"
   },
   "statuses": {
     "published": {
@@ -285,7 +287,7 @@
     "onThisPage": "Seções",
     "primary": "Navegação principal",
     "updates": "Novidades",
-    "history": "Histórico",
+    "history": "Gráfico de hiatos",
     "predictions": "Palpites"
   },
   "pages": {
@@ -366,7 +368,16 @@
       "durationTrails": "Em tempo decorrido ele fica em {rank}.º: {years} anos desde {startYear}, atrás de {leaderName} com {leaderYears}.",
       "chaptersLeads": "Em número de capítulos também é o mais longo: {count} capítulos, à frente de {runnerUpName} com {runnerUpCount}.",
       "chaptersTrails": "Em número de capítulos ele fica em {rank}.º: {count} capítulos contra {leaderCount} de {leaderName}, que segue como o arco mais longo já publicado.",
-      "elapsedLabel": "Tempo decorrido, incluindo pausas"
+      "elapsedLabel": "Tempo decorrido, incluindo pausas",
+      "faqTitle": "Perguntas sobre o arco {arc}",
+      "qLength": "Quanto dura o arco {arc}?",
+      "aLength": "{count} capítulos até agora, do capítulo {start} ao {end}, ao longo de {years} anos desde {startYear}. O arco ainda não terminou.",
+      "qStart": "Quando começou o arco {arc}?",
+      "aStart": "Com o capítulo {start}, publicado na Weekly Shonen Jump {startYear} n.º {startIssue}.",
+      "qOver": "O arco {arc} já terminou?",
+      "aOver": "Não. O último capítulo publicado é o {latest}, e Togashi anunciou manuscritos concluídos até o capítulo {manuscripts}.",
+      "qEnd": "Quantos capítulos o arco {arc} vai ter?",
+      "aEnd": "Não há duração anunciada. Nem Togashi nem a Weekly Shonen Jump disseram quantos capítulos faltam; esta página conta cada capítulo quando ele é publicado."
     },
     "chapter": {
       "metaTitlePublished": "Hunter x Hunter capítulo {chapter}: publicado em {date} na Weekly Shonen Jump n.º {issue}",
@@ -472,7 +483,8 @@
     },
     "history": {
       "metaTitle": "Hunter x Hunter: gráfico de hiatos, edição por edição desde 1998",
-      "metaDescription": "O gráfico de hiatos de HUNTER×HUNTER: cada edição da Weekly Shonen Jump desde 1998, com ou sem capítulo, colorida por arco, e a duração de cada arco."
+      "metaDescription": "O gráfico de hiatos de HUNTER×HUNTER: cada edição da Weekly Shonen Jump desde 1998, com ou sem capítulo, colorida por arco, e a duração de cada arco.",
+      "h1": "Gráfico de hiatos de HUNTER×HUNTER"
     }
   },
   "forecast": {

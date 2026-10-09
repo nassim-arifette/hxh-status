@@ -3735,3 +3735,66 @@ pre,
   letter-spacing: 0;
   text-transform: none;
 }
+
+/* Chapter pages index under the tracker: the tiles open a sheet, so the same
+   chapters are listed as plain links for readers and crawlers. */
+.chapter-index {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin-top: 14px;
+  color: var(--tone);
+  font-size: 0.85rem;
+}
+
+.chapter-index ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapter-index a {
+  color: var(--fg-soft);
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
+}
+
+.chapter-index a:hover {
+  color: var(--hunter-text);
+  text-decoration-color: currentColor;
+}
+
+/* The chapter sheet's link to the chapter's own page. */
+.sheet-page-link {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 0.95rem;
+  color: var(--hunter-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.arc-question + .arc-question {
+  margin-top: 8px;
+}
+
+/* On a phone every section link stays visible: the bar wraps to a second line
+   instead of hiding links off-screen. */
+@media (max-width: 560px) {
+  .primary-navigation {
+    flex-wrap: wrap;
+    gap: 0 20px;
+    overflow: visible;
+  }
+
+  .primary-navigation a {
+    min-height: 44px;
+  }
+}

@@ -87,7 +87,8 @@
     "title": "制作進捗",
     "chapterStatusAria": "各話の制作進捗",
     "legendAria": "ステータス凡例",
-    "selectHint": "各話を選ぶと出典を確認できます。"
+    "selectHint": "各話を選ぶと出典を確認できます。",
+    "chapterPages": "各話のページ"
   },
   "latestUpdate": {
     "translatedByGemini": "Geminiによる日本語からの翻訳",
@@ -105,7 +106,7 @@
   },
   "history": {
     "eyebrow": "1998-2026",
-    "title": "掲載履歴",
+    "title": "休載チャート",
     "chartAria": "HUNTER×HUNTER掲載履歴グラフ",
     "publishedIssue": "週刊少年ジャンプ{issue}号：No.{chapter}掲載",
     "emptyIssue": "週刊少年ジャンプ{issue}号：掲載なし",
@@ -171,7 +172,8 @@
     "weeklyShonenJump": "週刊少年ジャンプ",
     "issue": "{issue}号",
     "viewSource": "出典を見る",
-    "noSource": "この話数に紐づく出典はまだありません。"
+    "noSource": "この話数に紐づく出典はまだありません。",
+    "pageLink": "第{chapter}話のページ"
   },
   "statuses": {
     "published": {
@@ -285,7 +287,7 @@
     "onThisPage": "セクション",
     "primary": "メインナビゲーション",
     "updates": "投稿",
-    "history": "掲載履歴",
+    "history": "休載チャート",
     "predictions": "予想ゲーム"
   },
   "pages": {
@@ -366,7 +368,16 @@
       "durationTrails": "年月では第{rank}位です。{startYear}年から{years}年で、{leaderYears}の{leaderName}に次ぎます。",
       "chaptersLeads": "話数でも最長です。{count}話で、{runnerUpCount}話の{runnerUpName}を上回ります。",
       "chaptersTrails": "話数では第{rank}位です。{count}話で、{leaderCount}話の{leaderName}にはまだ及びません。",
-      "elapsedLabel": "経過期間（休載を含む）"
+      "elapsedLabel": "経過期間（休載を含む）",
+      "faqTitle": "{arc}についてのよくある質問",
+      "qLength": "{arc}はどのくらい長い？",
+      "aLength": "現在{count}話（第{start}話〜第{end}話）、{startYear}年から{years}年にわたって続いています。まだ完結していません。",
+      "qStart": "{arc}はいつ始まった？",
+      "aStart": "第{start}話、週刊少年ジャンプ{startYear}年{startIssue}号から始まりました。",
+      "qOver": "{arc}はもう終わった？",
+      "aOver": "いいえ。最新の掲載話は第{latest}話で、冨樫先生は第{manuscripts}話までの原稿完成を報告しています。",
+      "qEnd": "{arc}は全部で何話になる？",
+      "aEnd": "発表されていません。冨樫先生も週刊少年ジャンプも残りの話数を明らかにしておらず、このページは掲載ごとに話数を更新します。"
     },
     "chapter": {
       "metaTitlePublished": "HUNTER×HUNTER第{chapter}話 {date}／週刊少年ジャンプ{issue}号掲載",
@@ -472,7 +483,8 @@
     },
     "history": {
       "metaTitle": "ハンターハンター休載チャート：1998年以降のジャンプ全号の掲載履歴",
-      "metaDescription": "HUNTER×HUNTERの休載チャート。1998年以降の週刊少年ジャンプ全号について掲載の有無を編ごとに色分けし、各編の長さも比較できます。"
+      "metaDescription": "HUNTER×HUNTERの休載チャート。1998年以降の週刊少年ジャンプ全号について掲載の有無を編ごとに色分けし、各編の長さも比較できます。",
+      "h1": "HUNTER×HUNTER 休載チャート"
     }
   },
   "forecast": {

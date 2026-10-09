@@ -87,7 +87,8 @@
     "title": "制作进度",
     "chapterStatusAria": "各话制作进度",
     "legendAria": "状态说明",
-    "selectHint": "选择一话即可查看来源。"
+    "selectHint": "选择一话即可查看来源。",
+    "chapterPages": "各话页面"
   },
   "latestUpdate": {
     "translatedByGemini": "由 Gemini 从日语翻译",
@@ -105,7 +106,7 @@
   },
   "history": {
     "eyebrow": "1998-2026",
-    "title": "连载记录",
+    "title": "休刊图表",
     "chartAria": "《全职猎人》连载记录图",
     "publishedIssue": "《周刊少年Jump》第 {issue} 号：刊载第 {chapter} 话",
     "emptyIssue": "《周刊少年Jump》第 {issue} 号：未刊载新话",
@@ -171,7 +172,8 @@
     "weeklyShonenJump": "周刊少年Jump",
     "issue": "第 {issue} 号",
     "viewSource": "查看来源",
-    "noSource": "目前还没有这一话的专属来源。"
+    "noSource": "目前还没有这一话的专属来源。",
+    "pageLink": "第{chapter}话页面"
   },
   "statuses": {
     "published": {
@@ -285,7 +287,7 @@
     "onThisPage": "章节",
     "primary": "主导航",
     "updates": "动态",
-    "history": "连载历史",
+    "history": "休刊图表",
     "predictions": "日期预测"
   },
   "pages": {
@@ -366,7 +368,16 @@
       "durationTrails": "按跨越时间，它排第{rank}位：自{startYear}年起{years}年，次于{leaderYears}的{leaderName}。",
       "chaptersLeads": "按话数它同样最长：共{count}话，超过{runnerUpCount}话的{runnerUpName}。",
       "chaptersTrails": "按话数它排第{rank}位：共{count}话，少于{leaderName}的{leaderCount}话，后者仍是刊载话数最多的篇章。",
-      "elapsedLabel": "经过时间（含休刊）"
+      "elapsedLabel": "经过时间（含休刊）",
+      "faqTitle": "关于{arc}的常见问题",
+      "qLength": "{arc}有多长？",
+      "aLength": "目前共{count}话（第{start}话至第{end}话），自{startYear}年起历时{years}年，尚未完结。",
+      "qStart": "{arc}是什么时候开始的？",
+      "aStart": "从第{start}话开始，刊登于《周刊少年Jump》{startYear}年第{startIssue}期。",
+      "qOver": "{arc}结束了吗？",
+      "aOver": "没有。最新刊载的是第{latest}话，富坚已报告完成至第{manuscripts}话的原稿。",
+      "qEnd": "{arc}一共会有多少话？",
+      "aEnd": "尚未公布。富坚和《周刊少年Jump》都没有说明还剩多少话；本页会在每一话刊载后更新。"
     },
     "chapter": {
       "metaTitlePublished": "全职猎人（全職獵人）第{chapter}话于{date}刊登在《周刊少年Jump》第{issue}期",
@@ -472,7 +483,8 @@
     },
     "history": {
       "metaTitle": "全职猎人（全職獵人）休刊图表：1998年以来的每一期Jump",
-      "metaDescription": "《全职猎人》休刊图表：1998年以来《周刊少年Jump》每一期是否刊载，按篇章着色，并比较各篇章的长度。"
+      "metaDescription": "《全职猎人》休刊图表：1998年以来《周刊少年Jump》每一期是否刊载，按篇章着色，并比较各篇章的长度。",
+      "h1": "《全职猎人》休刊图表"
     }
   },
   "forecast": {

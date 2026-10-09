@@ -22,6 +22,7 @@ import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
 import ThemeToggle from "./theme-toggle";
 import { ARCS } from "./data/arcs";
+import { chapterPageNumbers } from "./data/chapter-pages";
 import { arcStats, buildStatusSentences, hiatusStats } from "./data/summary";
 import { HiatusStatistics } from "./hiatus-statistics";
 import { getChapterTitles, getChapterTitlesFor } from "./data/chapter-titles";
@@ -187,6 +188,9 @@ export function ProductionSection({
         lastUpdated={lastUpdated}
         locale={locale}
         messages={{ chapter: messages.chapter, production: messages.production, statuses: messages.statuses }}
+        pageHrefs={Object.fromEntries(
+          chapterPageNumbers.map((number) => [number, localePath(chapterPath(number), locale)]),
+        )}
         titles={getChapterTitlesFor(
           locale,
           chapters.map((chapter) => chapter.chapter),
@@ -194,7 +198,26 @@ export function ProductionSection({
       />
       <Legend messages={messages} />
       {capture ? null : (
-        <p className="section-note">{messages.production.selectHint}</p>
+        <>
+          <p className="section-note">{messages.production.selectHint}</p>
+          {/* The tiles open a sheet; these are the same chapters as plain
+              links, so every chapter page is one step from the home page. */}
+          <nav className="chapter-index" aria-label={messages.production.chapterPages}>
+            <span>{messages.production.chapterPages}</span>
+            <ul>
+              {chapterPageNumbers.map((number) => (
+                <li key={number}>
+                  <a
+                    href={localePath(chapterPath(number), locale)}
+                    aria-label={formatMessage(messages.chapter.pageLink, { chapter: number })}
+                  >
+                    {number}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </>
       )}
     </section>
   );

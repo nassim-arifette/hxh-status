@@ -2,6 +2,7 @@ import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
 import { arcPath } from "@/lib/routes";
 import { ContentShell } from "../content-shell";
 import { formatArcDuration, formatArcYears, type ArcStats } from "../data/arcs";
+import { latestPublished, manuscriptsComplete } from "../data/status";
 import { arcStats } from "../data/summary";
 
 export const SUCCESSION_WAR_PATH = arcPath("succession-war");
@@ -101,6 +102,30 @@ export function ArcPage({
           leaderCount: chapters.otherValue,
         });
 
+  // The questions readers type about the arc, answered from the same data as
+  // the rest of the page. Plain text, not FAQPage markup (see
+  // app/structured-data.tsx).
+  const values = {
+    arc: arcName(current, locale),
+    count: current.chapterCount,
+    start: current.startChapter ?? "",
+    end: current.endChapter ?? latestPublished.chapter,
+    years: current.spanYears,
+    startYear: current.startYear,
+    startIssue: current.startIssue,
+    latest: latestPublished.chapter,
+    manuscripts: manuscriptsComplete.chapter,
+  };
+  const questions = [
+    [copy.qLength, copy.aLength],
+    [copy.qStart, copy.aStart],
+    [copy.qOver, copy.aOver],
+    [copy.qEnd, copy.aEnd],
+  ].map(([question, answer]) => ({
+    question: formatMessage(question, values),
+    answer: formatMessage(answer, values),
+  }));
+
   return (
     <ContentShell
       locale={locale}
@@ -161,6 +186,20 @@ export function ArcPage({
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section aria-labelledby="arc-questions-title" className="content-section">
+        <div className="section-heading">
+          <div>
+            <h2 id="arc-questions-title">{formatMessage(copy.faqTitle, values)}</h2>
+          </div>
+        </div>
+        {questions.map(({ question, answer }) => (
+          <div className="arc-question" key={question}>
+            <h3 className="subsection-title">{question}</h3>
+            <p className="prose">{answer}</p>
+          </div>
+        ))}
       </section>
     </ContentShell>
   );

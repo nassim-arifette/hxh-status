@@ -9,7 +9,7 @@ export function historyMetadata(messages: Messages) {
   return { title: messages.pages.history.metaTitle, description: messages.pages.history.metaDescription };
 }
 export function HistoryPage({ locale, messages }: { locale: Locale; messages: Messages }) {
-  return <ContentShell locale={locale} messages={messages} path={HISTORY_PATH} title={messages.history.title} lede={messages.history.intro}>
+  return <ContentShell locale={locale} messages={messages} path={HISTORY_PATH} title={messages.pages.history.h1} lede={messages.history.intro}>
     <PublicationHistorySection locale={locale} messages={messages} />
   </ContentShell>;
 }
