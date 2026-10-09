@@ -105,7 +105,7 @@ export const ARCS: readonly ArcDefinition[] = [
       es: "Greed Island",
       pt: "Greed Island",
       zh: "贪婪之岛篇",
-      ar: "جريد آيلاند",
+      ar: "غريد آيلاند",
     },
     color: "#34d399",
     badgeBg: "rgba(52, 211, 153, 0.12)",
@@ -120,7 +120,7 @@ export const ARCS: readonly ArcDefinition[] = [
       es: "Ciudad Yorkshin",
       pt: "Cidade de Yorknew",
       zh: "友客鑫市篇",
-      ar: "مدينة يوركنيو",
+      ar: "مدينة يوركشين",
     },
     color: "#fbbf24",
     badgeBg: "rgba(251, 191, 36, 0.12)",
@@ -135,7 +135,7 @@ export const ARCS: readonly ArcDefinition[] = [
       es: "Torre Celestial",
       pt: "Arena Celestial",
       zh: "天空竞技场篇",
-      ar: "حلبة السماء",
+      ar: "برج السماء",
     },
     color: "#38bdf8",
     badgeBg: "rgba(56, 189, 248, 0.12)",
@@ -165,7 +165,7 @@ export const ARCS: readonly ArcDefinition[] = [
       es: "Examen de Cazador",
       pt: "Exame Hunter",
       zh: "猎人考试篇",
-      ar: "اختبار الصيادين",
+      ar: "امتحان الصيادين",
     },
     color: "#4ade80",
     badgeBg: "rgba(74, 222, 128, 0.12)",
@@ -180,7 +180,7 @@ export const ALL_ARCS_LABEL: Record<Locale, string> = {
   es: "Todos los arcos",
   pt: "Todos os arcos",
   zh: "全部篇章",
-  ar: "جميع الفصول",
+  ar: "جميع الأركات",
 };
 
 export const ARC_FILTER_LABEL: Record<Locale, string> = {
@@ -190,7 +190,7 @@ export const ARC_FILTER_LABEL: Record<Locale, string> = {
   es: "Filtrar por arco",
   pt: "Filtrar por arco",
   zh: "按篇章筛选",
-  ar: "تصفية حسب الفصل",
+  ar: "تصفية حسب الأرك",
 };
 
 export const RESET_LABEL: Record<Locale, string> = {
