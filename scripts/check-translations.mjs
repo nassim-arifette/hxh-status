@@ -175,7 +175,7 @@ const titleCoverageFloor = {
   es: 370,
   pt: 413,
   zh: 419,
-  ar: 101,
+  ar: 421,
 };
 
 const titlesDirectory = join(root, "app", "data", "chapter-titles");
