@@ -138,14 +138,26 @@ export default function PredictionGame({ locale }: { locale: Locale }) {
   async function card(): Promise<File> {
     const canvas = document.createElement("canvas"); canvas.width = 1200; canvas.height = 630;
     const c = canvas.getContext("2d")!;
-    c.fillStyle = "#0d1511"; c.fillRect(0, 0, 1200, 630);
-    c.fillStyle = "#b9f65d"; c.fillRect(48, 52, 7, 526);
-    c.font = "bold 25px sans-serif"; c.fillText("HUNTER × HUNTER · HXHSTATUS", 88, 104);
-    c.fillStyle = "#b4c3b9"; c.font = "30px sans-serif"; c.fillText(`${t.shareText} · ${t.chapter} ${state!.round.chapter}`, 88, 192, 1020);
-    c.fillStyle = "#f2f7ee"; c.font = "bold 68px sans-serif"; c.fillText(fmt(state!.pick!.predicted_date), 88, 310, 1020);
-    c.font = "30px sans-serif"; c.fillText(state!.pick!.nickname || t.anonymous, 88, 376, 1020);
-    c.fillStyle = "#b9f65d"; c.font = "32px sans-serif"; c.fillText(t.invitation, 88, 493, 1020);
-    c.fillStyle = "#b4c3b9"; c.font = "22px sans-serif"; c.fillText("hxhstatus.com", 88, 553);
+    // Drawn in the site's palette and typeface (DESIGN.md); Archivo is already
+    // loaded by the page, so the canvas only waits for the cuts it uses.
+    const family = getComputedStyle(document.documentElement).getPropertyValue("--font-archivo").trim() || "sans-serif";
+    await Promise.all(["500 30px", "900 120px"].map(spec => document.fonts.load(`${spec} ${family}`).catch(() => [])));
+    const text = (value: string, x: number, y: number, font: string, color: string, stretch: CanvasFontStretch = "normal") => {
+      c.font = `${font} ${family}`; c.fontStretch = stretch; c.fillStyle = color; c.fillText(value, x, y, 1072);
+    };
+    c.fillStyle = "#090909"; c.fillRect(0, 0, 1200, 630);
+    let x = 64;
+    for (const [glyph, color] of [["H", "#ecebe6"], ["×", "#6fd27c"], ["H", "#ecebe6"]]) {
+      text(glyph, x, 96, "900 34px", color, "extra-condensed");
+      x += c.measureText(glyph).width + 1;
+    }
+    text("Status", x + 12, 96, "500 28px", "#ecebe6");
+    text(`${t.shareText}, ${t.chapter} ${state!.round.chapter}`, 64, 200, "500 30px", "#9a9993");
+    text(fmt(state!.pick!.predicted_date), 64, 330, "900 120px", "#ecebe6", "extra-condensed");
+    c.fillStyle = "#ecebe6"; c.fillRect(64, 372, 420, 4);
+    text(state!.pick!.nickname || t.anonymous, 64, 432, "500 32px", "#ecebe6");
+    text(t.invitation, 64, 520, "500 32px", "#6fd27c");
+    text("hxhstatus.com", 64, 580, "500 22px", "#9a9993");
     return new File([await new Promise<Blob>((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(Error()), "image/png"))], `hxh-${state!.round.chapter}-${state!.pick!.predicted_date}.png`, { type: "image/png" });
   }
   async function download() {
@@ -153,7 +165,7 @@ export default function PredictionGame({ locale }: { locale: Locale }) {
   }
   async function share(id?: string) {
     const url = link(id); setShareLink(url);
-    const text = `${t.shareText} · ${t.chapter} ${state!.round.chapter} : ${fmt(state!.pick!.predicted_date)}. ${t.invitation}`;
+    const text = `${t.shareText}, ${t.chapter} ${state!.round.chapter} : ${fmt(state!.pick!.predicted_date)}. ${t.invitation}`;
     const file = await card();
     try {
       if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], text, url });

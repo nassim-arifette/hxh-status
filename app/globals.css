@@ -851,10 +851,6 @@ select {
   flex-shrink: 0;
 }
 
-.key-published {
-  background: var(--published);
-}
-
 .key-hiatus {
   border: 1px solid var(--rule);
   background: var(--raised);
@@ -1124,13 +1120,6 @@ select {
   font-family: var(--font-geist-sans), sans-serif;
   font-weight: 550;
   letter-spacing: -0.02em;
-}
-
-.sheet-chapter-original {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-  margin-bottom: 0;
 }
 
 .sheet-description {
@@ -1729,48 +1718,6 @@ select {
   z-index: 1;
 }
 
-.stat-current {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 24px 26px;
-  margin-bottom: 12px;
-  border: 1px solid var(--rule);
-  border-radius: 16px;
-  background:
-    linear-gradient(110deg, rgba(245, 158, 11, 0.1), transparent 58%),
-    var(--raised);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.045),
-    0 16px 34px -26px rgba(245, 158, 11, 0.45);
-}
-
-.stat-current-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.stat-current-value {
-  max-width: 26ch;
-  margin-top: 3px;
-  color: var(--hunter-text);
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: clamp(1.45rem, 2.4vw, 2rem);
-  font-weight: 720;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.035em;
-  line-height: 1.16;
-}
-
-.stat-current-since {
-  color: var(--text-muted);
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.73rem;
-  letter-spacing: 0.01em;
-}
-
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1834,7 +1781,6 @@ select {
 
 /* Geist Mono carries no Arabic glyphs, so mono Arabic text falls through to a
    face that renders it loosely spaced. Keep only the Latin-script UI mono. */
-[dir="rtl"] .stat-current-value,
 [dir="rtl"] .stat-value {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -1864,20 +1810,6 @@ select {
 @media (max-width: 560px) {
   .section-lede {
     margin-bottom: 20px;
-  }
-
-  .stat-current {
-    padding: 19px 17px;
-  }
-
-  .stat-current-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 9px;
-  }
-
-  .stat-current-value {
-    font-size: 1.32rem;
   }
 
   .stat {
@@ -2362,8 +2294,6 @@ select {
 @media (max-width: 720px) { .forecast-grid { grid-template-columns: 1fr; } }
 
 .forecast h3 { margin-block: 28px 12px; font-size: 1.1rem; font-weight: 600; }
-.forecast-scenario { margin-block: 24px; padding: 20px; border: 1px solid var(--accent-green); border-radius: 12px; }
-.forecast-scenario h3 { margin-block-start: 0; }
 .forecast-probabilities { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-block: 20px 28px; }
 .forecast-probabilities dt { color: var(--text-secondary); font-size: .85rem; }
 .forecast-probabilities dd { margin: 8px 0 0; font-size: 1.6rem; font-weight: 600; }
@@ -2377,7 +2307,7 @@ select {
 .forecast-legend span:first-child { color: var(--accent-green); }
 .forecast-equations { max-width: 100%; overflow-x: auto; padding: 16px; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-size: .8rem; line-height: 1.8; }
 .forecast-sources { display: flex; flex-wrap: wrap; gap: 12px 24px; padding-inline-start: 20px; font-size: .9rem; }
-@media (max-width: 480px) { .forecast-probabilities { grid-template-columns: repeat(2, 1fr); } .forecast-scenario { padding: 16px; } }
+@media (max-width: 480px) { .forecast-probabilities { grid-template-columns: repeat(2, 1fr); } }
 
 /* Shared navigation and a shorter, reader-first dashboard. */
 .primary-navigation { display:flex; flex-wrap:wrap; gap:4px 24px; padding:0 0 18px; margin:0 0 28px; border-bottom:1px solid var(--border); }
@@ -2419,21 +2349,17 @@ select {
 .update-excerpt { white-space:pre-wrap; overflow-wrap:anywhere; }
 .update-media img { width:auto; height:auto; max-width:min(220px,100%); }
 .prediction-game { display:grid; gap:1.5rem; margin-block:2rem; }
-.game-entry,.game-panel { padding:clamp(1.25rem,4vw,2.5rem); border:1px solid var(--rule); border-radius:18px; background:var(--raised); }
+.game-entry,.game-panel { padding:clamp(1.25rem,4vw,2.5rem); border:1px solid var(--rule); border-radius:4px; background:var(--raised); }
 .game-entry { background:radial-gradient(ellipse at 100% 0%,var(--raised) 0%,var(--raised) 65%); }
-.game-kicker { display:flex; justify-content:space-between; gap:1rem; text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; color:var(--hunter-text); margin-bottom:1.5rem; }
-.game-kicker span { color:var(--tone); }
 .prediction-game h2 { margin:0 0 1.2rem; font-size:clamp(1.4rem,3vw,2rem); line-height:1.2; }
 .prediction-game h3 { margin:1.75rem 0 1rem; }
 .prediction-game p { line-height:1.65; }
 .game-date { display:block; font-size:clamp(2rem,5vw,3.5rem); font-weight:750; letter-spacing:-.035em; color:var(--hunter-text); }
 .game-fields { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-block:1.5rem; }
 .prediction-game label { display:grid; gap:.65rem; font-size:.9rem; }
-.prediction-game input:not([type=checkbox]) { width:100%; min-width:0; padding:.85rem; color:var(--fg); background:var(--bg); border:1px solid var(--tone-dim); border-radius:8px; font:inherit; color-scheme:dark; }
+.prediction-game input:not([type=checkbox]) { width:100%; min-width:0; padding:.85rem; color:var(--fg); background:var(--bg); border:1px solid var(--tone-dim); border-radius:4px; font:inherit; }
 .prediction-game input:focus-visible,.prediction-game button:focus-visible,.game-recovery summary:focus-visible { outline:2px solid var(--hunter-text); outline-offset:4px; }
-.prediction-game .game-confirm { display:flex; align-items:flex-start; gap:.75rem; margin:1.4rem 0; line-height:1.5; }
-.game-confirm input { width:20px; height:20px; flex-shrink:0; accent-color:var(--hunter); }
-.prediction-game button { padding:.85rem 1.1rem; min-height:44px; border:1px solid transparent; border-radius:8px; background:var(--hunter); color:var(--on-hunter); font:inherit; font-weight:650; cursor:pointer; }
+.prediction-game button { padding:.85rem 1.1rem; min-height:44px; border:1px solid transparent; border-radius:4px; background:var(--hunter); color:var(--on-hunter); font:inherit; font-weight:650; cursor:pointer; }
 .prediction-game button:disabled { opacity:.45; cursor:default; }
 .prediction-game .game-secondary { background:transparent; border-color:var(--tone-dim); color:var(--fg); }
 .game-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin:1.5rem 0; }
@@ -2445,22 +2371,17 @@ select {
 .game-link button { flex-shrink:0; }
 .game-section-heading { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
 .game-section-heading>span { color:var(--hunter-text); font-variant-numeric:tabular-nums; }
-.game-metrics { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-block:1.5rem; }
-.game-metrics article { display:grid; gap:.65rem; padding:1.2rem; background:var(--raised); border-radius:10px; }
-.game-metrics span { color:var(--tone); font-size:.85rem; }
-.game-metrics strong { font-size:clamp(1.2rem,2.8vw,1.7rem); }
 .game-table-wrap { overflow:auto; margin-block:1rem; }
 .prediction-game table { width:100%; border-collapse:collapse; font-size:.9rem; }
 .prediction-game th,.prediction-game td { padding:.8rem; text-align:start; border-bottom:1px solid var(--rule); }
 .prediction-game th { color:var(--tone); font-weight:500; }
 .game-me { color:var(--hunter-text); background:var(--hover); }
-.game-feedback { padding:1rem 1.25rem; border:1px solid var(--tone); border-radius:10px; }
+.game-feedback { padding:1rem 1.25rem; border:1px solid var(--tone); border-radius:4px; }
 .game-error { color:var(--destructive); border-color:var(--destructive); }
 .game-settled { border-top:1px solid var(--rule); padding-top:1.5rem; }
 @media(max-width:600px) {
  .game-link { flex-direction:column; align-items:stretch; }
- .game-fields,.game-metrics { grid-template-columns:1fr; }
- .game-kicker span { display:none; }
+ .game-fields { grid-template-columns:1fr; }
  .game-actions button { flex:1 1 100%; }
 }
 
@@ -2473,13 +2394,13 @@ select {
 .game-calendar-toolbar { display:flex; align-items:center; gap:4px; }
 .prediction-game .game-calendar-toolbar button { display:grid; place-items:center; padding:0; min-width:44px; min-height:44px; border-color:var(--rule); background:var(--raised); color:var(--fg); }
 .game-calendar-selects { display:flex; justify-content:center; gap:4px; min-width:0; }
-.game-calendar-selects select { min-width:0; min-height:44px; max-width:145px; color:var(--fg); background:var(--raised); border:1px solid var(--rule); border-radius:8px; padding:8px; font:inherit; font-size:.85rem; font-weight:600; text-transform:capitalize; color-scheme:dark; cursor:pointer; }
+.game-calendar-selects select { min-width:0; min-height:44px; max-width:145px; color:var(--fg); background:var(--raised); border:1px solid var(--rule); border-radius:4px; padding:8px; font:inherit; font-size:.85rem; font-weight:600; text-transform:capitalize; cursor:pointer; }
 .game-calendar-week,.game-calendar-days { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:9px; text-align:center; }
 .game-calendar-week { margin-bottom:9px; color:var(--text-muted); font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:.68rem; font-weight:600; text-transform:uppercase; }
 .game-calendar-week span { overflow:hidden; }
 .game-calendar-days { list-style:none; margin:0; padding:0; }
 .game-calendar-days li { min-width:0; }
-.prediction-game .game-calendar-days .game-day { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; width:100%; min-width:0; min-height:44px; aspect-ratio:1.22; padding:0; border:1px solid var(--rule); border-radius:10px; background:var(--raised); color:var(--fg); box-shadow:inset 0 1px 0 rgba(255,255,255,.05); font-variant-numeric:tabular-nums; }
+.prediction-game .game-calendar-days .game-day { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; width:100%; min-width:0; min-height:44px; aspect-ratio:1.22; padding:0; border:1px solid var(--rule); border-radius:2px; background:var(--bg); color:var(--fg); font-variant-numeric:tabular-nums; }
 .prediction-game .game-calendar-days button.game-day:not(:disabled):hover { border-color:var(--accent-green); background:var(--hover); }
 .prediction-game .game-calendar-days button.game-day:disabled { opacity:.28; }
 .game-day-number { font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:1rem; font-weight:650; line-height:1.1; }
@@ -2489,14 +2410,14 @@ select {
 .prediction-game .game-calendar-days .game-day[data-heat="3"],.game-heat-scale i[data-heat="3"] { background:rgb(63 174 79 / .38); border-color:rgb(63 174 79 / .55); }
 .prediction-game .game-calendar-days .game-day[data-heat="4"],.game-heat-scale i[data-heat="4"] { background:rgb(63 174 79 / .58); border-color:var(--accent-green); }
 .prediction-game .game-calendar-days .game-day[data-heat="4"],.prediction-game .game-calendar-days .game-day[data-heat="4"] .game-day-count { color:var(--on-hunter); }
-.prediction-game .game-calendar-days .game-day[data-picked] { border-color:var(--fg); background:var(--hover); color:var(--fg); }
-.prediction-game .game-calendar-days .game-day[data-picked] .game-day-count { color:var(--fg); }
+.prediction-game .game-calendar-days .game-day[data-picked] { border-color:var(--fg); background:var(--fg); color:var(--bg); }
+.prediction-game .game-calendar-days .game-day[data-picked] .game-day-count { color:var(--bg); }
 .game-calendar-empty { visibility:hidden; }
 .game-calendar-legend { display:flex; flex-wrap:wrap; gap:12px 24px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); color:var(--text-secondary); font-size:.78rem; }
 .game-calendar-legend > span { display:flex; align-items:center; gap:9px; }
 .game-heat-scale { display:flex; gap:4px; }
 .game-heat-scale i { width:16px; height:12px; border:1px solid var(--rule); border-radius:3px; background:var(--raised); }
-.game-pick-swatch { width:12px; height:12px; border:1px solid var(--fg); border-radius:3px; background:var(--hover); }
+.game-pick-swatch { width:12px; height:12px; border:1px solid var(--fg); border-radius:2px; background:var(--fg); }
 .game-calendar-selects select:focus-visible { outline:2px solid var(--hunter-text); outline-offset:3px; }
 
 /* Prediction flow: saved date, immediate actions, then community comparison. */
@@ -2515,7 +2436,6 @@ select {
 .prediction-game .game-entry-saved h2 { margin-bottom:10px; }
 .prediction-game .game-entry-saved .game-date { color:var(--fg); }
 .prediction-game .game-verdict-confirmed { margin:12px 0 0; color:var(--text-secondary); font-size:.72rem; }
-.prediction-game .game-scope { margin:0 0 20px; max-width:70ch; color:var(--tone); font-size:.9rem; line-height:1.6; }
 .prediction-game .game-fields { grid-template-columns:repeat(2,minmax(0,1fr)); margin-block:20px; }
 .prediction-game .game-fields .game-hint { margin:0; font-size:.8rem; }
 .prediction-game .game-pick-readout { display:flex; align-items:center; min-height:52px; margin:0; color:var(--fg); font-family:var(--font-geist-mono),ui-monospace,monospace; font-size:1.1rem; font-weight:650; line-height:1.35; }
@@ -2532,8 +2452,6 @@ select {
 .game-next-steps { padding:8px 0; }
 .game-next-steps > h2 { margin-bottom:12px; }
 .game-option { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.45fr); gap:24px; padding:24px 0; border-top:1px solid var(--rule); }
-.game-option-intro h3 { margin:0 0 8px; font-size:1.1rem; line-height:1.4; }
-.game-option-intro p { max-width:40ch; margin:0; color:var(--tone); font-size:.9rem; }
 .game-option-body { min-width:0; }
 .game-option-body > p { margin:0; color:var(--tone); }
 .game-option-body .game-section-heading h3 { margin:0; }
@@ -2563,7 +2481,6 @@ select {
  .game-day-count { font-size:.55rem; }
  .prediction-game .game-pick-readout { min-height:44px; }
  .game-option { grid-template-columns:1fr; gap:12px; padding:20px 0; }
- .game-option-intro h3 { font-size:1rem; }
  .game-email-form button { width:100%; }
 }
 
@@ -2572,13 +2489,13 @@ select {
 .predictions-page .content-page-head { min-height:0; }
 .predictions-page .page-lede { max-width:48ch; }
 .prediction-game .game-participation { margin:0; font-size:.85rem; color:var(--text-secondary); }
-.game-participation strong { color:var(--text-primary,#f3f6f3); }
-.prediction-game .game-entry,.prediction-game .game-panel { border-radius:16px; }
+.game-participation strong { color:var(--fg); }
+.prediction-game .game-entry,.prediction-game .game-panel { border-radius:4px; }
 .prediction-game .game-date-field { margin-block:0 16px; }
 .prediction-game .game-fields { display:flex; flex-direction:column; gap:8px; }
-.game-nickname summary,.game-extras > summary { min-height:44px; padding-block:12px; cursor:pointer; color:var(--text-secondary); }
+.game-nickname summary { min-height:44px; padding-block:12px; cursor:pointer; color:var(--text-secondary); }
 .game-nickname[open] label { margin-block:8px; }
-.game-nickname summary:focus-visible,.game-extras > summary:focus-visible { outline:2px solid var(--hunter-text); outline-offset:4px; }
+.game-nickname summary:focus-visible { outline:2px solid var(--hunter-text); outline-offset:4px; }
 .prediction-game .game-vote { width:100%; margin-top:4px; }
 .prediction-game #game-final { font-size:.8rem; margin-block:12px; }
 .prediction-game #game-unlock { font-size:.75rem; text-align:center; }
@@ -2592,7 +2509,6 @@ select {
 .game-month-row meter::-webkit-meter-optimum-value { background:var(--hunter); }
 .game-month-row meter::-moz-meter-bar { background:var(--hunter); }
 .game-next-steps > .game-option { display:block; border:0; padding-top:0; }
-.game-extras { border-top:1px solid var(--border); }
 .game-next-steps .game-actions button { background:transparent; color:var(--fg); border-color:var(--tone-dim); }
 @media(max-width:600px) {
  .prediction-game .game-calendar-head { gap:12px; margin-bottom:16px; }

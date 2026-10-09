@@ -14,6 +14,10 @@
 
 :root {
   color-scheme: dark;
+  /* globals.css predates the redesign and names the Geist families it used to
+     load; both now resolve to Archivo, the only typeface the site ships. */
+  --font-geist-sans: var(--font-archivo);
+  --font-geist-mono: var(--font-archivo);
   --bg: #090909;
   --raised: #151514;
   --hover: #1d1d1b;
@@ -462,7 +466,6 @@
 }
 
 .home-hero[data-state="publishing"] {
-  grid-template-columns: minmax(0, 1fr);
   margin-top: 32px;
   padding: clamp(32px, 5vw, 56px);
   background: var(--hunter);
@@ -566,6 +569,48 @@ a.home-hero-count:hover span {
 
 .home-hero[data-state="publishing"] .home-hero-alerts p {
   color: var(--hunter-ink);
+}
+
+.home-hero[data-state="publishing"] {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+}
+
+.home-hero-next {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-bottom: 24px;
+  text-align: end;
+}
+
+.home-hero-next span {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.home-hero-next strong {
+  margin-top: 6px;
+  font-size: clamp(2.75rem, 6vw, 4.75rem);
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: 0.9;
+}
+
+.home-hero-next small {
+  margin-top: 8px;
+  color: var(--hunter-ink);
+  font-size: 0.95rem;
+}
+
+.site-shell .home-hero[data-state="publishing"] .push-notification-button {
+  border-color: var(--on-hunter);
+  color: var(--on-hunter);
+}
+
+.site-shell .home-hero[data-state="publishing"] .push-notification-button:not(:disabled):hover {
+  background: rgb(6 33 13 / 0.12);
+  color: var(--on-hunter);
 }
 
 .home-hero-art {
@@ -1075,7 +1120,14 @@ a.home-hero-count:hover span {
   }
 
   .home-hero[data-state="publishing"] {
+    grid-template-columns: minmax(0, 1fr);
     margin-inline: -16px;
+  }
+
+  .home-hero-next {
+    align-items: flex-start;
+    padding-bottom: 0;
+    text-align: start;
   }
 
   .home-jump {
@@ -1389,40 +1441,17 @@ a.home-hero-count:hover span {
   color: var(--fg-soft);
 }
 
-/* Statistics: the current pause is marked with a rule, not an amber glow. */
+/* Statistics: no amber glow behind the section. */
 .site-shell .stats-section::before {
   display: none;
 }
 
-.site-shell .stat-current {
-  border-color: var(--rule);
-  border-inline-start: 3px solid var(--hunter);
-  background: var(--raised);
-  box-shadow: none;
-}
-
-/* Data labels use the page's typeface. Pointing the mono variable at Archivo
-   covers every component that set it; real code keeps a monospace face. */
-:root:has(.site-shell) {
-  --font-geist-mono: var(--font-archivo);
-}
+/* Data labels use the page's typeface; real code keeps a monospace face. */
 
 .site-shell code,
 .site-shell pre,
 .site-shell .code-block {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-}
-
-.site-shell :is(
-  .history-key-count,
-  .stat-label,
-  .base-rates-badge,
-  .base-rate dt,
-  .game-kicker,
-  .game-calendar-week
-) {
-  letter-spacing: 0;
-  text-transform: none;
 }
 
 /* On the history page the chart sits under a page title with the same name;
@@ -1535,4 +1564,75 @@ a.home-hero-count:hover span {
   margin-top: 6px;
   color: var(--tone);
   font-size: 0.78rem;
+}
+
+/* Prediction game: headings and the big dates in the condensed display cut. */
+.site-shell .prediction-game h2,
+.site-shell .game-date {
+  font-weight: 900;
+  font-stretch: 62%;
+  letter-spacing: 0;
+}
+
+/* 404: the pages people most often arrive looking for, as a ruled list. */
+.not-found-links {
+  margin: 40px 0 0;
+  padding: 0;
+  border-top: 3px solid var(--fg);
+  list-style: none;
+}
+
+.not-found-links a {
+  display: block;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+  font-weight: 800;
+  font-stretch: 75%;
+}
+
+.not-found-links a:hover {
+  color: var(--hunter-text);
+}
+
+/* Share-image capture pages sit outside the shell (they are always dark), but
+   their sections take the same frame, labels and headings as the site. */
+.share-capture-page {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--site-sans);
+}
+
+.share-capture-page .content-section {
+  border-color: var(--rule);
+  border-radius: 4px;
+  background: var(--bg);
+  box-shadow: none;
+}
+
+.share-capture-page .eyebrow {
+  color: var(--tone);
+  font-family: var(--site-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.share-capture-page .section-heading h2 {
+  color: var(--fg);
+  font-family: var(--site-sans);
+  font-size: 2.25rem;
+  font-weight: 850;
+  font-stretch: 70%;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.share-capture-page .capture-site-label,
+.share-capture-page .history-key-count {
+  color: var(--tone);
+  font-family: var(--site-sans);
+  letter-spacing: 0;
+  text-transform: none;
 }

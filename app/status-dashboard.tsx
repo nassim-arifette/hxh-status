@@ -326,11 +326,11 @@ export default function StatusDashboard({
           <a
             className="wordmark"
             href="#top"
-            aria-label={messages.header.wordmarkAria}
           >
             <span className="wordmark-hxh">
               H<span className="wordmark-times">&times;</span>H
             </span>
+            {" "}
             <span className="wordmark-status">Status</span>
           </a>
           <SiteNavigation locale={locale} messages={messages} />
@@ -404,6 +404,28 @@ export default function StatusDashboard({
               />
             </div>
           </div>
+
+          {publicationStatus === "publishing" ? (
+            // While the series runs, the next release date is the answer
+            // readers come back for; it takes the place of the panel.
+            <div className="home-hero-next">
+              <span>
+                {messages.snapshot.nextChapter} {nextChapter.chapter}
+              </span>
+              <strong>
+                {nextChapter.releaseAt ? (
+                  <time dateTime={nextChapter.releaseAt.slice(0, 10)} title={messages.snapshot.japanDate}>
+                    {formatDate(nextChapter.releaseAt.slice(0, 10), { month: "long", day: "numeric", year: undefined }, locale)}
+                  </time>
+                ) : (
+                  statusMeta[nextChapter.status].shortLabel
+                )}
+              </strong>
+              <small>
+                {nextChapter.releaseAt ? "JST" : messages.snapshot.noOfficialDate}
+              </small>
+            </div>
+          ) : null}
 
           {publicationStatus === "hiatus" ? (
             <figure className="home-hero-art">

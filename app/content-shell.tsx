@@ -106,11 +106,11 @@ export function ContentShell({
           <a
             className="wordmark"
             href={localePath("/", locale)}
-            aria-label={messages.header.wordmarkAria}
           >
             <span className="wordmark-hxh">
               H<span className="wordmark-times">&times;</span>H
             </span>
+            {" "}
             <span className="wordmark-status">Status</span>
           </a>
           <SiteNavigation locale={locale} messages={messages} path={path} />

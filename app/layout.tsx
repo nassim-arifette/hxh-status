@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { GeistMono } from "geist/font/mono";
-import { GeistSans } from "geist/font/sans";
 import { Archivo } from "next/font/google";
 import { createLocaleMetadata } from "@/lib/metadata";
 import englishMessages from "@/messages/en.json";
@@ -9,8 +7,8 @@ import { THEME_SCRIPT } from "./theme";
 import "./globals.css";
 import "./site.css";
 
-// The tracker's display face. Its width axis gives the condensed numerals the
-// home page sets large; body copy uses the same family at normal width.
+// The site's one typeface. Its width axis gives the condensed headings and
+// numerals; body copy uses the same family at normal width.
 const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
   axes: ["wdth"],
@@ -41,7 +39,7 @@ export default function RootLayout({
     <html
       lang="en"
       dir="ltr"
-      className={`${GeistSans.variable} ${GeistMono.variable} ${archivo.variable}`}
+      className={archivo.variable}
       suppressHydrationWarning
     >
       <head>

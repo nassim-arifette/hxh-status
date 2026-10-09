@@ -101,7 +101,7 @@ The older stage hues (teal, blue, amber, orange) are retired on the home page. P
 
 ## Typography
 
-**Family:** Archivo, loaded in `app/layout.tsx` with its `wdth` axis as `--font-archivo`. CJK and Arabic text falls back to system faces (Hiragino Sans, Yu Gothic, Noto Sans JP/SC/Arabic).
+**Family:** Archivo, loaded in `app/layout.tsx` with its `wdth` axis as `--font-archivo`. It is the only typeface the site ships; the `--font-geist-*` variables that `globals.css` still names are aliases for it. CJK and Arabic text falls back to system faces (Hiragino Sans, Yu Gothic, Noto Sans JP/SC/Arabic).
 
 | Role | Size | Weight | Width | Use |
 | --- | --- | --- | --- | --- |
@@ -119,7 +119,7 @@ Numbers use tabular figures throughout.
 
 - **Frame:** 1120px max, 24px side gutters, 16px under 720px.
 - **Header:** a single bar with the wordmark, the section links, then the date the status last changed, the theme toggle and language. Under 1100px the links drop to a second row. Under 560px the date gets its own line and the links scroll sideways. The current page is marked by a 3px green underline sitting on the bar's bottom rule.
-- **Hero:** the question in tone, the answer at Answer size, then the day count above a 3px rule, linking to the hiatus page. Below it, one line on Togashi alerts with the alerts button (green outline, 44px): it is the hero's only action. While on hiatus, the cut-out figure sits on the right (above the answer on phones). While publishing, the hero becomes a solid hunter-green block with no art.
+- **Hero:** the question in tone, the answer at Answer size, then the day count above a 3px rule, linking to the hiatus page. Below it, one line on Togashi alerts with the alerts button (green outline, 44px): it is the hero's only action. While on hiatus, the cut-out figure sits on the right (above the answer on phones). While publishing, the hero becomes a solid hunter-green block with no art; the next chapter and its announced date (or its stage and "no official date") take the art's place, set large on the end side.
 - **Facts row:** four chapter numbers (latest released, next, manuscripts complete, confirmed progress) under a 3px rule, divided by hairlines, like a table of contents. Two columns under 980px.
 - **Jump links:** pill links to the production tracker, next chapter, latest Togashi post and FAQ, directly under the facts row. They scroll sideways on phones. Targets have `scroll-margin-top`.
 - **Sections:** each opens with a 3px text-colour rule and a section heading. There is no box around them. The gap between sections is `clamp(48px, 6vw, 72px)`.
@@ -166,6 +166,14 @@ The button is plain HTML (`app/theme-toggle.tsx`). A small script in `<head>` (`
 ### Next chapter
 
 Two columns: the model estimate ("Unofficial estimate: March 2027") with a link to its method, and the community game prompt on a raised panel with a 3px hunter border on the start side. The caveats live on the chapter page; the home page labels the estimate as unofficial and links to them.
+
+### Prediction game
+
+The game uses the same tokens: 4px panels, square-ish day cells on the page colour, a solid text-colour fill for the picked day (the "finished sheet"), and hunter fills for the primary button and the heat scale. Headings and big dates use the condensed display cut. The downloadable share card (`card()` in `app/prediction-game.tsx`) is drawn on a canvas in the same palette with the page's Archivo.
+
+### 404
+
+`app/not-found.tsx`: the site header, a condensed title, one sentence, and a ruled list of the pages people most often arrive looking for (hiatus answer, next chapter's release date, Togashi's updates, where to read). English only, since it answers every path.
 
 ### Latest Togashi post, FAQ, footer
 
