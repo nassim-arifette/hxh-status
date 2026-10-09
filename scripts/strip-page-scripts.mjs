@@ -4,6 +4,7 @@ import { join, relative, sep } from "node:path";
 import localeConfig from "../lib/locales.json" with { type: "json" };
 import { isContentRoute } from "../lib/routes.ts";
 import { LOCAL_DATE_SCRIPT } from "../app/local-date.ts";
+import { THEME_SCRIPT } from "../app/theme.ts";
 
 // The content pages — every chapter, every Togashi update, and the answer pages
 // beside them — are text, a table and a few links. They carry no interactive
@@ -14,9 +15,9 @@ import { LOCAL_DATE_SCRIPT } from "../app/local-date.ts";
 // Dropping them has a second effect that matters more as the site grows. Every
 // page ships a unique inline flight script, and Cloudflare allows a hundred
 // rules in _headers, so hashing one script per page cannot survive hundreds of
-// chapter pages. A stripped page's only inline script is the shared date
-// rewrite, whose bytes are identical everywhere, so one rule covers a whole
-// section no matter how many pages it holds.
+// chapter pages. A stripped page's only inline scripts are the shared date
+// rewrite and theme switch, whose bytes are identical everywhere, so one rule
+// covers a whole section no matter how many pages it holds.
 
 const root = process.cwd();
 const outDirectory = join(root, "out");
@@ -67,13 +68,15 @@ for await (const path of htmlFiles(outDirectory)) {
     .replace(NEXT_PRELOAD, "");
 
   // A content page that still ships an executable script other than the shared
-  // date rewrite has grown an interactive component, and stripping its runtime
-  // would leave that component dead on the page. Fail rather than ship it.
+  // date rewrite and theme switch has grown an interactive component, and
+  // stripping its runtime would leave that component dead on the page. Fail
+  // rather than ship it.
   const survivors = [...updated.matchAll(SCRIPT)]
     .filter(([, attributes]) => !NON_EXECUTABLE.test(attributes))
     .map(([, , body]) => body);
 
-  const unexpected = survivors.filter((body) => body !== LOCAL_DATE_SCRIPT);
+  const shared = new Set([LOCAL_DATE_SCRIPT, THEME_SCRIPT]);
+  const unexpected = survivors.filter((body) => !shared.has(body));
   if (unexpected.length > 0 || NEXT_SRC.test(updated)) {
     throw new Error(
       `${route} still needs JavaScript after stripping; it is not a content page.`,

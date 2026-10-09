@@ -41,8 +41,21 @@
   margin-top: 18px;
 }
 
+/* The photo is usually the post: it leads, and the words sit beside it. */
 .body[data-has-media="true"] {
-  grid-template-columns: minmax(0, 1fr) 168px;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.body[data-has-media="true"] .media {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.body[data-has-media="true"] .copy {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
 }
 
 .copy {
@@ -193,7 +206,7 @@
   aspect-ratio: 1;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 2px;
   background: var(--background);
 }
 
@@ -213,9 +226,9 @@
   place-items: center;
   width: 27px;
   height: 27px;
-  border: 1px solid #414a43;
+  border: 1px solid var(--border);
   border-radius: 5px;
-  background: #111512;
+  background: var(--card);
   color: var(--foreground);
   transition: background-color 130ms ease;
 }
@@ -268,14 +281,14 @@
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 720px) {
   .update {
     padding: 18px;
   }
 
   .header {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
 
@@ -284,46 +297,21 @@
   }
 
   .body[data-has-media="true"] {
-    grid-template-columns: minmax(0, 1fr) 112px;
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
   }
 
-  .body {
-    margin-top: 20px;
+  .body[data-has-media="true"] .media {
+    width: min(100%, 280px);
   }
 
-  .copy {
-    display: contents;
-  }
-
-  .byline {
+  .body[data-has-media="true"] .copy {
     grid-column: 1;
-    align-content: start;
-    align-self: start;
-    gap: 7px;
-  }
-
-  .date {
-    padding: 0;
-    border: 0;
+    grid-row: 2;
   }
 
   .text {
-    grid-column: 1;
-    grid-row: 2;
-    margin: 0;
     font-size: 1rem;
-  }
-
-  .media {
-    grid-column: 2;
-    grid-row: 1 / 3;
-    align-self: start;
-  }
-
-  .original,
-  .copy > .translation {
-    grid-column: 1 / -1;
   }
 
   .original summary {

@@ -4,12 +4,13 @@
     "description": "一个附有来源的非官方《HUNTER×HUNTER（全职猎人）》追踪站，汇总最新刊载章节以及富坚义博公开确认的后续章节制作进度。",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status：《全职猎人》最新刊载章节与已确认制作进度",
-    "homeTitleHiatus": "《全职猎人》休刊了吗？最新第{latest}话，下一话第{next}话（{month}）",
-    "homeTitlePublishing": "《全职猎人》休刊了吗？没有 — 最新第{latest}话，下一话第{next}话（{month}）"
+    "homeTitleHiatus": "《全职猎人》休刊了吗？第{next}话什么时候更新（{month}）",
+    "homeTitlePublishing": "《全职猎人》第{next}话什么时候更新？连载时间表（{month}）"
   },
   "header": {
     "wordmarkAria": "H×H Status",
-    "updated": "更新于 {date}"
+    "updated": "状态最后变更于 {date}",
+    "darkMode": "深色模式"
   },
   "language": {
     "label": "语言"
@@ -78,19 +79,22 @@
     "question": "《全职猎人》休刊了吗？",
     "summaryAria": "当前状态的文字说明",
     "japanDate": "日本日期（JST）",
-    "pauseDays": "已休刊{days}天"
+    "pauseDays": "已休刊{days}天",
+    "daysSince": "天（自第{chapter}话刊载以来）",
+    "waitArtAlt": "漫画分格：一名身穿长袍的男子蹲坐着说：“多久都行。我会等。”"
   },
   "production": {
     "eyebrow": "卡金王位继承战",
     "title": "制作进度",
     "chapterStatusAria": "各话制作进度",
-    "legendAria": "状态说明"
+    "legendAria": "状态说明",
+    "selectHint": "选择一话即可查看来源。"
   },
   "latestUpdate": {
     "translatedByGemini": "由 Gemini 从日语翻译",
     "translated": "译自日语",
     "originalText": "日语原文",
-    "translationUnavailable": "翻译暂不可用 · 日语原文",
+    "translationUnavailable": "翻译暂不可用，日语原文",
     "showOriginal": "查看原文",
     "imageAlt": "富坚义博帖子所附的第 {index} 张图片",
     "noPost": "暂无富坚义博的帖子。",
@@ -115,8 +119,8 @@
     "currentArcBadge": "连载中",
     "metricChapters": "话数",
     "metricDuration": "历时",
-    "rankChapters": "篇幅第 {rank} 位 · {count} 话",
-    "rankDuration": "历时第 {rank} 位 · {duration}",
+    "rankChapters": "篇幅第 {rank} 位，{count} 话",
+    "rankDuration": "历时第 {rank} 位，{duration}",
     "durationYears": "{years} 年",
     "durationMonths": "{months} 个月",
     "arcChaptersCount": "{count} 话",
@@ -129,7 +133,7 @@
     "methodology": "依据1998年以来的Jump期刊记录，合刊计为一期。描述过去，并非下次刊载预测。",
     "currentHiatus": {
       "title": "当前休刊状态",
-      "justStarted": "休刊刚开始 · 经历0期Jump",
+      "justStarted": "休刊刚开始，经历0期Jump",
       "elapsed": "已过去{days}天・记录的Jump期数：{issues}",
       "since": "自第 {chapter} 话（{jumpIssue} 期）刊登后"
     },
@@ -366,7 +370,7 @@
     },
     "chapter": {
       "metaTitlePublished": "《全职猎人》第{chapter}话于{date}刊登在《周刊少年Jump》第{issue}期",
-      "metaTitlePending": "《全职猎人》第{chapter}话什么时候出？已确认状态与来源",
+      "metaTitlePending": "《全职猎人》第{chapter}话什么时候更新？已确认状态与富坚的进度",
       "metaDescriptionPublished": "《全职猎人》第{chapter}话于{date}刊登在《周刊少年Jump》第{issue}期。含标题、单行本卷数、篇章以及可阅读的官方渠道。",
       "metaDescriptionPending": "《全职猎人》第{chapter}话尚未公布刊登日期。其已确认的制作阶段为{status}，更新于{date}，并附富坚公开的来源。",
       "h1": "《全职猎人》第{chapter}话",
@@ -468,12 +472,12 @@
     }
   },
   "forecast": {
-    "badge": "模型估计 · 非官方日期",
+    "badge": "模型估计，非官方日期",
     "title": "第{chapter}话可能何时刊登？",
     "intro": "两个探索性模型：历史休刊与基于富坚原稿完成动态的情景。概率取决于各自的假设。",
     "median": "模型中位数",
     "range": "中央80%预测区间",
-    "asOf": "计算于{date} · {total}次休刊，其中{count}次有准确日期。",
+    "asOf": "计算于{date}，{total}次休刊，其中{count}次有准确日期。",
     "caution": "模型中的80%不代表现实中的80%准确率。数据稀少，编辑部的决定未知。",
     "methodTitle": "方法、历史检验与局限",
     "method": "历史基准：2014年以来连续编号章节之间所有已结束的休刊，包括短暂停刊。时间从上一话刊登到复刊。有准确日期时优先使用，否则按每年48期Jump换算。",

@@ -1,220 +1,203 @@
 ---
 name: HxH Status
-description: A source-led status desk for HUNTER×HUNTER publication and production.
+description: A HUNTER×HUNTER publication and production tracker, drawn like a manga page.
 colors:
-  signal-green: "#78c963"
-  signal-green-soft: "#1b2b1c"
-  signal-green-border: "#315f32"
-  published-field: "#172b18"
-  scheduled-teal: "#50bcb2"
-  delivered-blue: "#68a0ff"
-  background-amber: "#d6aa4d"
-  inking-orange: "#df824c"
-  game-lime: "#b9f65d"
-  error-red: "#ef6a6a"
-  page-ink: "#0b0e0c"
-  card-ink: "#111512"
-  raised-ink: "#151916"
-  hover-ink: "#1a201b"
-  green-haze: "#1b241c"
-  foreground: "#f3f6f3"
-  text-secondary: "#a7aea8"
-  text-muted: "#879189"
-  border: "#252c27"
-  game-field: "#0c130f"
-  game-ink: "#10180d"
-  game-foreground: "#f1f6ed"
-  game-border: "#596852"
+  dark:
+    page: "#090909"
+    raised: "#151514"
+    hover: "#1d1d1b"
+    text: "#ecebe6"
+    text-soft: "#bdbcb6"
+    tone: "#9a9993"
+    tone-dim: "#5f5e5a"
+    rule: "#2a2a28"
+    hunter: "#3fae4f"
+    hunter-text: "#6fd27c"
+    on-hunter: "#06210d"
+  light:
+    page: "#f6f6f6"
+    raised: "#ebebe8"
+    hover: "#e2e2de"
+    text: "#121212"
+    text-soft: "#3d3c38"
+    tone: "#5e5d58"
+    tone-dim: "#a3a29c"
+    rule: "#d8d7d2"
+    hunter: "#3fae4f"
+    hunter-text: "#1d7a2c"
+    on-hunter: "#06210d"
 typography:
-  display:
-    fontFamily: "var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(2.1rem, 4vw, 3.25rem)"
-    fontWeight: 650
-    lineHeight: 1.05
-    letterSpacing: "-0.035em"
-  headline:
-    fontFamily: "var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.8rem, 3.4vw, 2.7rem)"
-    fontWeight: 650
-    lineHeight: 1.1
-    letterSpacing: "-0.035em"
-  title:
-    fontFamily: "var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1.75rem"
-    fontWeight: 570
+  family: "Archivo (variable, width axis), via next/font"
+  answer:
+    fontSize: "clamp(3.25rem, 8.5vw, 7rem)"
+    fontWeight: 900
+    fontStretch: "62%"
+    lineHeight: 0.86
+  figure:
+    fontSize: "clamp(2.5rem, 4.2vw, 3.5rem)"
+    fontWeight: 850
+    fontStretch: "62%"
+    lineHeight: 0.9
+  section-heading:
+    fontSize: "clamp(1.6rem, 2.8vw, 2.25rem)"
+    fontWeight: 850
+    fontStretch: "70%"
+    lineHeight: 1
   body:
-    fontFamily: "var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
-    lineHeight: 1.5
-  label:
-    fontFamily: "var(--font-geist-mono), ui-monospace, monospace"
-    fontSize: "0.72rem"
-    fontWeight: 600
-    lineHeight: 1.5
-    letterSpacing: "0.12em"
+    lineHeight: 1.6
+  small:
+    fontSize: "0.85–0.95rem"
+    fontWeight: 400–600
 rounded:
-  control: "8px"
-  tile: "10px"
-  small-panel: "12px"
-  metric-panel: "16px"
-  section: "18px"
-  pill: "999px"
-spacing:
-  compact: "8px"
-  control: "12px"
-  standard: "16px"
-  panel: "24px"
-  section: "38px"
-components:
-  utility-button:
-    backgroundColor: "{colors.raised-ink}"
-    textColor: "{colors.text-secondary}"
-    rounded: "{rounded.control}"
-    padding: "0 13px"
-    height: "44px"
-  game-primary-button:
-    backgroundColor: "{colors.game-lime}"
-    textColor: "{colors.game-ink}"
-    rounded: "{rounded.control}"
-    padding: "0.85rem 1.1rem"
-    height: "44px"
-  game-input:
-    backgroundColor: "{colors.game-field}"
-    textColor: "{colors.game-foreground}"
-    rounded: "{rounded.control}"
-    padding: "0.85rem"
-  section-card:
-    backgroundColor: "{colors.card-ink}"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.section}"
-    padding: "38px"
-  metric-panel:
-    backgroundColor: "rgba(17, 21, 18, 0.75)"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.metric-panel}"
-  published-chapter-card:
-    backgroundColor: "{colors.published-field}"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.tile}"
-  active-nav-link:
-    textColor: "{colors.signal-green}"
-  observation-badge:
-    backgroundColor: "{colors.raised-ink}"
-    textColor: "{colors.text-muted}"
-    rounded: "{rounded.pill}"
-    padding: "5px 11px"
+  tile: "2px"
+  control: "4px"
+  jump-link: "999px"
+rules:
+  section: "3px solid text"
+  divider: "1px solid rule"
+layout:
+  frame: "1120px, 24px gutters (16px under 720px)"
+  section-gap: "clamp(48px, 6vw, 72px)"
 ---
 
 # Design System: HxH Status
 
 ## Overview
 
-**Creative North Star: "The Signal Desk"**
+**Creative north star: "The manga page."**
 
-HxH Status reads like a compact editorial instrument: a dark, quiet field that makes the latest signal and its provenance easy to spot. The interface is precise and restrained, with crisp green highlights, tabular numbers, and gently layered panels rather than fan-art decoration. The source code and current rendered tracker, not a hypothetical redesign, define this record.
+HxH Status is drawn like a page of the manga it tracks: ink black, paper white, heavy panel rules, and Hunter green for what is finished and printed. The first screen gives the answer readers came for, set very large, and a figure from the series waits beside it. Everything below is quiet and ruled rather than boxed.
 
-The core tracker uses signal green sparingly for confirmed emphasis and actionable links. Other hues identify specific production stages or hiatus context, so color carries meaning rather than general excitement. The prediction game is a related but brighter participation surface with its own lime accent; it does not reset the global tracker palette.
+The system lives in `app/site.css`, loaded after `app/globals.css`. Its palette tokens are global, so the share-image capture routes use them too (always in dark). Everything else is scoped to `.site-shell`, which wraps the home page and every content page; light mode only applies inside it. `globals.css` still holds the base component styles, with its colours pointed at these tokens; `site.css` overrides their shape and type.
 
-**Key Characteristics:**
-- Near-black green surfaces and pale text create a calm, high-contrast reading field.
-- Geist Sans carries explanation; Geist Mono identifies dates, counts, labels, and status details.
-- Thin borders, restrained shadows, and compact controls make dense information navigable.
-- Responsive grids simplify without discarding the status hierarchy.
+**Key characteristics**
+
+- One black, one white, one green. The black is sampled from the hero art (`#090909`) so the figure sits on the page without a seam.
+- Light and dark modes follow the reader's system setting until they pick one with the header toggle. Light mode is the dark page inverted.
+- One typeface, Archivo, used at two widths: condensed and heavy for answers and chapter numbers, normal width for reading.
+- Sections are separated by a heavy 3px rule, like a panel border. There are no cards, glows or drop shadows.
+- Short copy. The page states each fact once, in the place it belongs.
 
 ## Colors
 
-The palette is dark and green-black, with a single recurring signal green and semantic stage colors.
+| Token | Dark | Light | Use |
+| --- | --- | --- | --- |
+| page | `#090909` | `#f6f6f6` | Page background. Never a tinted near-black. |
+| raised | `#151514` | `#ebebe8` | The few filled surfaces: the game prompt, tooltips, the chapter sheet. |
+| text | `#ecebe6` | `#121212` | Headings, numbers, body copy, section rules. |
+| text-soft | `#bdbcb6` | `#3d3c38` | Longer secondary copy. |
+| tone | `#9a9993` | `#5e5d58` | Labels, notes, inactive navigation. Named after screentone grey. |
+| tone-dim | `#5f5e5a` | `#a3a29c` | Decorative only: pencil outlines, hatching borders. Never text. |
+| rule | `#2a2a28` | `#d8d7d2` | Hairline dividers and control borders. |
+| hunter | `#3fae4f` | `#3fae4f` | Fills: published tiles, the primary button, the active nav underline, the publishing hero. |
+| hunter-text | `#6fd27c` | `#1d7a2c` | Green as text: the day count, the latest chapter, links. Darker in light mode for contrast. |
+| on-hunter | `#06210d` | `#06210d` | Text set on a hunter fill, in both modes. |
 
-### Primary
+**The green rule.** Green means printed, current, or actionable. It is never a background wash or a glow, and the hero art stays black and white.
 
-- **Signal Green** (`signal-green`): confirmed highlights, active navigation, source links, focus rings, and the current positive status. Its darker field and border companions (`signal-green-soft`, `signal-green-border`) support selected and published states.
-
-### Secondary
-
-- **Stage Teal, Blue, Amber, and Orange** (`scheduled-teal`, `delivered-blue`, `background-amber`, `inking-orange`): distinct production stages. Use them only with stage labels or explanatory context; the neutral unknown state remains subdued.
-- **Game Lime** (`game-lime`): the prediction route's participation buttons, selected dates, and key totals. It is a scoped variation, not the tracker-wide primary.
-- **Error Red** (`error-red`): destructive or failed states, never an informational highlight.
-
-### Neutral
-
-- **Page Ink** (`page-ink`), **Card Ink** (`card-ink`), **Raised Ink** (`raised-ink`), and **Hover Ink** (`hover-ink`): the layered dark surface sequence.
-- **Foreground** (`foreground`), **Secondary Text** (`text-secondary`), and **Muted Text** (`text-muted`): the reading hierarchy.
-- **Quiet Border** (`border`): dividers and control outlines that define structure without dominating it.
-
-**The Semantic Signal Rule.** Green means a current signal or useful action; stage hues retain their specific meanings and are not interchangeable decoration.
+The older stage hues (teal, blue, amber, orange) are retired on the home page. Production stages are now told apart by texture, plus an icon and a label (see Status grid).
 
 ## Typography
 
-**Display Font:** Geist Sans (system sans fallback).
-**Body Font:** Geist Sans (system sans fallback).
-**Label/Mono Font:** Geist Mono (system monospace fallback).
+**Family:** Archivo, loaded in `app/layout.tsx` with its `wdth` axis as `--font-archivo`. CJK and Arabic text falls back to system faces (Hiragino Sans, Yu Gothic, Noto Sans JP/SC/Arabic).
 
-**Character:** Close-set, confident sans headlines sit above measured explanatory copy. Mono is a data voice, not a second body font; it helps readers scan dates, chapter numbers, and compact status labels.
+| Role | Size | Weight | Width | Use |
+| --- | --- | --- | --- | --- |
+| Answer | `clamp(3.25rem, 8.5vw, 7rem)` | 900 | 62% | "On hiatus" / "Publishing". Once per page. |
+| Figure | `clamp(2.5rem, 4.2vw, 3.5rem)` | 850 | 62% | Chapter numbers in the facts row and the day count. |
+| Section heading | `clamp(1.6rem, 2.8vw, 2.25rem)` | 850 | 70% | `h2` under each section rule. |
+| Body | `1rem`, line-height 1.6 | 400 | 100% | Explanations, FAQ answers. Keep under ~60 characters a line. |
+| Small | `0.85–0.95rem` | 400–600 | 100% | Labels, notes, navigation. |
 
-### Hierarchy
+Numbers use tabular figures throughout.
 
-- **Display** (650, `clamp(2.1rem, 4vw, 3.25rem)`, 1.05): the home status answer.
-- **Headline** (650, `clamp(1.8rem, 3.4vw, 2.7rem)`, 1.1): content-page headings.
-- **Title** (570, `1.75rem`): section headings, reduced on narrow screens.
-- **Body** (400, `1rem`, 1.5): readable explanation; longer page prose stays around 74 characters wide with a looser 1.7 line height.
-- **Label** (600, `0.72rem`, `0.12em`, uppercase): eyebrow and small metadata; metrics and dates also use mono with tabular figures.
-
-**The Data Voice Rule.** Reserve Geist Mono for data and navigation metadata; use Geist Sans for sentences. Arabic numeric displays use the sans fallback where Geist Mono lacks suitable glyphs.
+**Don'ts.** No monospace for data labels. No tracked-out all-caps eyebrows. No arrows appended to link text. No middle-dot or bullet separators ("A · B", "A • B"); use the locale's comma or separate lines. Japanese 「・」 between listed nouns is ordinary punctuation and stays.
 
 ## Layout
 
-The main frame is capped at 1120px with 20px side gutters, narrowing to 14px at 720px and 11px at 390px. The header and primary navigation form two simple horizontal bands. The home snapshot pairs a status answer with four metrics on wide screens; it stacks below 980px. The metric panel changes from four columns to two at 720px. Chapter cards move from ten columns to six at 900px and five at 720px, while long history charts can scroll horizontally.
+- **Frame:** 1120px max, 24px side gutters, 16px under 720px.
+- **Header:** a single bar with the wordmark, the section links, then the date the status last changed, the theme toggle and language. Under 1100px the links drop to a second row. Under 560px the date gets its own line and the links scroll sideways. The current page is marked by a 3px green underline sitting on the bar's bottom rule.
+- **Hero:** the question in tone, the answer at Answer size, then the day count above a 3px rule, linking to the hiatus page. Below it, one line on Togashi alerts with the alerts button (green outline, 44px): it is the hero's only action. While on hiatus, the cut-out figure sits on the right (above the answer on phones). While publishing, the hero becomes a solid hunter-green block with no art.
+- **Facts row:** four chapter numbers (latest released, next, manuscripts complete, confirmed progress) under a 3px rule, divided by hairlines, like a table of contents. Two columns under 980px.
+- **Jump links:** pill links to the production tracker, next chapter, latest Togashi post and FAQ, directly under the facts row. They scroll sideways on phones. Targets have `scroll-margin-top`.
+- **Sections:** each opens with a 3px text-colour rule and a section heading. There is no box around them. The gap between sections is `clamp(48px, 6vw, 72px)`.
+- Everything is left-aligned (start-aligned in RTL). Use logical properties so Arabic mirrors correctly.
 
-Content panels use generous section padding (38px on desktop; 24px block and 18px inline at 720px) against compact controls. Reading copy is width-limited, while charts and tabular data can use the full frame. Touch-target controls reach at least 44px in coarse-pointer contexts. RTL layouts use logical inline properties where the interface changes direction.
+## Hero art
 
-## Elevation & Depth
+`app/assets/as-long-as-it-takes.webp` is the "As long as it takes. I'll wait." panel, converted to greyscale and cut out of its black background so it works on both page colours. The original lettering stays in the image; each letter keeps a black outline so it still reads on the light page. Only show the art while the series is on hiatus. If you regenerate it, keep the same cut-out: flood-fill the background from the edges, and keep a ~6px black outline around the letters.
 
-This is a subtly layered system, not a flat one. Depth comes first from the page/card/raised tonal sequence and quiet borders, then from diffuse shadows on major panels, popovers, tooltips, and sheets. The four-metric panel adds translucent fill, a light inset edge, and backdrop blur; chapter cards lift slightly on hover. A faint warm radial glow occasionally marks a status area, but does not become a general page texture.
+## Link preview
 
-**The Bordered Layer Rule.** Separate information with tonal steps and a fine border before adding shadow; reserve strong shadow for an overlay or a major surface.
-
-## Shapes
-
-Controls have compact rounded corners (8px), chapter cards and small panels sit near 10–12px, metric panels use 16px, and large content sections use 18px. Hairline borders and inset highlights keep edges legible on dark backgrounds. Pills are reserved for badges and status markers; dense information remains in rectangular grids and rows.
+`app/opengraph-image.tsx` renders the image Reddit, Discord and X show for a shared link: the hero's question and answer, the latest, next and last-finished chapter numbers under a heavy rule, and the cut-out figure (`app/assets/as-long-as-it-takes-og.png`, a PNG because the renderer cannot read WebP). It uses vendored static Archivo cuts in `app/assets/fonts/` (SIL OFL). It is rebuilt on each data change, so it states nothing that goes stale between builds, such as a day count.
 
 ## Components
 
-### Buttons
+### Status grid (production tracker)
 
-Utility actions are low-contrast raised-ink controls with quiet borders, 8px corners, and at least 44px height. Hover brightens their border, field, and text in about 130ms; focus is a 2px signal-green outline with offset. The prediction game uses a separate lime-filled primary button and an outlined secondary variant; disabled actions reduce opacity.
+Ten columns, so each row is one ten-chapter batch (five columns on phones). Square tiles with 2px corners. Each stage is drawn as a step in making a manga page:
 
-### Cards / Containers
+| Stage | Tile |
+| --- | --- |
+| No confirmed progress | Dashed tone-dim outline, number in tone. The pencil sketch. |
+| Character inking complete | Diagonal hatching in text colour at 20%. |
+| Background specifications complete | Screentone dots in text colour at ~40%, full text-colour border. |
+| Delivered to Jump | Solid text-colour fill: the finished sheet. |
+| Scheduled for release | The finished sheet with a 3px inset hunter border. |
+| Published | Solid hunter fill. |
 
-Large sections are card-ink panels with 18px corners, a border, and a diffuse shadow. The four-cell metric container uses 16px corners and internal dividers; its first metric receives a green-tinted field. Chapter cards use status-colored borders and dark tinted backgrounds, then lift 2px on hover. Tooltips and sheets keep the same palette but receive stronger shadow to read as overlays.
+Every tile keeps its status icon, and the legend repeats the same swatches with labels, so colour is never the only cue. Tiles lift 2px on hover; this is turned off under reduced motion.
 
-### Inputs / Fields
+### Theme toggle
 
-The prediction route's text fields sit on a darker field with a visible muted border, 8px corners, and generous padding. Focus receives a 2px lime outline. The date picker is a disclosure control with the same field treatment, and selected days invert to lime on dark text.
+A 36px utility button (44px on touch screens) whose icon is a moon in dark mode and opens into a sun in light mode: the moon's bite slides off, the disc shrinks and the rays rotate in, over ~480ms. Switching grows the new theme out of the button as a circle across the page, using the View Transitions API. Browsers without it, and readers with reduced motion, get an instant switch.
 
-### Chips / Badges
+The button is plain HTML (`app/theme-toggle.tsx`). A small script in `<head>` (`app/theme.ts`) applies the stored choice (`localStorage`, key `hxh-theme`) as `data-theme` on `<html>` before the first paint, and handles every toggle's click by event delegation. That is what lets the toggle work on the content pages, which ship no React runtime. The script's bytes are the same on every page, so one CSP hash covers it, and the content-page stripper allows it. The icon is drawn with CSS from the same selectors as the palette, so the server render never shows the wrong one. Palette selectors therefore come in pairs: `@media (prefers-color-scheme: light) :root:not([data-theme="dark"])` and `:root[data-theme="light"]`.
 
-Observation and model-context badges are restrained raised-ink pills with a fine border, muted mono text, and uppercase tracking. Status-colored badges are reserved for a specific meaning, such as the current arc or chapter stage.
+### Buttons and controls
 
-### Navigation
+- **Primary** (the only one: "Pick your date"): hunter fill, on-hunter text, 4px corners, 48px tall.
+- **Utility** (Share, Copy, alerts, language, the post links): transparent, 1px rule border, 4px corners. On hover the border goes to tone and the fill to raised.
+- **Text link:** hunter-text, underlined 1px with a 4px offset.
+- **Focus:** a 2px hunter-text outline with a 3px offset, on every interactive element.
 
-The primary navigation is a low-profile text row below the header. Inactive links use secondary text; the active page uses signal green and a thin underline. It wraps on narrow screens rather than becoming a new visual language. The language picker is a bordered raised-ink disclosure with mono text and a shadowed dark menu.
+### Next chapter
 
-### Status Grid
+Two columns: the model estimate ("Unofficial estimate: March 2027") with a link to its method, and the community game prompt on a raised panel with a 3px hunter border on the start side. The caveats live on the chapter page; the home page labels the estimate as unofficial and links to them.
 
-The chapter grid is the signature data component: numbered, nearly square tiles carry semantic production color through border, field, and a small status icon. The legend repeats those colors with labels, and focus-visible preserves keyboard legibility. Do not rely on color alone to communicate stage.
+### Latest Togashi post, FAQ, footer
 
-## Do's and Don'ts
+These use the same section rule and heading, with hairline dividers between items. The FAQ is a list of disclosure rows with no surrounding box.
 
-### Do:
+### Content pages
 
-- **Do** preserve the dark tonal sequence and use signal green for current emphasis, active states, links, and focus.
-- **Do** pair compact mono data labels with readable sans explanation and explicit source context.
-- **Do** simplify grids responsively while preserving stage labels and keyboard focus visibility.
-- **Do** keep the prediction game's brighter lime scoped to its participation interface.
+Every content page shares the home header (with the theme toggle), a breadcrumb in tone, and a page title at Answer style (condensed, 900) with a short lede. Below that:
 
-### Don't:
+- Sections open with the 3px rule and a condensed heading; no cards.
+- Tables have a 2px text-colour rule under the header row and hairlines between rows. The current row gets a raised fill and a 3px hunter mark on its start edge.
+- Fact lists and statistics are ruled rows: a 2px rule on top, hairline dividers, labels in sentence case, figures condensed.
+- Togashi updates are a ruled list; a post's quote is marked by a 3px hunter bar, not a box.
+- Code (endpoints, the badge snippet) keeps a monospace face; every other label uses Archivo.
+- When a section heading repeats the page title (the history chart), it is visually hidden but kept for the outline and the share image.
 
-- **Don't** use stage colors as interchangeable accents or imply that a production milestone is a release date.
-- **Don't** fill every panel with a glow or heavy shadow; the interface depends on quiet borders and selective depth.
-- **Don't** replace the restrained tracker vocabulary with decorative fan-art motifs when extending an existing surface.
+## Copy
+
+- Say each fact once. The hero says the status and the day count; the facts row gives the chapter numbers; nothing repeats them in a paragraph. The full status sentences still feed the page title, meta description, feed and structured data.
+- Labels are plain nouns in sentence case ("Next chapter", not "NEXT CHAPTER").
+- Estimates always carry the word "unofficial" (or its translation) next to the number.
+
+## Do's and don'ts
+
+**Do**
+
+- Keep pure page black/white and one green; add a new colour only if it carries a meaning no texture or label can.
+- Put a 3px rule above each section instead of a box.
+- Check both colour modes, a 390px phone, and Arabic (RTL) before shipping a change.
+
+**Don't**
+
+- Add cards, shadows, gradients or glows.
+- Use green for decoration.
+- Set long explanations on the home page; link to the page that holds them.

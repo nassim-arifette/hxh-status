@@ -74,7 +74,7 @@ export function UpdatesPage({
                   ) : null}
                   <a href={localePath(updatePath(post.id), locale)}>
                     {copy.readMore}
-                  </a>{" · "}<a href={post.url} target="_blank" rel="noreferrer">{messages.latestUpdate.viewPost}</a>
+                  </a>{", "}<a href={post.url} target="_blank" rel="noreferrer">{messages.latestUpdate.viewPost}</a>
                 </li>
               );
             })}

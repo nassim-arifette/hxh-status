@@ -1,15 +1,16 @@
 {
   "metadata": {
-    "title": "HxH Status - فصول HUNTER×HUNTER وتقدم العمل",
+    "title": "HxH Status: مواعيد صدور Hunter x Hunter وفترات التوقف وتحديثات توغاشي",
     "description": "متتبع غير رسمي وموثق بالمصادر لفصول HUNTER×HUNTER وللتقدم الذي يؤكده يوشيهيرو توغاشي في الفصول القادمة.",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status لمتابعة فصول HUNTER×HUNTER وآخر تقدم مؤكد في العمل",
-    "homeTitleHiatus": "هل HUNTER×HUNTER متوقف مؤقتًا؟ آخر فصل {latest}، والتالي {next} ({month})",
-    "homeTitlePublishing": "هل HUNTER×HUNTER متوقف مؤقتًا؟ لا — آخر فصل {latest}، والتالي {next} ({month})"
+    "homeTitleHiatus": "هل Hunter x Hunter متوقف؟ موعد صدور الفصل {next} ({month})",
+    "homeTitlePublishing": "Hunter x Hunter: موعد صدور الفصل {next} والجدول ({month})"
   },
   "header": {
     "wordmarkAria": "H×H Status",
-    "updated": "آخر تحديث: {date}"
+    "updated": "آخر تغيير في الحالة: {date}",
+    "darkMode": "الوضع الداكن"
   },
   "language": {
     "label": "اللغة"
@@ -78,19 +79,22 @@
     "question": "هل HUNTER×HUNTER متوقف مؤقتًا؟",
     "summaryAria": "الوضع الحالي بصيغة نصية",
     "japanDate": "التاريخ في اليابان (JST)",
-    "pauseDays": "متوقف منذ {days} يومًا"
+    "pauseDays": "متوقف منذ {days} يومًا",
+    "daysSince": "يومًا منذ الفصل {chapter}",
+    "waitArtAlt": "لوحة مانغا: رجل يرتدي رداءً طويلًا يجلس القرفصاء ويقول: «مهما طال الوقت، سأنتظر»."
   },
   "production": {
     "eyebrow": "حرب الخلافة في كاكين",
     "title": "متابعة الإنتاج",
     "chapterStatusAria": "حالة إنتاج الفصول",
-    "legendAria": "دليل الحالات"
+    "legendAria": "دليل الحالات",
+    "selectHint": "اختر فصلًا لعرض مصدره."
   },
   "latestUpdate": {
     "translatedByGemini": "مترجم من اليابانية بواسطة Gemini",
     "translated": "مترجم من اليابانية",
     "originalText": "النص الأصلي باليابانية",
-    "translationUnavailable": "الترجمة غير متاحة · النص الأصلي باليابانية",
+    "translationUnavailable": "الترجمة غير متاحة، النص الأصلي باليابانية",
     "showOriginal": "عرض النص الأصلي",
     "imageAlt": "الصورة {index} المرفقة بمنشور يوشيهيرو توغاشي",
     "noPost": "لا تتوفر منشورات لتوغاشي حاليًا.",
@@ -115,8 +119,8 @@
     "currentArcBadge": "الفصل الحالي",
     "metricChapters": "الفصول",
     "metricDuration": "المدة",
-    "rankChapters": "المركز {rank} في الطول · {count} فصل",
-    "rankDuration": "المركز {rank} في المدة الزمنية · {duration}",
+    "rankChapters": "المركز {rank} في الطول، {count} فصل",
+    "rankDuration": "المركز {rank} في المدة الزمنية، {duration}",
     "durationYears": "{years} سنة",
     "durationMonths": "{months} شهر",
     "arcChaptersCount": "{count} فصل",
@@ -129,8 +133,8 @@
     "methodology": "استنادًا إلى أعداد جمب منذ 1998؛ يُحسب العدد المزدوج مرة واحدة. تصف الأرقام الماضي لا الإصدار القادم.",
     "currentHiatus": {
       "title": "الانقطاع الحالي",
-      "justStarted": "بدأ للتو · مضى 0 عدد من جامب",
-      "elapsed": "مضى {days} يومًا · {issues} أعداد جمب مسجّلة",
+      "justStarted": "بدأ للتو، مضى 0 عدد من جامب",
+      "elapsed": "مضى {days} يومًا، {issues} أعداد جمب مسجّلة",
       "since": "منذ الفصل {chapter} (العدد {jumpIssue})"
     },
     "historicalHiatus": {
@@ -309,7 +313,7 @@
     },
     "statistics": {
       "name": "إحصاءات",
-      "metaTitle": "إحصاءات نشر HUNTER×HUNTER: {published} فصلًا عبر {total} عدد من Jump",
+      "metaTitle": "إحصاءات نشر Hunter x Hunter: {published} فصلًا عبر {total} عدد من Jump",
       "metaDescription": "إحصاءات وصفية لـ HUNTER×HUNTER من 1998 حتى اليوم: حضور بنسبة {percent}% في Weekly Shonen Jump، ووسيط توقف طويل قدره {median} عددًا، ومدة كل فترة نشر.",
       "h1": "إحصاءات نشر HUNTER×HUNTER",
       "lede": "ما وتيرة النشر، وكم تدوم التوقفات، وكم فصلًا يصدر بينها؟ تصف هذه الأرقام النشر السابق.",
@@ -326,7 +330,7 @@
     },
     "updates": {
       "name": "أخبار توغاشي",
-      "metaTitle": "منشورات يوشيهيرو توغاشي عن HUNTER×HUNTER، مترجمة",
+      "metaTitle": "منشورات يوشيهيرو توغاشي عن Hunter x Hunter، مترجمة",
       "metaDescription": "أرشيف موثّق يضم {posts} منشورات لتوغاشي، بالنص الياباني والترجمات المتاحة إلى {count} لغات وتفريغ الصور.",
       "h1": "أخبار توغاشي",
       "lede": "ينشر يوشيهيرو توغاشي تقدمه بنفسه. يُحفظ كل منشور هنا بنصه الياباني الأصلي، مع ترجمته، ومع تفريغ ورقة التسليم إلى Jump كلما ظهرت في الصور.",
@@ -365,8 +369,8 @@
       "elapsedLabel": "المدة المنقضية، بما فيها التوقفات"
     },
     "chapter": {
-      "metaTitlePublished": "HUNTER×HUNTER الفصل {chapter} صدر في {date} ضمن Weekly Shonen Jump رقم {issue}",
-      "metaTitlePending": "متى يصدر الفصل {chapter} من HUNTER×HUNTER؟ الحالة المؤكدة والمصدر",
+      "metaTitlePublished": "Hunter x Hunter الفصل {chapter} صدر في {date} ضمن Weekly Shonen Jump رقم {issue}",
+      "metaTitlePending": "Hunter x Hunter الفصل {chapter}: موعد الصدور والحالة وتقدم توغاشي",
       "metaDescriptionPublished": "صدر الفصل {chapter} من HUNTER×HUNTER في {date} ضمن العدد {issue} من Weekly Shonen Jump. العنوان والمجلد والقوس ومنصات القراءة الرسمية التي تتيحه.",
       "metaDescriptionPending": "لا يوجد تاريخ صدور معلن للفصل {chapter} من HUNTER×HUNTER. مرحلة إنتاجه المؤكدة هي {status}، وآخر تحديث لها في {date}، مع المصدر الذي نشره توغاشي.",
       "h1": "HUNTER×HUNTER الفصل {chapter}",
@@ -393,7 +397,7 @@
     },
     "whereToRead": {
       "name": "أين تقرأ",
-      "metaTitle": "أين تقرأ HUNTER×HUNTER رسميًا، حسب اللغة",
+      "metaTitle": "أين تقرأ Hunter x Hunter رسميًا، حسب اللغة",
       "metaDescription": "الطرق الرسمية والقانونية لقراءة HUNTER×HUNTER: VIZ Shonen Jump وMANGA Plus وShonen Jump+ وMANGA MILLION والطبعات الورقية المرخّصة، مرتبة حسب اللغة.",
       "h1": "أين تقرأ HUNTER×HUNTER",
       "lede": "اختر لغة القراءة. الروابط لخدمات رسمية؛ تختلف الفصول المتاحة والشروط حسب الخدمة وبلدك.",
@@ -434,7 +438,7 @@
     },
     "api": {
       "name": "واجهة البرمجة",
-      "metaTitle": "واجهة HxH Status العامة: حالة HUNTER×HUNTER بصيغة JSON وتغذيات وشارات",
+      "metaTitle": "واجهة HxH Status العامة: حالة Hunter x Hunter بصيغة JSON وتغذيات وشارات",
       "metaDescription": "واجهة JSON مجانية بلا مفتاح ومفتوحة على CORS لحالة نشر HUNTER×HUNTER وإحصاءات التوقف ومنشورات توغاشي المترجمة، إضافة إلى تغذيات Atom وتقويم iCalendar للإصدارات وشارات SVG قابلة للتضمين.",
       "h1": "واجهة البرمجة العامة",
       "lede": "كل ما يعرفه HxH Status متاح بصيغة JSON. بلا مفتاح، وبلا حد يتجاوز التخزين المؤقت المعتاد، وCORS مفتوح لأي أصل، ورقم إصدار ثابت للمخطط في كل مستند.",
@@ -468,12 +472,12 @@
     }
   },
   "forecast": {
-    "badge": "تقدير النموذج · ليس موعدًا رسميًا",
+    "badge": "تقدير النموذج، ليس موعدًا رسميًا",
     "title": "متى قد يصدر الفصل {chapter}؟",
     "intro": "نموذجان استكشافيان: الانقطاعات التاريخية وسيناريو يستند إلى إعلانات توغاشي عن اكتمال المخطوطات. تعتمد الاحتمالات على افتراضاتهما.",
     "median": "وسيط النموذج",
     "range": "فترة تنبؤ مركزية بنسبة 80٪",
-    "asOf": "الحساب بتاريخ {date} · {total} انقطاعات، منها {count} بتواريخ دقيقة.",
+    "asOf": "الحساب بتاريخ {date}، {total} انقطاعات، منها {count} بتواريخ دقيقة.",
     "caution": "احتمال 80٪ داخل النموذج لا يضمن دقة فعلية بنسبة 80٪. البيانات قليلة والقرارات التحريرية غير معروفة.",
     "methodTitle": "الطريقة والاختبارات التاريخية والحدود",
     "method": "المرجع التاريخي: جميع الانقطاعات المكتملة منذ 2014 بين فصول مرقمة متتالية، بما فيها القصيرة. المدة من آخر فصل إلى العودة. نعتمد التواريخ الدقيقة، وإلا نفترض 48 عددًا من جمب سنويًا.",

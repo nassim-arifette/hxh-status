@@ -190,7 +190,7 @@ export default function PredictionGame({ locale }: { locale: Locale }) {
         {state.pick ? <>
           <h2 id="game-entry-title" ref={savedHeading} tabIndex={-1}>{state.pick.nickname ? formatMessage(t.verdictNamed, { name: state.pick.nickname }) : t.verdictUnnamed}</h2>
           <time className="game-date" dateTime={state.pick.predicted_date}>{fmt(state.pick.predicted_date)}</time>
-          <p className="game-verdict-confirmed">{t.saved} · {t.chapter} {state.round.chapter}</p>
+          <p className="game-verdict-confirmed">{t.saved}, {t.chapter} {state.round.chapter}</p>
         </> : state.round.state === "open" ? <form onSubmit={e => { e.preventDefault(); void action(async () => {
           try {
             const result = await api<{ pick: Pick; email: string; alreadyVoted?: boolean }>("vote", { chapter: state.round.chapter, date, nickname, locale, turnstile: token });
@@ -212,7 +212,7 @@ export default function PredictionGame({ locale }: { locale: Locale }) {
           <p className="game-hint" id="game-unlock">{t.unlockHint}</p>
 
         </form> : <><h2 id="game-entry-title">{t.closed}</h2><p>{t.closedHelp}</p></>}
-        {state.round.actual_date && <p className="game-settled">{t.actual} <strong>{fmt(state.round.actual_date)}</strong>{state.pick && <> · {t.difference} : {Math.abs(Math.round((Date.parse(state.pick.predicted_date) - Date.parse(state.round.actual_date)) / 86400000))}</>}</p>}
+        {state.round.actual_date && <p className="game-settled">{t.actual} <strong>{fmt(state.round.actual_date)}</strong>{state.pick && <>, {t.difference} : {Math.abs(Math.round((Date.parse(state.pick.predicted_date) - Date.parse(state.round.actual_date)) / 86400000))}</>}</p>}
         {state.pick && state.round.state === "closed" && <p>{t.closedHelp}</p>}
         {state.pick && <>
         <div className="game-recovery-note">
@@ -241,7 +241,7 @@ export default function PredictionGame({ locale }: { locale: Locale }) {
 
             <p>{t.mean}: <strong>{fmt(stats.mean)}</strong></p>
             <p>{t.middle} <strong>{fmt(stats.lower)}</strong> {t.and} <strong>{fmt(stats.upper)}</strong>.</p>
-            <p>{t.mode}: {stats.modes.slice(0, 3).map(d => fmt(d)).join(" · ")}{stats.modes.length > 3 && ` (+${stats.modes.length - 3} ${t.more})`}</p>
+            <p>{t.mode}: {stats.modes.slice(0, 3).map(d => fmt(d)).join(", ")}{stats.modes.length > 3 && ` (+${stats.modes.length - 3} ${t.more})`}</p>
           </details>
         </>)}
         {stats && <>

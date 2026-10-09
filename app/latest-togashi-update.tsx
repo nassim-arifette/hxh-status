@@ -72,7 +72,12 @@ export default function LatestTogashiUpdate({
       ? post.translation.texts?.[locale]
       : undefined;
   const translated = locale !== "ja" && Boolean(translation);
-  const text = translation || post?.originalText;
+  // X appends a t.co link to the attached photo; the photo is shown below, so
+  // the link only repeats it. A post that is just a photo then has no text.
+  const hasMedia = Boolean(post?.mediaUrls.length);
+  const withoutMediaLink = (value: string | undefined) =>
+    hasMedia ? value?.replace(/\s*https:\/\/t\.co\/\S+\s*$/u, "") : value;
+  const text = withoutMediaLink(translation || post?.originalText)?.trim();
   const translationLabel = translated
     ? post?.translation.provider === "gemini"
       ? messages.translatedByGemini
@@ -110,8 +115,8 @@ export default function LatestTogashiUpdate({
         ) : null}
       </div>
 
-      {post && text ? (
-        <div className={styles.body} data-has-media={post.mediaUrls.length > 0}>
+      {post && (text || hasMedia) ? (
+        <div className={styles.body} data-has-media={hasMedia}>
           <div className={styles.copy}>
             <div className={styles.byline}>
               <div className={styles.author}>
@@ -123,11 +128,13 @@ export default function LatestTogashiUpdate({
               </time>
             </div>
 
-            <blockquote className={styles.text} lang={translated ? locale : "ja"} dir={translated ? undefined : "ltr"}>
-              <PostText text={text} compactLinks />
-            </blockquote>
+            {text ? (
+              <blockquote className={styles.text} lang={translated ? locale : "ja"} dir={translated ? undefined : "ltr"}>
+                <PostText text={text} compactLinks />
+              </blockquote>
+            ) : null}
 
-            {translated ? (
+            {!text ? null : translated ? (
               <details className={styles.original}>
                 <summary>
                   <span className={styles.translation}>{translationLabel}</span>
@@ -137,7 +144,7 @@ export default function LatestTogashiUpdate({
                   </span>
                 </summary>
                 <blockquote className={styles.originalText} lang="ja" dir="ltr">
-                  <PostText text={post.originalText} />
+                  <PostText text={withoutMediaLink(post.originalText) ?? ""} />
                 </blockquote>
               </details>
             ) : <p className={styles.translation}>{translationLabel}</p>}
@@ -152,7 +159,7 @@ export default function LatestTogashiUpdate({
                     alt={formatMessage(messages.imageAlt, { index: index + 1 })}
                     fill
                     unoptimized
-                    sizes="(max-width: 540px) 112px, 168px"
+                    sizes="(max-width: 720px) 280px, 320px"
                     className={styles.image}
                   />
                   <span className={styles.imageAction} aria-hidden="true">

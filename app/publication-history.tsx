@@ -130,7 +130,7 @@ function ArcComparison({
           </div>
           <span className="arc-current-span">
             {currentArc.startChapter && currentArc.endChapter
-              ? `Ch. ${currentArc.startChapter}–${currentArc.endChapter} · `
+              ? `Ch. ${currentArc.startChapter}–${currentArc.endChapter}, `
               : ""}
             {formatArcYears(currentArc, locale)}
           </span>
@@ -428,7 +428,7 @@ export function PublicationHistory({
             >
               <div className="history-cell-tooltip-header">
                 <span className="history-cell-tooltip-meta">
-                  {activeCell.year} • WSJ #{String(activeCell.issue).padStart(2, "0")}
+                  WSJ {activeCell.year} #{String(activeCell.issue).padStart(2, "0")}
                 </span>
                 {activeArcDef && (
                   <span

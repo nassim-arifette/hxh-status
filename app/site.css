@@ -1,0 +1,1538 @@
+/* The site's design system: drawn like a manga page. See DESIGN.md.
+
+   The palette tokens below are global, so the share-image capture routes pick
+   them up too; everything else is scoped to `.site-shell`, which wraps the
+   home page and every content page. Light mode only applies inside the shell
+   (the share images are always dark).
+
+   In dark mode the black is sampled from the hero art (#090909); light mode is
+   that black inverted (#f6f6f6). The figure is cut out of its panel, so it sits
+   on either page colour, and its lettering keeps a black outline so it reads
+   on both. Hunter green is kept for what is finished and printed. The
+   production tiles borrow the stages of a manuscript page: pencil outline,
+   inked hatching, screentone, the finished sheet, then print. */
+
+:root {
+  color-scheme: dark;
+  --bg: #090909;
+  --raised: #151514;
+  --hover: #1d1d1b;
+  --fg: #ecebe6;
+  --fg-rgb: 236 235 230;
+  --fg-soft: #bdbcb6;
+  --tone: #9a9993;
+  --tone-dim: #5f5e5a;
+  --rule: #2a2a28;
+  --hunter: #3fae4f;
+  --on-hunter: #06210d;
+  --hunter-ink: #06210d;
+  --hunter-text: #6fd27c;
+  --pop-shadow: 0 14px 36px rgb(0 0 0 / 0.6);
+
+  /* Shared tokens, re-pointed so portalled tooltips and the chapter sheet
+     match the page they open from. */
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--raised);
+  --popover: var(--raised);
+  --border: var(--rule);
+  --input: var(--rule);
+  --ring: var(--hunter-text);
+  --surface-raised: var(--raised);
+  --surface-hover: var(--hover);
+  --text-secondary: var(--fg-soft);
+  --text-muted: var(--tone);
+  --accent: var(--hover);
+  --accent-green: var(--hunter-text);
+  --accent-green-soft: var(--hunter-ink);
+
+  --published: var(--hunter-text);
+  --published-bg: var(--hunter-ink);
+  --published-border: var(--hunter);
+  --scheduled: var(--hunter-text);
+  --scheduled-bg: var(--raised);
+  --scheduled-border: var(--hunter);
+  --delivered: var(--fg);
+  --delivered-bg: var(--raised);
+  --delivered-border: var(--tone);
+  --background-work: var(--fg);
+  --background-work-bg: var(--raised);
+  --background-work-border: var(--tone-dim);
+  --inking: var(--tone);
+  --inking-bg: var(--raised);
+  --inking-border: var(--tone-dim);
+  --unknown: var(--tone);
+  --unknown-bg: var(--bg);
+  --unknown-border: var(--rule);
+
+  --site-sans: var(--font-archivo), "Hiragino Sans", "Yu Gothic UI",
+    "Noto Sans JP", "Noto Sans SC", "Noto Sans Arabic", ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+/* Light mode follows the system unless the reader picked a theme with the
+   header toggle, which sets data-theme on <html> (see app/theme.ts). */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]):has(.site-shell) {
+    color-scheme: light;
+    --bg: #f6f6f6;
+    --raised: #ebebe8;
+    --hover: #e2e2de;
+    --fg: #121212;
+    --fg-rgb: 18 18 18;
+    --fg-soft: #3d3c38;
+    --tone: #5e5d58;
+    --tone-dim: #a3a29c;
+    --rule: #d8d7d2;
+    --hunter-text: #1d7a2c;
+    --pop-shadow: 0 10px 28px rgb(0 0 0 / 0.14);
+  --destructive: #b3261e;
+  }
+}
+
+:root[data-theme="light"]:has(.site-shell) {
+  color-scheme: light;
+  --bg: #f6f6f6;
+  --raised: #ebebe8;
+  --hover: #e2e2de;
+  --fg: #121212;
+  --fg-rgb: 18 18 18;
+  --fg-soft: #3d3c38;
+  --tone: #5e5d58;
+  --tone-dim: #a3a29c;
+  --rule: #d8d7d2;
+  --hunter-text: #1d7a2c;
+  --pop-shadow: 0 10px 28px rgb(0 0 0 / 0.14);
+  --destructive: #b3261e;
+}
+
+:root:has(.site-shell),
+:root:has(.site-shell) body {
+  background: var(--bg);
+  font-family: var(--site-sans);
+}
+
+:root:has(.site-shell) ::selection {
+  background: var(--hunter);
+  color: var(--on-hunter);
+}
+
+.site-shell {
+  border-top: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--site-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+.site-shell .page-frame {
+  width: min(100% - 48px, 1120px);
+}
+
+.site-shell :focus-visible {
+  outline: 2px solid var(--hunter-text);
+  outline-offset: 3px;
+}
+
+/* Header */
+
+/* One bar: wordmark, sections, then the reader's own controls. The current
+   section's underline sits on the bar's bottom rule. */
+.site-shell .site-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "mark nav meta";
+  align-items: stretch;
+  column-gap: 44px;
+  min-height: 68px;
+  padding: 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-shell .wordmark {
+  grid-area: mark;
+  align-self: center;
+}
+
+.site-shell .header-meta {
+  grid-area: meta;
+  align-self: center;
+  width: auto;
+  gap: 12px;
+}
+
+.site-shell .wordmark {
+  align-items: center;
+  gap: 10px;
+}
+
+.site-shell .wordmark-hxh {
+  font-family: var(--site-sans);
+  font-size: 1.3rem;
+  font-weight: 850;
+  font-stretch: 70%;
+  letter-spacing: 0;
+}
+
+.site-shell .wordmark-times {
+  color: var(--hunter-text);
+}
+
+.site-shell .wordmark-status {
+  color: var(--fg);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.site-shell .updated-label {
+  color: var(--tone);
+  font-family: var(--site-sans);
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .live-dot {
+  background: var(--hunter-text);
+  box-shadow: none;
+}
+
+.site-shell .push-notification-button,
+.site-shell .language-picker > summary {
+  border-color: var(--rule);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--site-sans);
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .push-notification-button:hover,
+.site-shell .language-picker > summary:hover {
+  border-color: var(--tone);
+  background: var(--raised);
+}
+
+.site-shell .language-picker-icon {
+  color: var(--tone);
+}
+
+/* Theme toggle: a moon in dark mode that opens into a sun in light mode. */
+.site-shell .theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.site-shell .theme-toggle:hover {
+  border-color: var(--tone);
+  background: var(--raised);
+}
+
+.theme-toggle svg {
+  overflow: visible;
+}
+
+.theme-toggle-core,
+.theme-toggle-bite,
+.theme-toggle-rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 480ms cubic-bezier(0.22, 0.8, 0.24, 1), opacity 300ms ease;
+}
+
+.theme-toggle-rays {
+  transform-box: view-box;
+  opacity: 0;
+  transform: rotate(-60deg) scale(0.5);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .theme-toggle-core {
+    transform: scale(0.62);
+  }
+
+  :root:not([data-theme="dark"]) .theme-toggle-bite {
+    transform: translate(9px, -9px);
+  }
+
+  :root:not([data-theme="dark"]) .theme-toggle-rays {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+:root[data-theme="light"] .theme-toggle-core {
+  transform: scale(0.62);
+}
+
+:root[data-theme="light"] .theme-toggle-bite {
+  transform: translate(9px, -9px);
+}
+
+:root[data-theme="light"] .theme-toggle-rays {
+  opacity: 1;
+  transform: none;
+}
+
+/* The page-wide reveal is drawn by the toggle with the View Transitions API;
+   switch off the default cross-fade so only the circle shows. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (pointer: coarse) {
+  .site-shell .theme-toggle {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* Popups and hover states that globals.css colours for the dark tracker. */
+:root:has(.site-shell) .chapter-tooltip-content,
+:root:has(.site-shell) .status-tooltip-content,
+:root:has(.site-shell) .push-notification-feedback {
+  border-color: var(--rule);
+  background: var(--raised);
+  box-shadow: var(--pop-shadow);
+}
+
+:root:has(.site-shell) .language-picker-menu {
+  box-shadow: var(--pop-shadow);
+}
+
+:root:has(.site-shell) .sheet-note {
+  color: var(--fg-soft);
+}
+
+/* The chapter sheet and tooltips render outside .site-shell, so they are reached
+   through the root. They take the page's one typeface and sentence case. */
+:root:has(.site-shell) .chapter-sheet,
+:root:has(.site-shell) .chapter-sheet *,
+:root:has(.site-shell) .chapter-tooltip-content,
+:root:has(.site-shell) .status-tooltip-content,
+:root:has(.site-shell) .language-picker-menu a {
+  font-family: var(--site-sans);
+}
+
+:root:has(.site-shell) .chapter-sheet .eyebrow,
+:root:has(.site-shell) .chapter-sheet .sheet-label {
+  color: var(--tone);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root:has(.site-shell) .sheet-chapter {
+  font-size: 2.5rem;
+  font-weight: 850;
+  font-stretch: 70%;
+  letter-spacing: 0;
+}
+
+:root:has(.site-shell) .sheet-chapter:focus {
+  outline: none;
+}
+
+:root:has(.site-shell) .chapter-sheet .detail-list dd {
+  letter-spacing: 0;
+}
+
+.site-shell .source-link:hover {
+  color: var(--fg);
+}
+
+.site-shell .push-notification-button:not(:disabled):hover,
+.site-shell .push-notification-button[data-state="on"]:not(:disabled):hover,
+.site-shell .capture-action:not(:disabled):hover {
+  border-color: var(--tone);
+  background: var(--raised);
+  color: var(--fg);
+}
+
+.site-shell .primary-navigation {
+  grid-area: nav;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.site-shell .primary-navigation a {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 0;
+  color: var(--tone);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.site-shell .primary-navigation a:hover {
+  color: var(--fg);
+}
+
+.site-shell .primary-navigation a[aria-current="page"] {
+  color: var(--fg);
+  font-weight: 600;
+  box-shadow: inset 0 -3px 0 var(--hunter);
+}
+
+.site-shell .primary-navigation a:focus-visible {
+  outline-offset: -2px;
+}
+
+@media (max-width: 1100px) {
+  .site-shell .site-header {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "mark meta"
+      "nav nav";
+    row-gap: 4px;
+    padding-top: 14px;
+  }
+
+  .site-shell .header-meta {
+    justify-self: end;
+  }
+
+  .site-shell .primary-navigation {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-shell .site-header {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      "mark theme lang"
+      "updated updated updated"
+      "nav nav nav";
+    column-gap: 8px;
+  }
+
+  .site-shell .header-meta {
+    display: contents;
+  }
+
+  .site-shell .updated-label {
+    grid-area: updated;
+    margin-top: 10px;
+    font-size: 0.8rem;
+  }
+
+  .site-shell .theme-toggle {
+    grid-area: theme;
+  }
+
+  .site-shell .language-picker {
+    grid-area: lang;
+  }
+
+  .site-shell .wordmark-status {
+    display: inline;
+  }
+}
+
+/* Hero: the answer, the count, and while on hiatus, the panel. */
+
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 430px);
+  align-items: center;
+  gap: 32px;
+  padding-top: clamp(16px, 3vw, 32px);
+}
+
+.home-hero[data-state="publishing"] {
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 32px;
+  padding: clamp(32px, 5vw, 56px);
+  background: var(--hunter);
+  color: var(--on-hunter);
+}
+
+.home-hero-copy {
+  min-width: 0;
+  padding-block: 24px;
+}
+
+.home-hero h1 {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.home-hero-question {
+  color: var(--tone);
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.home-hero-answer {
+  font-size: clamp(3.25rem, 8.5vw, 7rem);
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.home-hero[data-state="publishing"] .home-hero-question,
+.home-hero[data-state="publishing"] .home-hero-detail {
+  color: var(--hunter-ink);
+}
+
+.home-hero-count {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  width: fit-content;
+  margin-top: clamp(28px, 4vw, 44px);
+  padding-top: 18px;
+  border-top: 3px solid var(--fg);
+}
+
+.home-hero-count strong {
+  color: var(--hunter-text);
+  font-size: clamp(2.75rem, 4.6vw, 3.75rem);
+  font-weight: 850;
+  font-stretch: 62%;
+  line-height: 0.9;
+}
+
+.home-hero-count span {
+  max-width: 18ch;
+  color: var(--fg);
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+a.home-hero-count:hover span {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.home-hero-detail {
+  margin: 28px 0 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+
+.home-hero-alerts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin-top: 28px;
+}
+
+.home-hero-alerts p {
+  max-width: 34ch;
+  margin: 0;
+  color: var(--fg-soft);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.site-shell .home-hero-alerts .push-notification-button {
+  min-height: 44px;
+  padding-inline: 16px;
+  border-color: var(--hunter);
+  color: var(--hunter-text);
+  font-size: 0.95rem;
+}
+
+.home-hero[data-state="publishing"] .home-hero-alerts p {
+  color: var(--hunter-ink);
+}
+
+.home-hero-art {
+  position: relative;
+  margin: 0;
+  padding-top: 8px;
+  min-width: 0;
+}
+
+.home-hero-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Facts: four chapter numbers, ruled like a table of contents. */
+
+.home-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border-top: 3px solid var(--fg);
+}
+
+.home-fact {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 18px 20px 24px;
+  border-inline-start: 1px solid var(--rule);
+}
+
+.home-fact:first-child {
+  padding-inline-start: 0;
+  border-inline-start: 0;
+}
+
+.home-fact dt {
+  min-height: 2.6em;
+  color: var(--fg);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.home-fact dt span {
+  display: block;
+  color: var(--tone);
+  font-weight: 400;
+}
+
+.home-fact dd {
+  margin: 0;
+}
+
+.home-fact-number {
+  margin-top: 10px !important;
+  font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+  font-weight: 850;
+  font-stretch: 62%;
+  line-height: 0.9;
+}
+
+.home-fact:first-child .home-fact-number {
+  color: var(--hunter-text);
+}
+
+.home-fact-note span {
+  display: block;
+}
+
+.home-fact-note {
+  margin-top: 12px !important;
+  color: var(--tone);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Jump links */
+
+.home-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.home-jump a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--fg);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.home-jump a:hover {
+  border-color: var(--hunter);
+  color: var(--hunter-text);
+}
+
+.site-shell #production,
+.site-shell #next-chapter,
+.site-shell #latest-togashi-update,
+.site-shell #faq {
+  scroll-margin-top: 24px;
+}
+
+/* Sections share one rhythm: a heavy top rule, no boxes. */
+
+.site-shell .content-section,
+.home-next,
+.site-shell #latest-togashi-update,
+.site-shell .home-explore {
+  margin: 0;
+  margin-top: clamp(48px, 6vw, 72px);
+  padding: 20px 0 0;
+  border: 0;
+  border-top: 3px solid var(--fg);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.site-shell .section-heading {
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.site-shell .section-heading h2,
+.site-shell #next-chapter-title,
+.site-shell #latest-update-title {
+  margin: 0;
+  color: var(--fg);
+  font-family: var(--site-sans);
+  font-size: clamp(1.6rem, 2.8vw, 2.25rem);
+  font-weight: 850;
+  font-stretch: 70%;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .section-heading .eyebrow {
+  margin: 0 0 8px;
+  color: var(--tone);
+  font-family: var(--site-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .capture-action,
+.site-shell .source-link {
+  border-radius: 4px;
+  font-family: var(--site-sans);
+}
+
+.site-shell .capture-action {
+  border-color: var(--rule);
+  background: transparent;
+  color: var(--fg);
+}
+
+.site-shell .capture-action:hover {
+  border-color: var(--tone);
+  background: var(--raised);
+}
+
+/* Production tiles */
+
+:is(.site-shell, .share-capture-page) .chapter-grid {
+  gap: 8px;
+}
+
+:is(.site-shell, .share-capture-page) .chapter-card {
+  aspect-ratio: 1;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 10px 11px;
+  border: 1px solid var(--tone-dim);
+  border-radius: 2px;
+  background: var(--bg);
+  box-shadow: none;
+  color: var(--fg);
+  transition: transform 120ms ease, outline-color 120ms ease;
+}
+
+:is(.site-shell, .share-capture-page) .chapter-card:hover {
+  border-color: var(--fg);
+  background-color: var(--bg);
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+
+:is(.site-shell, .share-capture-page) .chapter-number {
+  font-family: var(--site-sans);
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  font-weight: 800;
+  font-stretch: 70%;
+  letter-spacing: 0;
+}
+
+:is(.site-shell, .share-capture-page) .chapter-status-icon {
+  inset-inline-end: 7px;
+  right: auto;
+  bottom: 7px;
+  background: none;
+  color: currentColor;
+  opacity: 0.75;
+}
+
+/* Pencil: nothing confirmed yet. */
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="unknown"],
+:is(.site-shell, .share-capture-page) .legend-icon[data-status="unknown"],
+:is(.site-shell, .share-capture-page) .legend-item[data-status="unknown"] .legend-icon {
+  border: 1px dashed var(--tone-dim);
+  background: transparent;
+  color: var(--tone);
+}
+
+/* Inked: hatching. */
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="inking"],
+:is(.site-shell, .share-capture-page) .legend-item[data-status="inking"] .legend-icon {
+  border-color: var(--tone);
+  background:
+    repeating-linear-gradient(135deg, rgb(var(--fg-rgb) / 0.2) 0 1px, transparent 1px 7px),
+    var(--bg);
+  color: var(--fg);
+}
+
+/* Backgrounds specified: screentone. */
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="background"],
+:is(.site-shell, .share-capture-page) .legend-item[data-status="background"] .legend-icon {
+  border-color: var(--fg);
+  background:
+    radial-gradient(circle, rgb(var(--fg-rgb) / 0.42) 1.1px, transparent 1.6px) 0 0 / 6px 6px,
+    var(--bg);
+  color: var(--fg);
+}
+
+/* Delivered: the finished sheet. */
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="delivered"],
+:is(.site-shell, .share-capture-page) .legend-item[data-status="delivered"] .legend-icon {
+  border-color: var(--fg);
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Scheduled: the sheet, marked for print. */
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="scheduled"],
+:is(.site-shell, .share-capture-page) .legend-item[data-status="scheduled"] .legend-icon {
+  border-color: var(--hunter);
+  background: var(--fg);
+  box-shadow: inset 0 0 0 3px var(--hunter);
+  color: var(--bg);
+}
+
+/* Published: printed. */
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="published"],
+:is(.site-shell, .share-capture-page) .legend-item[data-status="published"] .legend-icon {
+  border-color: var(--hunter);
+  background: var(--hunter);
+  color: var(--on-hunter);
+}
+
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="delivered"]:hover,
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="scheduled"]:hover {
+  background-color: var(--fg);
+}
+
+:is(.site-shell, .share-capture-page) .chapter-card[data-status="published"]:hover {
+  background-color: var(--hunter);
+}
+
+:is(.site-shell, .share-capture-page) .legend {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 28px;
+  margin-top: 28px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+:is(.site-shell, .share-capture-page) .legend-item {
+  color: var(--fg);
+  font-size: 0.9rem;
+}
+
+:is(.site-shell, .share-capture-page) .legend-item-interactive:hover,
+:is(.site-shell, .share-capture-page) .legend-item-interactive:focus-visible {
+  border-color: var(--rule);
+  background: var(--raised);
+}
+
+:is(.site-shell, .share-capture-page) .legend-icon {
+  width: 22px;
+  height: 28px;
+  border-radius: 2px;
+}
+
+:is(.site-shell, .share-capture-page) .legend-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Next chapter: the model's guess beside the community game. */
+
+.home-next {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr);
+  gap: 40px 64px;
+}
+
+.home-next-estimate {
+  margin: 20px 0 0;
+  color: var(--fg);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.home-next-caution {
+  max-width: 60ch;
+  margin: 14px 0 0;
+  color: var(--tone);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.home-text-link {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--hunter-text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.home-text-link:hover {
+  color: var(--fg);
+}
+
+.home-next-game {
+  align-self: start;
+  padding: 24px;
+  background: var(--raised);
+  border-inline-start: 3px solid var(--hunter);
+}
+
+.home-next-game p {
+  margin: 0;
+  color: var(--fg);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.home-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 20px;
+  padding: 0 22px;
+  border-radius: 4px;
+  background: var(--hunter);
+  color: var(--on-hunter);
+  font-weight: 700;
+  transition: background-color 120ms ease;
+}
+
+.home-button:hover {
+  background: var(--hunter-text);
+}
+
+/* Latest Togashi post */
+
+.site-shell #latest-togashi-update > div:first-child {
+  align-items: flex-start;
+}
+
+.site-shell #latest-togashi-update blockquote {
+  font-family: var(--site-sans);
+}
+
+.site-shell #latest-togashi-update a.source-link {
+  border-radius: 4px;
+}
+
+/* Further reading */
+
+.site-shell .home-explore {
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding-top: 0;
+  border-bottom: 0;
+}
+
+.site-shell .home-explore a {
+  gap: 8px;
+  padding: 24px 0 8px;
+}
+
+.site-shell .home-explore a + a {
+  padding-inline-start: 32px;
+  border-inline-start: 1px solid var(--rule);
+}
+
+.site-shell .home-explore strong {
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-stretch: 70%;
+}
+
+.site-shell .home-explore a:hover strong {
+  color: var(--hunter-text);
+}
+
+.site-shell .home-explore span {
+  max-width: 52ch;
+  color: var(--tone);
+  font-size: 0.95rem;
+}
+
+.site-shell .faq-section .section-heading {
+  margin-bottom: 12px;
+}
+
+.site-shell .page-links {
+  margin-top: 64px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.site-shell .page-links .eyebrow {
+  color: var(--fg);
+  font-family: var(--site-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .page-links a {
+  color: var(--tone);
+}
+
+.site-shell .page-links a:hover {
+  color: var(--fg);
+}
+
+.site-shell .site-footer {
+  border-top-color: var(--rule);
+  color: var(--tone);
+}
+
+
+@media (max-width: 980px) {
+  .home-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+  }
+
+  .home-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-fact:nth-child(3) {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+
+  .home-fact:nth-child(n + 3) {
+    border-top: 1px solid var(--rule);
+  }
+
+  .home-next {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .site-shell .page-frame {
+    width: min(100% - 32px, 1120px);
+  }
+
+  .home-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-top: 32px;
+  }
+
+  .home-hero-copy {
+    padding-bottom: 0;
+  }
+
+  /* On a phone the figure sits above the answer, small enough that the
+     answer still lands in the first screen. */
+  .home-hero-art {
+    order: -1;
+    width: min(100%, 340px);
+    margin-inline: auto;
+    padding-top: 0;
+  }
+
+  .home-hero[data-state="publishing"] {
+    margin-inline: -16px;
+  }
+
+  .home-jump {
+    flex-wrap: nowrap;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  :is(.site-shell, .share-capture-page) .chapter-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  :is(.site-shell, .share-capture-page) .legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-shell .home-explore {
+    grid-template-columns: 1fr;
+  }
+
+  .site-shell .home-explore a + a {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+    border-top: 1px solid var(--rule);
+  }
+}
+
+@media (max-width: 420px) {
+  .home-fact {
+    padding-inline: 14px 0;
+  }
+
+  :is(.site-shell, .share-capture-page) .legend {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.site-shell, .share-capture-page) .chapter-card,
+  :is(.site-shell, .share-capture-page) .chapter-card:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Content pages: the same rules and type as the home page. Sections lose their
+   cards, tables and lists lose their boxes, labels lose their capitals. */
+
+.site-shell .eyebrow {
+  color: var(--tone);
+  font-family: var(--site-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .breadcrumb {
+  padding-top: 20px;
+}
+
+.site-shell .breadcrumb ol {
+  color: var(--tone);
+  font-size: 0.85rem;
+}
+
+.site-shell .breadcrumb a:hover {
+  color: var(--fg);
+}
+
+.site-shell .breadcrumb li + li::before {
+  color: var(--tone-dim);
+}
+
+.site-shell .content-page {
+  padding: 28px 0 8px;
+}
+
+.site-shell .content-page-head h1 {
+  margin: 8px 0 0;
+  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: 0.95;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.site-shell .page-lede {
+  max-width: 62ch;
+  margin-top: 16px;
+  color: var(--fg-soft);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.site-shell .prose,
+.site-shell .rule-list,
+.site-shell .update-changes,
+.site-shell .section-lede {
+  max-width: 68ch;
+  color: var(--fg-soft);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.site-shell .subsection-title {
+  margin-top: 28px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  font-stretch: 75%;
+  letter-spacing: 0;
+}
+
+.site-shell .section-note {
+  color: var(--tone);
+  font-size: 0.85rem;
+}
+
+.site-shell .prose a,
+.site-shell .rule-list a,
+.site-shell .section-note a,
+.site-shell .update-meta a,
+.site-shell .reader-list a,
+.site-shell .data-table a {
+  color: var(--hunter-text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Tables: a heavy rule on the header row, hairlines between rows. */
+.site-shell .data-table-scroll {
+  border: 0;
+  border-radius: 0;
+}
+
+.site-shell .data-table {
+  font-size: 0.92rem;
+}
+
+.site-shell .data-table th,
+.site-shell .data-table td {
+  padding: 11px 16px 11px 0;
+}
+
+.site-shell .data-table thead th {
+  border-bottom: 2px solid var(--fg);
+  background: none;
+  color: var(--fg);
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .data-table tbody tr {
+  border-top-color: var(--rule);
+}
+
+.site-shell .data-table tbody td {
+  color: var(--fg-soft);
+}
+
+.site-shell .data-table tbody tr[data-current="true"] {
+  background: var(--raised);
+  box-shadow: inset 3px 0 0 var(--hunter);
+}
+
+[dir="rtl"].site-shell .data-table tbody tr[data-current="true"] {
+  box-shadow: inset -3px 0 0 var(--hunter);
+}
+
+.site-shell .data-table tbody tr[data-current="true"] > :first-child {
+  padding-inline-start: 12px;
+}
+
+.site-shell .fact-list {
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  border-top: 2px solid var(--fg);
+}
+
+.site-shell .fact-list > div {
+  padding: 14px 0;
+  background: none;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-shell .fact-list dt {
+  color: var(--tone);
+  font-size: 0.9rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .fact-list dd {
+  font-size: 0.98rem;
+}
+
+.site-shell .code-block,
+.site-shell .update-sheet-text {
+  border-color: var(--rule);
+  border-radius: 4px;
+  background: var(--raised);
+  color: var(--fg-soft);
+}
+
+/* Togashi updates */
+.site-shell .update-list {
+  gap: 0;
+}
+
+.site-shell .update-card {
+  padding: 20px 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  background: none;
+}
+
+.site-shell .update-card time {
+  font-family: var(--site-sans);
+  font-size: 0.85rem;
+}
+
+.site-shell .update-excerpt {
+  font-size: 1.02rem;
+}
+
+.site-shell .update-change {
+  color: var(--hunter-text);
+  font-size: 0.9rem;
+}
+
+.site-shell .update-card a {
+  color: var(--hunter-text);
+  font-weight: 600;
+}
+
+.site-shell .update-quote {
+  padding-block: 4px;
+  padding-inline: 20px 0;
+  border: 0;
+  border-inline-start: 3px solid var(--hunter);
+  border-radius: 0;
+  background: none;
+  font-size: 1.15rem;
+}
+
+.site-shell .update-media img {
+  border-color: var(--rule);
+  border-radius: 2px;
+}
+
+/* Chapter pager */
+.site-shell .chapter-pager a {
+  border-color: var(--rule);
+  border-radius: 4px;
+  background: none;
+}
+
+.site-shell .chapter-pager a:hover {
+  border-color: var(--fg);
+  background: none;
+}
+
+.site-shell .chapter-pager span {
+  color: var(--tone);
+  font-size: 0.85rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell .chapter-pager strong {
+  font-size: 1.5rem;
+  font-weight: 850;
+  font-stretch: 70%;
+}
+
+/* Answer pages */
+.site-shell .pause-answer,
+.site-shell .forecast-answer-date,
+.site-shell .arc-verdicts strong {
+  color: var(--fg);
+  font-weight: 900;
+  font-stretch: 62%;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.site-shell .forecast-answer-date {
+  color: var(--hunter-text);
+}
+
+.site-shell .reader-option {
+  border-bottom-color: var(--rule);
+}
+
+.site-shell .reader-option h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-stretch: 75%;
+}
+
+.site-shell .reader-option p {
+  color: var(--fg-soft);
+}
+
+/* Statistics: the current pause is marked with a rule, not an amber glow. */
+.site-shell .stats-section::before {
+  display: none;
+}
+
+.site-shell .stat-current {
+  border-color: var(--rule);
+  border-inline-start: 3px solid var(--hunter);
+  background: var(--raised);
+  box-shadow: none;
+}
+
+/* Data labels use the page's typeface. Pointing the mono variable at Archivo
+   covers every component that set it; real code keeps a monospace face. */
+:root:has(.site-shell) {
+  --font-geist-mono: var(--font-archivo);
+}
+
+.site-shell code,
+.site-shell pre,
+.site-shell .code-block {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.site-shell :is(
+  .history-key-count,
+  .stat-label,
+  .base-rates-badge,
+  .base-rate dt,
+  .game-kicker,
+  .game-calendar-week
+) {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* On the history page the chart sits under a page title with the same name;
+   keep the section heading for the outline and the share image only. */
+.site-shell .content-page .history-section .section-heading h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.site-shell .arc-comparison {
+  padding: 20px 0 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  border-radius: 0;
+  background: none;
+}
+
+/* Every section heading on a content page, including the ones globals.css
+   reaches by id. */
+.site-shell .content-section h2,
+.site-shell .content-page .forecast h2,
+.site-shell #chapter-history-title {
+  margin-top: 0;
+  color: var(--fg);
+  font-family: var(--site-sans);
+  font-size: clamp(1.6rem, 2.8vw, 2.25rem);
+  font-weight: 850;
+  font-stretch: 70%;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.site-shell .content-section h3 {
+  font-weight: 800;
+  font-stretch: 75%;
+  letter-spacing: 0;
+}
+
+/* Statistics: figures in a ruled row, like the home page's chapter numbers. */
+.site-shell .stat-grid {
+  border: 0;
+  border-top: 2px solid var(--fg);
+  border-radius: 0;
+  background: none;
+}
+
+.site-shell .stat {
+  padding: 18px 20px 20px;
+  border-left: 0;
+  border-inline-start: 1px solid var(--rule);
+}
+
+.site-shell .stat:first-child {
+  padding-inline-start: 0;
+  border-inline-start: 0;
+}
+
+.site-shell .stat:hover {
+  background: none;
+}
+
+.site-shell .stat-label {
+  color: var(--fg);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.site-shell .stat-value {
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-weight: 850;
+  font-stretch: 62%;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.site-shell .stat-sub,
+.site-shell .stat-supporting {
+  color: var(--tone);
+}
+
+@media (max-width: 900px) {
+  .site-shell .stat {
+    padding-inline: 0;
+    border-inline-start: 0;
+  }
+}
+
+/* Chapter tooltips: one fact per line instead of bullet-joined runs. */
+:root:has(.site-shell) .chapter-tooltip-head,
+:root:has(.site-shell) .chapter-tooltip-sub {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+:root:has(.site-shell) .chapter-tooltip-head {
+  font-size: 0.85rem;
+}
+
+:root:has(.site-shell) .chapter-tooltip-title {
+  color: var(--fg-soft);
+  font-weight: 500;
+}
+
+:root:has(.site-shell) .chapter-tooltip-sub {
+  margin-top: 6px;
+  color: var(--tone);
+  font-size: 0.78rem;
+}

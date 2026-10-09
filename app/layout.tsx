@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import { Archivo } from "next/font/google";
 import { createLocaleMetadata } from "@/lib/metadata";
 import englishMessages from "@/messages/en.json";
 import { LOCAL_DATE_SCRIPT } from "./local-date";
+import { THEME_SCRIPT } from "./theme";
 import "./globals.css";
+import "./site.css";
+
+// The tracker's display face. Its width axis gives the condensed numerals the
+// home page sets large; body copy uses the same family at normal width.
+const archivo = Archivo({
+  subsets: ["latin", "latin-ext"],
+  axes: ["wdth"],
+  variable: "--font-archivo",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hxhstatus.com"),
@@ -29,9 +41,16 @@ export default function RootLayout({
     <html
       lang="en"
       dir="ltr"
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${archivo.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Applies a stored light/dark choice before the first paint. */}
+        <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }}
+        />
+      </head>
       <body suppressHydrationWarning>
         {children}
         {/* One rewrite pass for every date in the document, placed last so the

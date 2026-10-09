@@ -7,6 +7,8 @@ import { hiatusStats } from "./data/summary";
 import { nextChapter, publicationStatus, type ChapterRecord } from "./data/status";
 import { formatDate } from "./status-presentation";
 
+const monthYear = { month: "long", day: undefined } as const;
+
 export function ReleaseForecast({ chapter, locale, messages }: { chapter: ChapterRecord; locale: Locale; messages: Messages }) {
   if (chapter.chapter !== nextChapter.chapter || ["scheduled", "published"].includes(chapter.status) || publicationStatus !== "hiatus") return null;
   const copy = messages.forecast;
@@ -30,9 +32,11 @@ export function ReleaseForecast({ chapter, locale, messages }: { chapter: Chapte
     <h2 id="forecast-title">{formatMessage(copy.title, { chapter: chapter.chapter })}</h2>
     <div className="forecast-answer">
       <p className="forecast-answer-label">{copy.centralDate}</p>
-      <p className="forecast-answer-date"><time dateTime={active.medianDate}>{formatDate(active.medianDate, { month: "long" }, locale)}</time></p>
+      {/* Month precision: a model median to the day would claim an accuracy
+          the estimate does not have. */}
+      <p className="forecast-answer-date"><time dateTime={active.medianDate.slice(0, 7)}>{formatDate(active.medianDate, monthYear, locale)}</time></p>
       <p className="prose">{copy.centralExplanation}</p>
-      <p className="forecast-window">{formatMessage(copy.clearRange, { percent: percent(.8), start: formatDate(active.lowerDate, { month: "long" }, locale), end: formatDate(active.upperDate, { month: "long" }, locale) })}</p>
+      <p className="forecast-window">{formatMessage(copy.clearRange, { percent: percent(.8), start: formatDate(active.lowerDate, monthYear, locale), end: formatDate(active.upperDate, monthYear, locale) })}</p>
       <p className="section-note">{copy.simpleCaution}</p>
     </div>
     <h3>{copy.monthsTitle}</h3>
@@ -73,7 +77,7 @@ export function ReleaseForecast({ chapter, locale, messages }: { chapter: Chapte
         {production.lagSamples.map(s => <p className="prose" key={s.chapter}><a href={s.url}>{formatMessage(copy.lagEvidence, { chapter: s.chapter, completed: formatDate(s.completedOn, undefined, locale), released: formatDate(s.resumedOn, undefined, locale), days: s.days })}</a></p>)}
         <p className="prose">{formatMessage(copy.lagSensitivity, { early: month(lagSensitivity[0].medianDate), late: month(lagSensitivity[1].medianDate) })}</p>
         <h4>{copy.sourcesTitle}</h4>
-        <ul className="forecast-sources">{production.batch.map(s => <li key={s.chapter}><a href={s.url}>No. {s.chapter} · {formatDate(s.date, undefined, locale)}</a></li>)}</ul>
+        <ul className="forecast-sources">{production.batch.map(s => <li key={s.chapter}><a href={s.url}>No. {s.chapter}, {formatDate(s.date, undefined, locale)}</a></li>)}</ul>
       </>}
       <h3>{copy.historyTitle}</h3>
       <p className="prose">{copy.method}</p><p className="prose">{copy.conditioning}</p>

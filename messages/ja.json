@@ -1,15 +1,16 @@
 {
   "metadata": {
-    "title": "HxH Status - HUNTER×HUNTER 最新話・制作進捗トラッカー",
+    "title": "HxH Status - HUNTER×HUNTER（ハンターハンター）休載、最新話、制作進捗",
     "description": "HUNTER×HUNTERの掲載状況と、冨樫義博先生が公表した今後の話数の制作進捗を、出典付きで追跡する非公式サイトです。",
     "siteName": "HxH Status",
     "imageAlt": "HUNTER×HUNTERの最新掲載話と確認済み制作進捗を表示するHxH Status",
-    "homeTitleHiatus": "HUNTER×HUNTERは休載中？ 最新は第{latest}話、次は第{next}話（{month}）",
-    "homeTitlePublishing": "HUNTER×HUNTERは休載中？ いいえ — 最新は第{latest}話、次は第{next}話（{month}）"
+    "homeTitleHiatus": "ハンターハンターは休載中？第{next}話の再開はいつ（{month}）",
+    "homeTitlePublishing": "ハンターハンター第{next}話はいつ？掲載予定（{month}）"
   },
   "header": {
     "wordmarkAria": "H×H Status",
-    "updated": "更新：{date}"
+    "updated": "状況の最終変更：{date}",
+    "darkMode": "ダークモード"
   },
   "language": {
     "label": "言語"
@@ -78,19 +79,22 @@
     "question": "HUNTER×HUNTERは休載中ですか？",
     "summaryAria": "現在の状況を文章で",
     "japanDate": "日本での日付（JST）",
-    "pauseDays": "休載から{days}日"
+    "pauseDays": "休載から{days}日",
+    "daysSince": "日（第{chapter}話の掲載から）",
+    "waitArtAlt": "漫画のコマ：ローブ姿の男がしゃがみ込み「いつまでも待とう」と語る。"
   },
   "production": {
     "eyebrow": "カキン王位継承戦",
     "title": "制作進捗",
     "chapterStatusAria": "各話の制作進捗",
-    "legendAria": "ステータス凡例"
+    "legendAria": "ステータス凡例",
+    "selectHint": "各話を選ぶと出典を確認できます。"
   },
   "latestUpdate": {
     "translatedByGemini": "Geminiによる日本語からの翻訳",
     "translated": "日本語からの翻訳",
     "originalText": "日本語の原文",
-    "translationUnavailable": "翻訳を利用できません · 日本語の原文",
+    "translationUnavailable": "翻訳を利用できません、日本語の原文",
     "showOriginal": "原文を表示",
     "imageAlt": "冨樫義博の投稿に添付された画像{index}",
     "noPost": "冨樫義博の投稿はまだありません。",
@@ -115,8 +119,8 @@
     "currentArcBadge": "連載中",
     "metricChapters": "話数",
     "metricDuration": "期間",
-    "rankChapters": "話数第{rank}位 · {count}話",
-    "rankDuration": "連載期間第{rank}位 · {duration}",
+    "rankChapters": "話数第{rank}位、{count}話",
+    "rankDuration": "連載期間第{rank}位、{duration}",
     "durationYears": "{years}年",
     "durationMonths": "{months}ヶ月",
     "arcChaptersCount": "{count}話",
@@ -129,7 +133,7 @@
     "methodology": "1998年以降の掲載記録に基づき、合併号は1冊と数えます。次回掲載の予測ではありません。",
     "currentHiatus": {
       "title": "現在の休載状況",
-      "justStarted": "休載開始直後 · 経過号数 0号",
+      "justStarted": "休載開始直後、経過号数 0号",
       "elapsed": "{days}日経過・確認済みジャンプ{issues}号",
       "since": "第{chapter}話（{jumpIssue}号）掲載後〜"
     },
@@ -366,7 +370,7 @@
     },
     "chapter": {
       "metaTitlePublished": "HUNTER×HUNTER第{chapter}話 {date}／週刊少年ジャンプ{issue}号掲載",
-      "metaTitlePending": "HUNTER×HUNTER第{chapter}話はいつ？ 確認済みの状況と出典",
+      "metaTitlePending": "ハンターハンター第{chapter}話はいつ？確認済みの状況と冨樫先生の進捗",
       "metaDescriptionPublished": "HUNTER×HUNTER第{chapter}話は{date}、週刊少年ジャンプ{issue}号に掲載されました。サブタイトル、巻数、編、そして読める公式サービス。",
       "metaDescriptionPending": "HUNTER×HUNTER第{chapter}話の掲載日は未発表です。確認済みの制作段階は{status}で、{date}に更新されました。冨樫氏が公開した出典付き。",
       "h1": "HUNTER×HUNTER第{chapter}話",

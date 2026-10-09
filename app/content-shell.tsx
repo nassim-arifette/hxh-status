@@ -17,6 +17,7 @@ import {
 } from "@/lib/routes";
 import { lastUpdated } from "./data/status";
 import LanguageSwitcher from "./language-switcher";
+import ThemeToggle from "./theme-toggle";
 import { formatDate } from "./status-presentation";
 import {
   breadcrumbLd,
@@ -112,6 +113,7 @@ export function ContentShell({
             </span>
             <span className="wordmark-status">Status</span>
           </a>
+          <SiteNavigation locale={locale} messages={messages} path={path} />
           <div className="header-meta">
             <div className="updated-label">
               <span className="live-dot" aria-hidden="true" />
@@ -123,6 +125,7 @@ export function ContentShell({
                 ),
               })}
             </div>
+            <ThemeToggle label={messages.header.darkMode} />
             <LanguageSwitcher
               label={messages.language.label}
               locale={locale}
@@ -130,7 +133,6 @@ export function ContentShell({
             />
           </div>
         </header>
-        <SiteNavigation locale={locale} messages={messages} path={path} />
 
         <nav aria-label={messages.nav.breadcrumb} className="breadcrumb">
           <ol>

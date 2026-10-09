@@ -106,7 +106,7 @@ export function BaseRates({
 
       <p className="base-rates-more">
         <a href={localePath("/hiatus", locale)}>{copy.more}</a>
-        {" · "}
+        {", "}
         <a href={localePath(chapterPath(chapter), locale)}>{formatMessage(copy.forecastLink, { chapter })}</a>
       </p>
     </section>

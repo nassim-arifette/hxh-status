@@ -52,7 +52,7 @@ export function HiatusStatistics({
                   issues: historical.maxIssues,
                   years: historical.maxHiatus.approxYears,
                 })}
-                {" · "}
+                {", "}
                 {formatMessage(messages.historicalHiatus.recordLabel, {
                   startYear: historical.maxHiatus.startYear,
                   startIssue: historical.maxHiatus.startIssue,

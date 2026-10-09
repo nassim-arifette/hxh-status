@@ -141,21 +141,20 @@ function ChapterGrid({
                   {messages.chapter.title} {chapter.chapter}
                 </span>
                 {title ? (
-                  <span className="chapter-tooltip-title">• {title}</span>
+                  <span className="chapter-tooltip-title">{title}</span>
                 ) : (
-                  <span className="chapter-tooltip-title">• {volume}</span>
+                  <span className="chapter-tooltip-title">{volume}</span>
                 )}
               </div>
               <div className="chapter-tooltip-sub">
                 <span>{meta.label}</span>
                 {chapter.releaseAt ? (
                   <span>
-                    • <LocalDate dateTime={chapter.releaseAt} locale={locale} showTime={chapter.status === "scheduled"} />
+                    <LocalDate dateTime={chapter.releaseAt} locale={locale} showTime={chapter.status === "scheduled"} />
                   </span>
                 ) : null}
                 {chapter.jumpIssue ? (
                   <span>
-                    •{" "}
                     {formatMessage(messages.chapter.issue, {
                       issue: chapter.jumpIssue,
                     })}
@@ -234,7 +233,7 @@ function ChapterDetails({
           <>
             <SheetHeader className="sheet-header">
               <p className="eyebrow">
-                {volume ? `${volume} • ` : ""}
+                {volume ? `${volume}, ` : ""}
                 {messages.chapter.title}
               </p>
               <SheetTitle

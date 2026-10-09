@@ -117,8 +117,8 @@ export function ArcPage({
           </div>
         </div>
         <div className="arc-verdicts">
-          <div><span>{copy.columnChapters}</span><strong>#{current.chapterRank} · {current.chapterCount}</strong><p className="prose">{chapterSentence}</p></div>
-          <div><span>{copy.elapsedLabel}</span><strong>#{current.durationRank} · {formatArcDuration(current, messages.history)}</strong><p className="prose">{durationSentence}</p></div>
+          <div><span>{copy.columnChapters}</span><strong>{current.chapterCount} (#{current.chapterRank})</strong><p className="prose">{chapterSentence}</p></div>
+          <div><span>{copy.elapsedLabel}</span><strong>{formatArcDuration(current, messages.history)} (#{current.durationRank})</strong><p className="prose">{durationSentence}</p></div>
         </div>
       </section>
 

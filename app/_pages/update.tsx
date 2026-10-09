@@ -165,7 +165,7 @@ export function UpdatePage({
                 {formatMessage(messages.latestUpdate.imageText, {
                   index: image.imageIndex,
                 })}
-                {" · "}
+                {", "}
                 {messages.latestUpdate.imageTextByGemini}
               </p>
               <pre className="update-sheet-text" lang={locale}>

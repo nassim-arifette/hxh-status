@@ -52,7 +52,7 @@ export function HiatusPage({
       <section className="content-section" aria-labelledby="current-pause-title">
         <h2 id="current-pause-title">{copy.currentTitle}</h2>
         <p className="pause-answer">{publicationStatus === "hiatus" ? <span suppressHydrationWarning data-elapsed-since={hiatusStats.currentHiatus.sinceDate} data-days-template={messages.snapshot.pauseDays}>{formatMessage(messages.snapshot.pauseDays, { days: hiatusStats.currentHiatus.elapsedDays })}</span> : messages.snapshot.publishing}</p>
-        {publicationStatus === "hiatus" && <p className="prose">{formatMessage(messages.stats.currentHiatus.since, { chapter: hiatusStats.currentHiatus.sinceChapter, jumpIssue: hiatusStats.currentHiatus.sinceJumpIssue })} · {formatDate(hiatusStats.currentHiatus.sinceDate, undefined, locale)} JST</p>}
+        {publicationStatus === "hiatus" && <p className="prose">{formatMessage(messages.stats.currentHiatus.since, { chapter: hiatusStats.currentHiatus.sinceChapter, jumpIssue: hiatusStats.currentHiatus.sinceJumpIssue })}, {formatDate(hiatusStats.currentHiatus.sinceDate, undefined, locale)} JST</p>}
       </section>
 
       <section

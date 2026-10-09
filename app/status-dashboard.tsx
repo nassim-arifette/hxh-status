@@ -1,3 +1,6 @@
+import Image from "next/image";
+
+import waitArt from "./assets/as-long-as-it-takes.webp";
 import { gameCopy } from "./game-copy";
 import { SiteNavigation } from "./site-navigation";
 import {
@@ -17,6 +20,7 @@ import LanguageSwitcher from "./language-switcher";
 import LatestTogashiUpdate from "./latest-togashi-update";
 import PushNotificationControl from "./push-notification-control";
 import SectionCaptureActions from "./section-capture-actions";
+import ThemeToggle from "./theme-toggle";
 import { ARCS } from "./data/arcs";
 import { arcStats, buildStatusSentences, hiatusStats } from "./data/summary";
 import { HiatusStatistics } from "./hiatus-statistics";
@@ -189,6 +193,9 @@ export function ProductionSection({
         )}
       />
       <Legend messages={messages} />
+      {capture ? null : (
+        <p className="section-note">{messages.production.selectHint}</p>
+      )}
     </section>
   );
 }
@@ -310,7 +317,7 @@ export default function StatusDashboard({
   return (
     <main
       id="top"
-      className="site-shell"
+      className="site-shell home"
       dir={getLocaleDirection(locale)}
       lang={locale}
     >
@@ -326,6 +333,7 @@ export default function StatusDashboard({
             </span>
             <span className="wordmark-status">Status</span>
           </a>
+          <SiteNavigation locale={locale} messages={messages} />
           <div className="header-meta">
             <div className="updated-label">
               <span className="live-dot" aria-hidden="true" />
@@ -337,114 +345,166 @@ export default function StatusDashboard({
                 ),
               })}
             </div>
-            <PushNotificationControl
-              locale={locale}
-              messages={messages.notifications}
-            />
+            <ThemeToggle label={messages.header.darkMode} />
             <LanguageSwitcher
               label={messages.language.label}
               locale={locale}
             />
           </div>
         </header>
-        <SiteNavigation locale={locale} messages={messages} />
 
-        <section className="snapshot" aria-labelledby="publishing-status-title">
-          <div className="publishing-status" data-state={publicationStatus}>
+        <section
+          className="home-hero"
+          data-state={publicationStatus}
+          aria-labelledby="publishing-status-title"
+        >
+          <div className="home-hero-copy">
             {/* The heading carries the question readers type and the answer
                 they came for, in that order, so the page states its subject in
                 words rather than leaving it to a coloured dot. */}
             <h1 id="publishing-status-title">
-              <span className="publishing-status-question">
+              <span className="home-hero-question">
                 {messages.snapshot.question}
               </span>
-              <span className="publishing-status-answer">
-                <span className="publishing-status-dot" aria-hidden="true" />
-                {publicationStatusLabel}
-              </span>
+              <span className="home-hero-answer">{publicationStatusLabel}</span>
             </h1>
-            <p className="publishing-status-detail">
-              {formatMessage(messages.snapshot.chaptersPublished, {
-                count: chaptersThisYear,
-                year: currentYear,
-              })}
-            </p>
-          {publicationStatus === "hiatus" && <a className="hiatus-inline" href={localePath("/hiatus", locale)}><span suppressHydrationWarning data-elapsed-since={hiatusStats.currentHiatus.sinceDate} data-days-template={messages.snapshot.pauseDays}>{formatMessage(messages.snapshot.pauseDays, { days: hiatusStats.currentHiatus.elapsedDays })}</span> →</a>}
+
+            {publicationStatus === "hiatus" ? (
+              <a className="home-hero-count" href={localePath("/hiatus", locale)}>
+                <strong
+                  suppressHydrationWarning
+                  data-elapsed-since={hiatusStats.currentHiatus.sinceDate}
+                  data-days-template="{days}"
+                >
+                  {hiatusStats.currentHiatus.elapsedDays}
+                </strong>
+                <span>
+                  {formatMessage(messages.snapshot.daysSince, {
+                    chapter: latestPublished.chapter,
+                  })}
+                </span>
+              </a>
+            ) : (
+              <p className="home-hero-detail">
+                {formatMessage(messages.snapshot.chaptersPublished, {
+                  count: chaptersThisYear,
+                  year: currentYear,
+                })}
+              </p>
+            )}
+
+
+            {/* Alerts are what bring readers back when Togashi posts, so they
+                sit with the answer rather than among the header controls. */}
+            <div className="home-hero-alerts">
+              <p>{messages.notifications.description}</p>
+              <PushNotificationControl
+                locale={locale}
+                messages={messages.notifications}
+              />
+            </div>
           </div>
 
-          <div className="metric-grid">
-            <article className="metric metric-primary">
-              <span>{messages.snapshot.latestPublished}</span>
-              <strong>{latestPublished.chapter}</strong>
-              <small>
-                {latestPublished.jumpIssue ? `WSJ #${latestPublished.jumpIssue}` : ""}
-                {latestPublished.releaseAt ? (
-                  <>
-                    {latestPublished.jumpIssue ? " • " : ""}
-                    <time dateTime={latestPublished.releaseAt.slice(0, 10)} title={messages.snapshot.japanDate}>
-                      {formatDate(latestPublished.releaseAt.slice(0, 10), { month: "short", day: "numeric", year: undefined }, locale)} JST
-                    </time>
-                  </>
-                ) : null}
-              </small>
-            </article>
-            <article className="metric">
-              <span>{messages.snapshot.nextChapter}</span>
-              <strong>{nextChapter.chapter}</strong>
-              <small>
-                {nextChapter.releaseAt ? (
-                  <time dateTime={nextChapter.releaseAt.slice(0, 10)} title={messages.snapshot.japanDate}>
-                    {formatDate(nextChapter.releaseAt.slice(0, 10), { month: "short", day: "numeric", year: undefined }, locale)} JST
-                  </time>
-                ) : (
-                  <>
-                    {statusMeta[nextChapter.status].shortLabel}
-                    <span className="metric-official-date">{messages.snapshot.noOfficialDate}</span>
-                  </>
-                )}
-              </small>
-            </article>
-            <article className="metric">
-              <span>{messages.snapshot.manuscriptsComplete}<small>{messages.snapshot.throughChapter}</small></span>
-              <strong>{manuscriptsComplete.chapter}</strong>
-            </article>
-            <article className="metric">
-              <span>{messages.snapshot.workConfirmed}<small>{messages.snapshot.throughChapter}</small></span>
-              <strong>{workConfirmed.chapter}</strong>
-            </article>
-          </div>
-
-          {/* The same three sentences feed the title, the description, the feed
-              and the structured data; they are shown here so what a crawler
-              quotes is what a reader sees. */}
-          <p className="status-summary" aria-label={messages.snapshot.summaryAria}>
-            {summarySentences.join(" ")}
-          </p>
-
-          <a className="game-home-link" href={localePath("/predictions", locale)}><span>{gameCopy(locale).home}</span><strong>{gameCopy(locale).cta}</strong></a>
+          {publicationStatus === "hiatus" ? (
+            <figure className="home-hero-art">
+              <Image
+                src={waitArt}
+                alt={messages.snapshot.waitArtAlt}
+                priority
+                unoptimized
+                sizes="(max-width: 720px) 76vw, 430px"
+              />
+            </figure>
+          ) : null}
         </section>
 
-        <ProductionSection locale={locale} messages={messages} />
+        <dl className="home-facts">
+          <div className="home-fact">
+            <dt>{messages.snapshot.latestPublished}</dt>
+            <dd className="home-fact-number">{latestPublished.chapter}</dd>
+            <dd className="home-fact-note">
+              {latestPublished.jumpIssue ? `WSJ #${latestPublished.jumpIssue}` : ""}
+              {latestPublished.releaseAt ? (
+                <>
+                  {latestPublished.jumpIssue ? ", " : ""}
+                  <time dateTime={latestPublished.releaseAt.slice(0, 10)} title={messages.snapshot.japanDate}>
+                    {formatDate(latestPublished.releaseAt.slice(0, 10), { month: "short", day: "numeric", year: undefined }, locale)} JST
+                  </time>
+                </>
+              ) : null}
+            </dd>
+          </div>
+          <div className="home-fact">
+            <dt>{messages.snapshot.nextChapter}</dt>
+            <dd className="home-fact-number">{nextChapter.chapter}</dd>
+            <dd className="home-fact-note">
+              {nextChapter.releaseAt ? (
+                <time dateTime={nextChapter.releaseAt.slice(0, 10)} title={messages.snapshot.japanDate}>
+                  {formatDate(nextChapter.releaseAt.slice(0, 10), { month: "short", day: "numeric", year: undefined }, locale)} JST
+                </time>
+              ) : (
+                <>
+                  <span>{statusMeta[nextChapter.status].label}</span>
+                  <span>{messages.snapshot.noOfficialDate}</span>
+                </>
+              )}
+            </dd>
+          </div>
+          <div className="home-fact">
+            <dt>
+              {messages.snapshot.manuscriptsComplete}
+              <span>{messages.snapshot.throughChapter}</span>
+            </dt>
+            <dd className="home-fact-number">{manuscriptsComplete.chapter}</dd>
+          </div>
+          <div className="home-fact">
+            <dt>
+              {messages.snapshot.workConfirmed}
+              <span>{messages.snapshot.throughChapter}</span>
+            </dt>
+            <dd className="home-fact-number">{workConfirmed.chapter}</dd>
+          </div>
+        </dl>
 
-        <section className="content-section home-forecast" aria-labelledby="next-chapter-title">
-          <div>
+        {/* Jump links to the parts readers come back for. The production
+            section keeps its capture id, so its anchor is a wrapper. */}
+        <nav className="home-jump" aria-label={messages.nav.onThisPage}>
+          <a href="#production">{messages.production.title}</a>
+          <a href="#next-chapter">{messages.snapshot.nextChapter}</a>
+          <a href="#latest-togashi-update">{messages.latestUpdate.eyebrow}</a>
+          <a href="#faq">{messages.faq.title}</a>
+        </nav>
+
+        <div id="production">
+          <ProductionSection locale={locale} messages={messages} />
+        </div>
+
+        <section id="next-chapter" className="home-next" aria-labelledby="next-chapter-title">
+          <div className="home-next-model">
             <h2 id="next-chapter-title">
               {formatMessage(prediction ? messages.forecast.title : messages.baseRates.eyebrow, { chapter: nextChapter.chapter })}
             </h2>
-            <p className="section-lede">{prediction ? messages.forecast.simpleCaution : summarySentences[2]}</p>
-          </div>
-          <div className="home-forecast-detail">
             {predictionMonth && (
-              <p className="home-forecast-estimate">
+              <p className="home-next-estimate">
                 {formatMessage(messages.forecast.homePrediction, { date: predictionMonth })}
               </p>
             )}
-            <a className="source-link" href={localePath(chapterPath(nextChapter.chapter), locale)}>
+            {/* The estimate is labelled unofficial in its own sentence; the
+                caveats and method live on the chapter page linked below. */}
+            {prediction ? null : <p className="home-next-caution">{summarySentences[2]}</p>}
+            <a className="home-text-link" href={localePath(chapterPath(nextChapter.chapter), locale)}>
               {formatMessage(messages.baseRates.forecastLink, { chapter: nextChapter.chapter })}
             </a>
           </div>
+          <div className="home-next-game">
+            <p>{gameCopy(locale).home}</p>
+            {/* The catalog CTA ends in an arrow for inline use; the button
+                shape already says it is an action. */}
+            <a className="home-button" href={localePath("/predictions", locale)}>
+              {gameCopy(locale).cta.replace(/\s*[→←]\s*$/u, "")}
+            </a>
+          </div>
         </section>
-
         <LatestTogashiUpdate
           locale={locale}
           messages={messages.latestUpdate}
@@ -452,8 +512,8 @@ export default function StatusDashboard({
         />
 
         <section className="home-explore" aria-label={messages.nav.explore}>
-          <a href={localePath("/history", locale)}><strong>{messages.history.title} →</strong><span>{messages.history.intro}</span></a>
-          <a href={localePath("/statistics", locale)}><strong>{messages.pages.statistics.name} →</strong><span>{messages.pages.statistics.lede}</span></a>
+          <a href={localePath("/history", locale)}><strong>{messages.history.title}</strong><span>{messages.history.intro}</span></a>
+          <a href={localePath("/statistics", locale)}><strong>{messages.pages.statistics.name}</strong><span>{messages.pages.statistics.lede}</span></a>
         </section>
 
         <Faq locale={locale} messages={messages} />

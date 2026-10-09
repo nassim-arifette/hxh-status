@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="es">
   <id>https://hxhstatus.com/es/feed.xml</id>
-  <title type="text">HxH Status - Capítulos y progreso de HUNTER×HUNTER</title>
+  <title type="text">HxH Status: fechas de salida, pausas y novedades de Togashi sobre Hunter x Hunter</title>
   <subtitle type="text">Un tracker no oficial y con fuentes de los capítulos de HUNTER×HUNTER y del progreso confirmado por Yoshihiro Togashi en los próximos capítulos.</subtitle>
   <updated>2026-10-05T10:19:39.000Z</updated>
   <link rel="self" href="https://hxhstatus.com/es/feed.xml" type="application/atom+xml" />

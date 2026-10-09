@@ -1,15 +1,16 @@
 {
   "metadata": {
-    "title": "HxH Status - HUNTER×HUNTER Chapter & Production Tracker",
+    "title": "HxH Status: Hunter x Hunter release dates, hiatus and Togashi updates",
     "description": "A sourced, unofficial tracker for HUNTER×HUNTER chapter releases and Yoshihiro Togashi's confirmed progress on upcoming chapters.",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status chapter release and production tracker showing the latest confirmed HUNTER×HUNTER progress",
-    "homeTitleHiatus": "Is HUNTER×HUNTER on hiatus? Latest chapter {latest}, next is {next} ({month})",
-    "homeTitlePublishing": "Is HUNTER×HUNTER on hiatus? No — latest chapter {latest}, next is {next} ({month})"
+    "homeTitleHiatus": "Is Hunter x Hunter on hiatus? Chapter {next} release date ({month})",
+    "homeTitlePublishing": "Hunter x Hunter chapter {next} release date and schedule ({month})"
   },
   "header": {
     "wordmarkAria": "H×H Status",
-    "updated": "Updated {date}"
+    "updated": "Status last changed {date}",
+    "darkMode": "Dark mode"
   },
   "language": {
     "label": "Language"
@@ -78,19 +79,22 @@
     "question": "Is HUNTER×HUNTER on hiatus?",
     "summaryAria": "Current status in plain language",
     "japanDate": "Japan date (JST)",
-    "pauseDays": "On hiatus for {days} days"
+    "pauseDays": "On hiatus for {days} days",
+    "daysSince": "days since chapter {chapter}",
+    "waitArtAlt": "Manga panel of a robed man crouching, saying: “As long as it takes. I’ll wait.”"
   },
   "production": {
     "eyebrow": "Kakin Succession War",
     "title": "Production tracker",
     "chapterStatusAria": "Chapter production status",
-    "legendAria": "Status legend"
+    "legendAria": "Status legend",
+    "selectHint": "Select a chapter to see its source."
   },
   "latestUpdate": {
     "translatedByGemini": "Translated from Japanese by Gemini",
     "translated": "Translated from Japanese",
     "originalText": "Original Japanese text",
-    "translationUnavailable": "Translation unavailable · Original Japanese text",
+    "translationUnavailable": "Translation unavailable, showing the original Japanese",
     "showOriginal": "Show original text",
     "imageAlt": "Image {index} attached to Yoshihiro Togashi's post",
     "noPost": "No Togashi post is available yet.",
@@ -115,8 +119,8 @@
     "currentArcBadge": "Current arc",
     "metricChapters": "Chapters",
     "metricDuration": "Duration",
-    "rankChapters": "#{rank} longest arc · {count} chapters",
-    "rankDuration": "#{rank} by calendar duration · {duration}",
+    "rankChapters": "#{rank} longest arc, {count} chapters",
+    "rankDuration": "#{rank} by calendar duration, {duration}",
     "durationYears": "{years} yrs",
     "durationMonths": "{months} mos",
     "arcChaptersCount": "{count} ch.",
@@ -129,8 +133,8 @@
     "methodology": "Based on recorded Jump issues since 1998. A double issue counts once. These figures describe the past, not the next release.",
     "currentHiatus": {
       "title": "Current hiatus",
-      "justStarted": "Just started · 0 Jump issues elapsed",
-      "elapsed": "{days} days elapsed · {issues} recorded Jump issues",
+      "justStarted": "Just started, 0 Jump issues elapsed",
+      "elapsed": "{days} days elapsed, {issues} recorded Jump issues",
       "since": "Since chapter {chapter} (WSJ {jumpIssue})"
     },
     "historicalHiatus": {
@@ -288,7 +292,7 @@
   "pages": {
     "hiatus": {
       "name": "Hiatus tracker",
-      "metaTitle": "Hunter x Hunter hiatus history: every major break since 1998",
+      "metaTitle": "Hunter x Hunter hiatus tracker: the current break and every hiatus since 1998",
       "metaDescription": "Live count of the current HUNTER×HUNTER hiatus and the full record of {count} breaks of {threshold} Jump issues or more since 1998, measured from Weekly Shonen Jump's own issue numbering.",
       "h1": "HUNTER×HUNTER hiatus tracker",
       "lede": "See the current pause, then past pauses lasting at least ten Jump issues. Dates show elapsed time; issue counts show how many published magazines had no chapter.",
@@ -309,7 +313,7 @@
     },
     "statistics": {
       "name": "Statistics",
-      "metaTitle": "HUNTER×HUNTER publication statistics: {published} chapters across {total} Jump issues",
+      "metaTitle": "Hunter x Hunter statistics: {published} chapters across {total} Jump issues",
       "metaDescription": "Descriptive statistics for HUNTER×HUNTER from 1998 to today: {percent}% presence in Weekly Shonen Jump, a median major hiatus of {median} issues, and the length of every publication run.",
       "h1": "HUNTER×HUNTER publication statistics",
       "lede": "How often does HUNTER×HUNTER appear, how long do pauses last, and how many chapters come out between pauses? These figures describe past publication.",
@@ -326,7 +330,7 @@
     },
     "updates": {
       "name": "Togashi updates",
-      "metaTitle": "Yoshihiro Togashi's updates on HUNTER×HUNTER, translated",
+      "metaTitle": "Togashi’s Hunter x Hunter updates: manuscript progress, translated",
       "metaDescription": "A sourced archive of {posts} Togashi posts, with original Japanese, available translations in {count} languages and image transcriptions.",
       "h1": "Togashi updates",
       "lede": "Yoshihiro Togashi posts his own production progress. Each post here keeps the original Japanese, a translation, and a transcription of the Jump submission sheet whenever one is photographed.",
@@ -365,8 +369,8 @@
       "elapsedLabel": "Elapsed time, including pauses"
     },
     "chapter": {
-      "metaTitlePublished": "HUNTER×HUNTER chapter {chapter} released {date} in Weekly Shonen Jump #{issue}",
-      "metaTitlePending": "When is HUNTER×HUNTER chapter {chapter}? Confirmed status and source",
+      "metaTitlePublished": "Hunter x Hunter chapter {chapter}: released {date} in Weekly Shonen Jump #{issue}",
+      "metaTitlePending": "Hunter x Hunter chapter {chapter} release date: status and Togashi’s progress",
       "metaDescriptionPublished": "HUNTER×HUNTER chapter {chapter} was published on {date} in Weekly Shonen Jump issue #{issue}. Title, volume, arc and the official readers that carry it.",
       "metaDescriptionPending": "HUNTER×HUNTER chapter {chapter} has no announced release date. Its confirmed production stage is {status}, last updated {date}, with the source Togashi posted.",
       "h1": "HUNTER×HUNTER chapter {chapter}",
@@ -393,7 +397,7 @@
     },
     "whereToRead": {
       "name": "Where to read",
-      "metaTitle": "Where to read HUNTER×HUNTER officially, by language",
+      "metaTitle": "Where to read Hunter x Hunter manga officially, by language",
       "metaDescription": "The official, legal ways to read HUNTER×HUNTER: VIZ Shonen Jump, MANGA Plus, Shonen Jump+, MANGA MILLION and the licensed print editions, listed by language.",
       "h1": "Where to read HUNTER×HUNTER",
       "lede": "Choose a reading language below. Each link leads to an official service; chapter access and availability depend on the service and your country.",
@@ -434,7 +438,7 @@
     },
     "api": {
       "name": "API",
-      "metaTitle": "HxH Status public API: free HUNTER×HUNTER status JSON, feeds and badges",
+      "metaTitle": "HxH Status API: free Hunter x Hunter status JSON, feeds and badges",
       "metaDescription": "A free, key-less, CORS-enabled JSON API for HUNTER×HUNTER publication status, hiatus statistics and Togashi's translated posts, plus Atom feeds, an iCalendar of releases and embeddable SVG badges.",
       "h1": "Public API",
       "lede": "Everything HxH Status knows is served as JSON. No key, no rate limit beyond ordinary caching, CORS open to any origin, and a stable schema version on every document.",
@@ -468,12 +472,12 @@
     }
   },
   "forecast": {
-    "badge": "Model estimate · not an official date",
+    "badge": "Model estimate, not an official date",
     "title": "When could chapter {chapter} return?",
     "intro": "Two exploratory models: historical interruptions and a scenario informed by Togashi’s manuscript reports. Probabilities depend on their assumptions.",
     "median": "Model median",
     "range": "Central 80% predictive interval",
-    "asOf": "Calculated {date} · {total} interruptions, {count} with exact calendar dates.",
+    "asOf": "Calculated {date}, {total} interruptions, {count} with exact calendar dates.",
     "caution": "80% probability within a model does not establish 80% real-world reliability. Data are sparse and editorial decisions remain unknown.",
     "methodTitle": "Method, historical checks and limitations",
     "method": "Historical reference: every completed interruption since 2014 between consecutive numbered chapters, including short breaks. Duration runs from the last chapter to the return. Exact dates take precedence; otherwise assume 48 Jump issues per year.",
