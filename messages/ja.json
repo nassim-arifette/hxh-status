@@ -4,8 +4,8 @@
     "description": "HUNTER×HUNTERの掲載状況と、冨樫義博先生が公表した今後の話数の制作進捗を、出典付きで追跡する非公式サイトです。",
     "siteName": "HxH Status",
     "imageAlt": "HUNTER×HUNTERの最新掲載話と確認済み制作進捗を表示するHxH Status",
-    "homeTitleHiatus": "ハンターハンターは休載中？第{next}話の再開はいつ（{month}）",
-    "homeTitlePublishing": "ハンターハンター第{next}話はいつ？掲載予定（{month}）"
+    "homeTitleHiatus": "ハンターハンターは休載中？第{next}話の再開はいつ（{month}時点）",
+    "homeTitlePublishing": "ハンターハンター第{next}話はいつ？掲載予定（{month}時点）"
   },
   "header": {
     "updated": "状況の最終変更：{date}",
@@ -341,6 +341,7 @@
     "update": {
       "metaTitle": "{date}の冨樫氏の報告：第{chapter}話 {status}",
       "metaTitleGeneric": "{date}の冨樫義博氏の投稿",
+      "metaTitleGenericTimed": "{date} {time}（UTC）の冨樫義博氏の投稿",
       "metaDescription": "{date}に冨樫義博氏がHUNTER×HUNTERについて投稿した内容を、日本語原文と翻訳、そしてそれが確定させたトラッカーの変更とともに掲載しています。",
       "h1": "{date}の冨樫氏の報告",
       "changeTitle": "これで確定したこと",

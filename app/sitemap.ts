@@ -13,6 +13,7 @@ import {
 import { chapterPages } from "./data/chapter-pages";
 import { togashiPosts } from "./data/updates";
 import { lastUpdated } from "./data/status";
+import { homeUpdated } from "./data/summary";
 
 export const dynamic = "force-static";
 
@@ -25,12 +26,14 @@ function day(date: string) {
 // new page cannot be added without appearing here.
 export default function sitemap(): MetadataRoute.Sitemap {
   const updated = day(lastUpdated);
+  // The home page and the updates list also change with each Togashi post.
+  const withPosts = day(homeUpdated);
 
   const pages: { path: string; lastModified: Date }[] = [
-    { path: "/", lastModified: updated },
+    { path: "/", lastModified: withPosts },
     ...CONTENT_PAGES.map((page) => ({
       path: contentPagePath(page),
-      lastModified: updated,
+      lastModified: page === "updates" ? withPosts : updated,
     })),
     ...ARC_PAGES.map((arc) => ({ path: arcPath(arc), lastModified: updated })),
     ...chapterPages.map((chapter) => ({

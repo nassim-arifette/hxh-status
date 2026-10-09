@@ -4,8 +4,8 @@
     "description": "متتبع غير رسمي وموثق بالمصادر لفصول HUNTER×HUNTER وللتقدم الذي يؤكده يوشيهيرو توغاشي في الفصول القادمة.",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status لمتابعة فصول HUNTER×HUNTER وآخر تقدم مؤكد في العمل",
-    "homeTitleHiatus": "هل هنتر اكس هنتر متوقف؟ موعد صدور الفصل {next} ({month})",
-    "homeTitlePublishing": "هنتر اكس هنتر: موعد صدور الفصل {next} والجدول ({month})"
+    "homeTitleHiatus": "هل هنتر اكس هنتر متوقف؟ موعد صدور الفصل {next} (تحديث {month})",
+    "homeTitlePublishing": "هنتر اكس هنتر: موعد صدور الفصل {next} والجدول (تحديث {month})"
   },
   "header": {
     "updated": "آخر تغيير في الحالة: {date}",
@@ -341,6 +341,7 @@
     "update": {
       "metaTitle": "خبر توغاشي، {date}: الفصل {chapter} {status}",
       "metaTitleGeneric": "منشور يوشيهيرو توغاشي بتاريخ {date}",
+      "metaTitleGenericTimed": "منشور يوشيهيرو توغاشي بتاريخ {date}، {time} UTC",
       "metaDescription": "ما نشره يوشيهيرو توغاشي في {date} عن HUNTER×HUNTER، بالنص الياباني الأصلي ومترجمًا، مع تغيير المتتبع الذي أكده.",
       "h1": "خبر توغاشي، {date}",
       "changeTitle": "ما الذي أكده هذا المنشور",

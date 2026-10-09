@@ -4,8 +4,8 @@
     "description": "一个附有来源的非官方《HUNTER×HUNTER（全职猎人）》追踪站，汇总最新刊载章节以及富坚义博公开确认的后续章节制作进度。",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status：《全职猎人》最新刊载章节与已确认制作进度",
-    "homeTitleHiatus": "全职猎人（全職獵人）休刊了吗？第{next}话什么时候更新（{month}）",
-    "homeTitlePublishing": "全职猎人（全職獵人）第{next}话什么时候更新？连载时间表（{month}）"
+    "homeTitleHiatus": "全职猎人（全職獵人）休刊了吗？第{next}话什么时候更新（截至{month}）",
+    "homeTitlePublishing": "全职猎人（全職獵人）第{next}话什么时候更新？连载时间表（截至{month}）"
   },
   "header": {
     "updated": "状态最后变更于 {date}",
@@ -341,6 +341,7 @@
     "update": {
       "metaTitle": "{date}富坚动态：第{chapter}话{status}",
       "metaTitleGeneric": "富坚义博{date}的发文",
+      "metaTitleGenericTimed": "富坚义博{date} {time}（UTC）的发文",
       "metaDescription": "富坚义博在{date}关于《全职猎人》的发文，含日文原文与译文，以及由此确认的追踪状态变更。",
       "h1": "{date}富坚动态",
       "changeTitle": "这条动态确认了什么",

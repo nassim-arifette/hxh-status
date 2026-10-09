@@ -1,6 +1,7 @@
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
 import { formatDate } from "../status-presentation";
 import { deriveArcStats } from "./arcs";
+import { latestPostDate } from "./updates";
 import { deriveHiatusStats, type PublicationIssueInput } from "./hiatus-stats";
 import historyData from "./publication-history.json";
 import statusData from "./status-data.json";
@@ -106,6 +107,13 @@ export function buildStatusSentences(locale: Locale, messages: Messages) {
   ];
 }
 
+// The home page changes with every status change and every Togashi post (its
+// latest-post block), so either can make it newer.
+export const homeUpdated = [lastUpdated, latestPostDate]
+  .filter((date): date is string => Boolean(date))
+  .sort()
+  .at(-1)!;
+
 export function buildHomeTitle(locale: Locale, messages: Messages) {
   return formatMessage(
     publicationStatus === "hiatus"
@@ -114,7 +122,7 @@ export function buildHomeTitle(locale: Locale, messages: Messages) {
     {
       latest: latestPublished.chapter,
       next: nextChapter.chapter,
-      month: formatDate(lastUpdated, monthYear, locale),
+      month: formatDate(homeUpdated, monthYear, locale),
     },
   );
 }

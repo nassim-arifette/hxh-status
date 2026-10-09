@@ -4,8 +4,8 @@
     "description": "Un tracker no oficial y con fuentes de los capítulos de HUNTER×HUNTER y del progreso confirmado por Yoshihiro Togashi en los próximos capítulos.",
     "siteName": "HxH Status",
     "imageAlt": "HxH Status, seguimiento de los capítulos y del progreso confirmado de HUNTER×HUNTER",
-    "homeTitleHiatus": "¿Hunter x Hunter está en pausa? Fecha de salida del capítulo {next} ({month})",
-    "homeTitlePublishing": "Hunter x Hunter: fecha de salida del capítulo {next} y calendario ({month})"
+    "homeTitleHiatus": "¿Hunter x Hunter está en pausa? Fecha de salida del capítulo {next} (actualizado en {month})",
+    "homeTitlePublishing": "Hunter x Hunter: fecha de salida del capítulo {next} y calendario (actualizado en {month})"
   },
   "header": {
     "updated": "Estado modificado el {date}",
@@ -341,6 +341,7 @@
     "update": {
       "metaTitle": "Novedad de Togashi, {date}: capítulo {chapter} {status}",
       "metaTitleGeneric": "Publicación de Yoshihiro Togashi del {date}",
+      "metaTitleGenericTimed": "Publicación de Yoshihiro Togashi del {date}, {time} UTC",
       "metaDescription": "Lo que Yoshihiro Togashi publicó el {date} sobre HUNTER×HUNTER, en japonés original y traducido, con el cambio de seguimiento que confirmó.",
       "h1": "Novedad de Togashi, {date}",
       "changeTitle": "Lo que confirmó",

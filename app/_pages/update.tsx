@@ -1,7 +1,7 @@
 import { formatMessage, type Locale, type Messages } from "@/lib/i18n";
 import { localeUrl, updatePath } from "@/lib/routes";
 import { ContentShell } from "../content-shell";
-import { postExcerpt, postText, type TogashiPost } from "../data/updates";
+import { postExcerpt, postText, togashiPosts, type TogashiPost } from "../data/updates";
 import { formatDate } from "../status-presentation";
 import { newsArticleLd } from "../structured-data";
 import { UPDATES_PATH } from "./updates";
@@ -9,6 +9,14 @@ import { UPDATES_PATH } from "./updates";
 function changeStatus(messages: Messages, status: string) {
   const known = messages.statuses[status as keyof Messages["statuses"]];
   return known ? known.shortLabel : status;
+}
+
+// Posts sharing a day and the generic title (no tracker change to name).
+function sameDayGenericPosts(post: TogashiPost) {
+  const day = post.createdAt.slice(0, 10);
+  return togashiPosts.filter(
+    (other) => other.createdAt.slice(0, 10) === day && !other.tracker?.changes?.length,
+  ).length;
 }
 
 export function updateMetadata(
@@ -27,7 +35,14 @@ export function updateMetadata(
           chapter: change.chapter,
           status: changeStatus(messages, change.to),
         })
-      : formatMessage(copy.metaTitleGeneric, { date }),
+      : sameDayGenericPosts(post) > 1
+        // Togashi sometimes posts several times a day; the time keeps each
+        // page's title its own.
+        ? formatMessage(copy.metaTitleGenericTimed, {
+            date,
+            time: new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "UTC" }).format(new Date(post.createdAt)),
+          })
+        : formatMessage(copy.metaTitleGeneric, { date }),
     description: postExcerpt(post, locale) || formatMessage(copy.metaDescription, { date }),
   };
 }

@@ -39,6 +39,10 @@ export type TogashiPost = {
 
 export const togashiPosts = feed.posts as unknown as TogashiPost[];
 
+// The feed is newest first; its first post is the last time the home page and
+// the updates list changed for a reason other than a status change.
+export const latestPostDate = togashiPosts[0]?.createdAt.slice(0, 10);
+
 export function getPost(id: string) {
   return togashiPosts.find((post) => post.id === id);
 }
