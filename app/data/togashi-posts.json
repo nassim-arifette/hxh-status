@@ -2,6 +2,60 @@
   "schemaVersion": 1,
   "posts": [
     {
+      "id": "2110501264543109360",
+      "author": {
+        "id": "1528978792617611264",
+        "name": "Yoshihiro Togashi",
+        "screenName": "Un4v5s8bgsVk9Xp"
+      },
+      "createdAt": "2026-10-14T22:41:27.000Z",
+      "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2110501264543109360",
+      "originalText": "No429、原稿完成。 https://t.co/clXee1TjBe",
+      "mediaUrls": [
+        "https://pbs.twimg.com/media/HUoBtanawAABPQD.jpg"
+      ],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "刊少年ジャンプ　号\n名　H×H　429話\n総頁数　19　P\n入稿印　返却印\n編集担当\n製版①\n製版②\n活版\n営業\n入稿日　平成　年　月　日\n返却日　平成　年　月　日",
+          "translations": {
+            "ar": "مجلة شونين جمب الأسبوعية  العدد\nالاسم  H×H  الفصل 429\nإجمالي الصفحات  19  ص\nختم الإيداع  ختم الإرجاع\nمسؤول التحرير\nفرز الألوان ①\nفرز الألوان ②\nالطباعة الحرفية\nالمبيعات\nتاريخ الإيداع  هيسي  سنة  شهر  يوم\nتاريخ الإرجاع  هيسي  سنة  شهر  يوم",
+            "en": "Weekly Shonen Jump  Issue\nTitle  H×H  Chapter 429\nTotal Pages  19  P\nSubmission Stamp  Return Stamp\nEditorial Staff in Charge\nPlatemaking ①\nPlatemaking ②\nTypography\nSales\nSubmission Date  Heisei  Year  Month  Day\nReturn Date  Heisei  Year  Month  Day",
+            "es": "Weekly Shonen Jump  N.º\nTítulo  H×H  Capítulo 429\nTotal de páginas  19  P\nSello de entrega  Sello de devolución\nEditor a cargo\nPlacas ①\nPlacas ②\nTipografía\nVentas\nFecha de entrega  Heisei  Año  Mes  Día\nFecha de devolución  Heisei  Año  Mes  Día",
+            "fr": "Weekly Shonen Jump  N°\nTitre  H×H  Chapitre 429\nNombre total de pages  19  P\nTampon de soumission  Tampon de retour\nResponsable éditorial\nPhotogravure ①\nPhotogravure ②\nTypographie\nCommercial\nDate de soumission  Heisei  Année  Mois  Jour\nDate de retour  Heisei  Année  Mois  Jour",
+            "ja": "刊少年ジャンプ　号\n名　H×H　429話\n総頁数　19　P\n入稿印　返却印\n編集担当\n製版①\n製版②\n活版\n営業\n入稿日　平成　年　月　日\n返却日　平成　年　月　日",
+            "pt": "Weekly Shonen Jump  Edição\nTítulo  H×H  Capítulo 429\nTotal de páginas  19  P\nCarimbo de entrega  Carimbo de devolução\nEditor responsável\nClicheria ①\nClicheria ②\nTipografia\nVendas\nData de entrega  Heisei  Ano  Mês  Dia\nData de devolução  Heisei  Ano  Mês  Dia",
+            "zh": "周刊少年Jump  期\n名称  H×H  第429话\n总页数  19  页\n交稿印  返还印\n责任编辑\n制版①\n制版②\n活版\n营业\n交稿日  平成  年  月  日\n返还日  平成  年  月  日"
+          }
+        }
+      ],
+      "translation": {
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.7-flash",
+        "generatedAt": "2026-10-14T22:41:33.963Z",
+        "texts": {
+          "ar": "No429، اكتملت المخطوطة. https://t.co/clXee1TjBe",
+          "en": "No429, manuscript complete. https://t.co/clXee1TjBe",
+          "es": "No429, manuscrito terminado. https://t.co/clXee1TjBe",
+          "fr": "No429, manuscrit terminé. https://t.co/clXee1TjBe",
+          "ja": "No429、原稿完成。 https://t.co/clXee1TjBe",
+          "pt": "No429, manuscrito concluído. https://t.co/clXee1TjBe",
+          "zh": "No429、原稿完成。 https://t.co/clXee1TjBe"
+        }
+      },
+      "tracker": {
+        "decision": "apply",
+        "changes": [
+          {
+            "chapter": 429,
+            "from": "background",
+            "to": "delivered"
+          }
+        ]
+      }
+    },
+    {
       "id": "2107053094546866223",
       "author": {
         "id": "1528978792617611264",

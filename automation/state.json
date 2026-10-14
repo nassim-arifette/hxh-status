@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "listId": "2095219478636495163",
-  "lastProcessedTweetId": "2107053094546866223",
-  "lastProcessedAt": "2026-10-05T10:19:39.000Z",
-  "lastRunAt": "2026-10-05T10:19:46.265Z",
+  "lastProcessedTweetId": "2110501264543109360",
+  "lastProcessedAt": "2026-10-14T22:41:27.000Z",
+  "lastRunAt": "2026-10-14T22:41:33.963Z",
   "recentEvents": [
     {
       "tweetId": "2099793931164913882",
@@ -44,8 +44,64 @@
       "decision": "ignore",
       "reason": "The post is a personal announcement regarding the author's health and future work policy. He states that he will prioritize his own manuscripts and decline deadline-based external requests, and will announce when manuscript work resumes. No specific chapter numbers or production stage completions are mentioned.",
       "changes": []
+    },
+    {
+      "tweetId": "2110501264543109360",
+      "tweetUrl": "https://x.com/Un4v5s8bgsVk9Xp/status/2110501264543109360",
+      "createdAt": "2026-10-14T22:41:27.000Z",
+      "decision": "apply",
+      "reason": "Togashi explicitly confirmed that the manuscript for Chapter 429 is complete (No429、原稿完成).",
+      "changes": [
+        {
+          "chapter": 429,
+          "from": "background",
+          "to": "delivered"
+        }
+      ]
     }
   ],
   "pendingReviews": [],
-  "pendingAnalysis": []
+  "pendingAnalysis": [],
+  "pendingVerdict": {
+    "payload": {
+      "schemaVersion": 1,
+      "listId": "2095219478636495163",
+      "authorId": "1528978792617611264",
+      "requestedAt": "2026-10-14T22:41:33.963Z",
+      "tweets": [
+        {
+          "id": "2110501264543109360",
+          "authorId": "1528978792617611264",
+          "screenName": "Un4v5s8bgsVk9Xp",
+          "createdAt": "2026-10-14T22:41:27.000Z",
+          "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2110501264543109360",
+          "fullText": "No429、原稿完成。 https://t.co/clXee1TjBe",
+          "mediaUrls": [
+            "https://pbs.twimg.com/media/HUoBtanawAABPQD.jpg"
+          ]
+        }
+      ]
+    },
+    "verdict": {
+      "requestedAt": "2026-10-14T22:42:28.585Z",
+      "revision": "2110501264543109360-5695652d9ed1f845",
+      "posts": [
+        {
+          "id": "2110501264543109360",
+          "notification": "milestone",
+          "translations": null
+        }
+      ],
+      "milestones": {
+        "chapters": [
+          {
+            "chapter": 429,
+            "from": "background",
+            "to": "delivered"
+          }
+        ],
+        "publication": null
+      }
+    }
+  }
 }

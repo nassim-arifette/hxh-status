@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-15",
+  "lastUpdated": "2026-10-14",
   "hiatusAfterChapter": 420,
   "chapters": [
     {
@@ -139,11 +139,13 @@
     },
     {
       "chapter": 429,
-      "status": "background",
-      "updatedAt": "2026-08-27",
-      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2092902182790341023",
+      "status": "delivered",
+      "updatedAt": "2026-10-14",
+      "source": "https://x.com/Un4v5s8bgsVk9Xp/status/2110501264543109360",
       "sourceLabel": "Yoshihiro Togashi on X",
-      "sourceType": "togashi-x"
+      "sourceType": "togashi-x",
+      "sourcePostId": "2110501264543109360",
+      "sourcePublishedAt": "2026-10-14T22:41:27.000Z"
     },
     {
       "chapter": 430,
