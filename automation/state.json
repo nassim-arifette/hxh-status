@@ -81,41 +81,5 @@
         "https://pbs.twimg.com/media/HVkAFKtaMAAH1Hj.jpg"
       ]
     }
-  ],
-  "pendingVerdict": {
-    "payload": {
-      "schemaVersion": 1,
-      "listId": "2095219478636495163",
-      "authorId": "1528978792617611264",
-      "requestedAt": "2026-10-29T19:15:31.487Z",
-      "tweets": [
-        {
-          "id": "2114721597701734828",
-          "authorId": "1528978792617611264",
-          "screenName": "Un4v5s8bgsVk9Xp",
-          "createdAt": "2026-10-26T14:11:33.000Z",
-          "url": "https://x.com/Un4v5s8bgsVk9Xp/status/2114721597701734828",
-          "fullText": "No.430、原稿完成。 https://t.co/ILJJkITanL",
-          "mediaUrls": [
-            "https://pbs.twimg.com/media/HVkAFKtaMAAH1Hj.jpg"
-          ]
-        }
-      ]
-    },
-    "verdict": {
-      "requestedAt": "2026-10-29T19:16:12.360Z",
-      "revision": "2110501264543109360-5695652d9ed1f845",
-      "posts": [
-        {
-          "id": "2114721597701734828",
-          "notification": "raw",
-          "translations": null
-        }
-      ],
-      "milestones": {
-        "chapters": [],
-        "publication": null
-      }
-    }
-  }
+  ]
 }
