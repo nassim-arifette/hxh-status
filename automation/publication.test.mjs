@@ -70,6 +70,9 @@ test("an announced future return overrides the completed hiatus and stays publis
   Object.assign(record, { status: "scheduled", releaseAt: "2026-09-14T00:00:00+09:00" });
   assert.equal(publicationState(next), "publishing");
   record.status = "published";
+  // Pin the tracker date to the release: the live data's lastUpdated keeps
+  // moving, and 35 days after 2026-09-14 it would read as a fresh hiatus.
+  next.lastUpdated = "2026-09-14";
   assert.equal(publicationState(next), "publishing");
 });
 
