@@ -14,17 +14,45 @@
       "mediaUrls": [
         "https://pbs.twimg.com/media/HVkAFKtaMAAH1Hj.jpg"
       ],
-      "imageTexts": [],
+      "imageTexts": [
+        {
+          "imageIndex": 1,
+          "originalText": "共同印刷 様\n週刊少年ジャンプ　号\n品名　HxH 430話\n総頁数　19 P\n入稿印 返却印\n編集担当\n製版①\n製版②\n活版\n営業\n入稿日　平成 年 月 日\n返却日　平成 年 月 日",
+          "translations": {
+            "ar": "شركة كيودو للطباعة المحترمة\nعدد أسبوعية شونن جمب\nاسم المادة: HxH الفصل 430\nإجمالي عدد الصفحات: 19 صفحة\nختم الإيداع / ختم الإرجاع\nالمحرر المسؤول\nإعداد الألواح ①\nإعداد الألواح ②\nالطباعة البارزة\nالمبيعات\nتاريخ الإيداع: هيسي السنة الشهر اليوم\nتاريخ الإرجاع: هيسي السنة الشهر اليوم",
+            "en": "Kyodo Printing Co., Ltd.\nWeekly Shonen Jump Issue\nItem Name: HxH Chapter 430\nTotal Pages: 19 P\nSubmission Stamp / Return Stamp\nEditor in Charge\nPlatemaking ①\nPlatemaking ②\nLetterpress\nSales\nSubmission Date: Heisei Year Month Day\nReturn Date: Heisei Year Month Day",
+            "es": "Atn. Kyodo Printing\nEdición de Weekly Shonen Jump\nNombre del producto: HxH Capítulo 430\nTotal de páginas: 19 P\nSello de entrega / Sello de devolución\nEditor a cargo\nFabricación de planchas ①\nFabricación de planchas ②\nTipografía\nVentas\nFecha de entrega: Heisei Año Mes Día\nFecha de devolución: Heisei Año Mes Día",
+            "fr": "À l'attention de Kyodo Printing\nNuméro du Weekly Shonen Jump\nNom du produit : HxH Chapitre 430\nNombre total de pages : 19 P\nSceau de dépôt / Sceau de retour\nÉditeur en charge\nPhotogravure ①\nPhotogravure ②\nTypographie\nVentes\nDate de dépôt : Heisei Année Mois Jour\nDate de retour : Heisei Année Mois Jour",
+            "ja": "共同印刷 様\n週刊少年ジャンプ　号\n品名　HxH 430話\n総頁数　19 P\n入稿印 返却印\n編集担当\n製版①\n製版②\n活版\n営業\n入稿日　平成 年 月 日\n返却日　平成 年 月 日",
+            "pt": "A/C Kyodo Printing\nEdição da Weekly Shonen Jump\nNome do produto: HxH Capítulo 430\nTotal de páginas: 19 P\nCarimbo de entrega / Carimbo de devolução\nEditor responsável\nCriação de chapas ①\nCriação de chapas ②\nTipografia\nVendas\nData de entrega: Heisei Ano Mês Dia\nData de devolução: Heisei Ano Mês Dia",
+            "zh": "共同印刷 株式会社\n周刊少年Jump 号\n品名 HxH 第430话\n总页数 19 P\n入稿印 返还印\n编辑担当\n制版①\n制版②\n活版\n营业\n入稿日 平成 年 月 日\n返还日 平成 年 月 日"
+          }
+        }
+      ],
       "translation": {
-        "status": "unavailable",
-        "provider": null,
-        "model": null,
-        "generatedAt": null,
-        "texts": null
+        "status": "available",
+        "provider": "gemini",
+        "model": "gemini-3.5-flash",
+        "generatedAt": "2026-10-31T15:15:31.578Z",
+        "texts": {
+          "ar": "No.430، اكتملت المخطوطة. https://t.co/ILJJkITanL",
+          "en": "No.430, manuscript complete. https://t.co/ILJJkITanL",
+          "es": "No.430, manuscrito terminado. https://t.co/ILJJkITanL",
+          "fr": "No.430, manuscrit terminé. https://t.co/ILJJkITanL",
+          "ja": "No.430、原稿完成。 https://t.co/ILJJkITanL",
+          "pt": "No.430, manuscrito concluído. https://t.co/ILJJkITanL",
+          "zh": "No.430，原稿完成。 https://t.co/ILJJkITanL"
+        }
       },
       "tracker": {
-        "decision": "review",
-        "changes": []
+        "decision": "apply",
+        "changes": [
+          {
+            "chapter": 430,
+            "from": "background",
+            "to": "delivered"
+          }
+        ]
       }
     },
     {
